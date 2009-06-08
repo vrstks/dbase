@@ -103,9 +103,11 @@
 		</Unit>
 		<Unit filename="..\dbf.h" />
 		<Unit filename="..\dbf.hpp" />
-		<Unit filename="..\dbf.inl" />
 		<Unit filename="..\dbf_wx.cpp" />
 		<Unit filename="..\dbf_wx.h" />
+		<Unit filename="..\ioapi\ioapi.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename=".\src\app.cpp" />
 		<Unit filename=".\src\app.h" />
 		<Unit filename=".\src\appdoc.cpp" />
@@ -133,9 +135,6 @@
 		</Unit>
 		<Unit filename=".\src\wxext.cpp" />
 		<Unit filename="src\wxstreamc.cpp" />
-		<Unit filename="..\..\ioapi\unzip\ioapi.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Extensions>
 			<code_completion />
 			<envvars />

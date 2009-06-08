@@ -191,7 +191,7 @@
 		<Unit filename="src/wxext.cpp" />
 		<Unit filename="src/wxext.h" />
 		<Unit filename="src/wxstreamc.cpp" />
-		<Unit filename="../../ioapi/unzip/ioapi.c">
+		<Unit filename="../ioapi/ioapi.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions>
