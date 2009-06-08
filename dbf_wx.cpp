@@ -7,7 +7,7 @@
 #include <wx/docview.h>
 
 #include <zlib.h>
-#include "../ioapi/unzip/ioapi.h"
+#include "ioapi/ioapi.h"
 #include "bool.h"
 #include "dbf.h"
 #include "dbf.hpp"

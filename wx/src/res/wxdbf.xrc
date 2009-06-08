@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resource version="2.3.0.1" xmlns="http://www.wxwidgets.org/wxxrc">
+    <object class="wxMenuBar" name="menu_mdi">
+        <object class="wxMenu">
+            <label>&amp;File</label>
+            <object class="wxMenuItem" name="wxID_NEW">
+                <label>&amp;New\tCtrl+N</label>
+            </object>
+            <object class="wxMenuItem" name="wxID_OPEN">
+                <label>&amp;Open...\tCtrl+O</label>
+            </object>
+            <object class="separator">
+            </object>
+            <object class="wxMenuItem" name="wxID_PRINT_SETUP">
+                <label>&amp;Print Setup...</label>
+            </object>
+            <object class="separator">
+            </object>
+            <object class="wxMenuItem" name="wxID_EXIT">
+                <label>E&amp;xit\tCtrl+Q</label>
+            </object>
+        </object>
+        <object class="wxMenu">
+            <label>&amp;View</label>
+            <object class="wxMenuItem" name="fullscreen">
+                <label>&amp;Fullscreen\tF11</label>
+                <checkable>1</checkable>
+            </object>
+            <object class="separator">
+            </object>
+            <object class="wxMenuItem" name="toolbar">
+                <label>&amp;Toolbar</label>
+                <checkable>1</checkable>
+            </object>
+            <object class="wxMenuItem" name="statusbar">
+                <label>S&amp;tatus bar</label>
+                <checkable>1</checkable>
+            </object>
+        </object>
+        <object class="wxMenu">
+            <label>&amp;Help</label>
+            <object class="wxMenuItem" name="wxID_ABOUT">
+                <label>&amp;About...</label>
+            </object>
+        </object>
+    </object>
+    <object class="wxMenuBar" name="menu_dbf">
+        <object class="wxMenu">
+            <label>&amp;File</label>
+            <object class="wxMenuItem" name="wxID_NEW">
+                <label>&amp;New\tCtrl+N</label>
+            </object>
+            <object class="wxMenuItem" name="wxID_OPEN">
+                <label>&amp;Open...\tCtrl+O</label>
+            </object>
+            <object class="wxMenuItem" name="wxID_SAVE">
+                <label>&amp;Save\tCtrl+S</label>
+            </object>
+            <object class="wxMenuItem" name="wxID_SAVEAS">
+                <label>Save &amp;As...</label>
+            </object>
+            <object class="wxMenuItem" name="wxID_CLOSE">
+                <label>&amp;Close\tCtrl+W</label>
+            </object>
+            <object class="separator">
+            </object>
+            <object class="wxMenuItem" name="wxID_PROPERTIES">
+                <label>Proper&amp;ties...\tAlt+Enter</label>
+            </object>
+            <object class="wxMenuItem" name="export">
+                <label>E&amp;xport...\tCtrl+X</label>
+            </object>
+            <object class="wxMenuItem" name="pack">
+                <label>Pack &amp;Database...\tCtrl+D</label>
+            </object>
+            <object class="wxMenuItem" name="struct">
+                <label>Modif&amp;y Structure...\tCtrl+M</label>
+            </object>
+            <object class="separator">
+            </object>
+            <object class="wxMenuItem" name="wxID_PRINT">
+                <label>&amp;Print...\tCtrl+P</label>
+            </object>
+            <object class="wxMenuItem" name="wxID_PRINT_SETUP">
+                <label>&amp;Print Setup...</label>
+            </object>
+            <object class="wxMenuItem" name="wxID_PREVIEW">
+                <label>Print Pre&amp;view\tCtrl+Shift+P</label>
+            </object>
+            <object class="separator">
+            </object>
+            <object class="wxMenuItem" name="wxID_EXIT">
+                <label>E&amp;xit\tCtrl+Q</label>
+            </object>
+        </object>
+        <object class="wxMenu">
+            <label>&amp;Edit</label>
+            <object class="wxMenuItem" name="wxID_ADD">
+                <label>&amp;Add...\tInsert</label>
+                <help>Add record</help>
+            </object>
+            <object class="wxMenuItem" name="edit">
+                <label>&amp;Edit...\tF2</label>
+                <help>Edit record</help>
+            </object>
+            <object class="wxMenuItem" name="wxID_DELETE">
+                <label>&amp;Delete...\tDelete</label>
+                <help>Delete the selection</help>
+            </object>
+            <object class="wxMenuItem" name="wxID_UNDELETE">
+                <label>&amp;Undelete</label>
+                <help>Undelete the selection</help>
+            </object>
+            <object class="separator">
+            </object>
+            <object class="wxMenuItem" name="wxID_FIND">
+                <label>&amp;Find...\tCtrl+F</label>
+                <help>Undelete the selection</help>
+            </object>
+            <object class="wxMenuItem" name="next">
+                <label>Find &amp;Next...\tF3</label>
+                <help>Undelete the selection</help>
+            </object>
+            <object class="wxMenuItem" name="wxID_REPLACE">
+                <label>&amp;Replace...\tCtrl+H</label>
+                <help>Undelete the selection</help>
+            </object>
+            <object class="separator">
+            </object>
+            <object class="wxMenuItem" name="wxID_SELECTALL">
+                <label>Select &amp;All\tCtrl+A</label>
+                <help>Select the entire document</help>
+            </object>
+        </object>
+        <object class="wxMenu">
+            <label>&amp;View</label>
+            <object class="wxMenuItem" name="fullscreen">
+                <label>&amp;Fullscreen\tF11</label>
+                <checkable>1</checkable>
+            </object>
+            <object class="separator">
+            </object>
+            <object class="wxMenuItem" name="toolbar">
+                <label>&amp;Toolbar</label>
+                <checkable>1</checkable>
+            </object>
+            <object class="wxMenuItem" name="statusbar">
+                <label>S&amp;tatus bar</label>
+                <checkable>1</checkable>
+            </object>
+        </object>
+        <object class="wxMenu">
+            <label>&amp;Tools</label>
+            <object class="wxMenuItem" name="tool_struct">
+                <label>&amp;struct to clipboard</label>
+            </object>
+        </object>
+        <object class="wxMenu">
+            <label>&amp;Help</label>
+            <object class="wxMenuItem" name="wxID_ABOUT">
+                <label>&amp;About...</label>
+            </object>
+        </object>
+    </object>
+    <object class="wxDialog" name="struct" subclass="Dialog">
+        <style>wxCAPTION|wxRESIZE_BORDER|wxSYSTEM_MENU|wxCLOSE_BOX</style>
+        <exstyle>wxWS_EX_BLOCK_EVENTS</exstyle>
+        <title>Modify Database Structure</title>
+        <centered>1</centered>
+        <object class="wxBoxSizer">
+            <orient>wxHORIZONTAL</orient>
+            <object class="sizeritem">
+                <flag>wxGROW|wxALL</flag>
+                <border>5</border>
+                <option>1</option>
+                <object class="wxListCtrl" name="list" subclass="wxStructListView">
+                    <size>300,-1</size>
+                    <style>wxLC_REPORT|wxLC_VIRTUAL|wxLC_SINGLE_SEL</style>
+                </object>
+            </object>
+            <object class="sizeritem">
+                <flag>wxGROW|wxALL</flag>
+                <border>0</border>
+                <object class="wxBoxSizer">
+                    <orient>wxVERTICAL</orient>
+                    <object class="sizeritem">
+                        <flag>wxALIGN_CENTER_HORIZONTAL|wxBOTTOM</flag>
+                        <border>5</border>
+                        <object class="wxBoxSizer">
+                            <orient>wxVERTICAL</orient>
+                            <object class="sizeritem">
+                                <flag>wxALIGN_CENTER_HORIZONTAL|wxLEFT|wxRIGHT|wxTOP</flag>
+                                <border>5</border>
+                                <object class="wxButton" name="wxID_ADD">
+                                    <label>&amp;Add...</label>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <flag>wxALIGN_CENTER_HORIZONTAL|wxLEFT|wxRIGHT|wxTOP</flag>
+                                <border>5</border>
+                                <object class="wxButton" name="edit">
+                                    <label>&amp;Edit...</label>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <flag>wxALIGN_CENTER_HORIZONTAL|wxLEFT|wxRIGHT|wxTOP</flag>
+                                <border>5</border>
+                                <object class="wxButton" name="wxID_DELETE">
+                                    <label>&amp;Delete...</label>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <flag>wxALIGN_CENTER_HORIZONTAL|wxLEFT|wxRIGHT|wxTOP</flag>
+                                <border>5</border>
+                                <object class="wxButton" name="calendar">
+                                    <label>Ca&amp;lendar</label>
+                                </object>
+                            </object>
+                        </object>
+                    </object>
+                    <object class="sizeritem">
+                        <flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
+                        <border>5</border>
+                        <option>1</option>
+                        <object class="wxBoxSizer">
+                            <orient>wxVERTICAL</orient>
+                        </object>
+                    </object>
+                    <object class="sizeritem">
+                        <flag>wxALIGN_CENTER_HORIZONTAL|wxTOP|wxBOTTOM</flag>
+                        <border>5</border>
+                        <object class="wxBoxSizer">
+                            <orient>wxVERTICAL</orient>
+                            <object class="sizeritem">
+                                <flag>wxALIGN_CENTER_HORIZONTAL|wxLEFT|wxRIGHT|wxTOP</flag>
+                                <border>5</border>
+                                <object class="wxButton" name="wxID_OK">
+                                    <label>&amp;OK</label>
+                                    <default>1</default>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <flag>wxALIGN_CENTER_HORIZONTAL|wxLEFT|wxRIGHT|wxTOP</flag>
+                                <border>5</border>
+                                <object class="wxButton" name="wxID_CANCEL">
+                                    <label>&amp;Cancel</label>
+                                </object>
+                            </object>
+                        </object>
+                    </object>
+                </object>
+            </object>
+        </object>
+    </object>
+    <object class="wxDialog" name="field_edit" subclass="Dialog">
+        <style>wxCAPTION|wxRESIZE_BORDER|wxSYSTEM_MENU|wxCLOSE_BOX</style>
+        <exstyle>wxWS_EX_BLOCK_EVENTS</exstyle>
+        <object class="wxBoxSizer">
+            <orient>wxVERTICAL</orient>
+            <object class="sizeritem">
+                <flag>wxGROW|wxALL</flag>
+                <border>5</border>
+                <object class="wxFlexGridSizer">
+                    <cols>2</cols>
+                    <rows>2</rows>
+                    <vgap>2</vgap>
+                    <hgap>2</hgap>
+                    <growablecols>1</growablecols>
+                    <object class="sizeritem">
+                        <flag>wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL|wxALL|wxADJUST_MINSIZE</flag>
+                        <border>0</border>
+                        <object class="wxStaticText" name="wxID_STATIC">
+                            <label>Name:</label>
+                        </object>
+                    </object>
+                    <object class="sizeritem">
+                        <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                        <border>0</border>
+                        <object class="wxTextCtrl" name="edit0">
+                        </object>
+                    </object>
+                    <object class="sizeritem">
+                        <flag>wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL|wxALL|wxADJUST_MINSIZE</flag>
+                        <border>0</border>
+                        <object class="wxStaticText" name="wxID_STATIC">
+                            <label>Type:</label>
+                        </object>
+                    </object>
+                    <object class="sizeritem">
+                        <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                        <border>0</border>
+                        <object class="wxComboBox" name="edit1">
+                            <style>wxCB_READONLY</style>
+                        </object>
+                    </object>
+                    <object class="sizeritem">
+                        <flag>wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL|wxALL|wxADJUST_MINSIZE</flag>
+                        <border>0</border>
+                        <object class="wxStaticText" name="wxID_STATIC">
+                            <label>Length:</label>
+                        </object>
+                    </object>
+                    <object class="sizeritem">
+                        <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                        <border>0</border>
+                        <object class="wxTextCtrl" name="edit2">
+                        </object>
+                    </object>
+                    <object class="sizeritem">
+                        <flag>wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL|wxALL|wxADJUST_MINSIZE</flag>
+                        <border>0</border>
+                        <object class="wxStaticText" name="wxID_STATIC">
+                            <label>Decimals:</label>
+                        </object>
+                    </object>
+                    <object class="sizeritem">
+                        <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                        <border>0</border>
+                        <object class="wxTextCtrl" name="edit3">
+                        </object>
+                    </object>
+                </object>
+            </object>
+            <object class="sizeritem">
+                <flag>wxALIGN_CENTER_HORIZONTAL|wxTOP|wxBOTTOM</flag>
+                <border>5</border>
+                <object class="wxBoxSizer">
+                    <orient>wxHORIZONTAL</orient>
+                    <object class="sizeritem">
+                        <flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
+                        <border>5</border>
+                        <object class="wxButton" name="wxID_OK">
+                            <label>&amp;OK</label>
+                            <default>1</default>
+                        </object>
+                    </object>
+                    <object class="sizeritem">
+                        <flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
+                        <border>5</border>
+                        <object class="wxButton" name="wxID_CANCEL">
+                            <label>&amp;Cancel</label>
+                        </object>
+                    </object>
+                </object>
+            </object>
+        </object>
+    </object>
+</resource>

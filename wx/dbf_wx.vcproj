@@ -1269,7 +1269,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\ioapi\unzip\ioapi.c"
+				RelativePath="..\ioapi\ioapi.c"
 				>
 				<FileConfiguration
 					Name="Release|Win32"

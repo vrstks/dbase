@@ -294,7 +294,7 @@ SOURCE=..\dbf_wx.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\ioapi\unzip\ioapi.c
+SOURCE=..\ioapi\ioapi.c
 # ADD CPP /I "..\..\zlib"
 # SUBTRACT CPP /YX /Yc /Yu
 # End Source File

@@ -8,12 +8,12 @@ CFG=DBFExplorer - Win32 DLL Unicode Debug
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
 !MESSAGE 
-!MESSAGE NMAKE /f "DBFExplorer.6.mak".
+!MESSAGE NMAKE /f "DBFExplorer.mak".
 !MESSAGE 
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "DBFExplorer.6.mak" CFG="DBFExplorer - Win32 DLL Unicode Debug"
+!MESSAGE NMAKE /f "DBFExplorer.mak" CFG="DBFExplorer - Win32 DLL Unicode Debug"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
@@ -324,11 +324,6 @@ SOURCE=.\src\res\xptheme.bin
 
 SOURCE=..\ioapi\ioapi.c
 # ADD CPP /I "..\..\zlib"
-# SUBTRACT CPP /YX /Yc /Yu
-# End Source File
-# Begin Source File
-
-SOURCE=..\ioapi\ioapiw.c
 # SUBTRACT CPP /YX /Yc /Yu
 # End Source File
 # End Group
