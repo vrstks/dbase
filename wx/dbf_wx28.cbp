@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="dbf_wx" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Win32 DLL Unicode Debug">
+				<Option output="..\..\bin\wxdbfu_d.gcc.exe" prefix_auto="0" extension_auto="0" />
+				<Option object_output="..\..\gcc\debug\dbf_wx28\unicode" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D__WXDEBUG__" />
+					<Add option="-D_UNICODE" />
+					<Add option="-DWXUSINGDLL" />
+					<Add option="-DwxUSE_UNICODE=1" />
+					<Add directory=".\..\..\lib\vc_dll\mswud" />
+					<Add directory=".\..\..\include" />
+					<Add directory="." />
+					<Add directory=".\..\..\samples" />
+					<Add directory="$(WXWIN)\lib\vc_dll\mswud" />
+					<Add directory="$(WXWIN)\include" />
+				</Compiler>
+			</Target>
+			<Target title="Win32 DLL Debug">
+				<Option output="..\..\bin\wxdbf_d.gcc.exe" prefix_auto="0" extension_auto="0" />
+				<Option object_output="..\..\gcc\debug\dbf_wx28" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D__WXDEBUG__" />
+					<Add option="-DWXUSINGDLL" />
+					<Add directory="$(#WX.lib)\gcc_dll$(WX_CFG)\mswd" />
+				</Compiler>
+				<Linker>
+					<Add library="libwxmsw28d_xrc.a" />
+					<Add library="libwxbase28d_xml.a" />
+					<Add library="libwxbase28d_net.a" />
+					<Add library="libwxmsw28d_adv.a" />
+					<Add library="libwxmsw28d_html.a" />
+					<Add library="libwxmsw28d_core.a" />
+					<Add library="libwxbase28d.a" />
+					<Add directory="$(#WX.lib)\gcc_dll$(WX_CFG)" />
+				</Linker>
+			</Target>
+			<Target title="Win32 Unicode Release">
+				<Option output="..\..\bin\wxdbfu.exe" prefix_auto="0" extension_auto="0" />
+				<Option object_output="..\..\gcc\release\dbf_wx28\unicode" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-Wall" />
+					<Add option="-D_UNICODE" />
+					<Add option="-DwxUSE_UNICODE=1" />
+					<Add directory=".\..\..\lib\vc_lib\mswu" />
+					<Add directory=".\..\..\include" />
+					<Add directory="." />
+					<Add directory=".\..\..\samples" />
+					<Add directory="$(WXWIN)\lib\vc_lib\mswu" />
+					<Add directory="$(WXWIN)\include" />
+				</Compiler>
+			</Target>
+			<Target title="Win32 Release">
+				<Option output="..\..\bin\wxdbf.exe" prefix_auto="0" extension_auto="0" />
+				<Option object_output="..\..\gcc\release\dbf_wx28" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-Wall" />
+					<Add directory=".\..\..\lib\vc_lib\msw" />
+					<Add directory=".\..\..\include" />
+					<Add directory="." />
+					<Add directory=".\..\..\samples" />
+					<Add directory="$(WXWIN)\lib\vc_lib\msw" />
+					<Add directory="$(WXWIN)\include" />
+				</Compiler>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-DWIN32" />
+			<Add option="-D__WXMSW__" />
+			<Add option="-D_WINDOWS" />
+			<Add directory="$(#WX)\src\zlib" />
+			<Add directory="$(#WX.include)" />
+		</Compiler>
+		<ResourceCompiler>
+			<Add directory="$(#WX.include)" />
+		</ResourceCompiler>
+		<Linker>
+			<Add directory="$(#WX.lib)" />
+		</Linker>
+		<Unit filename="..\dbf.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\dbf.h" />
+		<Unit filename="..\dbf.hpp" />
+		<Unit filename="..\dbf.inl" />
+		<Unit filename="..\dbf_wx.cpp" />
+		<Unit filename="..\dbf_wx.h" />
+		<Unit filename=".\src\app.cpp" />
+		<Unit filename=".\src\app.h" />
+		<Unit filename=".\src\appdoc.cpp" />
+		<Unit filename=".\src\appframe.cpp" />
+		<Unit filename=".\src\appframe.h" />
+		<Unit filename="src\datalist.cpp" />
+		<Unit filename="src\datamodel.cpp" />
+		<Unit filename=".\src\dbfdlgs.cpp" />
+		<Unit filename=".\src\dbfdlgs.h" />
+		<Unit filename=".\src\dbfdoc.cpp" />
+		<Unit filename=".\src\dbfdoc.h" />
+		<Unit filename=".\src\dbfframe.cpp" />
+		<Unit filename=".\src\dbfframe.h" />
+		<Unit filename="src\dbflist.cpp" />
+		<Unit filename="src\dbfmodel.cpp" />
+		<Unit filename="src\dbfutil.cpp" />
+		<Unit filename=".\src\dbfview.cpp" />
+		<Unit filename=".\src\dbfview.h" />
+		<Unit filename=".\src\precomp.h">
+			<Option compile="1" />
+			<Option weight="0" />
+		</Unit>
+		<Unit filename=".\src\wxdbf.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
+		<Unit filename=".\src\wxext.cpp" />
+		<Unit filename="src\wxstreamc.cpp" />
+		<Unit filename="..\..\ioapi\unzip\ioapi.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

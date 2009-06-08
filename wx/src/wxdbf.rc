@@ -1,0 +1,5 @@
+app                 ICON    "res\\app.ico"
+dbf                 ICON    "res\\dbf.ico"
+
+#include "wx/msw/wx.rc"
+

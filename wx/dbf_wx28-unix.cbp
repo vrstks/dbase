@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="dbf_wx" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="GTK DLL Unicode Debug">
+				<Option output="../../bin/wxdbfu_gtk_d" prefix_auto="1" extension_auto="1" />
+				<Option object_output="../../gcc-gtk/debug/dbf_wx28/unicode" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D__WXDEBUG__" />
+					<Add option="-D_UNICODE" />
+					<Add option="-DWXUSINGDLL" />
+					<Add option="-DwxUSE_UNICODE=1" />
+					<Add option="-D__WXGTK__" />
+					<Add directory="$(WXWIN)/lib/vc_dll/mswud" />
+					<Add directory="$(WXWIN)/include" />
+				</Compiler>
+			</Target>
+			<Target title="GTK DLL Debug">
+				<Option output="../../bin/wxdbf_gtk_d" prefix_auto="1" extension_auto="1" />
+				<Option object_output="../../gcc-gtk/debug/dbf_wx28" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-D__WXDEBUG__" />
+					<Add option="-DWXUSINGDLL" />
+					<Add option="-D__WXGTK__" />
+					<Add directory="$(#WXBUILD)/buildgtkd/lib/wx/include/gtk2-ansi-debug-2.8" />
+				</Compiler>
+				<Linker>
+					<Add library="libwx_gtk2d_xrc-2.8" />
+					<Add library="libwx_gtk2d_adv-2.8" />
+					<Add library="libwx_gtk2d_html-2.8" />
+					<Add library="libwx_gtk2d_core-2.8" />
+					<Add library="libwx_based_net-2.8" />
+					<Add library="libwx_based_xml-2.8" />
+					<Add library="libwx_based-2.8" />
+					<Add directory="$(#WXBUILD)/buildgtkd/lib" />
+				</Linker>
+			</Target>
+			<Target title="GTK Unicode Release">
+				<Option output="../../bin/wxdbfu_gtk" prefix_auto="1" extension_auto="1" />
+				<Option object_output="../../gcc-gtk/release/dbf_wx28/unicode" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-Wall" />
+					<Add option="-D_UNICODE" />
+					<Add option="-DwxUSE_UNICODE=1" />
+					<Add option="-D__WXGTK__" />
+					<Add directory="./../../lib/vc_lib/mswu" />
+					<Add directory="./../../include" />
+					<Add directory="." />
+					<Add directory="./../../samples" />
+					<Add directory="$(WXWIN)/lib/vc_lib/mswu" />
+					<Add directory="$(WXWIN)/include" />
+				</Compiler>
+			</Target>
+			<Target title="GTK Release">
+				<Option output="../../bin/wxdbf_gtk" prefix_auto="1" extension_auto="1" />
+				<Option object_output="../../gcc-gtk/release/dbf_wx28" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Os" />
+					<Add option="-Wall" />
+					<Add option="-D__WXGTK__" />
+					<Add directory="$(#WXBUILD)/buildgtk/lib/wx/include/gtk2-ansi-release-static-2.8" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="libwx_gtk2_xrc-2.8" />
+					<Add library="libwx_gtk2_adv-2.8" />
+					<Add library="libwx_gtk2_html-2.8" />
+					<Add library="libwx_gtk2_core-2.8" />
+					<Add library="libwx_base_net-2.8" />
+					<Add library="libwx_base_xml-2.8" />
+					<Add library="libwx_base-2.8" />
+					<Add library="gtk-x11-2.0" />
+					<Add library="wxjpeg-2.8" />
+					<Add library="wxtiff-2.8" />
+					<Add library="gthread-2.0" />
+					<Add library="SM" />
+					<Add directory="$(#WXBUILD)/buildgtk/lib" />
+				</Linker>
+			</Target>
+			<Target title="X11 DLL Debug">
+				<Option output="../../bin/wxdbf_x11_d" prefix_auto="1" extension_auto="1" />
+				<Option object_output="../../gcc-x11/debug/dbf_wx28" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-DWXUSINGDLL" />
+					<Add option="-D__WXX11__" />
+					<Add option="-D__WXUNIVERSAL__" />
+					<Add option="-D__WXDEBUG__" />
+					<Add directory="$(#WXBUILD)/buildx11d/lib/wx/include/x11univ-ansi-debug-2.8" />
+				</Compiler>
+				<Linker>
+					<Add library="libwx_x11univd_xrc-2.8" />
+					<Add library="libwx_x11univd_adv-2.8" />
+					<Add library="libwx_x11univd_html-2.8" />
+					<Add library="libwx_x11univd_core-2.8" />
+					<Add library="libwx_based_net-2.8" />
+					<Add library="libwx_based_xml-2.8" />
+					<Add library="libwx_based-2.8" />
+					<Add directory="$(#WXBUILD)/buildx11d/lib" />
+				</Linker>
+			</Target>
+			<Target title="X11 Release">
+				<Option output="../../bin/wxdbf_x11" prefix_auto="1" extension_auto="1" />
+				<Option object_output="../../gcc-x11/release/dbf_wx28" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Os" />
+					<Add option="-Wall" />
+					<Add option="-D__WXX11__" />
+					<Add option="-D__WXUNIVERSAL__" />
+					<Add directory="$(#WXBUILD)/buildx11/lib/wx/include/x11univ-ansi-release-static-2.8" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="libwx_x11univ_xrc-2.8" />
+					<Add library="libwx_x11univ_adv-2.8" />
+					<Add library="libwx_x11univ_html-2.8" />
+					<Add library="libwx_x11univ_core-2.8" />
+					<Add library="libwx_base_net-2.8" />
+					<Add library="libwx_base_xml-2.8" />
+					<Add library="libwx_base-2.8" />
+					<Add library="expat" />
+					<Add library="X11" />
+					<Add library="Xext" />
+					<Add library="wxjpeg-2.8" />
+					<Add library="png" />
+					<Add library="wxtiff-2.8" />
+					<Add library="Xinerama" />
+					<Add directory="$(#WXBUILD)/buildx11/lib" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-D_FILE_OFFSET_BITS=64" />
+			<Add option="-D_LARGE_FILES" />
+			<Add directory="$(#WX.INCLUDE)" />
+		</Compiler>
+		<ResourceCompiler>
+			<Add directory="$(#WX.INCLUDE)" />
+		</ResourceCompiler>
+		<Unit filename="../../code/str.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../dbf.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../dbf_wx.cpp" />
+		<Unit filename="src/app.cpp" />
+		<Unit filename="src/app.h" />
+		<Unit filename="src/appdoc.cpp" />
+		<Unit filename="src/appframe.cpp" />
+		<Unit filename="src/appframe.h" />
+		<Unit filename="src/datalist.cpp" />
+		<Unit filename="src/datamodel.cpp" />
+		<Unit filename="src/dbfdlgs.cpp" />
+		<Unit filename="src/dbfdoc.cpp" />
+		<Unit filename="src/dbfframe.cpp" />
+		<Unit filename="src/dbflist.cpp" />
+		<Unit filename="src/dbfmodel.cpp" />
+		<Unit filename="src/dbfutil.cpp" />
+		<Unit filename="src/dbfview.cpp" />
+		<Unit filename="src/fontutil.h" />
+		<Unit filename="src/pages/ismserver.h" />
+		<Unit filename="src/pages/panelfonts.h" />
+		<Unit filename="src/pages/tcpclient.h" />
+		<Unit filename="src/pages/tcpserver.h" />
+		<Unit filename="src/pages/udp.h" />
+		<Unit filename="src/precomp.h">
+			<Option compile="1" />
+			<Option weight="0" />
+		</Unit>
+		<Unit filename="src/wxext.cpp" />
+		<Unit filename="src/wxext.h" />
+		<Unit filename="src/wxstreamc.cpp" />
+		<Unit filename="../../ioapi/unzip/ioapi.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
