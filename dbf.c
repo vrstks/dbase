@@ -15,7 +15,7 @@
 #include "bool.h"
 #include "dbf.h"
 #include <zlib.h>
-#include "../ioapi/unzip/ioapi.h"
+#include "ioapi/ioapi.h"
 #include "minmax.h"
 #include "stdint-ms.h"
 

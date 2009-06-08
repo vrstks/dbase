@@ -50,7 +50,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="zlib"
-				PreprocessorDefinitions="__USE_FILE_OFFSET64;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;WINVER=0x0400"
+				PreprocessorDefinitions="__USE_FILE_OFFSET64;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;WINVER=0x0500"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"
@@ -144,7 +144,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="zlib"
-				PreprocessorDefinitions="__USE_FILE_OFFSET64;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;WINVER=0x0400"
+				PreprocessorDefinitions="__USE_FILE_OFFSET64;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;WINVER=0x0500"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"
@@ -239,7 +239,7 @@
 				Optimization="1"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="zlib"
-				PreprocessorDefinitions="__USE_FILE_OFFSET64;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;WINVER=0x0400"
+				PreprocessorDefinitions="__USE_FILE_OFFSET64;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;WINVER=0x0500"
 				StringPooling="true"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
@@ -333,7 +333,7 @@
 				Optimization="1"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="zlib"
-				PreprocessorDefinitions="__USE_FILE_OFFSET64;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;WINVER=0x0400"
+				PreprocessorDefinitions="__USE_FILE_OFFSET64;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;WINVER=0x0500"
 				StringPooling="true"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
@@ -1069,11 +1069,11 @@
 				>
 			</File>
 			<File
-				RelativePath="dbf.h"
+				RelativePath="dbf\dbf.h"
 				>
 			</File>
 			<File
-				RelativePath="dbf\dbf.h"
+				RelativePath="dbf.h"
 				>
 			</File>
 			<File
@@ -1198,7 +1198,7 @@
 			Name="ioapi"
 			>
 			<File
-				RelativePath="..\..\ioapi\unzip\ioapi.c"
+				RelativePath="..\ioapi\ioapi.c"
 				>
 				<FileConfiguration
 					Name="Unicode Debug|Win32"
@@ -1252,7 +1252,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\ioapi\ioapiw.c"
+				RelativePath="..\ioapi\ioapiw.c"
 				>
 				<FileConfiguration
 					Name="Unicode Debug|Win32"
@@ -1339,42 +1339,6 @@
 			</File>
 			<File
 				RelativePath="..\dbf_mfc.cpp"
-				>
-				<FileConfiguration
-					Name="Unicode Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Unicode Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\code\xtime.c"
 				>
 				<FileConfiguration
 					Name="Unicode Debug|Win32"

@@ -9,6 +9,17 @@
 #ifndef _ZLIBIOAPI_H
 #define _ZLIBIOAPI_H
 
+#ifndef ZOFF_T
+#if defined(__USE_FILE_OFFSET64) && defined(_WIN32)
+   #include <stdio.h>     /* fpos_t */
+   #define ZOFF_T fpos_t
+   #define ZPOS_T fpos_t
+#else
+   #include <sys/types.h> /* off_t */
+   #define ZOFF_T off_t
+   #define ZPOS_T off_t
+#endif
+#endif
 
 #define ZLIB_FILEFUNC_SEEK_CUR (1)
 #define ZLIB_FILEFUNC_SEEK_END (2)
@@ -35,11 +46,15 @@
 extern "C" {
 #endif
 
+#ifndef _WIN32
+extern ZPOS_T _filelength(int fd);
+#endif
+
 typedef voidpf (ZCALLBACK *open_file_func) OF((voidpf opaque, const char* filename, int mode));
 typedef uLong  (ZCALLBACK *read_file_func) OF((voidpf opaque, voidpf stream, void* buf, uLong size));
 typedef uLong  (ZCALLBACK *write_file_func) OF((voidpf opaque, voidpf stream, const void* buf, uLong size));
-typedef long   (ZCALLBACK *tell_file_func) OF((voidpf opaque, voidpf stream));
-typedef long   (ZCALLBACK *seek_file_func) OF((voidpf opaque, voidpf stream, uLong offset, int origin));
+typedef ZPOS_T (ZCALLBACK *tell_file_func) OF((voidpf opaque, voidpf stream));
+typedef long   (ZCALLBACK *seek_file_func) OF((voidpf opaque, voidpf stream, ZOFF_T offset, int origin));
 typedef int    (ZCALLBACK *close_file_func) OF((voidpf opaque, voidpf stream));
 typedef int    (ZCALLBACK *testerror_file_func) OF((voidpf opaque, voidpf stream));
 

@@ -18,7 +18,7 @@
 #define __DBF_MFC_H__
 
 #include <zlib.h>
-#include "../ioapi/unzip/ioapi.h"
+#include "ioapi/ioapi.h"
 #include "bool.h"
 #include "dbf.h"
 #include "dbf.hpp"
