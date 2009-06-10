@@ -5,7 +5,7 @@
 #include <wx/dataview.h>
 #include <wx/txtstrm.h>
 #include <zlib.h>
-#include "../../../ioapi/unzip/ioapi.h"
+#include "../../ioapi/ioapi.h"
 
 #include "../../bool.h"
 #include "../../dbf.h"

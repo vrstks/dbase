@@ -3,7 +3,7 @@
 #include <wx/wx.h>
 #include <wx/stream.h>
 #include <zlib.h>
-#include "../../../ioapi/unzip/ioapi.h"
+#include "../../ioapi/ioapi.h"
 #include "wxstreamc.h"
 
 static long out_fseek(

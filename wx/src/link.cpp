@@ -15,7 +15,9 @@
          #pragma comment(lib, "wxmsw29u_adv.lib")
          #pragma comment(lib, "wxmsw29u_xrc.lib")
          #pragma comment(lib, "wxmsw29u_core.lib")
+         #pragma comment(lib, "wxmsw29u_html.lib")
          #pragma comment(lib, "wxbase29u.lib")
+         #pragma comment(lib, "wxbase29u_xml.lib")
       #endif
    #else
       #ifdef __WXDEBUG__
@@ -27,7 +29,9 @@
          #pragma comment(lib, "wxmsw29_adv.lib")
          #pragma comment(lib, "wxmsw29_xrc.lib")
          #pragma comment(lib, "wxmsw29_core.lib")
+         #pragma comment(lib, "wxmsw29_html.lib")
          #pragma comment(lib, "wxbase29.lib")
+         #pragma comment(lib, "wxbase29_xml.lib")
       #endif
    #endif
 #elif (wxVERSION_NUMBER >= 2800)
