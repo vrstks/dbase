@@ -1358,7 +1358,7 @@ DBF_HANDLE dbf_create_attach(void* stream, zlib_filefunc_def* api,
    {
       const DBF_FIELD_INFO* src = array + i;
             DBF_FIELD     * dst = fieldarray + i;
-      const size_t len = min(src->length, UINT8_MAX);
+      const size_t len = min(src->length, UCHAR_MAX);
 
       //dst->index = i;
       strncpy(dst->m_Name, src->name, sizeof(dst->m_Name));
