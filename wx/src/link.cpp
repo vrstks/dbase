@@ -41,7 +41,9 @@
          #pragma comment(lib, "wxmsw28u_adv.lib")
          #pragma comment(lib, "wxmsw28u_xrc.lib")
          #pragma comment(lib, "wxmsw28u_core.lib")
+         #pragma comment(lib, "wxmsw28u_html.lib")
          #pragma comment(lib, "wxbase28u.lib")
+         #pragma comment(lib, "wxbase28u_xml.lib")
       #endif
    #else
       #ifdef __WXDEBUG__
@@ -53,7 +55,9 @@
          #pragma comment(lib, "wxmsw28_adv.lib")
          #pragma comment(lib, "wxmsw28_xrc.lib")
          #pragma comment(lib, "wxmsw28_core.lib")
+         #pragma comment(lib, "wxmsw28_html.lib")
          #pragma comment(lib, "wxbase28.lib")
+         #pragma comment(lib, "wxbase28_xml.lib")
       #endif
    #endif
 #endif
