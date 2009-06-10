@@ -360,7 +360,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="version.lib"
-				OutputFile="..\..\bin/DBFExplorer_u.exe"
+				OutputFile="..\..\bin/DBFExploreru.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				ProgramDatabaseFile=".\..\vc9\release\dbfexplorer\unicode/DBFExplorer_u.pdb"
@@ -594,7 +594,7 @@
 					>
 					<Tool
 						Name="VCResourceCompilerTool"
-						PreprocessorDefinitions="NDEBUG;_AFXDLL"
+						PreprocessorDefinitions="NDEBUG"
 						AdditionalIncludeDirectories="test"
 					/>
 				</FileConfiguration>
