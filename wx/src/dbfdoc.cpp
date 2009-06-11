@@ -7,7 +7,7 @@
 #include "dbfview.h"
 #include "dbfdlgs.h"
 
-#include <zlib.h>
+#include "../../ioapi/zlib.h"
 #include "../../ioapi/ioapi.h"
 #include "../../bool.h"
 #include "../../dbf.h"

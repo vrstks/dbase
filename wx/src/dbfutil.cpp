@@ -9,7 +9,7 @@
 #include <wx/intl.h>
 #include "dbfutil.h"
 
-#include <zlib.h>
+#include "../../ioapi/zlib.h"
 #include "../../ioapi/ioapi.h"
 #include "../../bool.h"
 #include "../../dbf.h"

@@ -4,7 +4,7 @@
 
 #include <wx/dataview.h>
 #include <wx/txtstrm.h>
-#include <zlib.h>
+#include "../../ioapi/zlib.h"
 #include "../../ioapi/ioapi.h"
 
 #include "../../bool.h"

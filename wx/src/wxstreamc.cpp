@@ -2,7 +2,7 @@
 
 #include <wx/wx.h>
 #include <wx/stream.h>
-#include <zlib.h>
+#include "../../ioapi/zlib.h"
 #include "../../ioapi/ioapi.h"
 #include "wxstreamc.h"
 
