@@ -21,7 +21,7 @@ protected:
 
 // Operations
 public:
-   bool Open(const char* filename, struct zlib_filefunc_def_s* api, bool editable = true, enum dbf_charconv charconv = ENUM_dbf_charconv_compatible);
+   bool Open(const char* filename, struct zlib_filefunc_def_s* api = NULL, bool editable = true, enum dbf_charconv charconv = ENUM_dbf_charconv_compatible);
 	bool Open(const char* filename, bool editable = true, enum dbf_charconv charconv = ENUM_dbf_charconv_compatible);
 	bool Create(const char* filename, const DBF_FIELD_INFO* array, size_t array_count, enum dbf_charconv charconv = ENUM_dbf_charconv_compatible);
    bool Create(void* stream, struct zlib_filefunc_def_s*, const DBF_FIELD_INFO* array, size_t array_count, enum dbf_charconv charconv = ENUM_dbf_charconv_compatible, void* memo = NULL);
