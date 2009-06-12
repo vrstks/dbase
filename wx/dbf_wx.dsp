@@ -251,7 +251,7 @@ SOURCE=.\src\dbfframe.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\dbflistx.h
+SOURCE=.\src\dbflist.h
 # End Source File
 # Begin Source File
 
