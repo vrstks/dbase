@@ -40,7 +40,7 @@ bool wxDBFApp::OnInit(void)
       //_tsetlocale(LC_ALL, wxT(""));
       m_locale.Init();
 
-      SetVendorName(wxT("wxWidgets"));
+      SetVendorName(wxT("Troels K"));
       SetAppName(wxT("wxDBF"));
       //wxConfigBase* pConfig = wxConfigBase::Get();
 

@@ -104,7 +104,7 @@ bool wxDBFDoc::IsEditable(void) const
       if (doc && (wxDOC_NEW == flags))
       {
          ok = doc->Save();
-         if (ok) ok = ::DoModal_Structure(wxTheApp->GetTopWindow(), &database, wxT("New database structure"), doc->GetFilename());
+         if (ok) ok = ::DoModal_Structure(wxTheApp->GetTopWindow(), &database, _("New database structure"), doc->GetFilename());
          if (!ok)
          {
             doc->DeleteAllViews();
@@ -119,7 +119,7 @@ bool wxDBFDoc::IsEditable(void) const
    }
    else
    {
-      wxMessageBox(wxT("File not found"));
+      wxMessageBox(_("File not found"));
    }
    return doc;
 }
