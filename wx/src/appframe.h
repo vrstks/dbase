@@ -6,14 +6,15 @@
 #define __APPFRAME_H__
 
 /////////////////////////////////////////////////////////////////////////////
-// wxDBFAppFrame
+// MainFrame
 
-class wxDBFAppFrame : public wxDocMDIParentFrame
+class MainFrame : public wxDocMDIParentFrame
 {
-   DECLARE_CLASS(wxDBFAppFrame)
+   typedef wxDocMDIParentFrame base;
+   DECLARE_CLASS(MainFrame)
 public:
    wxMenu* m_file_menu;
-   wxDBFAppFrame(wxDocManager*, wxFrame*, const wxString& title, 
+   MainFrame(wxDocManager*, wxFrame*, const wxString& title, 
       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, 
       long type = wxDEFAULT_FRAME_STYLE);
 

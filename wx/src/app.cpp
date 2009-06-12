@@ -6,18 +6,17 @@
 
 #include "app.h"
 #include "appframe.h"
-//#include <locale.h>
 
-IMPLEMENT_APP(wxDBFApp)
+IMPLEMENT_APP(App)
 
-BEGIN_EVENT_TABLE(wxDBFApp, wxApp)
+BEGIN_EVENT_TABLE(App, wxApp)
 END_EVENT_TABLE()
 
-wxDBFApp::wxDBFApp(void) : wxApp(), m_docManager(NULL)
+App::App(void) : wxApp(), m_docManager(NULL)
 {
 }
 
-void wxDBFApp::FileHistoryUseMenu(wxMenu* file_menu)
+void App::FileHistoryUseMenu(wxMenu* file_menu)
 {
    if(0)if (file_menu == NULL)
    {
@@ -27,12 +26,12 @@ void wxDBFApp::FileHistoryUseMenu(wxMenu* file_menu)
    //m_docManager->FileHistoryAddFilesToMenu();
 }
 
-void wxDBFApp::FileHistoryRemoveMenu(wxMenu* file_menu)
+void App::FileHistoryRemoveMenu(wxMenu* file_menu)
 {
    m_docManager->FileHistoryRemoveMenu(file_menu);
 }
 
-bool wxDBFApp::OnInit(void)
+bool App::OnInit(void)
 {
    bool ok = wxApp::OnInit();
    if (ok)
@@ -55,7 +54,7 @@ bool wxDBFApp::OnInit(void)
       {
          AddDocTemplates();
 
-         wxDBFAppFrame* frame = new wxDBFAppFrame(m_docManager, NULL, GetAppName(), wxDefaultPosition, wxSize(640,480),
+         MainFrame* frame = new MainFrame(m_docManager, NULL, GetAppName(), wxDefaultPosition, wxSize(640,480),
                             wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE);
 
          wxMenuBar* menu = frame->GetMenuBar();
@@ -72,7 +71,7 @@ bool wxDBFApp::OnInit(void)
    return ok;
 }
 
-void wxDBFApp::FileHistoryLoadSave(bool save)
+void App::FileHistoryLoadSave(bool save)
 {
    wxConfigBase* pConfig = wxConfigBase::Get();
    pConfig->SetPath(wxT("MRU"));
@@ -87,7 +86,7 @@ void wxDBFApp::FileHistoryLoadSave(bool save)
    pConfig->SetPath(wxT("/"));
 }
 
-int wxDBFApp::OnExit(void)
+int App::OnExit(void)
 {
    FileHistoryLoadSave(true);
    wxDELETE(m_docManager);
@@ -97,9 +96,9 @@ int wxDBFApp::OnExit(void)
 
 //   EVT_ACTIVATE(CMDIChild::OnActivate)
 
-wxDBFAppFrame* wxDBFApp::GetMainFrame(void)
+MainFrame* App::GetMainFrame(void)
 {
-   wxASSERT(wxIS_KIND_OF(GetTopWindow(), wxDBFAppFrame));
-   return (wxDBFAppFrame*)GetTopWindow();
+   wxASSERT(wxIS_KIND_OF(GetTopWindow(), MainFrame));
+   return (MainFrame*)GetTopWindow();
 }
 

@@ -27,14 +27,14 @@ wxDocument* wxDBFDocManager::CreateDocument(const wxString& path, long flags)
    return wxDBFDoc::CreateDocument(this, path, flags);
 }
 
-void wxDBFApp::AddDocTemplates()
+void App::AddDocTemplates()
 {
    m_docManager = new wxDBFDocManager;
 
    wxDBFDoc::CreateDocTemplate(m_docManager);
 }
 
-wxMDIChildFrame* wxDBFApp::NewFrame(wxDocument* doc, wxView* view)
+wxMDIChildFrame* App::NewFrame(wxDocument* doc, wxView* view)
 {
    wxDocMDIChildFrame *subframe =
       new wxDBFFrame(doc, view, GetMainFrame());

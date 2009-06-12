@@ -11,6 +11,7 @@ class wxDBase;
 class wxOutputStream;
 class wxDBFModel : public wxDataModel
 {
+   typedef wxDataModel base;
 // Attributes
 public:
    wxDBase* m_database;

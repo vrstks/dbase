@@ -10,6 +10,7 @@
 
 class wxDBFFrame : public wxDocMDIChildFrame
 {
+   typedef wxDocMDIChildFrame base;
 public:
    wxMenu* m_file_menu;
 
@@ -21,9 +22,6 @@ public:
     {
        SetTitle(label);
     }
-#endif
-#ifdef __WXMSW__
-   virtual void InternalSetMenuBar();
 #endif
 protected:
    void OnActivate(wxActivateEvent&);

@@ -6,18 +6,19 @@
 #define __APP_H__
 
 /////////////////////////////////////////////////////////////////////////////
-// wxDBFApp
+// App
 
-class wxDBFAppFrame;
-class wxDBFApp : public wxApp
+class MainFrame;
+class App : public wxApp
 {
+   typedef wxApp base;
 protected:
    wxDocManager* m_docManager;
    wxLocale m_locale;
 public:
-   wxDBFApp(void);
+   App(void);
 
-   wxDBFAppFrame* GetMainFrame(void);
+   MainFrame* GetMainFrame(void);
 
    virtual bool OnInit(void);
    virtual int OnExit(void);
@@ -33,6 +34,6 @@ protected:
    DECLARE_EVENT_TABLE()
 };
 
-DECLARE_APP(wxDBFApp)
+DECLARE_APP(App)
 
 #endif // __APP_H__

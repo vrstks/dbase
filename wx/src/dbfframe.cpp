@@ -31,13 +31,6 @@ wxDBFFrame::~wxDBFFrame()
    wxGetApp().FileHistoryRemoveMenu(m_file_menu);
 }
 
-#ifdef __WXMSW__
-void wxDBFFrame::InternalSetMenuBar()
-{
-   wxDocMDIChildFrame::InternalSetMenuBar();
-}
-#endif
-
 void wxDBFFrame::OnActivate(wxActivateEvent& event)
 {
     //if (event.GetActive() && canvas)

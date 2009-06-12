@@ -11,6 +11,7 @@
 class wxDBase;
 class wxDBFDoc : public wxDocument
 {
+   typedef wxDocument base;
    DECLARE_DYNAMIC_CLASS(wxDBFDoc)
 
 // Attributes

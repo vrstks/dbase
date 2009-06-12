@@ -6,29 +6,27 @@
 #include "appframe.h"
 #include "wxext.h"
 #include "app.h"
-#include <wx/stockitem.h>
-#include <wx/aboutdlg.h>
 
-IMPLEMENT_CLASS(wxDBFAppFrame, wxDocMDIParentFrame)
+IMPLEMENT_CLASS(MainFrame, wxDocMDIParentFrame)
 
-BEGIN_EVENT_TABLE(wxDBFAppFrame, wxDocMDIParentFrame)
-   EVT_MENU(XRCID("statusbar")      , wxDBFAppFrame::OnStatusBar)
-   EVT_MENU(XRCID("toolbar")        , wxDBFAppFrame::OnToolBar)
-   EVT_MENU(wxID_ABOUT              , wxDBFAppFrame::OnAbout)
-   EVT_MENU(XRCID("fullscreen")        , wxDBFAppFrame::OnFullscreen)
-	EVT_UPDATE_UI(XRCID("fullscreen")   , wxDBFAppFrame::OnUpdateFullscreen)
-	EVT_UPDATE_UI(XRCID("toolbar")   , wxDBFAppFrame::OnUpdateToolBar)
-   EVT_UPDATE_UI(XRCID("statusbar") , wxDBFAppFrame::OnUpdateStatusBar)
-	EVT_UPDATE_UI(wxID_ADD           , wxDBFAppFrame::OnUpdateDisable)
-	EVT_UPDATE_UI(wxID_FIND          , wxDBFAppFrame::OnUpdateDisable)
-	EVT_UPDATE_UI(wxID_DELETE        , wxDBFAppFrame::OnUpdateDisable)
-	EVT_UPDATE_UI(XRCID("edit")      , wxDBFAppFrame::OnUpdateDisable)
-	EVT_UPDATE_UI(XRCID("struct")    , wxDBFAppFrame::OnUpdateDisable)
-	EVT_UPDATE_UI(XRCID("pack")      , wxDBFAppFrame::OnUpdateDisable)
-	EVT_UPDATE_UI(wxID_HELP          , wxDBFAppFrame::OnUpdateDisable)
+BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
+   EVT_MENU(XRCID("statusbar")      , MainFrame::OnStatusBar)
+   EVT_MENU(XRCID("toolbar")        , MainFrame::OnToolBar)
+   EVT_MENU(wxID_ABOUT              , MainFrame::OnAbout)
+   EVT_MENU(XRCID("fullscreen")        , MainFrame::OnFullscreen)
+	EVT_UPDATE_UI(XRCID("fullscreen")   , MainFrame::OnUpdateFullscreen)
+	EVT_UPDATE_UI(XRCID("toolbar")   , MainFrame::OnUpdateToolBar)
+   EVT_UPDATE_UI(XRCID("statusbar") , MainFrame::OnUpdateStatusBar)
+	EVT_UPDATE_UI(wxID_ADD           , MainFrame::OnUpdateDisable)
+	EVT_UPDATE_UI(wxID_FIND          , MainFrame::OnUpdateDisable)
+	EVT_UPDATE_UI(wxID_DELETE        , MainFrame::OnUpdateDisable)
+	EVT_UPDATE_UI(XRCID("edit")      , MainFrame::OnUpdateDisable)
+	EVT_UPDATE_UI(XRCID("struct")    , MainFrame::OnUpdateDisable)
+	EVT_UPDATE_UI(XRCID("pack")      , MainFrame::OnUpdateDisable)
+	EVT_UPDATE_UI(wxID_HELP          , MainFrame::OnUpdateDisable)
 END_EVENT_TABLE()
 
-wxDBFAppFrame::wxDBFAppFrame(wxDocManager* manager, wxFrame* frame, const wxString& title,
+MainFrame::MainFrame(wxDocManager* manager, wxFrame* frame, const wxString& title,
     const wxPoint& pos, const wxSize& size, long type)
    : wxDocMDIParentFrame(manager, frame, wxID_ANY, title, pos, size, type, wxT("myFrame"))
 {
@@ -47,9 +45,9 @@ wxDBFAppFrame::wxDBFAppFrame(wxDocManager* manager, wxFrame* frame, const wxStri
 #endif //ndef __WXMAC__
 }
 
-wxToolBar* wxDBFAppFrame::CreateToolBar()
+wxToolBar* MainFrame::CreateToolBar()
 {
-   wxToolBar* tb = wxDocMDIParentFrame::CreateToolBar(wxTB_TEXT | wxBORDER_NONE | wxTB_HORIZONTAL | wxTB_FLAT);
+   wxToolBar* tb = base::CreateToolBar(wxTB_TEXT | wxBORDER_NONE | wxTB_HORIZONTAL | wxTB_FLAT);
 
    static const wxTOOLBARITEM aID[] =
    {
@@ -107,7 +105,7 @@ wxToolBar* wxDBFAppFrame::CreateToolBar()
    return tb;
 }
 
-void wxDBFAppFrame::OnAbout(wxCommandEvent& WXUNUSED(event) )
+void MainFrame::OnAbout(wxCommandEvent& WXUNUSED(event) )
 {
    wxAboutDialogInfo info;
    info.SetDescription(wxString(wxT("\nThis demo program demonstrates the usage of wxDBase\n\n")) + wxVERSION_STRING);
@@ -116,40 +114,40 @@ void wxDBFAppFrame::OnAbout(wxCommandEvent& WXUNUSED(event) )
    wxAboutBox(info);
 }
 
-void wxDBFAppFrame::OnStatusBar(wxCommandEvent&)
+void MainFrame::OnStatusBar(wxCommandEvent&)
 {
    ::wxWindow_Toggle(GetStatusBar(), true);
    SendSizeEvent();
 }
 
-void wxDBFAppFrame::OnUpdateStatusBar(wxUpdateUIEvent& event)
+void MainFrame::OnUpdateStatusBar(wxUpdateUIEvent& event)
 {
    event.Check(GetStatusBar()->IsShown());
 }
 
-void wxDBFAppFrame::OnToolBar(wxCommandEvent&)
+void MainFrame::OnToolBar(wxCommandEvent&)
 {
    ::wxWindow_Toggle(GetToolBar(), true);
    SendSizeEvent();
 }
 
-void wxDBFAppFrame::OnUpdateToolBar(wxUpdateUIEvent& event)
+void MainFrame::OnUpdateToolBar(wxUpdateUIEvent& event)
 {
    event.Check(GetToolBar()->IsShown());
 }
 
-void wxDBFAppFrame::OnUpdateDisable(wxUpdateUIEvent& event)
+void MainFrame::OnUpdateDisable(wxUpdateUIEvent& event)
 {
    event.Enable(false);
 }
 
-void wxDBFAppFrame::OnFullscreen(wxCommandEvent&)
+void MainFrame::OnFullscreen(wxCommandEvent&)
 {
    long style = wxFULLSCREEN_NOBORDER|wxFULLSCREEN_NOCAPTION;
    ShowFullScreen(!IsFullScreen(), style);
 }
 
-void wxDBFAppFrame::OnUpdateFullscreen (wxUpdateUIEvent& event)
+void MainFrame::OnUpdateFullscreen (wxUpdateUIEvent& event)
 {
    event.Check(IsFullScreen());
 }

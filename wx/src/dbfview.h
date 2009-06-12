@@ -12,6 +12,7 @@ class wxDBFDoc;
 class wxDBFListCtrl;
 class wxDBFView : public wxView
 {
+   typedef wxView base;
    DECLARE_DYNAMIC_CLASS(wxDBFView)
 
 // Attributes
