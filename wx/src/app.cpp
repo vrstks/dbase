@@ -94,11 +94,8 @@ int App::OnExit(void)
    return wxApp::OnExit();
 }
 
-//   EVT_ACTIVATE(CMDIChild::OnActivate)
-
 MainFrame* App::GetMainFrame(void)
 {
-   wxASSERT(wxIS_KIND_OF(GetTopWindow(), MainFrame));
-   return (MainFrame*)GetTopWindow();
+   return wxStaticCast(GetTopWindow(), MainFrame);
 }
 

@@ -39,7 +39,6 @@ MainFrame::MainFrame(wxDocManager* manager, wxFrame* frame, const wxString& titl
    SetMenuBar(menu);
    m_file_menu = menu->GetMenu(0);
    wxGetApp().FileHistoryUseMenu(NULL);
-   Centre(wxBOTH);
 #ifndef __WXMAC__
    Show(true);
 #endif //ndef __WXMAC__
