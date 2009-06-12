@@ -461,7 +461,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="src\appdoc.cpp"
+				RelativePath="src\doc.cpp"
 				>
 				<FileConfiguration
 					Name="Release|Win32"

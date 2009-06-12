@@ -166,7 +166,7 @@
 		<Unit filename="../dbf_wx.cpp" />
 		<Unit filename="src/app.cpp" />
 		<Unit filename="src/app.h" />
-		<Unit filename="src/appdoc.cpp" />
+		<Unit filename="src/doc.cpp" />
 		<Unit filename="src/appframe.cpp" />
 		<Unit filename="src/appframe.h" />
 		<Unit filename="src/datalist.cpp" />

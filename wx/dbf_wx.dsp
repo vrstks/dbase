@@ -304,7 +304,7 @@ SOURCE=..\ioapi\ioapi.c
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\src\appdoc.cpp
+SOURCE=.\src\doc.cpp
 # End Source File
 # Begin Source File
 
