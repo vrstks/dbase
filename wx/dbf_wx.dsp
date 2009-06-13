@@ -55,7 +55,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 wxtiffd.lib wxjpegd.lib wxpngd.lib wxzlibd.lib wxregexud.lib wxexpatd.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib winspool.lib winmm.lib shell32.lib comctl32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib wsock32.lib odbc32.lib /nologo /subsystem:windows /debug /machine:I386 /libpath:".\..\..\lib\vc_dll"
-# ADD LINK32 wxtiffd.lib wxjpegd.lib wxpngd.lib wxzlibd.lib wxregexud.lib wxexpatd.lib kernel32.lib user32.lib /nologo /subsystem:windows /debug /machine:I386 /out:"..\..\bin/wxdbfu_d.6.exe" /libpath:"$(WXWIN)\lib\vc_dll"
+# ADD LINK32 user32.lib /nologo /subsystem:windows /debug /machine:I386 /out:"..\..\bin/wxdbfu_d.6.exe" /libpath:"$(WXWIN)\lib\vc_dll"
 
 !ELSEIF  "$(CFG)" == "dbf_wx - Win32 DLL Debug"
 
@@ -81,7 +81,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 wxtiffd.lib wxjpegd.lib wxpngd.lib wxzlibd.lib wxregexd.lib wxexpatd.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib winspool.lib winmm.lib shell32.lib comctl32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib wsock32.lib odbc32.lib /nologo /subsystem:windows /debug /machine:I386 /libpath:".\..\..\lib\vc_dll"
-# ADD LINK32 wxtiffd.lib wxjpegd.lib wxpngd.lib wxzlibd.lib wxregexd.lib wxexpatd.lib kernel32.lib user32.lib /nologo /subsystem:windows /debug /machine:I386 /out:"..\..\bin/wxdbf_d.6.exe" /libpath:"$(WXWIN)\lib\vc_dll"
+# ADD LINK32 user32.lib /nologo /subsystem:windows /debug /machine:I386 /out:"..\..\bin/wxdbf_d.6.exe" /libpath:"$(WXWIN)\lib\vc_dll"
 
 !ELSEIF  "$(CFG)" == "dbf_wx - Win32 Unicode Release"
 
@@ -107,7 +107,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 wxtiff.lib wxjpeg.lib wxpng.lib wxzlib.lib wxregexu.lib wxexpat.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib winspool.lib winmm.lib shell32.lib comctl32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib wsock32.lib odbc32.lib /nologo /subsystem:windows /machine:I386 /libpath:".\..\..\lib\vc_lib"
-# ADD LINK32 wxtiff.lib wxjpeg.lib wxpng.lib wxzlib.lib wxregexu.lib wxexpat.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib winspool.lib winmm.lib shell32.lib comctl32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib wsock32.lib /nologo /subsystem:windows /machine:I386 /out:"..\..\bin/wxdbfu.exe" /libpath:"$(WXWIN)\lib\vc_lib"
+# ADD LINK32 gdi32.lib kernel32.lib user32.lib comdlg32.lib comctl32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib /nologo /subsystem:windows /machine:I386 /out:"..\..\bin/wxdbfu.exe" /libpath:"$(WXWIN)\lib\vc_lib"
 
 !ELSEIF  "$(CFG)" == "dbf_wx - Win32 Release"
 
@@ -133,7 +133,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 wxtiff.lib wxjpeg.lib wxpng.lib wxzlib.lib wxregex.lib wxexpat.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib winspool.lib winmm.lib shell32.lib comctl32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib wsock32.lib odbc32.lib /nologo /subsystem:windows /machine:I386 /libpath:".\..\..\lib\vc_lib"
-# ADD LINK32 wxbase28.lib wxtiff.lib wxjpeg.lib wxpng.lib wxzlib.lib wxregex.lib wxexpat.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib winspool.lib winmm.lib shell32.lib comctl32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib wsock32.lib /nologo /subsystem:windows /machine:I386 /out:"..\..\bin/wxdbf.exe" /libpath:"$(WXWIN)\lib\vc_lib"
+# ADD LINK32 gdi32.lib kernel32.lib user32.lib comdlg32.lib comctl32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib /nologo /subsystem:windows /machine:I386 /out:"..\..\bin/wxdbf.exe" /libpath:"$(WXWIN)\lib\vc_lib"
 
 !ENDIF 
 
@@ -304,10 +304,6 @@ SOURCE=..\ioapi\ioapi.c
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\src\doc.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\src\dbfdoc.cpp
 # End Source File
 # Begin Source File
@@ -317,6 +313,10 @@ SOURCE=.\src\dbfframe.cpp
 # Begin Source File
 
 SOURCE=.\src\dbfview.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\doc.cpp
 # End Source File
 # End Group
 # End Target

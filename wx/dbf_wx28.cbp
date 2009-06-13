@@ -13,9 +13,7 @@
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-g" />
-					<Add option="-D_DEBUG" />
 					<Add option="-D__WXDEBUG__" />
-					<Add option="-D_UNICODE" />
 					<Add option="-DWXUSINGDLL" />
 					<Add option="-DwxUSE_UNICODE=1" />
 					<Add directory=".\..\..\lib\vc_dll\mswud" />
@@ -34,7 +32,6 @@
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-g" />
-					<Add option="-D_DEBUG" />
 					<Add option="-D__WXDEBUG__" />
 					<Add option="-DWXUSINGDLL" />
 					<Add directory="$(#WX.lib)\gcc_dll$(WX_CFG)\mswd" />
@@ -58,7 +55,6 @@
 				<Compiler>
 					<Add option="-O2" />
 					<Add option="-Wall" />
-					<Add option="-D_UNICODE" />
 					<Add option="-DwxUSE_UNICODE=1" />
 					<Add directory=".\..\..\lib\vc_lib\mswu" />
 					<Add directory=".\..\..\include" />
@@ -86,9 +82,6 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-DWIN32" />
-			<Add option="-D__WXMSW__" />
-			<Add option="-D_WINDOWS" />
 			<Add directory="$(#WX)\src\zlib" />
 			<Add directory="$(#WX.include)" />
 		</Compiler>
@@ -110,7 +103,6 @@
 		</Unit>
 		<Unit filename=".\src\app.cpp" />
 		<Unit filename=".\src\app.h" />
-		<Unit filename=".\src\doc.cpp" />
 		<Unit filename=".\src\appframe.cpp" />
 		<Unit filename=".\src\appframe.h" />
 		<Unit filename="src\datalist.cpp" />
@@ -126,6 +118,7 @@
 		<Unit filename="src\dbfutil.cpp" />
 		<Unit filename=".\src\dbfview.cpp" />
 		<Unit filename=".\src\dbfview.h" />
+		<Unit filename=".\src\doc.cpp" />
 		<Unit filename=".\src\precomp.h">
 			<Option compile="1" />
 			<Option weight="0" />
