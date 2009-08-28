@@ -71,7 +71,6 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="__WXMSW__,_WINDOWS,NOPCH"
 				Culture="1033"
 				AdditionalIncludeDirectories="$(WXWIN)\lib\vc_lib\msw;$(WXWIN)\include"
 			/>
@@ -149,7 +148,7 @@
 				AdditionalOptions="/EHsc "
 				Optimization="0"
 				AdditionalIncludeDirectories="$(WXWIN)\lib\vc_dll\mswud;$(WXWIN)\include"
-				PreprocessorDefinitions="__WXDEBUG__;WXUSINGDLL;wxUSE_UNICODE=1;_CRT_SECURE_NO_WARNINGS"
+				PreprocessorDefinitions="__WXDEBUG__;WXUSINGDLL;_CRT_SECURE_NO_WARNINGS"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				RuntimeTypeInfo="true"
@@ -169,7 +168,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG,__WXMSW__,__WXDEBUG__,_UNICODE,WXUSINGDLL,_WINDOWS,NOPCH"
+				PreprocessorDefinitions="_DEBUG;__WXDEBUG__;WXUSINGDLL"
 				Culture="1033"
 				AdditionalIncludeDirectories="$(WXWIN)\lib\vc_dll\mswud;$(WXWIN)\include"
 			/>
@@ -248,7 +247,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswu"
-				PreprocessorDefinitions="wxUSE_UNICODE=1;_CRT_SECURE_NO_WARNINGS"
+				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"
 				StringPooling="true"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
@@ -268,7 +267,6 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="__WXMSW__,_UNICODE,_WINDOWS,NOPCH"
 				Culture="1033"
 				AdditionalIncludeDirectories="$(WXWIN)\lib\vc_lib\mswu;$(WXWIN)\include"
 			/>
@@ -365,7 +363,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG,__WXMSW__,__WXDEBUG__,WXUSINGDLL,_WINDOWS,NOPCH"
+				PreprocessorDefinitions="_DEBUG;__WXDEBUG__;WXUSINGDLL"
 				Culture="1033"
 				AdditionalIncludeDirectories="$(WXWIN)\lib\vc_dll\mswd;$(WXWIN)\include"
 			/>
