@@ -17,9 +17,9 @@ int wxCALLBACK wxDataViewListModelSortedDefaultCompare
     static const long hash_datetime = wxHashTableBase::MakeKey(wxT("datetime"));
 
 #if (wxVERSION_NUMBER >= 2900)
-    auto   const long hash          = wxHashTableBase::MakeKey(model->GetSource()->GetColumnType(col));
+    const long hash          = wxHashTableBase::MakeKey(model->GetSource()->GetColumnType(col));
 #else
-    auto   const long hash          = wxHashTableBase::MakeKey(model->GetSource()->GetColType(col));
+    const long hash          = wxHashTableBase::MakeKey(model->GetSource()->GetColType(col));
 #endif
     int result;
 
