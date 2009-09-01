@@ -12,21 +12,21 @@ inline wxDBase::~wxDBase()
 
 inline void wxDBase::Close()
 {
+   wxASSERT(IsOpen());
    CDBase::Close();
-   //SetFilename(wxEmptyString);
 }
 
 inline bool wxDBase::Open(const wxString& filename, bool editable, enum dbf_charconv charconv)
 {
+   wxASSERT(!IsOpen());
    bool ok = CDBase::Open(filename.mb_str(), editable, charconv);
-   //if (ok) SetFilename(filename);
    return ok;
 }
 
 inline bool wxDBase::Create(const wxString& filename, const DBF_FIELD_INFO* array, size_t array_count, enum dbf_charconv charconv)
 {
+   wxASSERT(!IsOpen());
    bool ok = CDBase::Create(filename.mb_str(), array, array_count, charconv);
-   //if (ok) SetFilename(filename);
    return ok;
 }
 
@@ -34,35 +34,35 @@ inline bool wxDBase::Create(/*const wxString& filename, */void* stream, struct z
    const DBF_FIELD_INFO* array, size_t array_count, 
    enum dbf_charconv charconv, void* memo)
 {
+   wxASSERT(!IsOpen());
    bool ok = CDBase::Create(stream, api, array, array_count, charconv, memo);
-   //if (ok) SetFilename(filename);
    return ok;
 }
 
 inline bool wxDBase::Attach(/*const wxString& filename, */void* stream, struct zlib_filefunc_def_s* api,
                             bool editable, enum dbf_charconv conv, void* memo)
 {
+   wxASSERT(!IsOpen());
    bool ok = CDBase::Attach(stream, api, editable, conv, memo);
-   //if (ok) SetFilename(filename);
    return ok;
 }
 
 inline bool wxDBase::Attach(DBF_HANDLE handle/*, const wxString& filename*/)
 {
+   wxASSERT(!IsOpen());
    bool ok = CDBase::Attach(handle);
-   //if (ok) SetFilename(filename);
    return ok;
 }
 
 inline bool wxDBase::Attach(wxDBase* db)
 {
-   //const wxString filename = db->GetFilename();
-   return Attach(db->Detach()/*, filename*/);
+   wxASSERT(!IsOpen());
+   return Attach(db->Detach());
 }
 
 inline DBF_HANDLE wxDBase::Detach(void)
 {
-   //SetFilename(wxEmptyString);
+   wxASSERT(IsOpen());
    return CDBase::Detach();
 }
 

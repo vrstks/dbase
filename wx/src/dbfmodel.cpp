@@ -27,9 +27,9 @@ wxDBFModel::~wxDBFModel(void)
 {
    if (m_delete_on_exit)
    {
-      DBF_HANDLE handle = m_database->Detach();
-      if (handle)
+      if (m_database->IsOpen())
       {
+         DBF_HANDLE handle = m_database->Detach();
          ::dbf_detach(&handle);
       }
       wxDELETE(m_database);

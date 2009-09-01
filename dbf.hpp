@@ -14,7 +14,7 @@
 class COpenClose
 {
 public:
-	virtual void Close() = 0;
+   virtual void Close() = 0;
    virtual bool IsOpen(void) const = 0;
 };
 #endif
