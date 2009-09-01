@@ -108,7 +108,7 @@ void MainFrame::OnAbout(wxCommandEvent& WXUNUSED(event) )
 {
    wxAboutDialogInfo info;
    info.SetDescription(wxString(wxT("\nThis demo program demonstrates the usage of wxDBase\n\n")) + wxVERSION_STRING);
-   info.SetCopyright(wxT("Copyright (c) 2006-2008 Troels K"));
+   info.SetCopyright(wxT("Copyright (c) 2007-2009 Troels K"));
    info.AddDeveloper(wxT("Troels K"));
    wxAboutBox(info);
 }

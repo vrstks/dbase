@@ -1,5 +1,5 @@
 // msaccess.cpp
-// Copyright (c) 2007-2008 by Troels K. All rights reserved.
+// Copyright (c) 2007-2009 by Troels K. All rights reserved.
 
 /* 
    This program is free software; you can redistribute it and/or modify
