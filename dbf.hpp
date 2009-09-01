@@ -9,7 +9,17 @@
 #include <dbf.h>
 #endif
 
-class CDBase
+#ifndef OPENCLOSECLASS_DEFINED
+#define OPENCLOSECLASS_DEFINED
+class COpenClose
+{
+public:
+	virtual void Close() = 0;
+   virtual bool IsOpen(void) const = 0;
+};
+#endif
+
+class CDBase : public COpenClose
 {
 public:
 	CDBase();
@@ -119,8 +129,6 @@ public:
 	bool Write(const DBF_FIELD* , double);
 	bool Write(size_t field     , double);
 
-   bool IsOpen(void) const;
-
    bool Copy(void* stream, void* stream_memo, struct zlib_filefunc_def_s*, bool include_records, bool include_deleted_records);
 
 	size_t GetPosition(void) const;
@@ -141,6 +149,7 @@ public:
 public:
 	virtual ~CDBase();
 	virtual void Close();
+   virtual bool IsOpen(void) const;
 
 public:
 	//CString GetMemoFileName(const char* filename = NULL);
