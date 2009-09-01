@@ -5,7 +5,6 @@
 #include "precomp.h"
 
 #include "app.h"
-#include "../../dbf_wx.h" // wxDBFDocument
 #include "dbfdoc.h"
 #include "dbfview.h"
 #include "dbfframe.h"

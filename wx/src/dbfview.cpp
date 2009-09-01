@@ -6,7 +6,6 @@
 
 #include "app.h"
 #include "dbfview.h"
-#include "../../dbf_wx.h" // wxDBFDocument
 #include "dbfdoc.h"
 #include "dbfdlgs.h"
 #include "datalist.h"

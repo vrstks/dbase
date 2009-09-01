@@ -1,4 +1,6 @@
 // dbf_mfc.inl
+// Copyright (c) 2007-2009 by Troels K. All rights reserved.
+// License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 inline CDbaseFile::CDbaseFile() : CObject(), CDBase()
 {

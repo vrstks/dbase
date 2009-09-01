@@ -1,11 +1,13 @@
 // dbf_wx.h
-// Copyright (c) 2007-2008 by Troels K. All rights reserved.
+// Copyright (c) 2007-2009 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __DBF_WX_H__
 #define __DBF_WX_H__
 
-#ifdef __DBF_HPP__
+#ifndef __DBF_HPP__
+#include <dbf.h>
+#endif
 
 #ifndef WXROWCOL_DEFINED
 #define WXROWCOL_DEFINED
@@ -39,6 +41,17 @@ public:
    bool Create(wxOutputStream*, 
       const DBF_FIELD_INFO* array, size_t array_count, 
       enum dbf_charconv charconv = ENUM_dbf_charconv_compatible, void* memo = NULL);
+
+#ifdef _WX_FILENAME_H_
+   bool Open(const wxFileName& filename, bool editable = true, enum dbf_charconv charconv = ENUM_dbf_charconv_compatible)
+   {
+      return Open(filename.GetFullPath(), editable, charconv);
+   }
+	bool Create(const wxFileName& filename, const DBF_FIELD_INFO* array, size_t array_count, enum dbf_charconv charconv = ENUM_dbf_charconv_compatible)
+   {
+      return Create(filename.GetFullPath(), array, array_count, charconv);
+   }
+#endif
 
    size_t Read(const DBF_FIELD* , wxString*, size_t buf_len = 1024);
    size_t Read(const char* field, wxString*, size_t buf_len = 1024);
@@ -112,6 +125,5 @@ public:
    void Fixups(void);
    bool Update(/*int index*/);
 };
-#endif
 
 #endif // __DBF_WX_H__
