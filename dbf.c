@@ -1,5 +1,5 @@
 /* dbf.c */
-/* Copyright (c) 2007-2008 by Troels K. All rights reserved. */
+/* Copyright (c) 2007-2009 by Troels K. All rights reserved. */
 /* License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt */
 /* Partially based on MFC source code by www.pablosoftwaresolutions.com 2002	*/
 /* Partially based on Turbo C source code by Mark Sadler.		*/
@@ -1322,7 +1322,7 @@ DBF_HANDLE dbf_create(const char* filename, const DBF_FIELD_INFO* array, size_t 
       if (handle)
       {
          dbf_close(&handle); // ioapi quirk - change mode to ZLIB_FILEFUNC_MODE_EXISTING | ZLIB_FILEFUNC_MODE_WRITE
-         handle = dbf_open(filename, &api, charconv, TRUE);
+         handle = dbf_open(filename, &api, TRUE, charconv);
       }
       else
       {
