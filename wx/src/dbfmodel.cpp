@@ -28,7 +28,10 @@ wxDBFModel::~wxDBFModel(void)
    if (m_delete_on_exit)
    {
       DBF_HANDLE handle = m_database->Detach();
-      ::dbf_detach(&handle);
+      if (handle)
+      {
+         ::dbf_detach(&handle);
+      }
       wxDELETE(m_database);
    }
 }
@@ -42,13 +45,6 @@ size_t wxDBFModel::GetProperties(wxArrayString* as) const
 {
    return ::dbf_getproperties(m_database, as, false);
 }
-
-/*
-wxString wxDBFModel::GetFilename(void) const
-{
-   return m_database->GetFilename();
-}
-*/
 
 void wxDBFModel::GetColumn( unsigned int col, ColumnInfo* info) const
 {

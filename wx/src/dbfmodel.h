@@ -46,7 +46,6 @@ public:
    virtual size_t GetProperties(wxArrayString*) const;
    virtual bool IsOpen(void) const;
    virtual bool IsEditable(void) const;
-   //virtual wxString GetFilename(void) const;
    virtual bool AddNew(void);
 };
 
