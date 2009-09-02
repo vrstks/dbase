@@ -1,8 +1,8 @@
 /* dbf.h */
 /* Copyright (c) 2007-2009 by Troels K. All rights reserved. */
 /* License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt */
-/*  Partially based on Turbo C source code by Mark Sadler.		*/
-/*  Partially based on MFC source code by www.pablosoftwaresolutions.com 2002	*/
+/*  Partially based on Turbo C source code by Mark Sadler.      */
+/*  Partially based on MFC source code by www.pablosoftwaresolutions.com 2002   */
 
 #ifndef __DBF_H__
 #define __DBF_H__
@@ -41,21 +41,21 @@ enum dbf_charconv
 #endif
 
 /* error codes */
-#define		DBASE_OUT_OF_MEM		100		/*	not enough memory error message */
-#define		DBASE_NO_FILE			101		/*	file not found error message */
-#define		DBASE_BAD_FORMAT		102		/*	file is not a dBASE III file */
-#define		DBASE_INVALID_RECORD	103		/*	requested record does not exist */
-#define		DBASE_EOF				104		/*  the end of the file */
-#define		DBASE_BOF				105		/*  the begin of the file */
-#define		DBASE_NOT_OPEN			106		/*  file is not open */ 
-#define		DBASE_INVALID_FIELDNO	107		/*  invalid field number */
-#define		DBASE_INVALID_DATA		108		/*	invalid data error message */
-#define		DBASE_SUCCESS			109		/*	operation succesfull */
-#define		DBASE_NOT_FOUND			110		/*	record not found */
-#define		DBASE_WRITE_ERROR		111		/*  write error */
-#define		DBASE_READ_ERROR		112		/*  read error */
-#define		DBASE_INVALID_BLOCK_NO	113		/*  invalid memo block number */
-#define		DBASE_NO_MEMO_DATA		114		/*  no memo data available */
+#define      DBASE_OUT_OF_MEM      100      /*   not enough memory error message */
+#define      DBASE_NO_FILE         101      /*   file not found error message */
+#define      DBASE_BAD_FORMAT      102      /*   file is not a dBASE III file */
+#define      DBASE_INVALID_RECORD   103      /*   requested record does not exist */
+#define      DBASE_EOF            104      /*  the end of the file */
+#define      DBASE_BOF            105      /*  the begin of the file */
+#define      DBASE_NOT_OPEN         106      /*  file is not open */ 
+#define      DBASE_INVALID_FIELDNO   107      /*  invalid field number */
+#define      DBASE_INVALID_DATA      108      /*   invalid data error message */
+#define      DBASE_SUCCESS         109      /*   operation succesfull */
+#define      DBASE_NOT_FOUND         110      /*   record not found */
+#define      DBASE_WRITE_ERROR      111      /*  write error */
+#define      DBASE_READ_ERROR      112      /*  read error */
+#define      DBASE_INVALID_BLOCK_NO   113      /*  invalid memo block number */
+#define      DBASE_NO_MEMO_DATA      114      /*  no memo data available */
 
 #define DBF_FIELD struct _DBF_FIELD_DATA
 
@@ -75,10 +75,10 @@ enum dbf_data_type
 
 typedef struct _DBF_FIELD_INFO
 {
-   char	name[11]; // 10 chars + zero terminator
-	enum dbf_data_type type;
-	size_t length;
-	size_t decimals;
+   char   name[11]; // 10 chars + zero terminator
+   enum dbf_data_type type;
+   size_t length;
+   size_t decimals;
 } DBF_FIELD_INFO;
 
 EXTERN_C DBF_HANDLE  dbf_alloc         (void);
@@ -151,7 +151,7 @@ EXTERN_C const char* dbf_gettypetext  (enum dbf_data_type);
 EXTERN_C enum        dbf_data_type dbf_gettype_int2ext(char type);
 EXTERN_C char        dbf_gettype_ext2int(enum dbf_data_type);
 
-/* Remove all trailing and leading spaces.						*/
+/* Remove all trailing and leading spaces.                  */
 //EXTERN_C char* Trim(char *str, char trimchar);
 //EXTERN_C void field_init(DBF_FIELD* ptr);
 //EXTERN_C void field_init_ex(DBF_FIELD* ptr, const char* lpszName, char Type, Byte Length, Byte DecCount, Byte FieldNum);
