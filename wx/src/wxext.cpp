@@ -5,6 +5,25 @@
 #include "precomp.h"
 #include "wxext.h"
 
+bool wxInitXRC()
+{
+   wxXmlResource::Get()->InitAllHandlers();
+   wxString dir = wxFileName(wxTheApp->argv[0]).GetPath();
+
+   wxFileName filename;
+
+   filename.Assign(dir, wxTheApp->GetAppName(), wxT("xrc"));
+   if (!filename.FileExists())
+   {
+      filename.RemoveLastDir();
+      filename.AppendDir(wxT("dbf"));
+      filename.AppendDir(wxT("wx"));
+      filename.AppendDir(wxT("src"));
+      filename.AppendDir(wxT("res"));
+   }
+   return wxXmlResource::Get()->Load(filename.GetFullPath());
+}
+
 wxArtID wxID2ArtID(int wx_id)
 {
    wxArtID str;

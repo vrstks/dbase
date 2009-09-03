@@ -6,6 +6,7 @@
 
 #include "app.h"
 #include "appframe.h"
+#include "wxext.h"
 #include "wx29.h"
 
 IMPLEMENT_APP(App)
@@ -44,13 +45,8 @@ bool App::OnInit(void)
       SetAppName(wxT("wxDBF"));
       //wxConfigBase* pConfig = wxConfigBase::Get();
 
-      wxXmlResource::Get()->InitAllHandlers();
       wxFileSystem::AddHandler(new wxZipFSHandler);
-      wxString dir;
-      wxFileName::SplitPath(this->argv[0], &dir, NULL, NULL);
-
-      const wxString xrc = wxFileName(dir, GetAppName(), wxT("xrc")).GetFullPath();
-      ok = wxXmlResource::Get()->Load(xrc);
+      ok = ::wxInitXRC();
       if (ok)
       {
          AddDocTemplates();

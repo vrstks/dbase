@@ -99,3 +99,5 @@ inline void wxPostMenuCommand(wxEvtHandler* dest, int id)
 {
    wxPostCommandEvent(dest, wxEVT_COMMAND_MENU_SELECTED, id);
 }
+
+extern bool wxInitXRC();
