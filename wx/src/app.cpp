@@ -6,6 +6,7 @@
 
 #include "app.h"
 #include "appframe.h"
+#include "wx29.h"
 
 IMPLEMENT_APP(App)
 

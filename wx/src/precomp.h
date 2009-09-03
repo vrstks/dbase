@@ -11,4 +11,3 @@
 #include <wx/clipbrd.h>
 #include <wx/dataview.h>
 #include <wx/stockitem.h>
-#include <wx/aboutdlg.h>

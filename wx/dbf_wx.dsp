@@ -271,6 +271,10 @@ SOURCE=.\src\precomp.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\src\wx29.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\wxext.h
 # End Source File
 # End Group
