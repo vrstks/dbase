@@ -21,6 +21,7 @@ wxArtID wxID2ArtID(int wx_id)
       { wxID_EXIT          , wxART_QUIT            },
       { wxID_CLOSE         , wxART_QUIT            },
       { wxID_HELP          , wxART_HELP            },
+      { wxID_ABOUT         , wxART_HELP            },
       { wxID_COPY          , wxART_COPY            },
       { wxID_CUT           , wxART_CUT             },
       { wxID_PASTE         , wxART_PASTE           },

@@ -6,6 +6,8 @@
 #include "appframe.h"
 #include "wxext.h"
 #include "app.h"
+#include <wx/aboutdlg.h>
+#include "wx29.h"
 
 IMPLEMENT_CLASS(MainFrame, wxDocMDIParentFrame)
 
@@ -66,7 +68,7 @@ wxToolBar* MainFrame::CreateToolBar()
       { wxID_SEPARATOR     , NULL               , NULL         , NULL      , 0, 0                  },
       { wxID_FIND          , NULL               , NULL         , NULL      , wxACCEL_CTRL, 'F'},
       { wxID_SEPARATOR     , NULL               , NULL         , NULL      , 0, 0                  },
-      { wxID_HELP          , NULL               , NULL         , NULL      , wxACCEL_NORMAL, WXK_F1 },
+      { wxID_ABOUT /*wxID_HELP*/, NULL          , _("Help")    , NULL      , wxACCEL_NORMAL, WXK_F1 },
       { wxID_EXIT          , NULL               , NULL         , NULL      , wxACCEL_ALT   , WXK_F4  },
       { wxID_SEPARATOR     , NULL               , NULL         , NULL      , 0, 0                  },
    };
@@ -110,7 +112,9 @@ void MainFrame::OnAbout(wxCommandEvent& WXUNUSED(event) )
    info.SetDescription(wxString(wxT("\nThis demo program demonstrates the usage of wxDBase\n\n")) + wxVERSION_STRING);
    info.SetCopyright(wxT("Copyright (c) 2007-2009 Troels K"));
    info.AddDeveloper(wxT("Troels K"));
-   wxAboutBox(info);
+   info.SetWebSite(wxT("http://sf.net/projects/dbase"));
+   info.SetLicense(wxT("wxWindows"));
+   wxAboutBox(info, this);
 }
 
 void MainFrame::OnStatusBar(wxCommandEvent&)
