@@ -77,7 +77,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="version.lib"
-				OutputFile="..\..\bin/DBFExploreru_d.9.exe"
+				OutputFile="..\..\bin/DBFExplorer_d.9.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				GenerateDebugInformation="true"
@@ -171,7 +171,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="version.lib"
-				OutputFile="..\..\bin/DBFExplorer_d.9.exe"
+				OutputFile="..\..\bin/DBFExplorer-ansi_d.9.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				GenerateDebugInformation="true"
@@ -266,7 +266,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="version.lib"
-				OutputFile="..\..\bin/DBFExplorer.exe"
+				OutputFile="..\..\bin/DBFExplorer-ansi.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				ProgramDatabaseFile=".\..\vc9\release\dbfexplorer/DBFExplorer.pdb"
@@ -360,7 +360,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="version.lib"
-				OutputFile="..\..\bin/DBFExploreru.exe"
+				OutputFile="..\..\bin/DBFExplorer.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				ProgramDatabaseFile=".\..\vc9\release\dbfexplorer\unicode/DBFExplorer_u.pdb"
