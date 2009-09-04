@@ -155,7 +155,7 @@ void CDBFExplorerApp::OnHelpIndex()
 	::WinHelp(AfxGetMainWnd()->m_hWnd, AfxGetApp()->m_pszHelpFilePath, HELP_CONTENTS, 0L);	
 }
 
-extern bool mdb2dbf(CWnd* parent, const TCHAR* src, CString* newfile);
+extern bool mdb2dbf(CWnd* parent, const TCHAR* src, CStringArray* newfile);
 
 class CAccessDocTemplate : public CMultiDocTemplate
 {
@@ -171,13 +171,16 @@ public:
    {
       CWnd* parent = GetActiveFrame();
       CDocument* doc = NULL;
-      CString newfile;
+      CStringArray newfile;
       bool ok = ::mdb2dbf(parent, lpszPathName, &newfile);
       if (ok)
       {
-         if (newfile.GetLength())
+         if (newfile.GetSize())
          {
-	         doc = theApp.m_doctemplate->OpenDocumentFile(newfile);
+            for (int i = 0; i < newfile.GetSize(); i++)
+            {
+	            doc = theApp.m_doctemplate->OpenDocumentFile(newfile.ElementAt(i));
+            }
          }
          else // user chose csv
          {

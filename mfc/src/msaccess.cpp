@@ -42,7 +42,7 @@ public:
    bool Loop()
    {
       size_t row = 0;
-      for (MoveFirst(); !IsEOF(); MoveNext(), row++)
+      if (!(IsBOF() && IsEOF())) for (MoveFirst(); !IsEOF(); MoveNext(), row++)
       {
          //TRACE(_T("row %3d\n"), row);
          NewRecord();
@@ -319,7 +319,32 @@ static bool OpenFileSaveDialog(CWnd* parent, const TCHAR* src, const TCHAR* tabl
 
 extern bool DoModal_Pick(CWnd* parent, const CString& caption, const CStringArray& as, CString* sel);
 
-bool mdb2dbf(CWnd* parent, const TCHAR* src, CString* newfile)
+static bool mdb2dbf(CDaoDatabase* db, const TCHAR* tablename, CWnd* parent, const TCHAR* src, CString* newfile)
+{
+   CString str;
+   bool dbf;
+   bool ok = OpenFileSaveDialog(parent, src, tablename, &str, &dbf);
+   if (ok)
+   {
+      CWaitCursor wc;
+      if (dbf)
+      {
+         CDaoConverter_DBF table(db, tablename);
+         ok = table.Create(str);
+         if (ok) ok = table.Loop();
+         if (ok && newfile) newfile->operator=(str);
+      }
+      else // csv
+      {
+         CDaoConverter_CSV table(db, tablename);
+         ok = table.Create(str);
+         if (ok) ok = table.Loop();
+      }
+   }
+   return ok;
+}
+
+bool mdb2dbf(CWnd* parent, const TCHAR* src, CStringArray* newfilearray)
 {
    CDaoDatabase db;
    bool ok = true;
@@ -328,36 +353,40 @@ bool mdb2dbf(CWnd* parent, const TCHAR* src, CString* newfile)
       db.Open(src, false, true);
 
       CStringArray as;
+      CString tablename;
 	   for (int i = 0; i < db.GetTableDefCount(); i++)
       {
          CDaoTableDefInfo info;
 	      db.GetTableDefInfo(i, info);
-         as.Add(info.m_strName);      
+         tablename = info.m_strName;
+         if (tablename.Left(4) != _T("MSys"))
+         {
+            as.Add(tablename);
+         }
       }
-      CString tablename;
-      ok = DoModal_Pick(parent, _T("Select table"), as, &tablename);
+      bool all = (IDYES == AfxMessageBox(_T("Convert all ?"), MB_YESNO | MB_ICONQUESTION));
+      if (!all)
+      {
+         ok = DoModal_Pick(parent, _T("Select table"), as, &tablename);
+      }
       if (ok)
       {
-         CString str;
-         bool dbf;
-         ok = OpenFileSaveDialog(parent, src, tablename, &str, &dbf);
-         if (ok)
+         if (all)
          {
-            CWaitCursor wc;
-            if (dbf)
+            for (int i = 0; ok && (i < as.GetSize()); i++)
             {
-               CDaoConverter_DBF table(&db, tablename);
-               ok = table.Create(str);
-               if (ok) ok = table.Loop();
-               if (ok && newfile) newfile->operator=(str);
+               tablename = as.ElementAt(i);
+               CString newfile;
+               ok = mdb2dbf(&db, tablename, parent, src, &newfile);
+               if (ok) newfilearray->Add(newfile);
             }
-            else // csv
-            {
-               CDaoConverter_CSV table(&db, tablename);
-               ok = table.Create(str);
-               if (ok) ok = table.Loop();
-            }
-	      }
+         }
+         else
+         {
+            CString newfile;
+            ok = mdb2dbf(&db, tablename, parent, src, &newfile);
+            if (ok) newfilearray->Add(newfile);
+         }
       }
    }
    catch(CDaoException*)
