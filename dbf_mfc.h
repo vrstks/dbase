@@ -53,7 +53,6 @@ public:
 	int GetRecord(size_t index);
 	int PutRecord(size_t index);
 	bool PutRecord(void);
-	size_t GetCurRecNo() const;
 
 	int DeleteRecord(bool bDelete = true);
 	int AddRecord();

@@ -1037,13 +1037,13 @@ void CDBFExplorerView::EditField(int nItem, int nSubItem)
 		{
 			char*buff;
 
-			int nLength = pDoc->m_dBaseFile->GetMemoFieldLength(nSubItem+1);
+			int nLength = pDoc->m_dBaseFile->GetMemoFieldLength(nSubItem);
 			if (nLength)
 			{
 				try
 				{
 					buff = new char[nLength+1];
-					pDoc->m_dBaseFile->GetMemoField(nSubItem+1, buff, nLength);
+					pDoc->m_dBaseFile->GetMemoField(nSubItem, buff, nLength);
 					dlg.m_strText = buff;
 					delete buff;
 				}
@@ -1057,7 +1057,7 @@ void CDBFExplorerView::EditField(int nItem, int nSubItem)
 			if (pDoc->m_dBaseFile->GetRecord(pItem->dwRecordIndex) == DBASE_SUCCESS)
 			{
 				// Set new value
-				pDoc->m_dBaseFile->PutMemoField(nSubItem+1, (char *)(LPCTSTR)dlg.m_strText, dlg.m_strText.GetLength());
+				pDoc->m_dBaseFile->PutMemoField(nSubItem, dlg.m_strText, dlg.m_strText.GetLength());
 
 				pDoc->m_dBaseFile->PutRecord(pItem->dwRecordIndex);
 
@@ -1273,7 +1273,7 @@ void CDBFExplorerView::OnGetdispinfo(NMHDR* pNMHDR, LRESULT* pResult)
          int row = pInfo->item.iItem;
 	      int col = pInfo->item.iSubItem;
          pDoc->m_dBaseFile->SetPosition((size_t)row);
-         pDoc->m_dBaseFile->Read((size_t)(col + 1), &str);
+         pDoc->m_dBaseFile->Read(col, &str);
       }
 		_tcsncpy(pInfo->item.pszText, str, pInfo->item.cchTextMax);//set item text
    }

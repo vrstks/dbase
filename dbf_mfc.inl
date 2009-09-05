@@ -88,11 +88,6 @@ inline int CDbaseFile::GetPrevRecord()
 	return base::GetPrevRecord() ? DBASE_SUCCESS : base::GetLastError();
 }
 
-inline size_t CDbaseFile::GetCurRecNo() const
-{
-   return base::GetPosition() + 1;
-}
-
 inline int CDbaseFile::PutFloatField(const DBF_FIELD* field, double value)
 {
    return base::Write(field, value) ? DBASE_SUCCESS : base::GetLastError();

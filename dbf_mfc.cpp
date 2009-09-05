@@ -39,7 +39,7 @@ size_t CDbaseFile::SearchRecord(const DBF_FIELD* field, const TCHAR* lpszCriteri
 			Read(field, &buf);
 			if (!_tcscmp(buf, lpszCriteria))
 			{
-				return GetCurRecNo();              			
+				return GetPosition();              			
 			}
 		}
 	}

@@ -466,7 +466,7 @@ void CDBFExplorerDoc::ExportToText(LPCTSTR lpszFileName)
 					break;
 				}
 
-				int nItem = m_dBaseFile->GetCurRecNo() - 1;
+				int nItem = m_dBaseFile->GetPosition();
 				
 				// do not show deleted records
 				if (m_dBaseFile->IsRecordDeleted() && !GetActiveFrame()->m_bShowDeletedRecords)
@@ -573,7 +573,7 @@ void CDBFExplorerDoc::ExportToHTML(LPCTSTR lpszFileName)
 					break;
 				}
 
-				int nItem = m_dBaseFile->GetCurRecNo() - 1;
+				int nItem = m_dBaseFile->GetPosition();
 				
 				// do not show deleted records
 				if (m_dBaseFile->IsRecordDeleted() && !GetActiveFrame()->m_bShowDeletedRecords)
