@@ -480,7 +480,7 @@ inline bool CDbaseFile::Write(const DBF_FIELD* field, const SYSTEMTIME& st)
 
 inline bool CDbaseFile::Write(const DBF_FIELD* field, const CTime& utc, int ms)
 {
-   return base::Write(field, (time_t)utc.GetTime(), ms);
+   return base::WriteTime(field, (time_t)utc.GetTime(), ms);
 }
 
 inline bool CDbaseFile::Write(const char* field, const CTime& utc, int ms)

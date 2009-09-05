@@ -104,9 +104,9 @@ public:
 	bool Write(const char* field, const struct tm&, int ms = 0);
 	bool Write(size_t field     , const struct tm&, int ms = 0);
 
-   bool Write(const DBF_FIELD* , const time_t&, int ms = 0);
-	bool Write(const char* field, const time_t&, int ms = 0);
-	bool Write(size_t field     , const time_t&, int ms = 0);
+   bool WriteTime(const DBF_FIELD* , time_t, int ms = 0);
+	bool WriteTime(const char* field, time_t, int ms = 0);
+	bool WriteTime(size_t field     , time_t, int ms = 0);
 
    bool Write(const DBF_FIELD* , const bool&);
    bool Write(const char* field, const bool&);

@@ -771,6 +771,8 @@ BOOL dbf_putfield(DBF_HANDLE handle, const DBF_FIELD* field, const char* buf)
                ok = FALSE;
             }
             break;
+         default:
+            break;
       }
       if (ok)
       {
@@ -883,25 +885,6 @@ BOOL dbf_move_prepare(DBF_HANDLE handle)
    return ok;
 }
 
-static BOOL dbf_getfield_date(DBF_HANDLE handle, const DBF_FIELD* field, int* year, int* month, int* mday)
-{
-   BOOL ok = field && (field->type == DBF_DATA_TYPE_DATE);
-
-   if (ok)
-   {
-      long temp;
-      ok = dbf_getfield_numeric(handle, field, &temp);
-      if (ok) ok = (temp != 0);
-      if (ok)
-      {
-         if (mday ) *mday  =  (temp / 1    ) % 100;
-         if (month) *month = ((temp / 100  ) % 100) - 1;
-         if (year ) *year  =  (temp / 10000);
-      }
-   }
-   return ok;
-}
-
 BOOL dbf_getfield_time(DBF_HANDLE handle, const DBF_FIELD* field, time_t* utc_ptr, int* ms_ptr)
 {
    BOOL ok = (field != NULL);
@@ -912,29 +895,17 @@ BOOL dbf_getfield_time(DBF_HANDLE handle, const DBF_FIELD* field, time_t* utc_pt
       {
          case DBF_DATA_TYPE_DATE:
          {
-            int year, month, mday;
-            ok = dbf_getfield_date(handle, field, &year, &month, &mday);
+            struct tm tm;
+            int ms;
+            ok = dbf_getfield_tm(handle, field, &tm, &ms);
             if (ok)
             {
-               struct tm tm;
-               time_t temp;
-
-               tm.tm_sec = 0;
-               tm.tm_min = 0;
-               tm.tm_hour = 0;
-               tm.tm_mday = mday;
-               tm.tm_mon  = month;
-               tm.tm_year = year - 1900;
-               tm.tm_wday = 0;
-               tm.tm_yday = 0;
-               tm.tm_isdst = 0;
-
-               temp = mktime(&tm);
+               time_t temp = mktime(&tm);
                ok = (-1 != temp);
                if (ok)
                {
                   if (utc_ptr) *utc_ptr = temp;
-                  if (ms_ptr ) *ms_ptr  = 0;
+                  if (ms_ptr ) *ms_ptr  = ms;
                }
             }
             break;
@@ -1007,10 +978,15 @@ BOOL dbf_getfield_tm(DBF_HANDLE handle, const DBF_FIELD* field, struct tm* tm, i
       {
          case DBF_DATA_TYPE_DATE:
          {
-            int year, month, mday;
-            ok = dbf_getfield_date(handle, field, &year, &month, &mday);
+            long temp;
+            ok = dbf_getfield_numeric(handle, field, &temp);
+            if (ok) ok = (temp != 0);
             if (ok)
             {
+               int year, month, mday;
+               mday  =  (temp / 1    ) % 100;
+               month = ((temp / 100  ) % 100) - 1;
+               year  =  (temp / 10000);
                if (tm)
                {
                   tm->tm_sec = 0;

@@ -203,19 +203,19 @@ inline bool CDBase::Write(size_t field, const struct tm& tm, int ms)
    return Write(GetFieldPtr(field), tm, ms);
 }
 
-inline bool CDBase::Write(const DBF_FIELD* field, const time_t& utc, int ms)
+inline bool CDBase::WriteTime(const DBF_FIELD* field, time_t utc, int ms)
 {
    return ::dbf_putfield_time(m_handle, field, utc, ms) ? true : false;
 }
 
-inline bool CDBase::Write(const char* field, const time_t& utc, int ms)
+inline bool CDBase::WriteTime(const char* field, time_t utc, int ms)
 {
-   return Write(GetFieldPtr(field), utc, ms);
+   return WriteTime(GetFieldPtr(field), utc, ms);
 }
 
-inline bool CDBase::Write(size_t field, const time_t& utc, int ms)
+inline bool CDBase::WriteTime(size_t field, time_t utc, int ms)
 {
-   return Write(GetFieldPtr(field), utc, ms);
+   return WriteTime(GetFieldPtr(field), utc, ms);
 }
 
 inline bool CDBase::Read(const DBF_FIELD* field, bool* b)
