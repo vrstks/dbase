@@ -169,6 +169,9 @@ public:
             case DBF_DATA_TYPE_DATETIME:
                item->length = DBF_LEN_DATETIME;
                break;
+            case DBF_DATA_TYPE_BOOLEAN:
+               item->length = DBF_LEN_BOOLEAN;
+               break;
          }
       }
 
