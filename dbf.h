@@ -1,3 +1,4 @@
+
 /* dbf.h */
 /* Copyright (c) 2007-2009 by Troels K. All rights reserved. */
 /* License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt */
@@ -41,21 +42,21 @@ enum dbf_charconv
 #endif
 
 /* error codes */
-#define      DBASE_OUT_OF_MEM      100      /*   not enough memory error message */
-#define      DBASE_NO_FILE         101      /*   file not found error message */
-#define      DBASE_BAD_FORMAT      102      /*   file is not a dBASE III file */
+#define      DBASE_OUT_OF_MEM       100      /*   not enough memory error message */
+#define      DBASE_NO_FILE          101      /*   file not found error message */
+#define      DBASE_BAD_FORMAT       102      /*   file is not a dBASE III file */
 #define      DBASE_INVALID_RECORD   103      /*   requested record does not exist */
-#define      DBASE_EOF            104      /*  the end of the file */
-#define      DBASE_BOF            105      /*  the begin of the file */
+#define      DBASE_EOF              104      /*  the end of the file */
+#define      DBASE_BOF              105      /*  the begin of the file */
 #define      DBASE_NOT_OPEN         106      /*  file is not open */ 
-#define      DBASE_INVALID_FIELDNO   107      /*  invalid field number */
-#define      DBASE_INVALID_DATA      108      /*   invalid data error message */
-#define      DBASE_SUCCESS         109      /*   operation succesfull */
-#define      DBASE_NOT_FOUND         110      /*   record not found */
+#define      DBASE_INVALID_FIELDNO  107      /*  invalid field number */
+#define      DBASE_INVALID_DATA     108      /*   invalid data error message */
+#define      DBASE_SUCCESS          109      /*   operation succesfull */
+#define      DBASE_NOT_FOUND        110      /*   record not found */
 #define      DBASE_WRITE_ERROR      111      /*  write error */
-#define      DBASE_READ_ERROR      112      /*  read error */
-#define      DBASE_INVALID_BLOCK_NO   113      /*  invalid memo block number */
-#define      DBASE_NO_MEMO_DATA      114      /*  no memo data available */
+#define      DBASE_READ_ERROR       112      /*  read error */
+#define      DBASE_INVALID_BLOCK_NO 113      /*  invalid memo block number */
+#define      DBASE_NO_MEMO_DATA     114      /*  no memo data available */
 
 #define DBF_FIELD struct _DBF_FIELD_DATA
 
@@ -65,6 +66,8 @@ enum dbf_data_type
    DBF_DATA_TYPE_INTEGER,
    DBF_DATA_TYPE_FLOAT  ,
    DBF_DATA_TYPE_DATE   ,
+   DBF_DATA_TYPE_TIME   ,  /* non standard */
+   DBF_DATA_TYPE_DATETIME, /* non standard */
    DBF_DATA_TYPE_MEMO   ,
    DBF_DATA_TYPE_BOOLEAN,
    DBF_DATA_TYPE_ENUMCOUNT,

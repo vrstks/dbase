@@ -24,7 +24,9 @@ static const wxChar* const MOD_aszType[] =
    wxT("Number"),
    wxT("Float"),
    wxT("Date"),
-   wxT("Memo"),
+   wxT("Time"),
+   wxT("DateTime"), /* non standard */
+   wxT("Memo"),     /* non standard */
    wxT("Logical")
 };
 C_ASSERT_(1,WXSIZEOF(MOD_aszType) == DBF_DATA_TYPE_ENUMCOUNT);

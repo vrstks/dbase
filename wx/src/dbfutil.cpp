@@ -43,6 +43,8 @@ wxString dbf_getstruct_c(const wxString& tablename, wxDBase* db)
          wxT("DBF_DATA_TYPE_INTEGER"),
          wxT("DBF_DATA_TYPE_FLOAT"),
          wxT("DBF_DATA_TYPE_DATE"),
+         wxT("DBF_DATA_TYPE_TIME"),
+         wxT("DBF_DATA_TYPE_DATETIME"),
          wxT("DBF_DATA_TYPE_MEMO"),
          wxT("DBF_DATA_TYPE_BOOLEAN")
       };
@@ -102,6 +104,8 @@ size_t dbf_getproperties(wxDBase* db, wxArrayString* as_ptr, bool header)
          wxT("Number"),
          wxT("Float"),
          wxT("Date"),
+         wxT("Time"),
+         wxT("DateTime"),
          wxT("Memo"),
          wxT("Logical")
       };

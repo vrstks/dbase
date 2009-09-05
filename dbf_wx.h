@@ -26,6 +26,8 @@ class wxInputStream;
 class wxOutputStream;
 class wxDBase : public wxObject, public CDBase
 {
+   typedef CDBase base;
+
 // Construction
 public:
 	wxDBase();           

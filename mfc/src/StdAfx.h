@@ -20,4 +20,4 @@ extern void AutoSizeColumns(CListCtrl*);
 #define _countof(array) (sizeof(array)/sizeof((array)[0]))
 #endif
 
-
+#pragma warning(disable:4097)

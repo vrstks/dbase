@@ -58,7 +58,7 @@ public:
    }
    virtual ~CDaoConverter() {}
    virtual void NewRecord() = 0;
-   virtual void SaveField(size_t field, const COleVariant&) = 0;
+   virtual bool SaveField(size_t field, const COleVariant&) = 0;
    virtual void SaveRecord() = 0;
 };
 
@@ -91,7 +91,18 @@ public:
          switch (info.m_nType)
          {
             case dbDate:
-               item->type = DBF_DATA_TYPE_DATE;
+               switch (i)
+               {
+                  case 8:
+                  case 9:
+                     item->type = DBF_DATA_TYPE_TIME;
+                     break;
+                  case 6:
+                  case 7:
+                  default:
+                     item->type = DBF_DATA_TYPE_DATE;
+                     break;
+               }
                break;
             case dbDecimal:
             case dbFloat:
@@ -145,45 +156,49 @@ public:
    {
       m_dbf.AddNew();
    }
-   virtual void SaveField(size_t field, const COleVariant& var)
+   virtual bool SaveField(size_t field, const COleVariant& var)
    {
+      bool ok = false;
       switch (var.vt)
       {
          case VT_BOOL:
          {
             bool b = (var.boolVal != 0);
-            m_dbf.Write(field, b);
+            ok = m_dbf.Write(field, b);
             break;
          }
          case VT_UI1:
-            m_dbf.Write(field, (long)var.bVal);
+            ok = m_dbf.Write(field, (long)var.bVal);
             break;
          case VT_DATE:
          {
+            //CDaoFieldInfo info;
+	         //GetFieldInfo(field, info, AFX_DAO_ALL_INFO);
+
             COleDateTime dt(var.date);
-            m_dbf.WriteDate(field, dt.GetYear(), dt.GetMonth(), dt.GetDay());
+            ok = m_dbf.Write(field, dt);
             break;
          }
          case VT_R4:
-            m_dbf.Write(field, var.fltVal);
+            ok = m_dbf.Write(field, var.fltVal);
             break;
          case VT_R8:
-            m_dbf.Write(field, var.dblVal);
+            ok = m_dbf.Write(field, var.dblVal);
             break;
          case VT_I2:
-            m_dbf.Write(field, (long)var.iVal);
+            ok = m_dbf.Write(field, (long)var.iVal);
             break;
          case VT_I4:
-            m_dbf.Write(field, (long)var.lVal);
+            ok = m_dbf.Write(field, (long)var.lVal);
             break;
          case VT_BSTR:
          {
          #ifdef _UNICODE // T2CA() gets worn down by big databases, use wcstombs
             char sz[200];
             wcstombs(sz, (LPCTSTR)var.bstrVal, _countof(sz));
-            m_dbf.Write(field, sz);
+            ok = m_dbf.Write(field, sz);
          #else
-            m_dbf.Write(field, (LPCTSTR)var.bstrVal);
+            ok = m_dbf.Write(field, (LPCTSTR)var.bstrVal);
          #endif
             break;
          }
@@ -191,6 +206,7 @@ public:
             _asm NOP
             break;
       }
+      return ok;
    }
    virtual void SaveRecord()
    {
@@ -241,8 +257,9 @@ public:
    {
       m_row.Empty();
    }
-   virtual void SaveField(size_t field, const COleVariant& var)
+   virtual bool SaveField(size_t field, const COleVariant& var)
    {
+      bool ok = true;
       CString str;
       switch (var.vt)
       {
@@ -279,6 +296,7 @@ public:
       }
       if (field) m_row+=m_sep;
       m_row+=str;
+      return ok;
    }
    virtual void SaveRecord()
    {
@@ -344,7 +362,7 @@ static bool mdb2dbf(CDaoDatabase* db, const TCHAR* tablename, CWnd* parent, cons
    return ok;
 }
 
-bool mdb2dbf(CWnd* parent, const TCHAR* src, CStringArray* newfilearray)
+bool mdb2dbf(CWnd* parent, const TCHAR* src, CStringArray* newfilearray, const CString& rtablename)
 {
    CDaoDatabase db;
    bool ok = true;
@@ -352,22 +370,26 @@ bool mdb2dbf(CWnd* parent, const TCHAR* src, CStringArray* newfilearray)
    {
       db.Open(src, false, true);
 
+      bool all = false;
       CStringArray as;
-      CString tablename;
-	   for (int i = 0; i < db.GetTableDefCount(); i++)
+      CString tablename = rtablename;
+      if (tablename.IsEmpty())
       {
-         CDaoTableDefInfo info;
-	      db.GetTableDefInfo(i, info);
-         tablename = info.m_strName;
-         if (tablename.Left(4) != _T("MSys"))
+	      for (int i = 0; i < db.GetTableDefCount(); i++)
          {
-            as.Add(tablename);
+            CDaoTableDefInfo info;
+	         db.GetTableDefInfo(i, info);
+            tablename = info.m_strName;
+            if (tablename.Left(4) != _T("MSys"))
+            {
+               as.Add(tablename);
+            }
          }
-      }
-      bool all = (IDYES == AfxMessageBox(_T("Convert all ?"), MB_YESNO | MB_ICONQUESTION));
-      if (!all)
-      {
-         ok = DoModal_Pick(parent, _T("Select table"), as, &tablename);
+         all = (IDYES == AfxMessageBox(_T("Convert all ?"), MB_YESNO | MB_ICONQUESTION));
+         if (!all)
+         {
+            ok = DoModal_Pick(parent, _T("Select table"), as, &tablename);
+         }
       }
       if (ok)
       {

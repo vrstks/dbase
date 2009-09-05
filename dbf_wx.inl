@@ -13,20 +13,20 @@ inline wxDBase::~wxDBase()
 inline void wxDBase::Close()
 {
    wxASSERT(IsOpen());
-   CDBase::Close();
+   base::Close();
 }
 
 inline bool wxDBase::Open(const wxString& filename, bool editable, enum dbf_charconv charconv)
 {
    wxASSERT(!IsOpen());
-   bool ok = CDBase::Open(filename.mb_str(), editable, charconv);
+   bool ok = base::Open(filename.mb_str(), editable, charconv);
    return ok;
 }
 
 inline bool wxDBase::Create(const wxString& filename, const DBF_FIELD_INFO* array, size_t array_count, enum dbf_charconv charconv)
 {
    wxASSERT(!IsOpen());
-   bool ok = CDBase::Create(filename.mb_str(), array, array_count, charconv);
+   bool ok = base::Create(filename.mb_str(), array, array_count, charconv);
    return ok;
 }
 
@@ -35,7 +35,7 @@ inline bool wxDBase::Create(/*const wxString& filename, */void* stream, struct z
    enum dbf_charconv charconv, void* memo)
 {
    wxASSERT(!IsOpen());
-   bool ok = CDBase::Create(stream, api, array, array_count, charconv, memo);
+   bool ok = base::Create(stream, api, array, array_count, charconv, memo);
    return ok;
 }
 
@@ -43,14 +43,14 @@ inline bool wxDBase::Attach(/*const wxString& filename, */void* stream, struct z
                             bool editable, enum dbf_charconv conv, void* memo)
 {
    wxASSERT(!IsOpen());
-   bool ok = CDBase::Attach(stream, api, editable, conv, memo);
+   bool ok = base::Attach(stream, api, editable, conv, memo);
    return ok;
 }
 
 inline bool wxDBase::Attach(DBF_HANDLE handle/*, const wxString& filename*/)
 {
    wxASSERT(!IsOpen());
-   bool ok = CDBase::Attach(handle);
+   bool ok = base::Attach(handle);
    return ok;
 }
 
@@ -63,13 +63,13 @@ inline bool wxDBase::Attach(wxDBase* db)
 inline DBF_HANDLE wxDBase::Detach(void)
 {
    wxASSERT(IsOpen());
-   return CDBase::Detach();
+   return base::Detach();
 }
 
 inline size_t wxDBase::Read(const DBF_FIELD* field, wxString* str, size_t buf_len)
 {
    wxCharBuffer buf(buf_len);
-   size_t ret = CDBase::Read(field, buf.data(), buf_len);
+   size_t ret = base::Read(field, buf.data(), buf_len);
    str->operator=(wxConvertMB2WX(buf));
    return ret;
 }
@@ -86,7 +86,7 @@ inline size_t wxDBase::Read(const char* field, wxString* str, size_t buf_len)
 
 inline bool wxDBase::Write(const DBF_FIELD* field, const wxString& str)
 {
-   return CDBase::Write(field, str.mb_str());
+   return base::Write(field, str.mb_str());
 }
 
 inline bool wxDBase::Write(size_t field, const wxString& str)
@@ -103,7 +103,7 @@ inline bool wxDBase::Read(const DBF_FIELD* field, wxDateTime* dt)
 {
    struct tm tm;
    int ms;
-   bool ok = CDBase::ReadDateTime(field, &tm, &ms);
+   bool ok = base::ReadDateTime(field, &tm, &ms);
    if (ok && dt)
    {
       wxDateTime::Tm Tm(tm, wxDateTime::TimeZone());
@@ -161,7 +161,7 @@ inline bool wxDBase::Write(const DBF_FIELD* field, const wxDateTime& dt)
       tm.tm_yday = 0;
       tm.tm_isdst = 0;
 
-      ok = CDBase::WriteDateTime(field, &tm);
+      ok = base::WriteDateTime(field, &tm);
    }
    return ok;
 }
@@ -172,7 +172,7 @@ inline void wxDBase::DoDataExchange(bool WXUNUSED(bSaveAndValidate))
 
 inline bool wxDBase::SetPosition(size_t index)
 {
-   bool ok = CDBase::SetPosition(index);
+   bool ok = base::SetPosition(index);
    if (ok) Fixups();
    return ok;
 }
@@ -190,99 +190,99 @@ inline bool wxDBase::Update(/*int index*/)
 
 inline bool wxDBase::Read(size_t field, bool* b)
 {
-   return CDBase::Read(field, b);
+   return base::Read(field, b);
 }
 
 inline bool wxDBase::Read(const char* field, bool* b)
 {
-   return CDBase::Read(field, b);
+   return base::Read(field, b);
 }
 
 inline bool wxDBase::Write(const DBF_FIELD* field, const bool& b)
 {
-   return CDBase::Write(field, b);
+   return base::Write(field, b);
 }
 
 inline bool wxDBase::Write(size_t field, const bool& b)
 {
-   return CDBase::Write(field, b);
+   return base::Write(field, b);
 }
 
 inline bool wxDBase::Write(const char* field, const bool& b)
 {
-   return CDBase::Write(field, b);
+   return base::Write(field, b);
 }
 
 inline bool wxDBase::Write(const char* field, const char* str)
 {
-   return CDBase::Write(field, str);
+   return base::Write(field, str);
 }
 
 inline bool wxDBase::Read(const DBF_FIELD* field, long* value)
 {
-   return CDBase::Read(field, value);
+   return base::Read(field, value);
 }
 
 inline bool wxDBase::Read(const char* field, long* value)
 {
-   return CDBase::Read(field, value);
+   return base::Read(field, value);
 }
 
 inline bool wxDBase::Read(size_t field     , long* value)
 {
-   return CDBase::Read(field, value);
+   return base::Read(field, value);
 }
 
 inline bool wxDBase::Read(const DBF_FIELD* field, double* value)
 {
-   return CDBase::Read(field, value);
+   return base::Read(field, value);
 }
 
 inline bool wxDBase::Read(const char* field, double* value)
 {
-   return CDBase::Read(field, value);
+   return base::Read(field, value);
 }
 
 inline bool wxDBase::Read(size_t field     , double* value)
 {
-   return CDBase::Read(field, value);
+   return base::Read(field, value);
 }
 
 inline bool wxDBase::Write(const DBF_FIELD* field, long value)
 {
-   return CDBase::Write(field, value);
+   return base::Write(field, value);
 }
 
 inline bool wxDBase::Write(const char* field, long value)
 {
-   return CDBase::Write(field, value);
+   return base::Write(field, value);
 }
 
 inline bool wxDBase::Write(size_t field, long value)
 {
-   return CDBase::Write(field, value);
+   return base::Write(field, value);
 }
 
 inline bool wxDBase::Write(const DBF_FIELD* field, double value)
 {
-   return CDBase::Write(field, value);
+   return base::Write(field, value);
 }
 
 inline bool wxDBase::Write(const char* field, double value)
 {
-   return CDBase::Write(field, value);
+   return base::Write(field, value);
 }
 
 inline bool wxDBase::Write(size_t field, double value)
 {
-   return CDBase::Write(field, value);
+   return base::Write(field, value);
 }
 
 inline wxDateTime wxDBase::GetLastUpdate(wxString* str) const
 {
    // avoid wxDateTime(time_t) ctor to enable compilation
    // against "old" wx compilation (MSVC6+7: time_t = 32bits, MSVC8: time_t=64 bits)
-   const time_t utc = CDBase::GetLastUpdate();
+   const time_t utc = base::GetLastUpdate();
    const struct tm* ptm = localtime(&utc);
    wxDateTime t;
    if (ptm)

@@ -1146,7 +1146,7 @@ BOOL dbf_putfield_numeric(DBF_HANDLE handle, const DBF_FIELD* field, long value)
    return dbf_putfield(handle, field, buf);
 }
 
-static const char mod_type_int[] = "CNFDML";
+static const char mod_type_int[] = "CNFDCCML";
 C_ASSERT_(5, (sizeof(mod_type_int) - 1) == DBF_DATA_TYPE_ENUMCOUNT);
 
 char dbf_gettype_ext2int(enum dbf_data_type type)
@@ -1205,6 +1205,8 @@ const char* dbf_gettypetext(enum dbf_data_type index)
       "NUMERIC",
       "FLOAT",
       "DATE",
+      "CHAR",
+      "CHAR",
       "MEMO",
       "LOGICAL"
    };

@@ -181,20 +181,17 @@ void CDBFExplorerView::ShowRecords(bool /*bShowDeletedRecords*/)
 	}
 
 	// insert fieldnames
-	for (i = 1; i<=pDoc->m_dBaseFile->GetFieldCount(); i++)
+	for (i = 0; i < pDoc->m_dBaseFile->GetFieldCount(); i++)
 	{
-		const CField* pField = pDoc->m_dBaseFile->GetFieldPtr(i);
-		if (pField)
+      DBF_FIELD_INFO info;
+      if (pDoc->m_dBaseFile->GetFieldInfo(i, &info))
 		{
 			int nWidth = 100;//max(GetListCtrl().GetStringWidth(_T("X")) * pField->m_Length, GetListCtrl().GetStringWidth(A2CT(pField->m_Name)));
 			int nFormat = LVCFMT_LEFT;
 //			if (pField->m_Type == 'N' || pField->m_Type == 'F' || pField->m_Type == 'L')
 //				nFormat = LVCFMT_RIGHT;
 
-         char* temp = _strdup(pField->m_Name);
-         OemToCharA(temp, temp);
-			GetListCtrl().InsertColumn(i-1, A2CT(temp), nFormat, 3*nWidth/2);
-         free(temp);
+			GetListCtrl().InsertColumn(i-1, A2CT(info.name), nFormat, 3*nWidth/2);
 		}
 	}
 	int nCount = pDoc->m_dBaseFile->GetRecordCount();
@@ -1024,12 +1021,14 @@ void CDBFExplorerView::ReplaceCurrentText(CPoint &pt, LPCTSTR lpszText, LPCTSTR 
 void CDBFExplorerView::EditField(int nItem, int nSubItem)
 {
 	CDBFExplorerDoc* pDoc = GetDocument();
-	const CField* pField = pDoc->m_dBaseFile->GetFieldPtr(nSubItem+1);
-	
-	if ( (pField == NULL) || !pDoc->m_dBaseFile->IsEditable())
-		return;
 
-	if (pField->m_Type == 'M')
+   DBF_FIELD_INFO info;
+   if (!(pDoc->m_dBaseFile->IsEditable() && pDoc->m_dBaseFile->GetFieldInfo(nSubItem, &info)))
+	{
+      return;
+   }
+
+	if (info.type == DBF_DATA_TYPE_MEMO)
 	{
 		ITEMINFO *pItem = (ITEMINFO *)GetListCtrl().GetItemData(nItem);
 		CMemoEditorDlg dlg(GetParent());
@@ -1069,8 +1068,8 @@ void CDBFExplorerView::EditField(int nItem, int nSubItem)
 	else
 	{
 		CFieldEdit *pEdit = (CFieldEdit *)EditSubItem(nItem, nSubItem);
-		pEdit->m_nType = pField->m_Type;
-		pEdit->SetLimitText(pField->m_Length);
+		pEdit->m_type = info.type;
+		pEdit->SetLimitText(info.length);
 	}
 }
 

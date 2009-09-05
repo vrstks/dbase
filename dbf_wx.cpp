@@ -122,7 +122,7 @@ bool wxDBase::Attach(wxInputStream* stream, bool editable, enum dbf_charconv con
 {
    zlib_filefunc_def_s api;
    fill_filefunc(&api, stream);
-   bool ok = CDBase::Attach(stream, &api, editable, conv, memo);
+   bool ok = base::Attach(stream, &api, editable, conv, memo);
    //if (ok) SetFilename(filename);
    return ok;
 }

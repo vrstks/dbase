@@ -155,7 +155,7 @@ void CDBFExplorerApp::OnHelpIndex()
 	::WinHelp(AfxGetMainWnd()->m_hWnd, AfxGetApp()->m_pszHelpFilePath, HELP_CONTENTS, 0L);	
 }
 
-extern bool mdb2dbf(CWnd* parent, const TCHAR* src, CStringArray* newfile);
+extern bool mdb2dbf(CWnd* parent, const TCHAR* src, CStringArray* newfile, const CString& rtablename);
 
 class CAccessDocTemplate : public CMultiDocTemplate
 {
@@ -172,7 +172,9 @@ public:
       CWnd* parent = GetActiveFrame();
       CDocument* doc = NULL;
       CStringArray newfile;
-      bool ok = ::mdb2dbf(parent, lpszPathName, &newfile);
+      CString tablename;
+      tablename = _T("tur_tur");
+      bool ok = ::mdb2dbf(parent, lpszPathName, &newfile, tablename);
       if (ok)
       {
          if (newfile.GetSize())

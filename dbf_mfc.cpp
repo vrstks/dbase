@@ -16,7 +16,14 @@
 
 #include <afxwin.h>
 #include <afxconv.h>
+#include <afxdisp.h> // COleDateTime
+#pragma warning(disable:4097)
 #include "dbf_mfc.h"
+
+bool CDbaseFile::Write(const DBF_FIELD* field, const COleDateTime& dt)
+{
+   return WriteDate(field, dt.GetYear(), dt.GetMonth()-1, dt.GetDay());
+}
 
 /* Search for a specific record where criteria = field value	*/
 /* Start searching from record 'nStartRec'						*/
@@ -66,12 +73,12 @@ bool CDbaseFile::CloneDatabase(const TCHAR* lpszCloneName, bool bCopyRecords, bo
 	CString strField;
 	CStringArray fieldsArray;
 	// insert fieldnames
-	for (size_t i = 1; i <= GetFieldCount(); i++)
+	for (size_t i = 0; i < GetFieldCount(); i++)
 	{
-		const DBF_FIELD* field = GetFieldPtr(i);
-		if (field)
+      DBF_FIELD_INFO info;
+      if (GetFieldInfo(i, &info))
 		{
-			strField.Format(_T("%s,%c,%d,%d"), A2CT(field->m_Name), field->m_Type, field->m_Length, field->m_DecCount);
+			strField.Format(_T("%s,%c,%d,%d"), A2CT(info.name), dbf_gettype_ext2int(info.type), info.length, info.decimals);
 			fieldsArray.Add(strField);
 		}
    }	
@@ -97,18 +104,18 @@ bool CDbaseFile::CloneDatabase(const TCHAR* lpszCloneName, bool bCopyRecords, bo
 			   temp.GetRecord(dwCounter);
 
 			   // copy all fields
-			   for (size_t i = 1; i <= GetFieldCount(); i++)
+			   for (size_t i = 0; i < GetFieldCount(); i++)
 			   {
-				   const DBF_FIELD* field = GetFieldPtr(i);
-				   if (field)
-				   {
+               DBF_FIELD_INFO info;
+               if (GetFieldInfo(i, &info))
+		         {
 					   if (GetField(i, szBuff))
 					   {
 						   temp.PutField(i, szBuff);
 					   }
 					   
 					   // copy memo data
-					   if (field->m_Type == 'M')
+					   if (info.type == DBF_DATA_TYPE_MEMO)
 					   {
 						   uLong dwLength = GetMemoFieldLength(i);
 						   if (dwLength)

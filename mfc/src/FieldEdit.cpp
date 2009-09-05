@@ -32,6 +32,8 @@
 #include "stdafx.h"
 #include "dbfexplorer.h"
 #include "FieldEdit.h"
+#include "..\..\bool.h"
+#include "..\..\dbf.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -163,7 +165,7 @@ void CFieldEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 	
 	TCHAR tChar = (TCHAR)nChar;
 
-	if (m_nType == 'N' || m_nType == 'F')
+	if ( (m_type == DBF_DATA_TYPE_INTEGER) || (m_type == DBF_DATA_TYPE_FLOAT))
 	{
 		if(tChar != '+' && tChar != '-' && tChar != '.' && tChar != '0' && tChar != '1' &&
 			tChar != '2' && tChar != '3' && tChar != '4' && tChar != '5' && tChar != '6' &&
@@ -171,7 +173,7 @@ void CFieldEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 			return;
 	}
 
-	if (m_nType == 'L')
+	if (m_type == DBF_DATA_TYPE_BOOLEAN)
 	{
 		if(tChar != 'T' && tChar != 't' && tChar != 'F' && tChar != 'f' &&
 		   tChar != 'Y' && tChar != 'y' && tChar != 'N' && tChar != 'n' && tChar != '?' &&

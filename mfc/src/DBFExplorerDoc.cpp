@@ -209,16 +209,13 @@ void CDBFExplorerDoc::OnFileStructure()
 	CStructureDlg dlg(AfxGetMainWnd());
 
 	// copy fieldnames
-	for (size_t i=1; i<=m_dBaseFile->GetFieldCount(); i++)
+	for (size_t i = 0; i < m_dBaseFile->GetFieldCount(); i++)
 	{
-		const CField* pField = m_dBaseFile->GetFieldPtr(i);
-		if (pField)
+      DBF_FIELD_INFO info;
+      if (m_dBaseFile->GetFieldInfo(i, &info))
 		{
 			CString strFieldData;
-         char* temp = _strdup(pField->m_Name);
-         OemToCharA(temp, temp);
-			strFieldData.Format(_T("%s,%c,%d,%d"), A2CT(temp), pField->m_Type, pField->m_Length, pField->m_DecCount);
-         free(temp);
+			strFieldData.Format(_T("%s,%c,%d,%d"), A2CT(info.name), dbf_gettype_ext2int(info.type), info.length, info.decimals);
 			dlg.m_strFieldArray.Add(strFieldData);
 		}
 	}
@@ -346,20 +343,21 @@ BOOL CDBFExplorerDoc::CopyBackupData(LPCTSTR lpszBackupFile)
 			m_dBaseFile->GetRecord(dwCounter);
 
 			// copy all fields
-			for (size_t i=1; i<=backupDBF.GetFieldCount(); i++)
+			for (size_t i = 0; i <backupDBF.GetFieldCount(); i++)
 			{
-				const CField *pBackupField = backupDBF.GetFieldPtr(i);
-				const CField *pField = m_dBaseFile->GetFieldPtr(pBackupField->m_Name);
-				// check if field exists in new database
-				if (pField)
+            DBF_FIELD_INFO pBackupField;
+            backupDBF.GetFieldInfo(i, &pBackupField);
+
+            DBF_FIELD_INFO pField;
+            if (m_dBaseFile->GetFieldInfo(m_dBaseFile->FindField(pBackupField.name), &pField))
 				{
 					if (backupDBF.GetField(i, szBuff))
 					{
-						m_dBaseFile->PutField(pBackupField->m_Name, szBuff);
+						m_dBaseFile->PutField(pBackupField.name, szBuff);
 					}
 					
 					// copy memo data
-					if (pField->m_Type == 'M' && pBackupField->m_Type == 'M')
+					if ( (pField.type == DBF_DATA_TYPE_MEMO) && (pBackupField.type == DBF_DATA_TYPE_MEMO))
 					{
 						char* buff = NULL;
 
@@ -370,14 +368,14 @@ BOOL CDBFExplorerDoc::CopyBackupData(LPCTSTR lpszBackupFile)
 							backupDBF.GetMemoField(i, buff, nLength);
 						}			
 						// set value
-						if (buff) m_dBaseFile->PutMemoField(pBackupField->m_Name, buff, strlen(buff));
+						if (buff) m_dBaseFile->PutMemoField(pBackupField.name, buff, strlen(buff));
 						delete buff;
 					}
 					else
-					if (pField->m_Type == 'M')
+					if (pField.type == DBF_DATA_TYPE_MEMO)
 					{
 						// initialize data
-						m_dBaseFile->ClearMemoField(pBackupField->m_Name);
+						m_dBaseFile->ClearMemoField(pBackupField.name);
 					}
 				}
 				else
@@ -473,12 +471,13 @@ void CDBFExplorerDoc::ExportToText(LPCTSTR lpszFileName)
 				if (m_dBaseFile->IsRecordDeleted() && !GetActiveFrame()->m_bShowDeletedRecords)
 					continue;
 
-				for (size_t i=1; i<=m_dBaseFile->GetFieldCount(); i++)
+				for (size_t i = 0; i < m_dBaseFile->GetFieldCount(); i++)
 				{
 					char szBuff[255];
 
-					const CField *pField = m_dBaseFile->GetFieldPtr(i);
-					if (pField->m_Type == 'M')
+               DBF_FIELD_INFO info;
+               m_dBaseFile->GetFieldInfo(i, &info);
+					if (info.type == DBF_DATA_TYPE_MEMO)
 					{
 						strcpy(szBuff, "MEMO");
 					}
@@ -551,12 +550,13 @@ void CDBFExplorerDoc::ExportToHTML(LPCTSTR lpszFileName)
 			file.Write(strHTML, strHTML.GetLength());
 
 			// show fieldnames
-			for (size_t i=1; i<=m_dBaseFile->GetFieldCount(); i++)
+			for (size_t i = 0; i < m_dBaseFile->GetFieldCount(); i++)
 			{
-				const CField* pField = m_dBaseFile->GetFieldPtr(i);
-				if (pField)
-				{
-					strHTML.Format(_T("<TH BGCOLOR=#c0c0c0 BORDERCOLOR=#000000 ><FONT SIZE=2 FACE=\"Arial\" COLOR=#000000>%s</FONT></TH>\r\n"), A2CT(pField->m_Name));
+            DBF_FIELD_INFO info;
+            if (m_dBaseFile->GetFieldInfo(i, &info))
+		      {
+					strHTML.Format(_T("<TH BGCOLOR=#c0c0c0 BORDERCOLOR=#000000 ><FONT SIZE=2 FACE=\"Arial\" COLOR=#000000>%s</FONT></TH>\r\n"), 
+                  A2CT(info.name));
 					file.Write(strHTML, strHTML.GetLength());
 				}
 			}
@@ -581,12 +581,13 @@ void CDBFExplorerDoc::ExportToHTML(LPCTSTR lpszFileName)
 				strHTML = "<TR VALIGN=TOP>\r\n";
 				file.Write(strHTML, strHTML.GetLength());
 				
-				for (size_t i=1; i<=m_dBaseFile->GetFieldCount(); i++)
+				for (size_t i = 0; i < m_dBaseFile->GetFieldCount(); i++)
 				{
 					char szBuff[255];
 
-					const CField* pField = m_dBaseFile->GetFieldPtr(i);
-					if (pField->m_Type == 'M')
+               DBF_FIELD_INFO info;
+               m_dBaseFile->GetFieldInfo(i, &info);
+					if (info.type == DBF_DATA_TYPE_MEMO)
 					{
 						strcpy(szBuff, "MEMO");
 					}

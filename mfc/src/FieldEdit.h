@@ -35,7 +35,7 @@ public:
 
 // Implementation
 public:
-	char m_nType;
+	enum dbf_data_type m_type;
 	virtual ~CFieldEdit();
 
 	// Generated message map functions

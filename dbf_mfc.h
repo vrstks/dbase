@@ -27,6 +27,7 @@
 class COleDateTime;
 class CDbaseFile : public CObject, public CDBase
 {
+   typedef CDBase base;
 public:
 	CDbaseFile();           
 
@@ -75,13 +76,13 @@ public:
 	CString GetCharField(size_t field);
 	CString GetCharField(const char* field);
 
-   bool Read(const DBF_FIELD* , COleDateTime*, int* ms = NULL);
-	bool Read(const char* field, COleDateTime*, int* ms = NULL);
-	bool Read(size_t      field, COleDateTime*, int* ms = NULL);
+   bool Read(const DBF_FIELD* , COleDateTime*);
+	bool Read(const char* field, COleDateTime*);
+	bool Read(size_t      field, COleDateTime*);
 
-   bool Write(const DBF_FIELD* , const COleDateTime&, int ms = 0);
-	bool Write(const char* field, const COleDateTime&, int ms = 0);
-	bool Write(size_t      field, const COleDateTime&, int ms = 0);
+   bool Write(const DBF_FIELD* , const COleDateTime&);
+	bool Write(const char* field, const COleDateTime&);
+	bool Write(size_t      field, const COleDateTime&);
 
    bool Write(const DBF_FIELD* , const CTime&, int ms = 0);
 	bool Write(const char* field, const CTime&, int ms = 0);
@@ -186,19 +187,6 @@ public:
 	int ClearMemoField(size_t field);
 	int ClearMemoField(const char* field);	
 };
-
-// to satisfy DBFExplorer
-typedef struct _DBF_FIELD_DATA
-{
-	char	 m_Name[12];
-	char	 m_Type;
-	size_t m_Length;
-	size_t m_DecCount;
-	char*	ptr;
-   unsigned long namehash;
-} DBF_FIELD_DATA;
-
-#define CField struct _DBF_FIELD_DATA
 
 #include "dbf_mfc.inl"
 
