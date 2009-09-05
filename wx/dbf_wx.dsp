@@ -239,6 +239,10 @@ SOURCE=..\dbf_wx.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\dbf_wx.inl
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\dbfdlgs.h
 # End Source File
 # Begin Source File

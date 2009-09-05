@@ -1069,15 +1069,11 @@
 				>
 			</File>
 			<File
-				RelativePath="dbf\dbf.h"
+				RelativePath="..\dbf.h"
 				>
 			</File>
 			<File
-				RelativePath="dbf.h"
-				>
-			</File>
-			<File
-				RelativePath="dbf.hpp"
+				RelativePath="..\dbf.hpp"
 				>
 			</File>
 			<File
@@ -1085,7 +1081,15 @@
 				>
 			</File>
 			<File
-				RelativePath="dbf_mfc.h"
+				RelativePath="..\dbf.inl"
+				>
+			</File>
+			<File
+				RelativePath="..\dbf_mfc.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dbf_mfc.inl"
 				>
 			</File>
 			<File
