@@ -1,4 +1,6 @@
 // wx29.h
+// Copyright (c) 2009 by Troels K. All rights reserved.
+// License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __WX29_H__
 #define __WX29_H__
