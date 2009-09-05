@@ -49,7 +49,7 @@ public:
          for (int i = 0; i < GetFieldCount(); i++)
          {
             COleVariant var;
-      	   GetFieldValue((size_t)i, var);
+      	   GetFieldValue(i, var);
             SaveField(i, var);
          }
          SaveRecord();
@@ -71,6 +71,71 @@ public:
    CDbaseFile m_dbf;
    CDaoConverter_DBF(CDaoDatabase* db, const TCHAR* tablename) : CDaoConverter(db, tablename) {}
 
+   enum dbf_data_type GetFieldType(int field, const CDaoFieldInfo& info)
+   {
+      enum dbf_data_type type;
+      switch (info.m_nType)
+      {
+         case dbDate:
+         {
+            bool date = false;
+            bool time = false;
+            if (!(IsBOF() && IsEOF())) for (MoveFirst(); !IsEOF(); MoveNext())
+            {
+               COleVariant var;
+      	      GetFieldValue(field, var);
+               if (var.vt == VT_DATE)
+               {
+                  COleDateTime dt(var.date);
+                  date = date || (dt.GetYear() != 1899);
+                  time = time || dt.GetHour() || dt.GetMinute() || dt.GetSecond();
+               }
+            }
+            if (date && time)
+            {
+               type = DBF_DATA_TYPE_DATETIME;
+            }
+            else
+            {
+               type = date ? DBF_DATA_TYPE_DATE : DBF_DATA_TYPE_TIME;
+            }
+            break;
+         }
+         case dbDecimal:
+         case dbFloat:
+         case dbSingle:
+         case dbDouble:
+            type = DBF_DATA_TYPE_FLOAT;
+            break;
+         case dbText:
+         case dbMemo:
+         case dbChar:
+            type = DBF_DATA_TYPE_CHAR;
+            break;
+         case dbInteger:
+         case dbLong:
+         case dbByte:
+         case dbNumeric:
+         case dbBigInt:
+            type = DBF_DATA_TYPE_INTEGER;
+            break;
+         case dbBoolean:
+            type = DBF_DATA_TYPE_BOOLEAN;
+            break;
+         case dbCurrency:
+         case dbBinary:
+         case dbLongBinary:
+         case dbGUID:
+         case dbVarBinary:
+         case dbTime:
+         case dbTimeStamp:
+         default:
+            type = DBF_DATA_TYPE_UNKNOWN;
+            break;
+      }
+      return type;
+   }
+
    bool Create(const TCHAR* file)
    {
       USES_CONVERSION;
@@ -86,56 +151,10 @@ public:
          item->name[_countof(item->name) - 1] = 0;
          item->decimals = 0;
          item->length = info.m_lSize;
-         //TRACE(_T("Field %d %s\n"), i, info.m_strName.operator LPCTSTR());
-
-         switch (info.m_nType)
+         item->type = GetFieldType(i, info);
+         if ( (item->type == DBF_DATA_TYPE_CHAR) && (0 == item->length))
          {
-            case dbDate:
-               switch (i)
-               {
-                  case 8:
-                  case 9:
-                     item->type = DBF_DATA_TYPE_TIME;
-                     break;
-                  case 6:
-                  case 7:
-                  default:
-                     item->type = DBF_DATA_TYPE_DATE;
-                     break;
-               }
-               break;
-            case dbDecimal:
-            case dbFloat:
-            case dbSingle:
-            case dbDouble:
-               item->type = DBF_DATA_TYPE_FLOAT;
-               break;
-            case dbText:
-            case dbMemo:
-            case dbChar:
-               item->type = DBF_DATA_TYPE_CHAR;
-               if (0 == item->length) item->length = 80;
-               break;
-            case dbInteger:
-            case dbLong:
-            case dbByte:
-            case dbNumeric:
-            case dbBigInt:
-               item->type = DBF_DATA_TYPE_INTEGER;
-               break;
-            case dbBoolean:
-               item->type = DBF_DATA_TYPE_BOOLEAN;
-               break;
-            case dbCurrency:
-            case dbBinary:
-            case dbLongBinary:
-            case dbGUID:
-            case dbVarBinary:
-            case dbTime:
-            case dbTimeStamp:
-            default:
-               _asm NOP
-               return false;
+            item->length = 80;
          }
       }
 
@@ -172,9 +191,6 @@ public:
             break;
          case VT_DATE:
          {
-            //CDaoFieldInfo info;
-	         //GetFieldInfo(field, info, AFX_DAO_ALL_INFO);
-
             COleDateTime dt(var.date);
             ok = m_dbf.Write(field, dt);
             break;
@@ -259,7 +275,6 @@ public:
    }
    virtual bool SaveField(size_t field, const COleVariant& var)
    {
-      bool ok = true;
       CString str;
       switch (var.vt)
       {
@@ -296,7 +311,7 @@ public:
       }
       if (field) m_row+=m_sep;
       m_row+=str;
-      return ok;
+      return true;
    }
    virtual void SaveRecord()
    {
