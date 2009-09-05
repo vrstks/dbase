@@ -41,6 +41,10 @@ enum dbf_charconv
 #define NAME_MAX 255
 #endif
 
+#define DBF_LEN_DATE     8
+#define DBF_LEN_TIME     9
+#define DBF_LEN_DATETIME (DBF_LEN_DATE + DBF_LEN_TIME)
+
 /* error codes */
 #define      DBASE_OUT_OF_MEM       100      /*   not enough memory error message */
 #define      DBASE_NO_FILE          101      /*   file not found error message */

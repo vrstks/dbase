@@ -152,9 +152,23 @@ public:
          item->decimals = 0;
          item->length = info.m_lSize;
          item->type = GetFieldType(i, info);
-         if ( (item->type == DBF_DATA_TYPE_CHAR) && (0 == item->length))
+         switch (item->type)
          {
-            item->length = 80;
+            case DBF_DATA_TYPE_CHAR:
+               if (0 == item->length)
+               {
+                  item->length = 80;
+               }
+               break;
+            case DBF_DATA_TYPE_DATE:
+               item->length = DBF_LEN_DATE;
+               break;
+            case DBF_DATA_TYPE_TIME:
+               item->length = DBF_LEN_TIME;
+               break;
+            case DBF_DATA_TYPE_DATETIME:
+               item->length = DBF_LEN_DATETIME;
+               break;
          }
       }
 
