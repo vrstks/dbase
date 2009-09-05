@@ -70,7 +70,7 @@ wxStructListView::~wxStructListView()
 
 void wxStructListView::Init(wxDBase* db)
 {
-   static const wxChar* MOD_aszType[] =
+   static const wxChar* aszType[] =
    {
       wxT("Name"),
       wxT("Type"),
@@ -78,10 +78,10 @@ void wxStructListView::Init(wxDBase* db)
       //wxT("Decimals")
    };
    size_t i;
-   C_ASSERT_(1, ENUM_col_enumcount == WXSIZEOF(MOD_aszType));
-   for (i = 0; i < WXSIZEOF(MOD_aszType); i++)
+   C_ASSERT_(1, ENUM_col_enumcount == WXSIZEOF(aszType));
+   for (i = 0; i < WXSIZEOF(aszType); i++)
    {
-      InsertColumn(i, MOD_aszType[i], (i == ENUM_col_length) ? wxLIST_FORMAT_RIGHT : wxLIST_FORMAT_LEFT, 80);
+      InsertColumn(i, aszType[i], (i == ENUM_col_length) ? wxLIST_FORMAT_RIGHT : wxLIST_FORMAT_LEFT, 80);
    }
 
    m_array_count = (db && db->IsOpen()) ? db->GetFieldCount() : 0;

@@ -173,7 +173,9 @@ public:
       CDocument* doc = NULL;
       CStringArray newfile;
       CString tablename;
+   #ifdef x_DEBUG
       tablename = _T("tur_tur");
+   #endif
       bool ok = ::mdb2dbf(parent, lpszPathName, &newfile, tablename);
       if (ok)
       {
