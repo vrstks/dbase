@@ -68,31 +68,6 @@ inline int CDbaseFile::InsertRecord(size_t index)
    return ::dbf_insertrecord(m_handle, index) ? DBASE_SUCCESS : base::GetLastError();
 }
 
-inline const DBF_FIELD* CDbaseFile::GetFieldPtr(size_t field)
-{
-   return base::GetFieldPtr(field - 1);
-}
-
-inline const DBF_FIELD* CDbaseFile::GetFieldPtr(const char* field)
-{
-   return base::GetFieldPtr(field);
-}
-
-inline int CDbaseFile::GetField(const DBF_FIELD* field, char* buf)
-{
-   return base::GetField(field, buf, 255);
-}
-
-inline int CDbaseFile::GetField(size_t field, char* buf)
-{
-   return base::GetField(field-1, buf, 255);
-}
-
-inline int CDbaseFile::GetField(const char* field, char* buf)
-{
-   return base::GetField(field, buf, 255);
-}
-
 inline int CDbaseFile::GetFirstRecord()
 {
 	return base::GetFirstRecord() ? DBASE_SUCCESS : base::GetLastError();
@@ -116,30 +91,6 @@ inline int CDbaseFile::GetPrevRecord()
 inline size_t CDbaseFile::GetCurRecNo() const
 {
    return base::GetPosition() + 1;
-}
-
-inline CString CDbaseFile::GetCharField(const DBF_FIELD* field)
-{
-   CString str;
-#if defined(UNICODE) || defined(_UNICODE)
-   char temp[512];
-   base::Read(field, temp, sizeof(temp));
-   str.operator=(temp);
-#else
-   base::Read(field, str.GetBuffer(255), 255);
-   str.ReleaseBuffer();
-#endif
-   return str;
-}
-
-inline CString CDbaseFile::GetCharField(const char* field)
-{
-   return GetCharField(GetFieldPtr(field));
-}
-
-inline CString CDbaseFile::GetCharField(size_t field)
-{
-   return GetCharField(GetFieldPtr(field));
 }
 
 inline int CDbaseFile::PutFloatField(const DBF_FIELD* field, double value)
@@ -218,21 +169,6 @@ inline bool CDbaseFile::GetLogicalField(const char* field)
    bool b;
    base::Read(field, &b);
    return b;
-}
-
-inline int CDbaseFile::PutField(const DBF_FIELD* field, const char* buf)
-{
-   return base::Write(field, buf) ? DBASE_SUCCESS : base::GetLastError();
-}
-
-inline int CDbaseFile::PutField(const char* field, const char* buf)
-{
-   return PutField(GetFieldPtr(field), buf);
-}
-
-inline int CDbaseFile::PutField(size_t field, const char* buf)
-{
-   return PutField(GetFieldPtr(field), buf);
 }
 
 inline int CDbaseFile::PutNumericField(const DBF_FIELD* field, long value)
@@ -340,12 +276,12 @@ inline int CDbaseFile::ClearMemoField(const char* field)
    return base::GetLastError();
 }
 
-inline size_t CDbaseFile::SearchRecord(const char* field, const char* criteria, size_t nStartRec)
+inline size_t CDbaseFile::SearchRecord(const char* field, const TCHAR* criteria, size_t nStartRec)
 {
    return SearchRecord(GetFieldPtr(field), criteria, nStartRec);
 }
 
-inline size_t CDbaseFile::SearchRecord(size_t field, const char* criteria, size_t nStartRec)
+inline size_t CDbaseFile::SearchRecord(size_t field, const TCHAR* criteria, size_t nStartRec)
 {
    return SearchRecord(GetFieldPtr(field), criteria, nStartRec);
 }
@@ -453,14 +389,37 @@ inline bool CDbaseFile::Write(const char* field, const bool& b)
    return base::Write(field, b);
 }
 
-inline bool CDbaseFile::Write(const char* field, const char* str)
+/*
+inline CString CDbaseFile::GetCharField(const DBF_FIELD* field)
 {
-   return base::Write(field, str);
+   CString str;
+#if defined(UNICODE) || defined(_UNICODE)
+   char temp[512];
+   base::Read(field, temp, sizeof(temp));
+   str.operator=(temp);
+#else
+   base::Read(field, str.GetBuffer(255), 255);
+   str.ReleaseBuffer();
+#endif
+   return str;
+}
+*/
+
+inline bool CDbaseFile::Write(const DBF_FIELD* field, const TCHAR* str)
+{
+   USES_CONVERSION;
+   return base::Write(field, T2CA(str));
 }
 
-inline bool CDbaseFile::Write(size_t field, const char* str)
+
+inline bool CDbaseFile::Write(const char* field, const TCHAR* str)
 {
-   return base::Write(field, str);
+   return Write(GetFieldPtr(field), str);
+}
+
+inline bool CDbaseFile::Write(size_t field, const TCHAR* str)
+{
+   return Write(GetFieldPtr(field), str);
 }
 
 inline bool CDbaseFile::Read(size_t field     , long* value)

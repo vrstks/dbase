@@ -64,18 +64,6 @@ public:
 	int GetNextRecord();
 	int GetPrevRecord();
 
-	// field operations
-	const DBF_FIELD* GetFieldPtr(size_t field);
-	const DBF_FIELD* GetFieldPtr(const char* field);
-	
-   int GetField(const DBF_FIELD* , char* buf);
-	int GetField(size_t field     , char* buf);
-	int GetField(const char* field, char* buf);
-	
-   CString GetCharField(const DBF_FIELD*);
-	CString GetCharField(size_t field);
-	CString GetCharField(const char* field);
-
    bool Read(const DBF_FIELD* , COleDateTime*);
 	bool Read(const char* field, COleDateTime*);
 	bool Read(size_t      field, COleDateTime*);
@@ -92,9 +80,9 @@ public:
    bool Write(const char* field, const bool&);
    bool Write(size_t field     , const bool&);
 
-	bool Write(const char* field, const char*);
-	bool Write(const DBF_FIELD* , const char*);
-   bool Write(size_t field     , const char*);
+	bool Write(const char* field, const TCHAR*);
+	bool Write(const DBF_FIELD* , const TCHAR*);
+   bool Write(size_t field     , const TCHAR*);
 
 	bool Write(const char* field, long);
 	bool Write(const DBF_FIELD* , long);
@@ -136,10 +124,6 @@ public:
 
    bool IsOpen(void) const { return (m_handle != NULL); }
 
-   int PutField(const DBF_FIELD* , const char*);
-	int PutField(size_t field     , const char*);
-	int PutField(const char* field, const char*);
-
    int PutNumericField(const DBF_FIELD* , long);
 	int PutNumericField(size_t field     , long);
 	int PutNumericField(const char* field, long);
@@ -152,9 +136,9 @@ public:
 	int PutLogicalField(size_t field     , bool);
 	int PutLogicalField(const char* field, bool);
 
-	size_t SearchRecord(const DBF_FIELD* , const char* criteria, size_t nStartRec = 0);
-	size_t SearchRecord(const char* field, const char* criteria, size_t nStartRec = 0);
-	size_t SearchRecord(size_t field     , const char* criteria, size_t nStartRec = 0);
+	size_t SearchRecord(const DBF_FIELD* , const TCHAR* criteria, size_t nStartRec = 0);
+	size_t SearchRecord(const char* field, const TCHAR* criteria, size_t nStartRec = 0);
+	size_t SearchRecord(size_t field     , const TCHAR* criteria, size_t nStartRec = 0);
 
 	int Pack();
    DBF_HANDLE Detach(void);

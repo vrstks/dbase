@@ -74,11 +74,12 @@ bool wxDBase::GetValue(wxVariant* var, const wxRowCol& rowcol)
       case DBF_DATA_TYPE_MEMO   :
       case DBF_DATA_TYPE_CHAR   :
       {
-         char buf[1024] = "";
-
-         GetField(rowcol.col, buf, sizeof(buf));
-         wxString str = wxConvertMB2WX(buf);
-         var->operator=(str);
+         wxString str;
+         /*ok = */Read(rowcol.col, &str);
+         if (ok)
+         {
+            var->operator=(str);
+         }
          break;
       }
       case DBF_DATA_TYPE_UNKNOWN:

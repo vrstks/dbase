@@ -330,7 +330,7 @@ BOOL CDBFExplorerDoc::CopyBackupData(LPCTSTR lpszBackupFile)
 	CDbaseFile backupDBF;
 
 	DWORD dwCounter = 0;
-	char szBuff[255];
+	CString szBuff;
 
 	// open backup file
 	if (backupDBF.Open(lpszBackupFile) == DBASE_SUCCESS)
@@ -351,9 +351,9 @@ BOOL CDBFExplorerDoc::CopyBackupData(LPCTSTR lpszBackupFile)
             DBF_FIELD_INFO pField;
             if (m_dBaseFile->GetFieldInfo(m_dBaseFile->FindField(pBackupField.name), &pField))
 				{
-					if (backupDBF.GetField(i, szBuff))
+					if (backupDBF.Read(i, &szBuff))
 					{
-						m_dBaseFile->PutField(pBackupField.name, szBuff);
+						m_dBaseFile->Write(pBackupField.name, szBuff);
 					}
 					
 					// copy memo data
@@ -440,6 +440,7 @@ void CDBFExplorerDoc::OnFileExport()
 /********************************************************************/
 void CDBFExplorerDoc::ExportToText(LPCTSTR lpszFileName)
 {
+   USES_CONVERSION;
 	try
 	{
 		CFile file;
@@ -473,21 +474,21 @@ void CDBFExplorerDoc::ExportToText(LPCTSTR lpszFileName)
 
 				for (size_t i = 0; i < m_dBaseFile->GetFieldCount(); i++)
 				{
-					char szBuff[255];
+					CString szBuff;
 
                DBF_FIELD_INFO info;
                m_dBaseFile->GetFieldInfo(i, &info);
 					if (info.type == DBF_DATA_TYPE_MEMO)
 					{
-						strcpy(szBuff, "MEMO");
+						szBuff = _T("MEMO");
 					}
 					else
 					{
-						m_dBaseFile->GetField(i, szBuff);
+						m_dBaseFile->Read(i, &szBuff);
 					}
 					if (i != 1)
 						file.Write(",", 1);
-					file.Write(szBuff, strlen(szBuff));
+					file.Write(T2CA(szBuff), szBuff.GetLength());
 				}
 				file.Write("\r\n", 2);
 				// Update progress control
@@ -583,19 +584,20 @@ void CDBFExplorerDoc::ExportToHTML(LPCTSTR lpszFileName)
 				
 				for (size_t i = 0; i < m_dBaseFile->GetFieldCount(); i++)
 				{
-					char szBuff[255];
+					CString szBuff;
 
                DBF_FIELD_INFO info;
                m_dBaseFile->GetFieldInfo(i, &info);
 					if (info.type == DBF_DATA_TYPE_MEMO)
 					{
-						strcpy(szBuff, "MEMO");
+						szBuff = _T("MEMO");
 					}
 					else
 					{
-						m_dBaseFile->GetField(i, szBuff);
+						m_dBaseFile->Read(i, &szBuff);
 					}
-					strHTML.Format(_T("<TD BORDERCOLOR=#c0c0c0 ><FONT SIZE=2 FACE=\"Arial\" COLOR=#000000>%s</FONT></TD>\r\n"), A2CT(szBuff));
+					strHTML.Format(_T("<TD BORDERCOLOR=#c0c0c0 ><FONT SIZE=2 FACE=\"Arial\" COLOR=#000000>%s</FONT></TD>\r\n"), 
+                  szBuff.operator LPCTSTR());
 					file.Write(strHTML, strHTML.GetLength());
 				}
 

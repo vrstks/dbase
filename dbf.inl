@@ -294,19 +294,19 @@ inline const DBF_FIELD* CDBase::GetFieldPtr(const char* field) const
    return ::dbf_getfieldptr_name(m_handle, field);
 }
 
-inline size_t CDBase::GetField(const DBF_FIELD* field, char* buf, size_t buf_len, enum dbf_data_type type) const
+inline size_t CDBase::Read(const DBF_FIELD* field, char* buf, size_t buf_len, enum dbf_data_type type) const
 {
    return ::dbf_getfield(m_handle, field, buf, buf_len, type);
 }
 
-inline size_t CDBase::GetField(size_t field, char* buf, size_t buf_len, enum dbf_data_type type) const
+inline size_t CDBase::Read(size_t field, char* buf, size_t buf_len, enum dbf_data_type type) const
 {
-   return GetField(GetFieldPtr(field), buf, buf_len, type);
+   return Read(GetFieldPtr(field), buf, buf_len, type);
 }
 
-inline size_t CDBase::GetField(const char* field, char* buf, size_t buf_len, enum dbf_data_type type) const
+inline size_t CDBase::Read(const char* field, char* buf, size_t buf_len, enum dbf_data_type type) const
 {
-   return GetField(GetFieldPtr(field), buf, buf_len, type);
+   return Read(GetFieldPtr(field), buf, buf_len, type);
 }
 
 inline bool CDBase::IsRecordDeleted() const

@@ -27,17 +27,17 @@ bool CDbaseFile::Write(const DBF_FIELD* field, const COleDateTime& dt)
 
 /* Search for a specific record where criteria = field value	*/
 /* Start searching from record 'nStartRec'						*/
-size_t CDbaseFile::SearchRecord(const DBF_FIELD* field, const char* lpszCriteria, size_t nStartRec)
+size_t CDbaseFile::SearchRecord(const DBF_FIELD* field, const TCHAR* lpszCriteria, size_t nStartRec)
 {
-	char buf[255];
+	CString buf;
    int nResult;
 	// walk through all records
    for(nResult=GetRecord(nStartRec); nResult==DBASE_SUCCESS; nResult=GetNextRecord())
   	{
 		if (!IsRecordDeleted())
 		{
-			GetField(field, buf);
-			if (!strcmp(buf, lpszCriteria))
+			Read(field, &buf);
+			if (!_tcscmp(buf, lpszCriteria))
 			{
 				return GetCurRecNo();              			
 			}
@@ -91,7 +91,7 @@ bool CDbaseFile::CloneDatabase(const TCHAR* lpszCloneName, bool bCopyRecords, bo
 	   if (bCopyRecords)
 	   {
 		   uLong dwCounter = 0;
-		   char szBuff[255];
+		   CString szBuff;
 
 		   // copy all records
 		   for (int rc=GetFirstRecord(); rc==DBASE_SUCCESS; rc=GetNextRecord())
@@ -109,9 +109,9 @@ bool CDbaseFile::CloneDatabase(const TCHAR* lpszCloneName, bool bCopyRecords, bo
                DBF_FIELD_INFO info;
                if (GetFieldInfo(i, &info))
 		         {
-					   if (GetField(i, szBuff))
+					   if (Read(i, &szBuff))
 					   {
-						   temp.PutField(i, szBuff);
+						   temp.Write(i, szBuff);
 					   }
 					   
 					   // copy memo data

@@ -191,7 +191,7 @@ void CDBFExplorerView::ShowRecords(bool /*bShowDeletedRecords*/)
 //			if (pField->m_Type == 'N' || pField->m_Type == 'F' || pField->m_Type == 'L')
 //				nFormat = LVCFMT_RIGHT;
 
-			GetListCtrl().InsertColumn(i-1, A2CT(info.name), nFormat, 3*nWidth/2);
+			GetListCtrl().InsertColumn(i, A2CT(info.name), nFormat, 3*nWidth/2);
 		}
 	}
 	int nCount = pDoc->m_dBaseFile->GetRecordCount();
@@ -421,7 +421,7 @@ void CDBFExplorerView::OnEndlabeledit(NMHDR* pNMHDR, LRESULT* pResult)
 
 		if (pDoc->m_dBaseFile->GetRecord(pItem->dwRecordIndex) == DBASE_SUCCESS)
 		{
-			if (DBASE_SUCCESS == pDoc->m_dBaseFile->PutField(plvItem->iSubItem+1, T2CA(plvItem->pszText)))
+			if (pDoc->m_dBaseFile->Write(plvItem->iSubItem, plvItem->pszText))
          {
 			   pDoc->m_dBaseFile->PutRecord(pItem->dwRecordIndex);
          }
@@ -1001,7 +1001,7 @@ void CDBFExplorerView::ReplaceCurrentText(CPoint &pt, LPCTSTR lpszText, LPCTSTR 
 		if (pDoc->m_dBaseFile->GetRecord(pItem->dwRecordIndex) == DBASE_SUCCESS)
 		{
 			LPTSTR lpszText = strItemText.GetBuffer(strItemText.GetLength());
-			pDoc->m_dBaseFile->PutField(pt.y+1, T2CA(lpszText));
+			pDoc->m_dBaseFile->Write(pt.y, lpszText);
 			pDoc->m_dBaseFile->PutRecord(pItem->dwRecordIndex);
 			strItemText.ReleaseBuffer();
 			
