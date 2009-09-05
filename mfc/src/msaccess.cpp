@@ -86,18 +86,26 @@ public:
       	      GetFieldValue(field, var);
                if (var.vt == VT_DATE)
                {
+                  SYSTEMTIME st;
                   COleDateTime dt(var.date);
-                  date = date || (dt.GetYear() != 1899);
-                  time = time || dt.GetHour() || dt.GetMinute() || dt.GetSecond();
+                  if (dt.GetAsSystemTime(st))
+                  {
+                     date = date || (st.wYear != 1899);
+                     time = time || st.wHour || st.wMinute || st.wSecond;
+                  }
                }
             }
             if (date && time)
             {
                type = DBF_DATA_TYPE_DATETIME;
             }
+            else if (time)
+            {
+               type = DBF_DATA_TYPE_TIME;
+            }
             else
             {
-               type = date ? DBF_DATA_TYPE_DATE : DBF_DATA_TYPE_TIME;
+               type = DBF_DATA_TYPE_DATE;
             }
             break;
          }
