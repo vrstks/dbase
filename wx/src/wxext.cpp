@@ -5,21 +5,37 @@
 #include "precomp.h"
 #include "wxext.h"
 
+bool wxGetExeFolder(wxFileName* filename)
+{
+   filename->Assign(wxTheApp->argv[0]);
+   filename->SetFullName(wxEmptyString);
+   return filename->IsOk();
+}
+
+bool wxGetDevFolder(wxFileName* filename)
+{
+   wxGetExeFolder(filename);
+   filename->RemoveLastDir();
+   filename->AppendDir(wxT("dbf"));
+   filename->AppendDir(wxT("wx"));
+   return filename->DirExists();
+}
+
 bool wxInitXRC()
 {
    wxXmlResource::Get()->InitAllHandlers();
-   wxString dir = wxFileName(wxTheApp->argv[0]).GetPath();
+
+   const wxString fullname = wxTheApp->GetAppName() + wxT(".xrc");
 
    wxFileName filename;
-
-   filename.Assign(dir, wxTheApp->GetAppName(), wxT("xrc"));
+   wxGetExeFolder(&filename);
+   filename.SetFullName(fullname);
    if (!filename.FileExists())
    {
-      filename.RemoveLastDir();
-      filename.AppendDir(wxT("dbf"));
-      filename.AppendDir(wxT("wx"));
+      ::wxGetDevFolder(&filename);
       filename.AppendDir(wxT("src"));
       filename.AppendDir(wxT("res"));
+      filename.SetFullName(fullname);
    }
    return wxXmlResource::Get()->Load(filename.GetFullPath());
 }
