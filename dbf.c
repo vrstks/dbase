@@ -89,10 +89,10 @@ typedef struct _DBF_FILEFIELD
 {
    char      name[11];   // field name in ASCII zero-filled
    char      type;         // field type in ASCII
-   uint8_t  unused_0[4];
+   uint8_t   unused_0[4];
    uint8_t   length;     // field length in binary
-   uint8_t    deccount;   // field decimal count in binary
-   uint8_t  unused_1[14];
+   uint8_t   deccount;   // field decimal count in binary
+   uint8_t   unused_1[14];
 } DBF_FILEFIELD;
 
 typedef union _DBF_MEMO_BLOCK
@@ -155,7 +155,7 @@ typedef struct _DBF_DATA
 typedef struct _DBF_FIELD_DATA
 {
    char    m_Name[12];
-   char    m_Type;
+   enum dbf_data_type type;
    size_t m_Length;
    size_t m_DecCount;
    char*   ptr;
@@ -312,7 +312,7 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
                   }
                   strncpy(field->m_Name, temp.name, _countof(field->m_Name)-1);
                   field->m_Name[_countof(field->m_Name)-1] = 0;
-                  field->m_Type     = temp.deccount ? 'F' : temp.type;
+                  field->type       = temp.deccount ? DBF_DATA_TYPE_FLOAT : dbf_gettype_int2ext(temp.type);
                   field->m_Length   = temp.length  ;
                   field->m_DecCount = temp.deccount;
                   field->ptr        = handle->recorddataptr + fielddata_pos;
@@ -728,11 +728,11 @@ BOOL dbf_putfield(DBF_HANDLE handle, const DBF_FIELD* field, const char* buf)
       const size_t buf_len = strlen(buf);
       char* dup = handle->dup = strdup_host2dos(buf, buf_len, handle->charconv, handle->dup);
       // check for correct type
-      switch (field->m_Type)
+      switch (field->type)
       {
-         case 'F':
-         case 'N':
-         //case 'M':
+         case DBF_DATA_TYPE_FLOAT:
+         case DBF_DATA_TYPE_INTEGER:
+         //case DBF_DATA_TYPE_MEMO:
          {
             char* ptr = dup;
             Trim(ptr, ' ');
@@ -752,7 +752,7 @@ BOOL dbf_putfield(DBF_HANDLE handle, const DBF_FIELD* field, const char* buf)
             }
             break;
          }
-         case 'D':
+         case DBF_DATA_TYPE_DATE:
             if(!dbf_isvaliddate(dup))
             {
                strncpy(handle->lasterrormsg, "Invalid type (not a DATE)", _countof(handle->lasterrormsg));
@@ -760,7 +760,7 @@ BOOL dbf_putfield(DBF_HANDLE handle, const DBF_FIELD* field, const char* buf)
                ok = FALSE;
             }
             break;
-         case 'L':
+         case DBF_DATA_TYPE_BOOLEAN:
             if (strchr("YyNnFfTt?", *dup))
             {
             }
@@ -774,14 +774,14 @@ BOOL dbf_putfield(DBF_HANDLE handle, const DBF_FIELD* field, const char* buf)
       }
       if (ok)
       {
-         switch (field->m_Type)
+         switch (field->type)
          {
-            case 'N':
+            case DBF_DATA_TYPE_INTEGER:
                snprintf(dup, buf_len + 1, "%d", atoi(dup)); // normalize
                memset(field->ptr, ' ', field->m_Length);
                strncpy(field->ptr, dup, field->m_Length);
                break;
-            case 'M':
+            case DBF_DATA_TYPE_MEMO:
             {
                const int n = atoi(field->ptr);
                size_t block = (size_t)n;
@@ -826,7 +826,7 @@ BOOL dbf_putfield(DBF_HANDLE handle, const DBF_FIELD* field, const char* buf)
                }
                break;
             }
-            case 'F':
+            case DBF_DATA_TYPE_FLOAT:
             {
                int sep;
                size_t i;
@@ -885,7 +885,7 @@ BOOL dbf_move_prepare(DBF_HANDLE handle)
 
 static BOOL dbf_getfield_date(DBF_HANDLE handle, const DBF_FIELD* field, int* year, int* month, int* mday)
 {
-   BOOL ok = field && (field->m_Type == 'D');
+   BOOL ok = field && (field->type == DBF_DATA_TYPE_DATE);
 
    if (ok)
    {
@@ -902,26 +902,15 @@ static BOOL dbf_getfield_date(DBF_HANDLE handle, const DBF_FIELD* field, int* ye
    return ok;
 }
 
-static BOOL dbf_putfield_date(DBF_HANDLE handle, const DBF_FIELD* field, int year, int month, int mday)
-{
-   char sz[80];
-
-   snprintf(sz, sizeof(sz), "%04d%02d%02d",
-      year + ((year < 1900) ? 1900 : 0),
-      month + 1,
-      mday);
-   return dbf_putfield(handle, field, sz);
-}
-
 BOOL dbf_getfield_time(DBF_HANDLE handle, const DBF_FIELD* field, time_t* utc_ptr, int* ms_ptr)
 {
    BOOL ok = (field != NULL);
 
    if (ok)
    {
-      switch (field->m_Type)
+      switch (field->type)
       {
-         case 'D':
+         case DBF_DATA_TYPE_DATE:
          {
             int year, month, mday;
             ok = dbf_getfield_date(handle, field, &year, &month, &mday);
@@ -950,8 +939,8 @@ BOOL dbf_getfield_time(DBF_HANDLE handle, const DBF_FIELD* field, time_t* utc_pt
             }
             break;
          }
-         case 'N':
-         case 'M':
+         case DBF_DATA_TYPE_INTEGER:
+         case DBF_DATA_TYPE_MEMO:
          {
             long temp;
             ok = dbf_getfield_numeric(handle, field, &temp);
@@ -962,7 +951,7 @@ BOOL dbf_getfield_time(DBF_HANDLE handle, const DBF_FIELD* field, time_t* utc_pt
             }
             break;
          }
-         case 'F':
+         case DBF_DATA_TYPE_FLOAT:
          {
             double temp;
             ok = dbf_getfield_float(handle, field, &temp);
@@ -985,20 +974,20 @@ BOOL dbf_putfield_time(DBF_HANDLE handle, const DBF_FIELD* field, time_t utc, in
 {
    BOOL ok = (field != NULL);
 
-   if (ok) switch (field->m_Type)
+   if (ok) switch (field->type)
    {
-      case 'D':
+      case DBF_DATA_TYPE_DATE:
       {
          struct tm* tm = localtime(&utc);
          ok = (tm != NULL);
-         if (ok) ok = dbf_putfield_date(handle, field, tm->tm_year + 1900, tm->tm_mon, tm->tm_mday);
+         if (ok) ok = dbf_putfield_tm(handle, field, tm, ms);
          break;
       }
-      case 'N':
-      case 'M':
+      case DBF_DATA_TYPE_INTEGER:
+      case DBF_DATA_TYPE_MEMO:
          ok = dbf_putfield_numeric(handle, field, (long)utc);
          break;
-      case 'F':
+      case DBF_DATA_TYPE_FLOAT:
          ok = dbf_putfield_float(handle, field, ((double)utc) + ((double)ms)/1000);
          break;
       default:
@@ -1014,9 +1003,9 @@ BOOL dbf_getfield_tm(DBF_HANDLE handle, const DBF_FIELD* field, struct tm* tm, i
 
    if (ok)
    {
-      switch (field->m_Type)
+      switch (field->type)
       {
-         case 'D':
+         case DBF_DATA_TYPE_DATE:
          {
             int year, month, mday;
             ok = dbf_getfield_date(handle, field, &year, &month, &mday);
@@ -1038,9 +1027,9 @@ BOOL dbf_getfield_tm(DBF_HANDLE handle, const DBF_FIELD* field, struct tm* tm, i
             }
             break;
          }
-         case 'N':
-         case 'M':
-         case 'F':
+         case DBF_DATA_TYPE_INTEGER:
+         case DBF_DATA_TYPE_MEMO:
+         case DBF_DATA_TYPE_FLOAT:
          {
             time_t utc;
             ok = dbf_getfield_time(handle, field, &utc, ms);
@@ -1068,14 +1057,46 @@ BOOL dbf_putfield_tm(DBF_HANDLE handle, const DBF_FIELD* field, const struct tm*
 {
    BOOL ok = tm && field;
 
-   if (ok) switch (field->m_Type)
+   if (ok) switch (field->type)
    {
-      case 'D':
-         ok = dbf_putfield_date(handle, field, tm->tm_year, tm->tm_mon, tm->tm_mday);
+      case DBF_DATA_TYPE_DATE:
+      {
+         char sz[80];
+         snprintf(sz, sizeof(sz), "%04d%02d%02d",
+            tm->tm_year + ((tm->tm_year < 1900) ? 1900 : 0),
+            tm->tm_mon + 1,
+            tm->tm_mday);
+         ok = dbf_putfield(handle, field, sz);
          break;
-      case 'N':
-      case 'M':
-      case 'F':
+      }
+      case DBF_DATA_TYPE_TIME: /* non-standard */
+      {
+         char sz[80];
+         snprintf(sz, sizeof(sz), "%02d%02d%02d%03d",
+            tm->tm_hour,
+            tm->tm_min,
+            tm->tm_sec,
+            ms % 1000);
+         ok = dbf_putfield(handle, field, sz);
+         break;
+      }
+      case DBF_DATA_TYPE_DATETIME: /* non-standard */
+      {
+         char sz[80];
+         snprintf(sz, sizeof(sz), "%04d%02d%02d%02d%02d%02d%03d",
+            tm->tm_year + ((tm->tm_year < 1900) ? 1900 : 0),
+            tm->tm_mon + 1,
+            tm->tm_mday,
+            tm->tm_hour,
+            tm->tm_min,
+            tm->tm_sec,
+            ms % 1000);
+         ok = dbf_putfield(handle, field, sz);
+         break;
+      }
+      case DBF_DATA_TYPE_INTEGER:
+      case DBF_DATA_TYPE_MEMO:
+      case DBF_DATA_TYPE_FLOAT:
       {
          const time_t utc = mktime((struct tm*)tm); // unconst due to bad prototype in MSVC7
          ok = (-1 != utc);
@@ -1177,7 +1198,7 @@ enum dbf_data_type dbf_gettype_int2ext(char type)
 
 enum dbf_data_type dbf_getfield_type(DBF_HANDLE handle, const DBF_FIELD* field)
 {
-   return field ? dbf_gettype_int2ext(field->m_Type) : DBF_DATA_TYPE_UNKNOWN;
+   return field ? field->type : DBF_DATA_TYPE_UNKNOWN;
 }
 
 BOOL dbf_getfield_info(DBF_HANDLE handle, size_t index, DBF_FIELD_INFO* info)
@@ -1191,7 +1212,7 @@ BOOL dbf_getfield_info(DBF_HANDLE handle, size_t index, DBF_FIELD_INFO* info)
       //strncpy(info->name, field->m_Name, sizeof(info->name));
       strcpy_dos2host(info->name, field->m_Name, sizeof(info->name), handle->charconv);
       info->length   = field->m_Length;
-      info->type     = dbf_gettype_int2ext(field->m_Type);
+      info->type     = field->type;
       info->decimals = field->m_DecCount;
    }
    return ok;
@@ -1365,7 +1386,7 @@ DBF_HANDLE dbf_create_attach(void* stream, zlib_filefunc_def* api,
 
       //dst->index = i;
       strncpy(dst->m_Name, src->name, sizeof(dst->m_Name));
-      dst->m_Type       = dbf_gettype_ext2int(src->type);
+      dst->type         = src->type;
       dst->m_DecCount   = (uint8_t)src->decimals;
       dst->m_Length     = (uint8_t)len;
       dst->ptr = NULL;
@@ -1393,7 +1414,7 @@ DBF_HANDLE dbf_create_attach(void* stream, zlib_filefunc_def* api,
 
       //strncpy(temp.name, field->m_Name, sizeof(temp.name));
 
-      temp.type     = field->m_Type;
+      temp.type     = dbf_gettype_ext2int(field->type);
       temp.length   = (uint8_t)field->m_Length;
       temp.deccount = (uint8_t)field->m_DecCount;
       field->ptr = recorddataptr + header.recordlength;
@@ -1460,19 +1481,18 @@ BOOL dbf_getversion(DBF_HANDLE handle)
    return handle->version;
 }
 
-size_t dbf_getfield(DBF_HANDLE handle, const DBF_FIELD* field, char* buf, size_t buf_len, enum dbf_data_type enumtype)
+size_t dbf_getfield(DBF_HANDLE handle, const DBF_FIELD* field, char* buf, size_t buf_len, enum dbf_data_type type)
 {
    BOOL trim = TRUE;
    size_t len = 0;
 
    if (field)
    {
-      const char type = dbf_gettype_ext2int(enumtype);
-      if ( (field->m_Type == type) || (type == '?'))
+      if ( (field->type == type) || (type == DBF_DATA_TYPE_ANY))
       {
-         switch (field->m_Type)
+         switch (field->type)
          {
-            case 'M':
+            case DBF_DATA_TYPE_MEMO:
             {
                const char term = field->ptr[field->m_Length];
                int n;
@@ -1546,7 +1566,7 @@ size_t dbf_getfield(DBF_HANDLE handle, const DBF_FIELD* field, char* buf, size_t
                }
                if (buf)
                {
-                  if (field->m_Type == 'F')
+                  if (field->type == DBF_DATA_TYPE_FLOAT)
                   {
                      strncpy(buf, field->ptr, len);
                      dotnormalize(buf, 0, len);
