@@ -191,7 +191,10 @@ void CDBFExplorerView::ShowRecords(bool /*bShowDeletedRecords*/)
 //			if (pField->m_Type == 'N' || pField->m_Type == 'F' || pField->m_Type == 'L')
 //				nFormat = LVCFMT_RIGHT;
 
-			GetListCtrl().InsertColumn(i-1, A2CT(pField->m_Name), nFormat, 3*nWidth/2);
+         char* temp = _strdup(pField->m_Name);
+         OemToCharA(temp, temp);
+			GetListCtrl().InsertColumn(i-1, A2CT(temp), nFormat, 3*nWidth/2);
+         free(temp);
 		}
 	}
 	int nCount = pDoc->m_dBaseFile->GetRecordCount();

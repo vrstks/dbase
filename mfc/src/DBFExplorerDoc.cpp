@@ -215,7 +215,10 @@ void CDBFExplorerDoc::OnFileStructure()
 		if (pField)
 		{
 			CString strFieldData;
-			strFieldData.Format(_T("%s,%c,%d,%d"), A2CT(pField->m_Name), pField->m_Type, pField->m_Length, pField->m_DecCount);
+         char* temp = _strdup(pField->m_Name);
+         OemToCharA(temp, temp);
+			strFieldData.Format(_T("%s,%c,%d,%d"), A2CT(temp), pField->m_Type, pField->m_Length, pField->m_DecCount);
+         free(temp);
 			dlg.m_strFieldArray.Add(strFieldData);
 		}
 	}
