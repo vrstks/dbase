@@ -55,7 +55,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 /nologo /subsystem:windows /machine:I386
-# ADD LINK32 version.lib /nologo /subsystem:windows /machine:I386 /out:"..\..\bin/DBFExplorer-ansi.exe"
+# ADD LINK32 version.lib /nologo /subsystem:windows /machine:I386 /out:"..\..\bin/DBFExplorer95.exe"
 
 !ELSEIF  "$(CFG)" == "DBFExplorer - Win32 DLL Debug"
 
@@ -81,7 +81,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 version.lib /nologo /subsystem:windows /debug /machine:I386 /out:"..\..\bin/DBFExplorer-ansi_d.6.exe" /pdbtype:sept
+# ADD LINK32 version.lib /nologo /subsystem:windows /debug /machine:I386 /out:"..\..\bin/DBFExplorer95_d.6.exe" /pdbtype:sept
 
 !ELSEIF  "$(CFG)" == "DBFExplorer - Win32 Unicode Release"
 
