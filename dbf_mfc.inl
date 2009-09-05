@@ -209,20 +209,8 @@ inline int CDbaseFile::GetMemoField(size_t field, char* buf, size_t buf_len)
 
 inline size_t CDbaseFile::GetMemoFieldLength(size_t field)
 {
-   size_t len = base::Read(GetFieldPtr(field), NULL, 0);
+   size_t len = base::Read(GetFieldPtr(field), (char*)NULL, 0);
    return len ? (len + 1) : 0;
-}
-
-inline int CDbaseFile::PutMemoField(size_t field, const char* buf, size_t /*buf_len*/)
-{
-   base::Write(GetFieldPtr(field), buf);
-   return base::GetLastError();
-}
-
-inline int CDbaseFile::PutMemoField(const char* field, const char* buf, size_t /*buf_len*/)
-{
-   base::Write(GetFieldPtr(field), buf);
-   return base::GetLastError();
 }
 
 /*
@@ -485,9 +473,14 @@ inline bool CDbaseFile::Read(size_t field, CTime* utc, int* ms)
    return Read(GetFieldPtr(field), utc, ms);
 }
 
+inline bool CDbaseFile::Write(const DBF_FIELD* field, const SYSTEMTIME& st)
+{
+   return base::Write(field, st);
+}
+
 inline bool CDbaseFile::Write(const DBF_FIELD* field, const CTime& utc, int ms)
 {
-   return base::WriteDateTime(field, (time_t)utc.GetTime(), ms);
+   return base::Write(field, (time_t)utc.GetTime(), ms);
 }
 
 inline bool CDbaseFile::Write(const char* field, const CTime& utc, int ms)

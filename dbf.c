@@ -883,7 +883,7 @@ BOOL dbf_move_prepare(DBF_HANDLE handle)
    return ok;
 }
 
-BOOL dbf_getfield_date(DBF_HANDLE handle, const DBF_FIELD* field, int* year, int* month, int* mday)
+static BOOL dbf_getfield_date(DBF_HANDLE handle, const DBF_FIELD* field, int* year, int* month, int* mday)
 {
    BOOL ok = field && (field->m_Type == 'D');
 
@@ -902,7 +902,7 @@ BOOL dbf_getfield_date(DBF_HANDLE handle, const DBF_FIELD* field, int* year, int
    return ok;
 }
 
-BOOL dbf_putfield_date(DBF_HANDLE handle, const DBF_FIELD* field, int year, int month, int mday)
+static BOOL dbf_putfield_date(DBF_HANDLE handle, const DBF_FIELD* field, int year, int month, int mday)
 {
    char sz[80];
 

@@ -141,34 +141,19 @@ inline bool CDBase::GetPrevRecord()
    return ok;
 }
 
-inline bool CDBase::ReadDate(const DBF_FIELD* field, int* year, int* month, int* mday)
-{
-   return ::dbf_getfield_date(m_handle, field, year, month, mday) ? true : false;
-}
-
-inline bool CDBase::ReadDate(const char* field, int* year, int* month, int* mday)
-{
-   return ReadDate(GetFieldPtr(field), year, month, mday);
-}
-
-inline bool CDBase::ReadDate(size_t field, int* year, int* month, int* mday)
-{
-   return ReadDate(GetFieldPtr(field), year, month, mday);
-}
-
-inline bool CDBase::ReadDateTime(const DBF_FIELD* field, struct tm* tm, int* ms)
+inline bool CDBase::Read(const DBF_FIELD* field, struct tm* tm, int* ms)
 {
    return ::dbf_getfield_tm(m_handle, field, tm, ms) ? true : false;
 }
 
-inline bool CDBase::ReadDateTime(const char* field, struct tm* tm, int* ms)
+inline bool CDBase::Read(const char* field, struct tm* tm, int* ms)
 {
-   return ReadDateTime(GetFieldPtr(field), tm, ms);
+   return Read(GetFieldPtr(field), tm, ms);
 }
 
-inline bool CDBase::ReadDateTime(size_t field, struct tm* tm, int* ms)
+inline bool CDBase::Read(size_t field, struct tm* tm, int* ms)
 {
-   return ReadDateTime(GetFieldPtr(field), tm, ms);
+   return Read(GetFieldPtr(field), tm, ms);
 }
 
 inline bool CDBase::ReadDateTime(const DBF_FIELD* field, time_t* utc, int* ms)
@@ -186,49 +171,51 @@ inline bool CDBase::ReadDateTime(size_t field, time_t* utc, int* ms)
    return ReadDateTime(GetFieldPtr(field), utc, ms);
 }
 
-inline bool CDBase::WriteDate(const DBF_FIELD* field, int year, int month, int mday)
+#ifdef _WINBASE_
+inline bool CDBase::Write(const DBF_FIELD* field, const SYSTEMTIME& st)
 {
-   return ::dbf_putfield_date(m_handle, field, year, month, mday) ? true : false;
+   struct tm tm;
+   tm.tm_year = st.wYear - 1900;
+   tm.tm_mon  = st.wMonth - 1;
+   tm.tm_mday = st.wDay;
+   tm.tm_hour = st.wHour;
+   tm.tm_min  = st.wMinute;
+   tm.tm_sec  = st.wSecond;
+   tm.tm_isdst = 0;
+   tm.tm_wday = 0;
+   tm.tm_yday = 0;
+   return Write(field, tm, st.wMilliseconds);
+}
+#endif
+
+inline bool CDBase::Write(const DBF_FIELD* field, const struct tm& tm, int ms)
+{
+   return ::dbf_putfield_tm(m_handle, field, &tm, ms) ? true : false;
 }
 
-inline bool CDBase::WriteDate(const char* field, int year, int month, int mday)
+inline bool CDBase::Write(const char* field, const struct tm& tm, int ms)
 {
-   return WriteDate(GetFieldPtr(field), year, month, mday);
+   return Write(GetFieldPtr(field), tm, ms);
 }
 
-inline bool CDBase::WriteDate(size_t field, int year, int month, int mday)
+inline bool CDBase::Write(size_t field, const struct tm& tm, int ms)
 {
-   return WriteDate(GetFieldPtr(field), year, month, mday);
+   return Write(GetFieldPtr(field), tm, ms);
 }
 
-inline bool CDBase::WriteDateTime(const DBF_FIELD* field, const struct tm* tm, int ms)
-{
-   return ::dbf_putfield_tm(m_handle, field, tm, ms) ? true : false;
-}
-
-inline bool CDBase::WriteDateTime(const char* field, const struct tm* tm, int ms)
-{
-   return WriteDateTime(GetFieldPtr(field), tm, ms);
-}
-
-inline bool CDBase::WriteDateTime(size_t field, const struct tm* tm, int ms)
-{
-   return WriteDateTime(GetFieldPtr(field), tm, ms);
-}
-
-inline bool CDBase::WriteDateTime(const DBF_FIELD* field, const time_t& utc, int ms)
+inline bool CDBase::Write(const DBF_FIELD* field, const time_t& utc, int ms)
 {
    return ::dbf_putfield_time(m_handle, field, utc, ms) ? true : false;
 }
 
-inline bool CDBase::WriteDateTime(const char* field, const time_t& utc, int ms)
+inline bool CDBase::Write(const char* field, const time_t& utc, int ms)
 {
-   return WriteDateTime(GetFieldPtr(field), utc, ms);
+   return Write(GetFieldPtr(field), utc, ms);
 }
 
-inline bool CDBase::WriteDateTime(size_t field, const time_t& utc, int ms)
+inline bool CDBase::Write(size_t field, const time_t& utc, int ms)
 {
-   return WriteDateTime(GetFieldPtr(field), utc, ms);
+   return Write(GetFieldPtr(field), utc, ms);
 }
 
 inline bool CDBase::Read(const DBF_FIELD* field, bool* b)

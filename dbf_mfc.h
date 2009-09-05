@@ -71,6 +71,9 @@ public:
 	bool Write(const char* field, const COleDateTime&);
 	bool Write(size_t      field, const COleDateTime&);
 
+#ifdef _WINBASE_
+   bool Write(const DBF_FIELD* , const SYSTEMTIME&);
+#endif
    bool Write(const DBF_FIELD* , const CTime&, int ms = 0);
 	bool Write(const char* field, const CTime&, int ms = 0);
 	bool Write(size_t      field, const CTime&, int ms = 0);
@@ -154,19 +157,6 @@ public:
 	
 	size_t GetMemoFieldLength(size_t field);
 	int GetMemoField(size_t field     , char *buf, size_t buf_len);
-	int PutMemoField(size_t field     , const char* buf, size_t buf_len);
-	int PutMemoField(const char* field, const char* buf, size_t buf_len);
-   /*
-   size_t GetMemoFieldLength(const DBF_FIELD*);
-	size_t GetMemoFieldLength(size_t field);
-	size_t GetMemoFieldLength(const char* field);
-	int GetMemoField(const DBF_FIELD* , char* buf, size_t buf_len);
-	int GetMemoField(size_t field     , char *buf, size_t buf_len);
-	int GetMemoField(const char* field, char* buf, size_t buf_len);
-   int PutMemoField(const DBF_FIELD* , const char* buf, size_t buf_len);
-
-   int ClearMemoField(const DBF_FIELD*);
-   */
 	int ClearMemoField(size_t field);
 	int ClearMemoField(const char* field);	
 };

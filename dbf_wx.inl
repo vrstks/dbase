@@ -103,7 +103,7 @@ inline bool wxDBase::Read(const DBF_FIELD* field, wxDateTime* dt)
 {
    struct tm tm;
    int ms;
-   bool ok = base::ReadDateTime(field, &tm, &ms);
+   bool ok = base::Read(field, &tm, &ms);
    if (ok && dt)
    {
       wxDateTime::Tm Tm(tm, wxDateTime::TimeZone());
@@ -161,7 +161,7 @@ inline bool wxDBase::Write(const DBF_FIELD* field, const wxDateTime& dt)
       tm.tm_yday = 0;
       tm.tm_isdst = 0;
 
-      ok = base::WriteDateTime(field, &tm);
+      ok = base::Write(field, tm);
    }
    return ok;
 }

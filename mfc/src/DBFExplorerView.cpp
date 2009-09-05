@@ -1057,7 +1057,7 @@ void CDBFExplorerView::EditField(int nItem, int nSubItem)
 			if (pDoc->m_dBaseFile->GetRecord(pItem->dwRecordIndex) == DBASE_SUCCESS)
 			{
 				// Set new value
-				pDoc->m_dBaseFile->PutMemoField(nSubItem, dlg.m_strText, dlg.m_strText.GetLength());
+				pDoc->m_dBaseFile->Write(nSubItem, dlg.m_strText);
 
 				pDoc->m_dBaseFile->PutRecord(pItem->dwRecordIndex);
 

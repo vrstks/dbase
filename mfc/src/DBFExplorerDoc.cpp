@@ -326,6 +326,7 @@ void CDBFExplorerDoc::OnFilePackdatabase()
 /********************************************************************/
 BOOL CDBFExplorerDoc::CopyBackupData(LPCTSTR lpszBackupFile)
 {
+   USES_CONVERSION;
 	// copy all data
 	CDbaseFile backupDBF;
 
@@ -368,7 +369,7 @@ BOOL CDBFExplorerDoc::CopyBackupData(LPCTSTR lpszBackupFile)
 							backupDBF.GetMemoField(i, buff, nLength);
 						}			
 						// set value
-						if (buff) m_dBaseFile->PutMemoField(pBackupField.name, buff, strlen(buff));
+						if (buff) m_dBaseFile->Write(m_dBaseFile->GetFieldPtr(pBackupField.name), A2CT(buff));
 						delete buff;
 					}
 					else

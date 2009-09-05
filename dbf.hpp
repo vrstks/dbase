@@ -74,13 +74,9 @@ public:
    int GetField_Date(size_t field     , char*);
 	int GetField_Date(const char* field, char*);
    
-   bool ReadDate(const DBF_FIELD* , int* year, int* month, int* mday);
-	bool ReadDate(const char* field, int* year, int* month, int* mday);
-	bool ReadDate(size_t field     , int* year, int* month, int* mday);
-
-   bool ReadDateTime(const DBF_FIELD* , struct tm*, int* ms = NULL);
-	bool ReadDateTime(const char* field, struct tm*, int* ms = NULL);
-	bool ReadDateTime(size_t field     , struct tm*, int* ms = NULL);
+   bool Read(const DBF_FIELD* , struct tm*, int* ms = NULL);
+	bool Read(const char* field, struct tm*, int* ms = NULL);
+	bool Read(size_t field     , struct tm*, int* ms = NULL);
 
    bool ReadDateTime(const DBF_FIELD* , time_t*, int* ms = NULL);
 	bool ReadDateTime(const char* field, time_t*, int* ms = NULL);
@@ -101,17 +97,16 @@ public:
    bool Read(const char* field, double*);   
    bool Read(size_t field     , double*);
 
-   bool WriteDate(const DBF_FIELD* , int year, int month, int mday);
-	bool WriteDate(const char* field, int year, int month, int mday);
-	bool WriteDate(size_t field     , int year, int month, int mday);
+#ifdef _WINBASE_
+   bool Write(const DBF_FIELD*, const SYSTEMTIME&);
+#endif
+   bool Write(const DBF_FIELD* , const struct tm&, int ms = 0);
+	bool Write(const char* field, const struct tm&, int ms = 0);
+	bool Write(size_t field     , const struct tm&, int ms = 0);
 
-   bool WriteDateTime(const DBF_FIELD* , const struct tm*, int ms = 0);
-	bool WriteDateTime(const char* field, const struct tm*, int ms = 0);
-	bool WriteDateTime(size_t field     , const struct tm*, int ms = 0);
-
-   bool WriteDateTime(const DBF_FIELD* , const time_t&, int ms = 0);
-	bool WriteDateTime(const char* field, const time_t&, int ms = 0);
-	bool WriteDateTime(size_t field     , const time_t&, int ms = 0);
+   bool Write(const DBF_FIELD* , const time_t&, int ms = 0);
+	bool Write(const char* field, const time_t&, int ms = 0);
+	bool Write(size_t field     , const time_t&, int ms = 0);
 
    bool Write(const DBF_FIELD* , const bool&);
    bool Write(const char* field, const bool&);

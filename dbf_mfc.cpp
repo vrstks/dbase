@@ -22,7 +22,13 @@
 
 bool CDbaseFile::Write(const DBF_FIELD* field, const COleDateTime& dt)
 {
-   return WriteDate(field, dt.GetYear(), dt.GetMonth()-1, dt.GetDay());
+   SYSTEMTIME st;
+   bool ok = dt.GetAsSystemTime(st) ? true : false;
+   if (ok)
+   {
+      ok = Write(field, st);
+   }
+   return ok;
 }
 
 /* Search for a specific record where criteria = field value	*/
@@ -125,7 +131,7 @@ bool CDbaseFile::CloneDatabase(const TCHAR* lpszCloneName, bool bCopyRecords, bo
                         buf[dwLength] = 0;
 
 							   // set value
-							   temp.PutMemoField(i, buf, strlen(buf));
+							   temp.Write(i, A2CT(buf));
 							   free(buf);
 						   }	
 						   else

@@ -126,9 +126,6 @@ EXTERN_C BOOL        dbf_getfield_bool (DBF_HANDLE, const DBF_FIELD*, BOOL*);
 EXTERN_C BOOL        dbf_putfield_bool (DBF_HANDLE, const DBF_FIELD*, BOOL);
 EXTERN_C BOOL        dbf_putfield_float(DBF_HANDLE, const DBF_FIELD*, double);
 
-EXTERN_C BOOL        dbf_getfield_date (DBF_HANDLE, const DBF_FIELD*, int* year, int* month, int* mday);
-EXTERN_C BOOL        dbf_putfield_date (DBF_HANDLE, const DBF_FIELD*, int  year, int  month, int  mday);
-
 EXTERN_C BOOL        dbf_getfield_time (DBF_HANDLE, const DBF_FIELD*, time_t*, int* ms);
 EXTERN_C BOOL        dbf_putfield_time (DBF_HANDLE, const DBF_FIELD*, time_t , int ms);
 
