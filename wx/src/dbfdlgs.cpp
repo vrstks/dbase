@@ -220,9 +220,9 @@ void wxDBFStructDialog::OnCalendar(wxCommandEvent&)
 {
    static const DBF_FIELD_INFO aField[] =
    {
-      { "DATE"    , DBF_DATA_TYPE_DATE   ,  8, 0 },
+      { "DATE"    , DBF_DATA_TYPE_DATE   , DBF_LEN_DATE, 0 },
       { "TEXT"    , DBF_DATA_TYPE_CHAR   , 80, 0 },
-      { "ANNIVERS", DBF_DATA_TYPE_BOOLEAN,  1, 0 }
+      { "ANNIVERS", DBF_DATA_TYPE_BOOLEAN, DBF_LEN_BOOLEAN, 0 }
    };
    m_list->m_array_count = WXSIZEOF(aField);
    size_t len = m_list->m_array_count * sizeof(*m_list->m_array);
