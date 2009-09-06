@@ -233,16 +233,8 @@ public:
             ok = m_dbf.Write(field, (long)var.lVal);
             break;
          case VT_BSTR:
-         {
-         #ifdef _UNICODE // T2CA() gets worn down by big databases, use wcstombs
-            char sz[200];
-            wcstombs(sz, (LPCTSTR)var.bstrVal, _countof(sz));
-            ok = m_dbf.Write(field, sz);
-         #else
             ok = m_dbf.Write(field, (LPCTSTR)var.bstrVal);
-         #endif
             break;
-         }
          default:
             _asm NOP
             break;

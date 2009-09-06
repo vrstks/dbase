@@ -390,8 +390,13 @@ inline CString CDbaseFile::GetCharField(const DBF_FIELD* field)
 
 inline bool CDbaseFile::Write(const DBF_FIELD* field, const TCHAR* str)
 {
-   USES_CONVERSION;
-   return base::Write(field, T2CA(str));
+#ifdef _UNICODE // T2CA() gets worn down by big databases, use wcstombs
+   char sz[1024];
+   wcstombs(sz, str, _countof(sz));
+   return base::Write(field, sz);
+#else
+   return base::Write(field, str);
+#endif
 }
 
 
