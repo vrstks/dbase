@@ -667,10 +667,14 @@ const DBF_FIELD* dbf_getfieldptr(DBF_HANDLE handle, size_t index)
    return field;
 }
 
-int dbf_findfield(DBF_HANDLE handle, const char* fieldname)
+int dbf_findfield(DBF_HANDLE handle, const char* fieldname_host)
 {
    size_t i;
-   const uint32_t namehash = strhash(fieldname, FALSE);
+   uint32_t namehash;
+   char fieldname[20];
+
+   strcpy_host2dos(fieldname, fieldname_host, _countof(fieldname), ENUM_dbf_charconv_oem_host);
+   namehash = strhash(fieldname, FALSE);
 
    for (i = 0; i < handle->fieldcount; i++)
    {
