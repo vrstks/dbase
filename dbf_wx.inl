@@ -188,6 +188,11 @@ inline bool wxDBase::Update(/*int index*/)
    return PutRecord(/*index*/);
 }
 
+inline bool wxDBase::Read(const DBF_FIELD* field, bool* b)
+{
+   return base::Read(field, b);
+}
+
 inline bool wxDBase::Read(size_t field, bool* b)
 {
    return base::Read(field, b);
