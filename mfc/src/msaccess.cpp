@@ -20,6 +20,7 @@
 
 #include "stdafx.h"
 #include "..\..\dbf_mfc.h"
+#include <math.h> // log
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -62,6 +63,22 @@ public:
    virtual void SaveRecord() = 0;
 };
 
+static long lpow(long x, long y) 
+{
+   long nRet;
+   for (nRet = 1; y > 0; y--)
+   {
+      nRet*=x;
+   }
+   return nRet;
+}
+
+static long lroot(long x, long y) 
+{
+   double flt = log((double)x)/log((double)y);
+   return (long)flt;
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // CDaoConverter_DBF
 
@@ -71,7 +88,7 @@ public:
    CDbaseFile m_dbf;
    CDaoConverter_DBF(CDaoDatabase* db, const TCHAR* tablename) : CDaoConverter(db, tablename) {}
 
-   enum dbf_data_type GetFieldType(int field, const CDaoFieldInfo& info)
+   enum dbf_data_type GetFieldType(int field, const CDaoFieldInfo& info, size_t* length)
    {
       enum dbf_data_type type;
       switch (info.m_nType)
@@ -98,14 +115,17 @@ public:
             if (date && time)
             {
                type = DBF_DATA_TYPE_DATETIME;
+               *length = DBF_LEN_DATETIME;
             }
             else if (time)
             {
                type = DBF_DATA_TYPE_TIME;
+               *length = DBF_LEN_TIME;
             }
             else
             {
                type = DBF_DATA_TYPE_DATE;
+               *length = DBF_LEN_DATE;
             }
             break;
          }
@@ -119,6 +139,10 @@ public:
          case dbMemo:
          case dbChar:
             type = DBF_DATA_TYPE_CHAR;
+            if (0 == *length)
+            {
+               *length = 80;
+            }
             break;
          case dbInteger:
          case dbLong:
@@ -126,9 +150,24 @@ public:
          case dbNumeric:
          case dbBigInt:
             type = DBF_DATA_TYPE_INTEGER;
+            // workaround: it may be a running number, check if last one fits.
+            // If not, increase the field size
+            if (!(IsBOF() && IsEOF()))
+            {
+               MoveLast();
+               COleVariant var;
+      	      GetFieldValue(field, var);
+               
+               long n = lpow(10, *length);
+               if ( (var.vt == VT_I4) && (var.lVal >= n))
+               {
+                  *length = 1 + lroot(n, 10);
+               }
+            }
             break;
          case dbBoolean:
             type = DBF_DATA_TYPE_BOOLEAN;
+            *length = DBF_LEN_BOOLEAN;
             break;
          case dbCurrency:
          case dbBinary:
@@ -159,28 +198,7 @@ public:
          item->name[_countof(item->name) - 1] = 0;
          item->decimals = 0;
          item->length = info.m_lSize;
-         item->type = GetFieldType(i, info);
-         switch (item->type)
-         {
-            case DBF_DATA_TYPE_CHAR:
-               if (0 == item->length)
-               {
-                  item->length = 80;
-               }
-               break;
-            case DBF_DATA_TYPE_DATE:
-               item->length = DBF_LEN_DATE;
-               break;
-            case DBF_DATA_TYPE_TIME:
-               item->length = DBF_LEN_TIME;
-               break;
-            case DBF_DATA_TYPE_DATETIME:
-               item->length = DBF_LEN_DATETIME;
-               break;
-            case DBF_DATA_TYPE_BOOLEAN:
-               item->length = DBF_LEN_BOOLEAN;
-               break;
-         }
+         item->type = GetFieldType(i, info, &item->length);
       }
 
       zlib_filefunc_def api;
