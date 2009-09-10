@@ -945,17 +945,21 @@ BOOL dbf_getfield_time(DBF_HANDLE handle, const DBF_FIELD* field, time_t* utc_pt
    return ok;
 }
 
-BOOL dbf_putfield_time(DBF_HANDLE handle, const DBF_FIELD* field, time_t utc, int ms)
+BOOL dbf_putfield_time(DBF_HANDLE handle, const DBF_FIELD* field, time_t utc, int ms, enum dbf_data_type type)
 {
    BOOL ok = (field != NULL);
 
-   if (ok) switch (field->type)
+   if (type < 0) type = field->type;
+
+   if (ok) switch (type)
    {
       case DBF_DATA_TYPE_DATE:
+      case DBF_DATA_TYPE_TIME:
+      case DBF_DATA_TYPE_DATETIME:
       {
          struct tm* tm = localtime(&utc);
          ok = (tm != NULL);
-         if (ok) ok = dbf_putfield_tm(handle, field, tm, ms);
+         if (ok) ok = dbf_putfield_tm(handle, field, tm, ms, type);
          break;
       }
       case DBF_DATA_TYPE_INTEGER:
@@ -1033,11 +1037,13 @@ BOOL dbf_getfield_tm(DBF_HANDLE handle, const DBF_FIELD* field, struct tm* tm, i
    return ok;
 }
 
-BOOL dbf_putfield_tm(DBF_HANDLE handle, const DBF_FIELD* field, const struct tm* tm, int ms)
+BOOL dbf_putfield_tm(DBF_HANDLE handle, const DBF_FIELD* field, const struct tm* tm, int ms, enum dbf_data_type type)
 {
    BOOL ok = tm && field;
+   
+   if (type < 0) type = field->type;
 
-   if (ok) switch (field->type)
+   if (ok) switch (type)
    {
       case DBF_DATA_TYPE_DATE:
       {
@@ -1080,7 +1086,7 @@ BOOL dbf_putfield_tm(DBF_HANDLE handle, const DBF_FIELD* field, const struct tm*
       {
          const time_t utc = mktime((struct tm*)tm); // unconst due to bad prototype in MSVC7
          ok = (-1 != utc);
-         if (ok) ok = dbf_putfield_time(handle, field, utc, ms);
+         if (ok) ok = dbf_putfield_time(handle, field, utc, ms, type);
          break;
       }
       default:

@@ -188,34 +188,34 @@ inline bool CDBase::Write(const DBF_FIELD* field, const SYSTEMTIME& st)
 }
 #endif
 
-inline bool CDBase::Write(const DBF_FIELD* field, const struct tm& tm, int ms)
+inline bool CDBase::Write(const DBF_FIELD* field, const struct tm& tm, int ms, enum dbf_data_type type)
 {
-   return ::dbf_putfield_tm(m_handle, field, &tm, ms) ? true : false;
+   return ::dbf_putfield_tm(m_handle, field, &tm, ms, type) ? true : false;
 }
 
-inline bool CDBase::Write(const char* field, const struct tm& tm, int ms)
+inline bool CDBase::Write(const char* field, const struct tm& tm, int ms, enum dbf_data_type type)
 {
-   return Write(GetFieldPtr(field), tm, ms);
+   return Write(GetFieldPtr(field), tm, ms, type);
 }
 
-inline bool CDBase::Write(size_t field, const struct tm& tm, int ms)
+inline bool CDBase::Write(size_t field, const struct tm& tm, int ms, enum dbf_data_type type)
 {
-   return Write(GetFieldPtr(field), tm, ms);
+   return Write(GetFieldPtr(field), tm, ms, type);
 }
 
-inline bool CDBase::WriteTime(const DBF_FIELD* field, time_t utc, int ms)
+inline bool CDBase::WriteTime(const DBF_FIELD* field, time_t utc, int ms, enum dbf_data_type type)
 {
-   return ::dbf_putfield_time(m_handle, field, utc, ms) ? true : false;
+   return ::dbf_putfield_time(m_handle, field, utc, ms, type) ? true : false;
 }
 
-inline bool CDBase::WriteTime(const char* field, time_t utc, int ms)
+inline bool CDBase::WriteTime(const char* field, time_t utc, int ms, enum dbf_data_type type)
 {
-   return WriteTime(GetFieldPtr(field), utc, ms);
+   return WriteTime(GetFieldPtr(field), utc, ms, type);
 }
 
-inline bool CDBase::WriteTime(size_t field, time_t utc, int ms)
+inline bool CDBase::WriteTime(size_t field, time_t utc, int ms, enum dbf_data_type type)
 {
-   return WriteTime(GetFieldPtr(field), utc, ms);
+   return WriteTime(GetFieldPtr(field), utc, ms, type);
 }
 
 inline bool CDBase::Read(const DBF_FIELD* field, bool* b)
