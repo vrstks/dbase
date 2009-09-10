@@ -128,7 +128,7 @@ BEGIN
     BEGIN
         MENUITEM "&Help Topics\tF1",            ID_HELP_INDEX
         MENUITEM SEPARATOR
-        MENUITEM "&About DBFExplorer...",       ID_APP_ABOUT
+        MENUITEM "&About...",                   ID_APP_ABOUT
     END
 END
 
@@ -185,7 +185,7 @@ BEGIN
     BEGIN
         MENUITEM "&Help Topics\tF1",            ID_HELP_INDEX
         MENUITEM SEPARATOR
-        MENUITEM "&About DBF Explorer...",      ID_APP_ABOUT
+        MENUITEM "&About...",                   ID_APP_ABOUT
     END
 END
 
@@ -227,6 +227,7 @@ BEGIN
     VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
     VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT, NOINVERT
     VK_RETURN,      ID_EDIT_RECORD,         VIRTKEY, NOINVERT
+    VK_RETURN,      ID_FILE_STRUCTURE,      VIRTKEY, ALT, NOINVERT
     "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL, NOINVERT
     "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
 END
