@@ -126,6 +126,7 @@ protected:
 public:
    void Fixups(void);
    bool Update(/*int index*/);
+   static bool ParseDate(const wxString&, wxDateTime::Tm*, enum dbf_data_type);
 };
 
 #endif // __DBF_WX_H__

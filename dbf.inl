@@ -447,3 +447,7 @@ inline int CDBase::FindField(const char* fieldname) const
    return ::dbf_findfield(m_handle, fieldname);
 }
 
+inline bool CDBase::ParseDate(const char* buf, struct tm* tm, int* ms, enum dbf_data_type type)
+{
+   return ::dbf_parsedate(buf, tm, ms, type) ? true : false;
+}

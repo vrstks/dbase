@@ -289,3 +289,16 @@ inline wxDateTime wxDBase::GetLastUpdate(wxString* str) const
    return t;
 }
 
+inline bool wxDBase::ParseDate(const wxString& buf, wxDateTime::Tm* dtm, enum dbf_data_type type)
+{
+   struct tm tm;
+   int ms;
+   bool ok = base::ParseDate(buf.mb_str(), &tm, &ms, type);
+   if (ok)
+   {
+      wxDateTime::Tm temp(tm, wxDateTime::Local);
+      temp.msec = ms;
+      *dtm = temp;
+   }
+   return ok;
+}

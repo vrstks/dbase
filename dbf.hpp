@@ -154,6 +154,7 @@ public:
    
    bool OpenMemo(void* stream);
    bool CreateMemo(void* stream);
+   static bool ParseDate(const char*, struct tm*, int* ms, enum dbf_data_type);
 };
 
 #endif // __DBF_HPP__

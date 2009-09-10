@@ -511,16 +511,69 @@ time_t dbf_getlastupdate(DBF_HANDLE handle)
    return handle->lastupdate;
 }
 
-BOOL dbf_isvaliddate(const char *buf)
-{
-   int year, month, day;
-   BOOL ok = (3 == sscanf(buf,"%04d%02d%02d", &year, &month, &day));
+#define FMT_DATE     "%04d%02d%02d"
+#define FMT_TIME     "%02d%02d%02d%03d"
+#define FMT_DATETIME "%04d%02d%02d%02d%02d%02d%03d"
 
+BOOL dbf_parsedate(const char *buf, struct tm* tm_ptr, int* ms_ptr, enum dbf_data_type type)
+{
+   BOOL ok;
+   struct tm tm;
+   int ms = 0;
+   
+   memset(&tm, 0, sizeof(tm));
+   switch (type)
+   {
+      case DBF_DATA_TYPE_DATE:
+         ok = (3 == sscanf(buf, FMT_DATE, &tm.tm_year, &tm.tm_mon, &tm.tm_mday));
+         if (ok)
+         {
+            tm.tm_mon--;
+            tm.tm_year-=1900;
+            ok = (tm.tm_mon  >= 0) && (tm.tm_mon  <= 11) 
+              && (tm.tm_mday >= 1) && (tm.tm_mday <= 31);
+         }
+         break;
+      case DBF_DATA_TYPE_TIME:
+         ok = (4 == sscanf(buf, FMT_TIME, &tm.tm_hour, &tm.tm_min, &tm.tm_sec, &ms));
+         if (ok)
+         {
+            ok = (tm.tm_hour >= 0) && (tm.tm_hour <= 23) 
+              && (tm.tm_min  >= 0) && (tm.tm_min  <= 59)
+              && (tm.tm_sec  >= 0) && (tm.tm_sec  <= 59)
+              && (ms         >= 0) && (ms         <= 999);
+         }
+         break;
+      case DBF_DATA_TYPE_DATETIME:
+         ok = (7 == sscanf(buf, FMT_DATETIME, 
+               &tm.tm_year, &tm.tm_mon, &tm.tm_mday, &tm.tm_hour, &tm.tm_min, &tm.tm_sec, &ms));
+         if (ok)
+         {
+            tm.tm_mon--;
+            tm.tm_year-=1900;
+            ok = (tm.tm_mon  >= 0) && (tm.tm_mon  <= 11) 
+              && (tm.tm_mday >= 1) && (tm.tm_mday <= 31)
+              && (tm.tm_hour >= 0) && (tm.tm_hour <= 23) 
+              && (tm.tm_min  >= 0) && (tm.tm_min  <= 59)
+              && (tm.tm_sec  >= 0) && (tm.tm_sec  <= 59)
+              && (ms         >= 0) && (ms         <= 999);
+         }
+         break;
+      default:
+         ok = FALSE;
+         break;
+   }
    if (ok)
    {
-      ok = (month >= 1) && (month <= 12) && (day >= 1) && (day <= 31);
+      if (tm_ptr) *tm_ptr = tm;
+      if (ms_ptr) *ms_ptr = ms;
    }
    return ok;
+}
+
+BOOL dbf_isvaliddate(const char *buf, enum dbf_data_type type)
+{
+   return dbf_parsedate(buf, NULL, NULL, type);
 }
 
 BOOL dbf_setposition(DBF_HANDLE handle, size_t record)
@@ -757,7 +810,7 @@ BOOL dbf_putfield(DBF_HANDLE handle, const DBF_FIELD* field, const char* buf)
             break;
          }
          case DBF_DATA_TYPE_DATE:
-            if(!dbf_isvaliddate(dup))
+            if(!dbf_isvaliddate(dup, field->type))
             {
                strncpy(handle->lasterrormsg, "Invalid type (not a DATE)", _countof(handle->lasterrormsg));
                handle->lasterror = DBASE_INVALID_DATA;
@@ -985,30 +1038,12 @@ BOOL dbf_getfield_tm(DBF_HANDLE handle, const DBF_FIELD* field, struct tm* tm, i
       switch (field->type)
       {
          case DBF_DATA_TYPE_DATE:
+         case DBF_DATA_TYPE_TIME:
+         case DBF_DATA_TYPE_DATETIME:
          {
-            long temp;
-            ok = dbf_getfield_numeric(handle, field, &temp);
-            if (ok) ok = (temp != 0);
-            if (ok)
-            {
-               int year, month, mday;
-               mday  =  (temp / 1    ) % 100;
-               month = ((temp / 100  ) % 100) - 1;
-               year  =  (temp / 10000);
-               if (tm)
-               {
-                  tm->tm_sec = 0;
-                  tm->tm_min = 0;
-                  tm->tm_hour = 0;
-                  tm->tm_mday = mday;
-                  tm->tm_mon  = month;
-                  tm->tm_year = year - 1900;
-                  tm->tm_wday = 0;
-                  tm->tm_yday = 0;
-                  tm->tm_isdst = 0;
-               }
-               if (ms) *ms = 0;
-            }
+            char temp[80];
+            ok = 0 != dbf_getfield(handle, field, temp, _countof(temp), DBF_DATA_TYPE_ANY);
+            if (ok) ok = dbf_parsedate(temp, tm, ms, field->type);
             break;
          }
          case DBF_DATA_TYPE_INTEGER:
@@ -1048,7 +1083,7 @@ BOOL dbf_putfield_tm(DBF_HANDLE handle, const DBF_FIELD* field, const struct tm*
       case DBF_DATA_TYPE_DATE:
       {
          char sz[80];
-         snprintf(sz, sizeof(sz), "%04d%02d%02d",
+         snprintf(sz, sizeof(sz), FMT_DATE,
             tm->tm_year + ((tm->tm_year < 1900) ? 1900 : 0),
             tm->tm_mon + 1,
             tm->tm_mday);
@@ -1058,7 +1093,7 @@ BOOL dbf_putfield_tm(DBF_HANDLE handle, const DBF_FIELD* field, const struct tm*
       case DBF_DATA_TYPE_TIME: /* non-standard */
       {
          char sz[80];
-         snprintf(sz, sizeof(sz), "%02d%02d%02d%03d",
+         snprintf(sz, sizeof(sz), FMT_TIME,
             tm->tm_hour,
             tm->tm_min,
             tm->tm_sec,
@@ -1069,7 +1104,7 @@ BOOL dbf_putfield_tm(DBF_HANDLE handle, const DBF_FIELD* field, const struct tm*
       case DBF_DATA_TYPE_DATETIME: /* non-standard */
       {
          char sz[80];
-         snprintf(sz, sizeof(sz), "%04d%02d%02d%02d%02d%02d%03d",
+         snprintf(sz, sizeof(sz), FMT_DATETIME,
             tm->tm_year + ((tm->tm_year < 1900) ? 1900 : 0),
             tm->tm_mon + 1,
             tm->tm_mday,
