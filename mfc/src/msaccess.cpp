@@ -20,7 +20,6 @@
 
 #include "stdafx.h"
 #include "..\..\dbf_mfc.h"
-#include <math.h> // log
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -62,22 +61,6 @@ public:
    virtual bool SaveField(size_t field, const COleVariant&) = 0;
    virtual void SaveRecord() = 0;
 };
-
-static long lpow(long x, long y) 
-{
-   long nRet;
-   for (nRet = 1; y > 0; y--)
-   {
-      nRet*=x;
-   }
-   return nRet;
-}
-
-static long lroot(long x, long y) 
-{
-   double flt = log((double)x)/log((double)y);
-   return (long)flt;
-}
 
 /////////////////////////////////////////////////////////////////////////////
 // CDaoConverter_DBF
@@ -150,18 +133,23 @@ public:
          case dbNumeric:
          case dbBigInt:
             type = DBF_DATA_TYPE_INTEGER;
-            // workaround: it may be a running number, check if last one fits.
-            // If not, increase the field size
+            // workaround: it may be a running number, check if highest one fits.
+            // Increase field size if needed
             if (!(IsBOF() && IsEOF()))
             {
                MoveLast();
                COleVariant var;
       	      GetFieldValue(field, var);
                
-               long n = lpow(10, *length);
-               if ( (var.vt == VT_I4) && (var.lVal >= n))
+               if (var.vt == VT_I4)
                {
-                  *length = 1 + lroot(n, 10);
+                  char temp[80];
+                  size_t len = _snprintf(temp, _countof(temp), "%d", var.lVal);
+
+                  if (len > *length)
+                  {
+                     *length = len;
+                  }
                }
             }
             break;
