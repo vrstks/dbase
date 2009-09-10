@@ -305,7 +305,7 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
 
                   ZREAD(handle->api, stream, &temp, sizeof(temp));
 
-                  if (*temp.name <= ' ')
+                  if ( (*temp.name >= 0) && (*temp.name <= ' '))
                   {
                      handle->fieldcount = i;
                      break;
