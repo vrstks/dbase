@@ -75,9 +75,9 @@ public:
    bool Read(const char* field, double*);   
    bool Read(size_t field     , double*);   
 
-   bool Write(const DBF_FIELD* , const wxDateTime&);
-   bool Write(const char* field, const wxDateTime&);
-   bool Write(size_t field     , const wxDateTime&);
+   bool Write(const DBF_FIELD* , const wxDateTime&, enum dbf_data_type type = DBF_DATA_TYPE_ANY);
+   bool Write(const char* field, const wxDateTime&, enum dbf_data_type type = DBF_DATA_TYPE_ANY);
+   bool Write(size_t field     , const wxDateTime&, enum dbf_data_type type = DBF_DATA_TYPE_ANY);
 
    bool Write(const DBF_FIELD* , const bool&);
    bool Write(const char* field, const bool&);

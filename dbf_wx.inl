@@ -30,7 +30,7 @@ inline bool wxDBase::Create(const wxString& filename, const DBF_FIELD_INFO* arra
    return ok;
 }
 
-inline bool wxDBase::Create(/*const wxString& filename, */void* stream, struct zlib_filefunc_def_s* api, 
+inline bool wxDBase::Create(void* stream, struct zlib_filefunc_def_s* api, 
    const DBF_FIELD_INFO* array, size_t array_count, 
    enum dbf_charconv charconv, void* memo)
 {
@@ -39,7 +39,7 @@ inline bool wxDBase::Create(/*const wxString& filename, */void* stream, struct z
    return ok;
 }
 
-inline bool wxDBase::Attach(/*const wxString& filename, */void* stream, struct zlib_filefunc_def_s* api,
+inline bool wxDBase::Attach(void* stream, struct zlib_filefunc_def_s* api,
                             bool editable, enum dbf_charconv conv, void* memo)
 {
    wxASSERT(!IsOpen());
@@ -47,7 +47,7 @@ inline bool wxDBase::Attach(/*const wxString& filename, */void* stream, struct z
    return ok;
 }
 
-inline bool wxDBase::Attach(DBF_HANDLE handle/*, const wxString& filename*/)
+inline bool wxDBase::Attach(DBF_HANDLE handle)
 {
    wxASSERT(!IsOpen());
    bool ok = base::Attach(handle);
@@ -108,15 +108,6 @@ inline bool wxDBase::Read(const DBF_FIELD* field, wxDateTime* dt)
    {
       wxDateTime::Tm Tm(tm, wxDateTime::TimeZone());
       Tm.msec = ms;
-/*      
-      Tm.sec  = tm.tm_sec;
-      Tm.min  = tm.tm_min;
-      Tm.hour = tm.tm_hour;
-      Tm.mday = tm.tm_mday;
-      Tm.mon  = (enum wxDateTime::Month)tm.tm_mon;
-      Tm.year = tm.tm_year + 1900;
-      Tm.msec = ms; // we want ms *and* years < 1970
-      */
       dt->Set(Tm); // don't use tm ctor, we want ms and years < 1970
       if (ms) dt->SetMillisecond(ms);
    }
@@ -133,17 +124,17 @@ inline bool wxDBase::Read(const char* field, wxDateTime* dt)
    return Read(GetFieldPtr(field), dt);
 }
 
-inline bool wxDBase::Write(size_t field, const wxDateTime& dt)
+inline bool wxDBase::Write(size_t field, const wxDateTime& dt, enum dbf_data_type type)
 {
-   return Write(GetFieldPtr(field), dt);
+   return Write(GetFieldPtr(field), dt, type);
 }
 
-inline bool wxDBase::Write(const char* field, const wxDateTime& dt)
+inline bool wxDBase::Write(const char* field, const wxDateTime& dt, enum dbf_data_type type)
 {
-   return Write(GetFieldPtr(field), dt);
+   return Write(GetFieldPtr(field), dt, type);
 }
 
-inline bool wxDBase::Write(const DBF_FIELD* field, const wxDateTime& dt)
+inline bool wxDBase::Write(const DBF_FIELD* field, const wxDateTime& dt, enum dbf_data_type type)
 {
    bool ok = dt.IsValid();
    if (ok)
@@ -161,7 +152,7 @@ inline bool wxDBase::Write(const DBF_FIELD* field, const wxDateTime& dt)
       tm.tm_yday = 0;
       tm.tm_isdst = 0;
 
-      ok = base::Write(field, tm, Tm.msec);
+      ok = base::Write(field, tm, Tm.msec, type);
    }
    return ok;
 }
