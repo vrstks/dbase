@@ -161,7 +161,7 @@ inline bool wxDBase::Write(const DBF_FIELD* field, const wxDateTime& dt)
       tm.tm_yday = 0;
       tm.tm_isdst = 0;
 
-      ok = base::Write(field, tm);
+      ok = base::Write(field, tm, Tm.msec);
    }
    return ok;
 }
