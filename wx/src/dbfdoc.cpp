@@ -57,11 +57,18 @@ bool wxDBFDoc::DoOpenDocument(const wxString& filename)
    return ok;
 }
 
+#if (wxVERSION_NUMBER >= 2900)
+wxString wxDBFDoc::GetUserReadableName() const
+{
+	return m_documentFile;
+}
+#else
 bool wxDBFDoc::GetPrintableName(wxString& buf) const
 {
    buf = m_documentFile;
    return true;
 }
+#endif
 
 bool wxDBFDoc::IsModified(void) const
 {

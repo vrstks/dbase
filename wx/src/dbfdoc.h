@@ -41,7 +41,11 @@ public:
    virtual bool IsModified(void) const;
    virtual void Modify(bool mod);
    virtual bool OnCloseDocument();
+#if (wxVERSION_NUMBER >= 2900)
+   virtual wxString GetUserReadableName() const;
+#else
    virtual bool GetPrintableName(wxString& buf) const;
+#endif
 };
 
 #endif // __DBFDOC_H__
