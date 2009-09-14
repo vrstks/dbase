@@ -141,10 +141,18 @@ public:
                COleVariant var;
       	      GetFieldValue(field, var);
                
-               if (var.vt == VT_I4)
+               int n = 0;
+               switch (var.vt)
+               {
+                  case VT_I2: 
+                     n = var.iVal; break;
+                  case VT_I4: 
+                     n = var.lVal; break;
+               }
+               if (n)
                {
                   char temp[80];
-                  size_t len = _snprintf(temp, _countof(temp), "%d", var.lVal);
+                  size_t len = _snprintf(temp, _countof(temp), "%d", n);
 
                   if (len > *length)
                   {
