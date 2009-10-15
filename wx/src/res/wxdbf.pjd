@@ -6,8 +6,8 @@
     <string name="title">""</string>
     <string name="author">""</string>
     <string name="description">""</string>
-    <string name="xrc_filename">"..\..\..\bin\wxdbf.xrc"</string>
-    <bool name="convert_images_to_xpm">0</bool>
+    <string name="xrc_filename">"wxdbf.xrc"</string>
+    <long name="image_mode">0</long>
     <bool name="inline_images">0</bool>
     <bool name="generate_cpp_for_xrc">1</bool>
     <long name="working_mode">2</long>
@@ -21,6 +21,7 @@
     <bool name="use_two_step_construction">0</bool>
     <bool name="use_enums">0</bool>
     <bool name="generate_for_xrced">0</bool>
+    <bool name="generate_virtual_eventhandlers">0</bool>
     <string name="current_platform">"&lt;All platforms&gt;"</string>
     <string name="target_wx_version">"&lt;Any&gt;"</string>
     <string name="cpp_header_comment">"/////////////////////////////////////////////////////////////////////////////
@@ -138,7 +139,7 @@
         <long name="locked">0</long>
         <string name="template-name">""</string>
         <bool name="dirty">1</bool>
-        <long name="makefile-last-written">0</long>
+        <long name="makefile-last-written">-8519680</long>
         <string name="Compiler name">""</string>
         <string name="Build mode">"Debug"</string>
         <string name="Unicode mode">"ANSI"</string>
@@ -146,10 +147,13 @@
         <string name="Modularity">"Modular"</string>
         <string name="GUI mode">"GUI"</string>
         <string name="Toolkit">"wxMSW"</string>
+        <string name="Processor type">"32-bit"</string>
         <string name="Runtime linking">"Dynamic"</string>
         <string name="Use exceptions">"Yes"</string>
         <string name="Use ODBC">"No"</string>
         <string name="Use OpenGL">"No"</string>
+        <string name="Use wxMediaCtrl">"No"</string>
+        <string name="Use wxRichTextCtrl">"Yes"</string>
         <string name="wxWidgets version">"%WXVERSION%"</string>
         <string name="Executable name">"%EXECUTABLE%"</string>
         <string name="Program arguments">""</string>
@@ -171,6 +175,7 @@
         <string name="Optimizations">"%AUTO%"</string>
         <string name="Warnings">"%AUTO%"</string>
         <string name="Debug flags">"%AUTO%"</string>
+        <string name="Extra compile flags">"%AUTO%"</string>
         <string name="Libraries">"%AUTO%"</string>
         <string name="Library path">"%AUTO%"</string>
         <string name="Linker flags">"%AUTO%"</string>
@@ -183,6 +188,7 @@
         <string name="PATH variable">"%AUTO%"</string>
         <bool name="Suppress source rules">0</bool>
         <bool name="Enable makefile generation">1</bool>
+        <string name="CFG">""</string>
       </document>
     </document>
   </data>
@@ -242,7 +248,7 @@
             <string name="proxy-Member variable name">""</string>
             <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             <document>
-              <string name="title">"&amp;New\tCtrl+N: wxID_NEW"</string>
+              <string name="title">"&amp;New: wxID_NEW"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menuitem"</string>
@@ -254,16 +260,17 @@
               <string name="proxy-type">"wbMenuItemProxy"</string>
               <string name="proxy-Id name">"wxID_NEW"</string>
               <long name="proxy-Id value">5002</long>
-              <string name="proxy-Label">"&amp;New\tCtrl+N"</string>
+              <string name="proxy-Label">"&amp;New"</string>
               <string name="proxy-Kind">"Normal"</string>
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">""</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
-              <string name="title">"&amp;Open...\tCtrl+O: wxID_OPEN"</string>
+              <string name="title">"&amp;Open...: wxID_OPEN"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menuitem"</string>
@@ -275,12 +282,13 @@
               <string name="proxy-type">"wbMenuItemProxy"</string>
               <string name="proxy-Id name">"wxID_OPEN"</string>
               <long name="proxy-Id value">5000</long>
-              <string name="proxy-Label">"&amp;Open...\tCtrl+O"</string>
+              <string name="proxy-Label">"&amp;Open..."</string>
               <string name="proxy-Kind">"Normal"</string>
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">""</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
@@ -315,6 +323,7 @@
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">""</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
@@ -331,7 +340,7 @@
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
-              <string name="title">"E&amp;xit\tCtrl+Q: wxID_EXIT"</string>
+              <string name="title">"E&amp;xit: wxID_EXIT"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menuitem"</string>
@@ -343,12 +352,13 @@
               <string name="proxy-type">"wbMenuItemProxy"</string>
               <string name="proxy-Id name">"wxID_EXIT"</string>
               <long name="proxy-Id value">5006</long>
-              <string name="proxy-Label">"E&amp;xit\tCtrl+Q"</string>
+              <string name="proxy-Label">"E&amp;xit"</string>
               <string name="proxy-Kind">"Normal"</string>
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">""</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
           </document>
@@ -368,7 +378,7 @@
             <string name="proxy-Member variable name">""</string>
             <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             <document>
-              <string name="title">"&amp;Fullscreen\tF11: fullscreen"</string>
+              <string name="title">"&amp;Fullscreen: view_fullscreen"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menuitem"</string>
@@ -378,14 +388,15 @@
               <long name="locked">0</long>
               <string name="created">"9/9/2006"</string>
               <string name="proxy-type">"wbMenuItemProxy"</string>
-              <string name="proxy-Id name">"fullscreen"</string>
+              <string name="proxy-Id name">"view_fullscreen"</string>
               <long name="proxy-Id value">10001</long>
-              <string name="proxy-Label">"&amp;Fullscreen\tF11"</string>
+              <string name="proxy-Label">"&amp;Fullscreen"</string>
               <string name="proxy-Kind">"Check"</string>
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">""</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
@@ -420,6 +431,7 @@
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">""</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
@@ -441,6 +453,7 @@
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">""</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
           </document>
@@ -478,6 +491,7 @@
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">""</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
           </document>
@@ -519,7 +533,7 @@
             <string name="proxy-Member variable name">""</string>
             <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             <document>
-              <string name="title">"&amp;New\tCtrl+N: wxID_NEW"</string>
+              <string name="title">"&amp;New: wxID_NEW"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menuitem"</string>
@@ -531,16 +545,17 @@
               <string name="proxy-type">"wbMenuItemProxy"</string>
               <string name="proxy-Id name">"wxID_NEW"</string>
               <long name="proxy-Id value">5002</long>
-              <string name="proxy-Label">"&amp;New\tCtrl+N"</string>
+              <string name="proxy-Label">"&amp;New"</string>
               <string name="proxy-Kind">"Normal"</string>
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">""</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
-              <string name="title">"&amp;Open...\tCtrl+O: wxID_OPEN"</string>
+              <string name="title">"&amp;Open...: wxID_OPEN"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menuitem"</string>
@@ -552,16 +567,17 @@
               <string name="proxy-type">"wbMenuItemProxy"</string>
               <string name="proxy-Id name">"wxID_OPEN"</string>
               <long name="proxy-Id value">5000</long>
-              <string name="proxy-Label">"&amp;Open...\tCtrl+O"</string>
+              <string name="proxy-Label">"&amp;Open..."</string>
               <string name="proxy-Kind">"Normal"</string>
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">""</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
-              <string name="title">"&amp;Save\tCtrl+S: wxID_SAVE"</string>
+              <string name="title">"&amp;Save: wxID_SAVE"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menuitem"</string>
@@ -573,12 +589,13 @@
               <string name="proxy-type">"wbMenuItemProxy"</string>
               <string name="proxy-Id name">"wxID_SAVE"</string>
               <long name="proxy-Id value">5003</long>
-              <string name="proxy-Label">"&amp;Save\tCtrl+S"</string>
+              <string name="proxy-Label">"&amp;Save"</string>
               <string name="proxy-Kind">"Normal"</string>
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">""</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
@@ -600,10 +617,11 @@
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">""</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
-              <string name="title">"&amp;Close\tCtrl+W: wxID_CLOSE"</string>
+              <string name="title">"&amp;Close: wxID_CLOSE"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menuitem"</string>
@@ -615,12 +633,13 @@
               <string name="proxy-type">"wbMenuItemProxy"</string>
               <string name="proxy-Id name">"wxID_CLOSE"</string>
               <long name="proxy-Id value">5001</long>
-              <string name="proxy-Label">"&amp;Close\tCtrl+W"</string>
+              <string name="proxy-Label">"&amp;Close"</string>
               <string name="proxy-Kind">"Normal"</string>
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">""</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
@@ -637,7 +656,7 @@
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
-              <string name="title">"Proper&amp;ties...\tAlt+Enter: wxID_PROPERTIES"</string>
+              <string name="title">"Proper&amp;ties...: wxID_PROPERTIES"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menuitem"</string>
@@ -649,16 +668,17 @@
               <string name="proxy-type">"wbMenuItemProxy"</string>
               <string name="proxy-Id name">"wxID_PROPERTIES"</string>
               <long name="proxy-Id value">5040</long>
-              <string name="proxy-Label">"Proper&amp;ties...\tAlt+Enter"</string>
+              <string name="proxy-Label">"Proper&amp;ties..."</string>
               <string name="proxy-Kind">"Normal"</string>
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">""</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
-              <string name="title">"E&amp;xport...\tCtrl+X: export"</string>
+              <string name="title">"E&amp;xport...: export"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menuitem"</string>
@@ -670,16 +690,17 @@
               <string name="proxy-type">"wbMenuItemProxy"</string>
               <string name="proxy-Id name">"export"</string>
               <long name="proxy-Id value">10001</long>
-              <string name="proxy-Label">"E&amp;xport...\tCtrl+X"</string>
+              <string name="proxy-Label">"E&amp;xport..."</string>
               <string name="proxy-Kind">"Normal"</string>
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">""</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
-              <string name="title">"Pack &amp;Database...\tCtrl+D: pack"</string>
+              <string name="title">"Pack &amp;Database...: pack"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menuitem"</string>
@@ -691,16 +712,17 @@
               <string name="proxy-type">"wbMenuItemProxy"</string>
               <string name="proxy-Id name">"pack"</string>
               <long name="proxy-Id value">10004</long>
-              <string name="proxy-Label">"Pack &amp;Database...\tCtrl+D"</string>
+              <string name="proxy-Label">"Pack &amp;Database..."</string>
               <string name="proxy-Kind">"Normal"</string>
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">""</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
-              <string name="title">"Modif&amp;y Structure...\tCtrl+M: struct"</string>
+              <string name="title">"Modif&amp;y Structure...: struct"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menuitem"</string>
@@ -712,12 +734,13 @@
               <string name="proxy-type">"wbMenuItemProxy"</string>
               <string name="proxy-Id name">"struct"</string>
               <long name="proxy-Id value">10005</long>
-              <string name="proxy-Label">"Modif&amp;y Structure...\tCtrl+M"</string>
+              <string name="proxy-Label">"Modif&amp;y Structure..."</string>
               <string name="proxy-Kind">"Normal"</string>
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">""</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
@@ -734,7 +757,7 @@
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
-              <string name="title">"&amp;Print...\tCtrl+P: wxID_PRINT"</string>
+              <string name="title">"&amp;Print...: wxID_PRINT"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menuitem"</string>
@@ -746,12 +769,13 @@
               <string name="proxy-type">"wbMenuItemProxy"</string>
               <string name="proxy-Id name">"wxID_PRINT"</string>
               <long name="proxy-Id value">5010</long>
-              <string name="proxy-Label">"&amp;Print...\tCtrl+P"</string>
+              <string name="proxy-Label">"&amp;Print..."</string>
               <string name="proxy-Kind">"Normal"</string>
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">""</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
@@ -773,10 +797,11 @@
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">""</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
-              <string name="title">"Print Pre&amp;view\tCtrl+Shift+P: wxID_PREVIEW"</string>
+              <string name="title">"Print Pre&amp;view: wxID_PREVIEW"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menuitem"</string>
@@ -788,12 +813,13 @@
               <string name="proxy-type">"wbMenuItemProxy"</string>
               <string name="proxy-Id name">"wxID_PREVIEW"</string>
               <long name="proxy-Id value">5012</long>
-              <string name="proxy-Label">"Print Pre&amp;view\tCtrl+Shift+P"</string>
+              <string name="proxy-Label">"Print Pre&amp;view"</string>
               <string name="proxy-Kind">"Normal"</string>
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">""</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
@@ -810,7 +836,7 @@
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
-              <string name="title">"E&amp;xit\tCtrl+Q: wxID_EXIT"</string>
+              <string name="title">"E&amp;xit: wxID_EXIT"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menuitem"</string>
@@ -822,12 +848,13 @@
               <string name="proxy-type">"wbMenuItemProxy"</string>
               <string name="proxy-Id name">"wxID_EXIT"</string>
               <long name="proxy-Id value">5006</long>
-              <string name="proxy-Label">"E&amp;xit\tCtrl+Q"</string>
+              <string name="proxy-Label">"E&amp;xit"</string>
               <string name="proxy-Kind">"Normal"</string>
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">""</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
           </document>
@@ -847,7 +874,7 @@
             <string name="proxy-Member variable name">""</string>
             <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             <document>
-              <string name="title">"&amp;Add...\tInsert: wxID_ADD"</string>
+              <string name="title">"&amp;Add...: wxID_ADD"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menuitem"</string>
@@ -859,16 +886,17 @@
               <string name="proxy-type">"wbMenuItemProxy"</string>
               <string name="proxy-Id name">"wxID_ADD"</string>
               <long name="proxy-Id value">5118</long>
-              <string name="proxy-Label">"&amp;Add...\tInsert"</string>
+              <string name="proxy-Label">"&amp;Add..."</string>
               <string name="proxy-Kind">"Normal"</string>
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">"Add record"</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
-              <string name="title">"&amp;Edit...\tF2: edit"</string>
+              <string name="title">"&amp;Edit...: edit"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menuitem"</string>
@@ -880,16 +908,17 @@
               <string name="proxy-type">"wbMenuItemProxy"</string>
               <string name="proxy-Id name">"edit"</string>
               <long name="proxy-Id value">10006</long>
-              <string name="proxy-Label">"&amp;Edit...\tF2"</string>
+              <string name="proxy-Label">"&amp;Edit..."</string>
               <string name="proxy-Kind">"Normal"</string>
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">"Edit record"</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
-              <string name="title">"&amp;Delete...\tDelete: wxID_DELETE"</string>
+              <string name="title">"&amp;Delete...: wxID_DELETE"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menuitem"</string>
@@ -901,12 +930,13 @@
               <string name="proxy-type">"wbMenuItemProxy"</string>
               <string name="proxy-Id name">"wxID_DELETE"</string>
               <long name="proxy-Id value">5037</long>
-              <string name="proxy-Label">"&amp;Delete...\tDelete"</string>
+              <string name="proxy-Label">"&amp;Delete..."</string>
               <string name="proxy-Kind">"Normal"</string>
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">"Delete the selection"</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
@@ -928,6 +958,7 @@
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">"Undelete the selection"</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
@@ -944,7 +975,7 @@
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
-              <string name="title">"&amp;Find...\tCtrl+F: wxID_FIND"</string>
+              <string name="title">"&amp;Find...: wxID_FIND"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menuitem"</string>
@@ -956,16 +987,17 @@
               <string name="proxy-type">"wbMenuItemProxy"</string>
               <string name="proxy-Id name">"wxID_FIND"</string>
               <long name="proxy-Id value">5034</long>
-              <string name="proxy-Label">"&amp;Find...\tCtrl+F"</string>
+              <string name="proxy-Label">"&amp;Find..."</string>
               <string name="proxy-Kind">"Normal"</string>
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>
-              <string name="proxy-Help text">"Undelete the selection"</string>
+              <string name="proxy-Help text">"Find"</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
-              <string name="title">"Find &amp;Next...\tF3: next"</string>
+              <string name="title">"Find &amp;Next...: next"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menuitem"</string>
@@ -977,16 +1009,17 @@
               <string name="proxy-type">"wbMenuItemProxy"</string>
               <string name="proxy-Id name">"next"</string>
               <long name="proxy-Id value">10003</long>
-              <string name="proxy-Label">"Find &amp;Next...\tF3"</string>
+              <string name="proxy-Label">"Find &amp;Next..."</string>
               <string name="proxy-Kind">"Normal"</string>
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>
-              <string name="proxy-Help text">"Undelete the selection"</string>
+              <string name="proxy-Help text">"Find next"</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
-              <string name="title">"&amp;Replace...\tCtrl+H: wxID_REPLACE"</string>
+              <string name="title">"&amp;Replace...: wxID_REPLACE"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menuitem"</string>
@@ -998,12 +1031,13 @@
               <string name="proxy-type">"wbMenuItemProxy"</string>
               <string name="proxy-Id name">"wxID_REPLACE"</string>
               <long name="proxy-Id value">5038</long>
-              <string name="proxy-Label">"&amp;Replace...\tCtrl+H"</string>
+              <string name="proxy-Label">"&amp;Replace..."</string>
               <string name="proxy-Kind">"Normal"</string>
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">"Undelete the selection"</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
@@ -1020,7 +1054,7 @@
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
-              <string name="title">"Select &amp;All\tCtrl+A: wxID_SELECTALL"</string>
+              <string name="title">"Select &amp;All: wxID_SELECTALL"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menuitem"</string>
@@ -1032,12 +1066,13 @@
               <string name="proxy-type">"wbMenuItemProxy"</string>
               <string name="proxy-Id name">"wxID_SELECTALL"</string>
               <long name="proxy-Id value">5036</long>
-              <string name="proxy-Label">"Select &amp;All\tCtrl+A"</string>
+              <string name="proxy-Label">"Select &amp;All"</string>
               <string name="proxy-Kind">"Normal"</string>
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">"Select the entire document"</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
           </document>
@@ -1057,7 +1092,7 @@
             <string name="proxy-Member variable name">""</string>
             <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             <document>
-              <string name="title">"&amp;Fullscreen\tF11: fullscreen"</string>
+              <string name="title">"&amp;Fullscreen: view_fullscreen"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menuitem"</string>
@@ -1067,14 +1102,15 @@
               <long name="locked">0</long>
               <string name="created">"9/9/2006"</string>
               <string name="proxy-type">"wbMenuItemProxy"</string>
-              <string name="proxy-Id name">"fullscreen"</string>
+              <string name="proxy-Id name">"view_fullscreen"</string>
               <long name="proxy-Id value">10008</long>
-              <string name="proxy-Label">"&amp;Fullscreen\tF11"</string>
+              <string name="proxy-Label">"&amp;Fullscreen"</string>
               <string name="proxy-Kind">"Check"</string>
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">""</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
@@ -1109,6 +1145,7 @@
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">""</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
@@ -1130,6 +1167,7 @@
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">""</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
           </document>
@@ -1167,6 +1205,7 @@
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">""</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
           </document>
@@ -1204,6 +1243,7 @@
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">""</string>
               <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
           </document>
@@ -1359,6 +1399,7 @@
               <bool name="proxy-wxLC_USER_TEXT">0</bool>
               <bool name="proxy-wxLC_EDIT_LABELS">0</bool>
               <bool name="proxy-wxLC_NO_HEADER">0</bool>
+              <bool name="proxy-wxLC_NO_SORT_HEADER">0</bool>
               <bool name="proxy-wxLC_SINGLE_SEL">1</bool>
               <bool name="proxy-wxLC_SORT_ASCENDING">0</bool>
               <bool name="proxy-wxLC_SORT_DESCENDING">0</bool>

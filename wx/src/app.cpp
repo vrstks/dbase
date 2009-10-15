@@ -60,6 +60,8 @@ bool App::OnInit(void)
          FileHistoryLoadSave(false);
 
          SetTopWindow(frame);
+         ::wxSetAcceleratorTable(frame, GetAccelerator());
+         ::wxMenuBar_Fixup(frame->GetMenuBar(), GetAccelerator());
 
          wxFileHistory* mru = m_docManager->GetFileHistory();
          if (mru->GetCount()) m_docManager->CreateDocument(mru->GetHistoryFile(0), wxDOC_SILENT);
@@ -94,5 +96,44 @@ int App::OnExit(void)
 MainFrame* App::GetMainFrame(void)
 {
    return wxStaticCast(GetTopWindow(), MainFrame);
+}
+
+/*static*/ const AcceleratorArray& App::GetAccelerator()
+{
+   static AcceleratorArray array;
+   if (array.IsEmpty())
+   {
+      array.Add(wxGetStockAcceleratorEx(wxID_EXIT));
+      array.Add(wxGetStockAcceleratorEx(wxID_CUT));
+      array.Add(wxGetStockAcceleratorEx(wxID_COPY));
+      array.Add(wxGetStockAcceleratorEx(wxID_PASTE));
+      array.Add(wxGetStockAcceleratorEx(wxID_HELP));
+      array.Add(wxGetStockAcceleratorEx(wxID_NEW));
+      array.Add(wxGetStockAcceleratorEx(wxID_OPEN));
+      array.Add(wxGetStockAcceleratorEx(wxID_CLOSE));
+      array.Add(wxGetStockAcceleratorEx(wxID_SAVE));
+      array.Add(wxGetStockAcceleratorEx(wxID_PRINT));
+      array.Add(wxGetStockAcceleratorEx(wxID_PREVIEW));
+      array.Add(wxGetStockAcceleratorEx(wxID_SELECTALL));
+      array.Add(wxGetStockAcceleratorEx(wxID_PROPERTIES));
+      array.Add(wxGetStockAcceleratorEx(wxID_FIND));
+      array.Add(wxGetStockAcceleratorEx(wxID_SELECTALL));
+
+      array.Add(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_F1, wxID_ABOUT));
+
+      array.Add(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_FULLSCREEN, XRCID("view_fullscreen")));
+
+      array.Add(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_INSERT, wxID_ADD));
+      array.Add(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_DELETE, wxID_DELETE));
+      array.Add(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_F2, XRCID("edit")));
+      array.Add(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_F3, XRCID("next")));
+      array.Add(wxAcceleratorEntry(wxACCEL_CTRL, 'H', wxID_REPLACE));
+      array.Add(wxAcceleratorEntry(wxACCEL_CTRL, 'X', XRCID("export")));
+      array.Add(wxAcceleratorEntry(wxACCEL_CTRL, 'D', XRCID("pack")));
+      array.Add(wxAcceleratorEntry(wxACCEL_CTRL, 'M', XRCID("struct")));
+
+      array.Add(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_F12, wxID_SAVEAS));
+   }
+   return array;
 }
 

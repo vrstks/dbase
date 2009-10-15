@@ -5,6 +5,9 @@
 #include "precomp.h"
 #include "wxext.h"
 
+#include <wx/arrimpl.cpp>
+WX_DEFINE_OBJARRAY(AcceleratorArray)
+
 bool wxGetExeFolder(wxFileName* filename)
 {
    filename->Assign(wxTheApp->argv[0]);
@@ -244,3 +247,154 @@ bool wxListCtrl_EndEditLabel(wxListCtrl* ctrl, bool cancel)
 #endif
 }
 #endif
+
+#if wxUSE_ACCEL
+
+wxAcceleratorEntry wxGetStockAcceleratorEx(wxWindowID id)
+{
+    wxAcceleratorEntry ret;
+
+    #define STOCKITEM(stockid, flags, keycode)      \
+        case stockid:                               \
+            ret.Set(flags, keycode, stockid);       \
+            break;
+
+    switch (id)
+    {
+        STOCKITEM(wxID_PRINT,                wxACCEL_CMD,'P')
+        STOCKITEM(wxID_PREVIEW,              wxACCEL_CMD | wxACCEL_SHIFT,'P')
+        STOCKITEM(wxID_SAVEAS,               wxACCEL_CMD | wxACCEL_SHIFT,'S')
+        STOCKITEM(wxID_SELECTALL,            wxACCEL_CMD,'A')
+        STOCKITEM(wxID_UNDO,                 wxACCEL_CMD,'Z')
+        STOCKITEM(wxID_REDO,                 wxACCEL_CMD,'Y')
+        //STOCKITEM(wxID_PREFERENCES,          wxACCEL_CMD,'T')
+        STOCKITEM(wxID_ICONIZE_FRAME,        wxACCEL_ALT,WXK_FULLSCREEN)
+        STOCKITEM(wxID_REFRESH,              wxACCEL_NORMAL, WXK_F5)
+        STOCKITEM(wxID_PROPERTIES,           wxACCEL_ALT,WXK_RETURN)
+        STOCKITEM(wxID_BACKWARD,             wxACCEL_ALT , WXK_LEFT)
+        STOCKITEM(wxID_FORWARD,              wxACCEL_ALT , WXK_RIGHT)
+        STOCKITEM(wxID_HELP,                 wxACCEL_NORMAL, WXK_HELP)
+        STOCKITEM(wxID_REPLACE,              wxACCEL_CMD,'H')
+        STOCKITEM(wxID_EXIT,                 wxACCEL_CTRL, 'Q')
+        STOCKITEM(wxID_CLOSE,                wxACCEL_CTRL, 'W')
+        default:
+            //if (id == wxXRCID_GOTO) ret.Set(wxACCEL_CTRL,'G',id);
+            //else
+            ret = wxGetStockAccelerator(id);
+            break;
+    };
+
+    #undef STOCKITEM
+
+    // always use wxAcceleratorEntry::IsOk on returned value !
+    return ret;
+}
+
+#endif // wxUSE_ACCEL
+
+void wxSetAcceleratorTable(wxWindow* wnd, const AcceleratorArray& array)
+{
+   const size_t count = array.GetCount();
+   wxAcceleratorEntry* temp = new wxAcceleratorEntry[count];
+   for (size_t i = 0; i < count; i++)
+   {
+      temp[i] = array.Item(i);
+   }
+   wxAcceleratorTable accel(count, temp);
+   wnd->SetAcceleratorTable(accel);
+   wxDELETEA(temp);
+}
+
+wxString wxMenuItem_GetText(const wxMenuItem* item)
+{
+   wxString str = item->GetItemLabel();
+#ifdef __WXGTK__
+   wxString_Replace(&str, '_', '&');
+#endif
+   return str;
+}
+
+#define ACCELSTR_SEP "   "
+
+bool wxMenuItem_SetAccelText(wxMenuItem* item, const wxString& accel, bool append)
+{
+   wxString str = wxMenuItem_GetText(item);
+   wxString ch_sep = wxT("\t");
+   const int sep = str.Find(ch_sep);
+
+   if (wxNOT_FOUND == sep)
+   {
+   }
+   else if (append)
+   {
+      ch_sep = wxT(ACCELSTR_SEP);
+   }
+   else
+   {
+      str.Truncate(sep);
+   }
+   item->SetItemLabel(wxString::Format(wxT("%s%s%s"),
+      str.wx_str(),
+      ch_sep.wx_str(),
+      accel.wx_str()));
+   return true;
+}
+
+wxString wxGetAccelText(const wxAcceleratorEntry& accel)
+{
+   return wxGetAccelText(accel.GetFlags(), (enum wxKeyCode)accel.GetKeyCode());
+}
+
+void wxMenuBar_Fixup(wxMenuBar* menu, const AcceleratorArray& array)
+{
+   const size_t count = array.GetCount();
+   for (size_t i = 0; i < count; i++)
+   {
+      const wxAcceleratorEntry& entry = array.Item(i);
+      wxMenuItem* item = menu->FindItem(entry.GetCommand());
+      if (item)
+      {
+         wxMenuItem_SetAccelText(item, wxGetAccelText(entry), true);
+      }
+   }
+}
+
+wxString wxGetStockLabelEx(wxWindowID id, bool withCodes)
+{
+    #define STOCKITEM(stockid, label) \
+        case stockid:                 \
+            stockLabel = label;       \
+            break;
+
+   wxString stockLabel;
+   switch (id)
+   {
+     STOCKITEM(wxID_ICONIZE_FRAME,            _("&Minimize"))
+     STOCKITEM(wxID_VIEW_SORTNAME,            _("&Sort by name"))
+     STOCKITEM(wxID_VIEW_SORTTYPE,            _("&Sort by type"))
+     STOCKITEM(wxID_VIEW_SORTDATE,            _("&Sort by date"))
+     STOCKITEM(wxID_VIEW_SORTSIZE,            _("&Sort by size"))
+     STOCKITEM(wxID_VIEW_LIST,                _("&List mode"))
+     STOCKITEM(wxID_VIEW_DETAILS,             _("&Details mode"))
+     STOCKITEM(wxID_VIEW_LARGEICONS,          _("&Large icons mode"))
+     STOCKITEM(wxID_VIEW_SMALLICONS,          _("&Small icons mode"))
+     STOCKITEM(wxID_SETUP          ,          _("&Setup..."))
+      default:
+         //if (id == wxXRCID_GOTO) stockLabel = _("&Goto...");
+         //else if (id == wxXRCID_RUN) stockLabel = _("&Run");
+         break;
+   }
+    #undef STOCKITEM
+#if (wxVERSION_NUMBER >= 2800)
+   if (stockLabel.IsEmpty()) stockLabel = wxGetStockLabel(id, withCodes ? wxSTOCK_WITH_MNEMONIC : 0);
+#else
+   if (stockLabel.IsEmpty()) stockLabel = wxGetStockLabel(id, withCodes, accelerator);
+#endif
+   if (!withCodes)
+   {
+      stockLabel = wxStripMenuCodes(stockLabel);
+      wxString_RemoveEllipsis(&stockLabel);
+   }
+   return stockLabel;
+}
+

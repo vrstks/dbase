@@ -6,6 +6,7 @@
 
 #include "dbfframe.h"
 #include "app.h"
+#include "wxext.h"
 
 wxDBFFrame::wxDBFFrame(wxDocument* doc, wxView* view, wxMDIParentFrame* parent)
    : wxDocMDIChildFrame(doc, view, parent, wxID_ANY, wxT("Child Frame"),
@@ -17,6 +18,7 @@ wxDBFFrame::wxDBFFrame(wxDocument* doc, wxView* view, wxMDIParentFrame* parent)
    SetIcon(wxIcon(wxT("dbf")));
 #endif
    wxMenuBar* menu = wxXmlResource::Get()->LoadMenuBar(wxT("menu_dbf"));
+   ::wxMenuBar_Fixup(menu, wxGetApp().GetAccelerator());
    SetMenuBar(menu);
    m_file_menu = menu->GetMenu(0);
    wxGetApp().FileHistoryUseMenu(m_file_menu);

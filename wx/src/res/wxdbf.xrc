@@ -4,10 +4,10 @@
         <object class="wxMenu">
             <label>&amp;File</label>
             <object class="wxMenuItem" name="wxID_NEW">
-                <label>&amp;New\tCtrl+N</label>
+                <label>&amp;New</label>
             </object>
             <object class="wxMenuItem" name="wxID_OPEN">
-                <label>&amp;Open...\tCtrl+O</label>
+                <label>&amp;Open...</label>
             </object>
             <object class="separator">
             </object>
@@ -17,13 +17,13 @@
             <object class="separator">
             </object>
             <object class="wxMenuItem" name="wxID_EXIT">
-                <label>E&amp;xit\tCtrl+Q</label>
+                <label>E&amp;xit</label>
             </object>
         </object>
         <object class="wxMenu">
             <label>&amp;View</label>
-            <object class="wxMenuItem" name="fullscreen">
-                <label>&amp;Fullscreen\tF11</label>
+            <object class="wxMenuItem" name="view_fullscreen">
+                <label>&amp;Fullscreen</label>
                 <checkable>1</checkable>
             </object>
             <object class="separator">
@@ -48,63 +48,63 @@
         <object class="wxMenu">
             <label>&amp;File</label>
             <object class="wxMenuItem" name="wxID_NEW">
-                <label>&amp;New\tCtrl+N</label>
+                <label>&amp;New</label>
             </object>
             <object class="wxMenuItem" name="wxID_OPEN">
-                <label>&amp;Open...\tCtrl+O</label>
+                <label>&amp;Open...</label>
             </object>
             <object class="wxMenuItem" name="wxID_SAVE">
-                <label>&amp;Save\tCtrl+S</label>
+                <label>&amp;Save</label>
             </object>
             <object class="wxMenuItem" name="wxID_SAVEAS">
                 <label>Save &amp;As...</label>
             </object>
             <object class="wxMenuItem" name="wxID_CLOSE">
-                <label>&amp;Close\tCtrl+W</label>
+                <label>&amp;Close</label>
             </object>
             <object class="separator">
             </object>
             <object class="wxMenuItem" name="wxID_PROPERTIES">
-                <label>Proper&amp;ties...\tAlt+Enter</label>
+                <label>Proper&amp;ties...</label>
             </object>
             <object class="wxMenuItem" name="export">
-                <label>E&amp;xport...\tCtrl+X</label>
+                <label>E&amp;xport...</label>
             </object>
             <object class="wxMenuItem" name="pack">
-                <label>Pack &amp;Database...\tCtrl+D</label>
+                <label>Pack &amp;Database...</label>
             </object>
             <object class="wxMenuItem" name="struct">
-                <label>Modif&amp;y Structure...\tCtrl+M</label>
+                <label>Modif&amp;y Structure...</label>
             </object>
             <object class="separator">
             </object>
             <object class="wxMenuItem" name="wxID_PRINT">
-                <label>&amp;Print...\tCtrl+P</label>
+                <label>&amp;Print...</label>
             </object>
             <object class="wxMenuItem" name="wxID_PRINT_SETUP">
                 <label>&amp;Print Setup...</label>
             </object>
             <object class="wxMenuItem" name="wxID_PREVIEW">
-                <label>Print Pre&amp;view\tCtrl+Shift+P</label>
+                <label>Print Pre&amp;view</label>
             </object>
             <object class="separator">
             </object>
             <object class="wxMenuItem" name="wxID_EXIT">
-                <label>E&amp;xit\tCtrl+Q</label>
+                <label>E&amp;xit</label>
             </object>
         </object>
         <object class="wxMenu">
             <label>&amp;Edit</label>
             <object class="wxMenuItem" name="wxID_ADD">
-                <label>&amp;Add...\tInsert</label>
+                <label>&amp;Add...</label>
                 <help>Add record</help>
             </object>
             <object class="wxMenuItem" name="edit">
-                <label>&amp;Edit...\tF2</label>
+                <label>&amp;Edit...</label>
                 <help>Edit record</help>
             </object>
             <object class="wxMenuItem" name="wxID_DELETE">
-                <label>&amp;Delete...\tDelete</label>
+                <label>&amp;Delete...</label>
                 <help>Delete the selection</help>
             </object>
             <object class="wxMenuItem" name="wxID_UNDELETE">
@@ -114,28 +114,28 @@
             <object class="separator">
             </object>
             <object class="wxMenuItem" name="wxID_FIND">
-                <label>&amp;Find...\tCtrl+F</label>
-                <help>Undelete the selection</help>
+                <label>&amp;Find...</label>
+                <help>Find</help>
             </object>
             <object class="wxMenuItem" name="next">
-                <label>Find &amp;Next...\tF3</label>
-                <help>Undelete the selection</help>
+                <label>Find &amp;Next...</label>
+                <help>Find next</help>
             </object>
             <object class="wxMenuItem" name="wxID_REPLACE">
-                <label>&amp;Replace...\tCtrl+H</label>
+                <label>&amp;Replace...</label>
                 <help>Undelete the selection</help>
             </object>
             <object class="separator">
             </object>
             <object class="wxMenuItem" name="wxID_SELECTALL">
-                <label>Select &amp;All\tCtrl+A</label>
+                <label>Select &amp;All</label>
                 <help>Select the entire document</help>
             </object>
         </object>
         <object class="wxMenu">
             <label>&amp;View</label>
-            <object class="wxMenuItem" name="fullscreen">
-                <label>&amp;Fullscreen\tF11</label>
+            <object class="wxMenuItem" name="view_fullscreen">
+                <label>&amp;Fullscreen</label>
                 <checkable>1</checkable>
             </object>
             <object class="separator">

@@ -9,6 +9,8 @@
 // App
 
 class MainFrame;
+class AcceleratorArray;
+
 class App : public wxApp
 {
    typedef wxApp base;
@@ -24,6 +26,8 @@ public:
    virtual int OnExit(void);
 
    wxMDIChildFrame* NewFrame(wxDocument*, wxView*);
+   static const AcceleratorArray& GetAccelerator();
+
    void FileHistoryUseMenu(wxMenu*);
    void FileHistoryRemoveMenu(wxMenu*);
    void FileHistoryLoadSave(bool save);

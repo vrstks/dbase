@@ -2,6 +2,11 @@
 // Copyright (c) 2007-2009 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
+#define WXK_HELP       WXK_F1
+#define WXK_FULLSCREEN WXK_F11
+
+WX_DECLARE_OBJARRAY(wxAcceleratorEntry, AcceleratorArray);
+
 #ifdef _WX_ARTPROV_H_
 #define wxART_PREVIEW      wxART_MAKE_ART_ID(wxART_PREVIEW)
 #define wxART_PREFERENCES  wxART_MAKE_ART_ID(wxART_PREFERENCES)
@@ -101,3 +106,18 @@ inline void wxPostMenuCommand(wxEvtHandler* dest, int id)
 }
 
 extern bool wxInitXRC();
+
+extern wxAcceleratorEntry wxGetStockAcceleratorEx(wxWindowID id);
+
+class WXDLLIMPEXP_FWD_CORE wxMenuBar;
+extern void wxMenuBar_Fixup(wxMenuBar*, const AcceleratorArray&);
+extern void wxSetAcceleratorTable(wxWindow*, const AcceleratorArray&);
+
+#define wxELLIPSE_REPLACEMENT       wxT("...")
+
+inline void wxString_RemoveEllipsis(wxString* str)
+{
+   str->Replace(wxELLIPSE_REPLACEMENT, wxEmptyString);
+}
+
+#define wxMessageBoxCaption      wxGetAppDisplayName()
