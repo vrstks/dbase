@@ -82,7 +82,6 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add directory="$(#WX)\src\zlib" />
 			<Add directory="$(#WX.include)" />
 		</Compiler>
 		<ResourceCompiler>
