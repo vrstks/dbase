@@ -10,7 +10,7 @@
 #include "dbfframe.h"
 #include "appframe.h"
 
-class wxDBFDocManager : public wxDocManager
+class DocManager : public wxDocManager
 {
 public:
    virtual void OnOpenFileFailure()
@@ -21,14 +21,14 @@ public:
    virtual wxDocument * CreateDocument(const wxString& path, long flags);
 };
 
-wxDocument* wxDBFDocManager::CreateDocument(const wxString& path, long flags)
+wxDocument* DocManager::CreateDocument(const wxString& path, long flags)
 {
    return wxDBFDoc::CreateDocument(this, path, flags);
 }
 
 void App::AddDocTemplates()
 {
-   m_docManager = new wxDBFDocManager;
+   m_docManager = new DocManager;
 
    wxDBFDoc::CreateDocTemplate(m_docManager);
 }
