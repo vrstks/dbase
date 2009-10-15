@@ -11,6 +11,7 @@
 #include "datalist.h"
 #include "dbflist.h"
 #include "dbfutil.h"
+#include "wx29.h"
 #include "wxext.h"
 #include "dbfmodel.h"
 
@@ -134,7 +135,7 @@ void wxDBFView::OnStructClipboard(wxCommandEvent&)
    const wxString str = ::dbf_getstruct_c(GetDocument()->GetTablename(), GetDocument()->GetDatabase());
    bool ok = wxClipboard_Set(str);
    ::wxMessageBox(ok ? _("Struct is now on the Clipboard") : _("Failed to open clipboard"),
-      wxMessageBoxCaptionStr, wxOK | wxCENTRE, m_frame);
+      wxMessageBoxCaption, wxOK | wxCENTRE, m_frame);
 }
 
 void wxDBFView::OnProperties(wxCommandEvent&)
@@ -155,7 +156,7 @@ void wxDBFView::OnProperties(wxCommandEvent&)
       if (i) str+=wxT("\n");
       str+=as.Item(i);
    }
-   ::wxMessageBox(str, wxMessageBoxCaptionStr, wxOK | wxCENTRE, m_frame);
+   ::wxMessageBox(str, wxMessageBoxCaption, wxOK | wxCENTRE, m_frame);
 }
 
 void wxDBFView::OnSelectAll(wxCommandEvent&)
@@ -193,7 +194,7 @@ void wxDBFView::OnUpdateNeedSel(wxUpdateUIEvent& event)
 
 void wxDBFView::OnDeleteAll(wxCommandEvent&)
 {
-   if (wxOK == wxMessageBox(_("Delete all?"), wxMessageBoxCaptionStr, wxOK | wxCANCEL | wxICON_QUESTION, m_frame))
+   if (wxOK == wxMessageBox(_("Delete all?"), wxMessageBoxCaption, wxOK | wxCANCEL | wxICON_QUESTION, m_frame))
    {
       m_list->DeleteAll(true);
    }
@@ -201,7 +202,7 @@ void wxDBFView::OnDeleteAll(wxCommandEvent&)
 
 void wxDBFView::OnDelete(wxCommandEvent&)
 {
-   if (wxOK == wxMessageBox(_("Delete selection?"), wxMessageBoxCaptionStr, wxOK | wxCANCEL | wxICON_QUESTION, m_frame))
+   if (wxOK == wxMessageBox(_("Delete selection?"), wxMessageBoxCaption, wxOK | wxCANCEL | wxICON_QUESTION, m_frame))
    {
       m_list->DeleteSelection(true);
    }
