@@ -24,9 +24,11 @@ inline bool wxWindow_Toggle(wxWindow* wnd, bool layout)
    wnd->Show(show);
    if (layout)
    {
+   /*
       wxWindow* parent = wnd->GetParent();
       parent->Layout();
       parent->Refresh();
+   */
    }
    return show;
 }
