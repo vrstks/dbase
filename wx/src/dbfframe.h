@@ -19,7 +19,7 @@ public:
    virtual ~wxDBFFrame();
 #if (wxVERSION_NUMBER < 2900)
    // To get statusbar menu help
-   virtual wxStatusBar *GetStatusBar() const { return wxStaticCast(GetParent(), wxFrame)->GetStatusBar(); }
+   //virtual wxStatusBar *GetStatusBar() const { return wxStaticCast(GetParent(), wxFrame)->GetStatusBar(); }
 #endif
 #ifndef __WXMSW__
     virtual void SetLabel(const wxString& label)
