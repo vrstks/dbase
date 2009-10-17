@@ -16,17 +16,17 @@ inline void wxDBase::Close()
    base::Close();
 }
 
-inline bool wxDBase::Open(const wxString& filename, bool editable, enum dbf_charconv charconv)
+inline bool wxDBase::Open(const wxFileName& filename, bool editable, enum dbf_charconv charconv)
 {
    wxASSERT(!IsOpen());
-   bool ok = base::Open(filename.mb_str(), editable, charconv);
+   bool ok = base::Open(filename.GetFullPath().mb_str(), editable, charconv);
    return ok;
 }
 
-inline bool wxDBase::Create(const wxString& filename, const DBF_FIELD_INFO* array, size_t array_count, enum dbf_charconv charconv)
+inline bool wxDBase::Create(const wxFileName& filename, const DBF_FIELD_INFO* array, size_t array_count, enum dbf_charconv charconv)
 {
    wxASSERT(!IsOpen());
-   bool ok = base::Create(filename.mb_str(), array, array_count, charconv);
+   bool ok = base::Create(filename.GetFullPath().mb_str(), array, array_count, charconv);
    return ok;
 }
 

@@ -35,9 +35,7 @@ void App::AddDocTemplates()
 
 wxMDIChildFrame* App::NewFrame(wxDocument* doc, wxView* view)
 {
-   wxDocMDIChildFrame *subframe =
-      new wxDBFFrame(doc, view, GetMainFrame());
-   
+   wxDocMDIChildFrame* subframe = new wxDBFFrame(doc, view, GetMainFrame());   
    return subframe;
 }
 

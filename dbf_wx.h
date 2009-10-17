@@ -24,6 +24,7 @@ typedef struct _wxDataViewRowCol
 class wxVariant;
 class wxInputStream;
 class wxOutputStream;
+class wxFileName;
 class wxDBase : public wxObject, public CDBase
 {
    typedef CDBase base;
@@ -34,26 +35,15 @@ public:
 
 // Operations
 public:	
-   bool Open  (const wxString& filename, bool editable = true, enum dbf_charconv charconv = ENUM_dbf_charconv_compatible);
+   bool Open  (const wxFileName&, bool editable = true, enum dbf_charconv charconv = ENUM_dbf_charconv_compatible);
    bool Open  (wxInputStream*, enum dbf_charconv charconv = ENUM_dbf_charconv_compatible);
-	bool Create(const wxString& filename, const DBF_FIELD_INFO* array, size_t array_count, enum dbf_charconv charconv = ENUM_dbf_charconv_compatible);
+	bool Create(const wxFileName&, const DBF_FIELD_INFO* array, size_t array_count, enum dbf_charconv charconv = ENUM_dbf_charconv_compatible);
    bool Create(/*const wxString& filename, */void* stream, struct zlib_filefunc_def_s*, 
       const DBF_FIELD_INFO* array, size_t array_count, 
       enum dbf_charconv charconv = ENUM_dbf_charconv_compatible, void* memo = NULL);
    bool Create(wxOutputStream*, 
       const DBF_FIELD_INFO* array, size_t array_count, 
       enum dbf_charconv charconv = ENUM_dbf_charconv_compatible, void* memo = NULL);
-
-#ifdef _WX_FILENAME_H_
-   bool Open(const wxFileName& filename, bool editable = true, enum dbf_charconv charconv = ENUM_dbf_charconv_compatible)
-   {
-      return Open(filename.GetFullPath(), editable, charconv);
-   }
-	bool Create(const wxFileName& filename, const DBF_FIELD_INFO* array, size_t array_count, enum dbf_charconv charconv = ENUM_dbf_charconv_compatible)
-   {
-      return Create(filename.GetFullPath(), array, array_count, charconv);
-   }
-#endif
 
    size_t Read(const DBF_FIELD* , wxString*, size_t buf_len = 1024);
    size_t Read(const char* field, wxString*, size_t buf_len = 1024);

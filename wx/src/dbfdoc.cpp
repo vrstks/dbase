@@ -41,14 +41,15 @@ bool wxDBFDoc::DoSaveDocument(const wxString& WXUNUSED(filename))
     return true;
 }
 
-bool wxDBFDoc::DoOpenDocument(const wxString& filename)
+bool wxDBFDoc::DoOpenDocument(const wxString& path)
 {
+   wxFileName filename(path);
    bool ok = m_database->Open(filename, true, ENUM_dbf_charconv_compatible);
    if (!ok) ok = m_database->Open(filename, false, ENUM_dbf_charconv_compatible);
    if (ok)
    {
       UpdateAllViews(NULL, (wxObject*)(long)ENUM_hint_initialupdate);
-      wxFileName::SplitPath(filename, NULL, &m_tablename, NULL);
+      m_tablename = filename.GetName();
    }
    else
    {

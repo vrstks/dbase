@@ -5,6 +5,7 @@
 #include <wx/wx.h>
 #include <wx/variant.h>
 #include <wx/docview.h>
+#include <wx/filename.h>
 
 #include "ioapi/zlib.h"
 #include "ioapi/ioapi.h"

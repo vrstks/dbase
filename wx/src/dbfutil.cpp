@@ -7,6 +7,8 @@
 #include <wx/object.h>
 #include <wx/filefn.h>
 #include <wx/intl.h>
+#include <wx/filename.h>
+
 #include "dbfutil.h"
 
 #include "../../ioapi/zlib.h"
