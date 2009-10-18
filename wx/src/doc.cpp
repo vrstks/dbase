@@ -13,18 +13,14 @@
 
 class DocManager : public wxDocManager
 {
+   typedef wxDocManager base;
 public:
-   virtual void OnOpenFileFailure()
-   {
-      wxDocManager::OnOpenFileFailure();
-      //wxMessageBox(wxT("Bad file format"));
-   }
    virtual wxDocument * CreateDocument(const wxString& path, long flags);
 };
 
 wxDocument* DocManager::CreateDocument(const wxString& path, long flags)
 {
-   return wxDBFDoc::CreateDocument(this, path, flags);
+   return wxDBFDoc::CreateDocument(this, wxFileName(path), flags);
 }
 
 wxDocManager* App::CreateDocManager()

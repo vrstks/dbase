@@ -27,7 +27,7 @@ public:
    };
 
    static wxDocTemplate* CreateDocTemplate(wxDocManager*);
-   static wxDocument* CreateDocument(wxDocManager*, const wxString& path, long flags);
+   static wxDocument* CreateDocument(wxDocManager*, const wxFileName&, long flags);
 
    wxDBase* GetDatabase(void) const { return m_database; }
    wxString GetTablename(void) const { return m_tablename; }

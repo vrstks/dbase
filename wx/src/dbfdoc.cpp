@@ -100,15 +100,15 @@ bool wxDBFDoc::IsEditable(void) const
           CLASSINFO(wxDBFDoc), CLASSINFO(wxDBFView));
 }
 
-/*static*/ wxDocument* wxDBFDoc::CreateDocument(wxDocManager* docManager, const wxString& path, long flags)
+/*static*/ wxDocument* wxDBFDoc::CreateDocument(wxDocManager* docManager, const wxFileName& filename, long flags)
 {
    wxDBFDoc* doc = NULL;
    wxDBase database;
    wxBusyCursor wc;
-   bool ok = path.IsEmpty() || wxFileExists(path);
+   bool ok = (!filename.IsOk()) || filename.FileExists();
    if (ok)
    {
-      doc = (wxDBFDoc*)docManager->wxDocManager::CreateDocument(path, flags);
+      doc = (wxDBFDoc*)docManager->wxDocManager::CreateDocument(filename.GetFullPath(), flags);
       if (doc && (wxDOC_NEW == flags))
       {
          ok = doc->Save();
