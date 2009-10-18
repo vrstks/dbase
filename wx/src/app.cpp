@@ -46,7 +46,7 @@ bool App::OnInit(void)
          ::wxMenuBar_Fixup(frame->GetMenuBar(), GetAccelerator());
 
          wxFileName filename;
-         if (m_mru->GetFile(0, &filename))
+         if (m_mru->GetFile(0, &filename) && filename.FileExists())
          {
             docManager->CreateDocument(filename.GetFullPath(), wxDOC_SILENT);
          }
