@@ -26,7 +26,6 @@ public:
       ENUM_hint_initialupdate = 123 // must be non-null
    };
 
-   static wxDocTemplate* CreateDocTemplate(wxDocManager*);
    static wxDocument* CreateDocument(wxDocManager*, const wxFileName&, long flags);
 
    wxDBase* GetDatabase(void) const { return m_database; }
@@ -36,16 +35,12 @@ public:
 // Implementation
 public:
    virtual ~wxDBFDoc(void);
+   virtual bool SaveAs();
    virtual bool DoSaveDocument(const wxString& filename);
    virtual bool DoOpenDocument(const wxString& filename);
    virtual bool IsModified(void) const;
    virtual void Modify(bool mod);
    virtual bool OnCloseDocument();
-#if (wxVERSION_NUMBER >= 2900)
-   virtual wxString GetUserReadableName() const;
-#else
-   virtual bool GetPrintableName(wxString& buf) const;
-#endif
 };
 
 #endif // __DBFDOC_H__

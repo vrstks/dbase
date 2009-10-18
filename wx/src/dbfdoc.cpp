@@ -4,7 +4,6 @@
 
 #include "precomp.h"
 
-#include "dbfview.h"
 #include "dbfdlgs.h"
 
 #include "../../ioapi/zlib.h"
@@ -16,6 +15,7 @@
 #include "../../dbf_wx.h"
 #include "../../dbf_wx.inl"
 #include "dbfdoc.h"
+#include "wxext.h"
 
 IMPLEMENT_DYNAMIC_CLASS(wxDBFDoc, wxDocument)
 
@@ -58,19 +58,6 @@ bool wxDBFDoc::DoOpenDocument(const wxString& path)
    return ok;
 }
 
-#if (wxVERSION_NUMBER >= 2900)
-wxString wxDBFDoc::GetUserReadableName() const
-{
-	return m_documentFile;
-}
-#else
-bool wxDBFDoc::GetPrintableName(wxString& buf) const
-{
-   buf = m_documentFile;
-   return true;
-}
-#endif
-
 bool wxDBFDoc::IsModified(void) const
 {
    return false && m_database->IsOpen() && m_database->IsModified();
@@ -91,13 +78,6 @@ bool wxDBFDoc::OnCloseDocument()
 bool wxDBFDoc::IsEditable(void) const
 {
    return m_database->IsOpen() && m_database->IsEditable();
-}
-
-/*static*/ wxDocTemplate* wxDBFDoc::CreateDocTemplate(wxDocManager* docManager)
-{
-   return new wxDocTemplate(docManager, wxT("dBASE III Files"), wxT("*.")wxT(FILEEXT_DBASE),
-      wxT(""), wxT(FILEEXT_DBASE), wxT("dbf doc"), wxT("dbf view"),
-          CLASSINFO(wxDBFDoc), CLASSINFO(wxDBFView));
 }
 
 /*static*/ wxDocument* wxDBFDoc::CreateDocument(wxDocManager* docManager, const wxFileName& filename, long flags)
@@ -130,5 +110,15 @@ bool wxDBFDoc::IsEditable(void) const
       wxMessageBox(_("File not found"));
    }
    return doc;
+}
+
+bool wxDBFDoc::SaveAs()
+{
+   bool ok = base::SaveAs();
+   if (ok)
+   {
+       ::wxDocument_SetTitleFullPath(this);
+   }
+   return ok;
 }
 

@@ -124,6 +124,14 @@ inline void wxString_RemoveEllipsis(wxString* str)
 
 #define wxMessageBoxCaption      wxGetAppDisplayName()
 
+#ifdef _WX_DOCH__
+inline void wxDocument_SetTitleFullPath(wxDocument* doc)
+{
+   doc->SetTitle(doc->GetFilename());
+   doc->SetFilename(doc->GetFilename(), true); // -> OnChangeFilename -> refresh caption
+}
+#endif
+
 /////////////////////////////////////////////////////////////////////////////
 // wxRecentFileList
 // wxFileHistory is confusing and difficult to use, esp in MDI:
