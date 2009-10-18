@@ -861,6 +861,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\src\wx29.cpp"
+				>
+			</File>
+			<File
 				RelativePath="src\wxdbf.rc"
 				>
 				<FileConfiguration

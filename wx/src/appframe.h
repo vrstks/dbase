@@ -26,7 +26,6 @@ protected:
    void OnFullscreen (wxCommandEvent&);
    
    void OnUpdateFullscreen (wxUpdateUIEvent&);
-   void OnUpdateDisable    (wxUpdateUIEvent&);
    void OnUpdateStatusBar  (wxUpdateUIEvent&);
    void OnUpdateToolBar    (wxUpdateUIEvent&);
 

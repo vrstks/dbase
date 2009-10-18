@@ -198,6 +198,10 @@ SOURCE=.\src\wxdbf.rc
 # End Source File
 # Begin Source File
 
+SOURCE=.\src\wx29.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\wxext.cpp
 # End Source File
 # Begin Source File

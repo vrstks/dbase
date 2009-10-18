@@ -9,16 +9,27 @@
 #include "dbfview.h"
 #include "dbfframe.h"
 #include "appframe.h"
+#include "wx29.h"
 #include "wxext.h"
 #include "../../bool.h"
 #include "../../dbf.h"
 
-class DocManager : public wxDocManager
+class DocManager : public wxDocManagerEx
 {
-   typedef wxDocManager base;
+   typedef wxDocManagerEx base;
 public:
    virtual wxDocument * CreateDocument(const wxString& path, long flags);
+   DECLARE_EVENT_TABLE()
 };
+
+BEGIN_EVENT_TABLE(DocManager, wxDocManagerEx)
+	EVT_UPDATE_UI(wxID_ADD           , DocManager::OnUpdateDisableIfNoDoc)
+	EVT_UPDATE_UI(wxID_FIND          , DocManager::OnUpdateDisableIfNoDoc)
+	EVT_UPDATE_UI(wxID_DELETE        , DocManager::OnUpdateDisableIfNoDoc)
+	EVT_UPDATE_UI(XRCID("edit")      , DocManager::OnUpdateDisableIfNoDoc)
+	EVT_UPDATE_UI(XRCID("struct")    , DocManager::OnUpdateDisableIfNoDoc)
+	EVT_UPDATE_UI(XRCID("pack")      , DocManager::OnUpdateDisableIfNoDoc)
+END_EVENT_TABLE()
 
 wxDocument* DocManager::CreateDocument(const wxString& path, long flags)
 {

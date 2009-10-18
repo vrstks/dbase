@@ -21,4 +21,13 @@ inline wxString wxGetAppDisplayName()
 #endif
 }
 
+class wxDocManagerEx : public wxDocManager
+{
+protected:
+#if (wxVERSION_NUMBER < 2900)
+   void OnUpdateDisableIfNoDoc(wxUpdateUIEvent&);
+#endif
+   DECLARE_EVENT_TABLE()
+};
+
 #endif // __WX29_H__

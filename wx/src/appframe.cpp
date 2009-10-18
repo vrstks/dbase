@@ -19,13 +19,7 @@ BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
 	EVT_UPDATE_UI(XRCID("view_fullscreen"), MainFrame::OnUpdateFullscreen)
 	EVT_UPDATE_UI(XRCID("toolbar")   , MainFrame::OnUpdateToolBar)
    EVT_UPDATE_UI(XRCID("statusbar") , MainFrame::OnUpdateStatusBar)
-	EVT_UPDATE_UI(wxID_ADD           , MainFrame::OnUpdateDisable)
-	EVT_UPDATE_UI(wxID_FIND          , MainFrame::OnUpdateDisable)
-	EVT_UPDATE_UI(wxID_DELETE        , MainFrame::OnUpdateDisable)
-	EVT_UPDATE_UI(XRCID("edit")      , MainFrame::OnUpdateDisable)
-	EVT_UPDATE_UI(XRCID("struct")    , MainFrame::OnUpdateDisable)
-	EVT_UPDATE_UI(XRCID("pack")      , MainFrame::OnUpdateDisable)
-	EVT_UPDATE_UI(wxID_HELP          , MainFrame::OnUpdateDisable)
+// EVT_UPDATE_UI(wxID_HELP          , MainFrame::OnUpdateDisable)
 END_EVENT_TABLE()
 
 MainFrame::MainFrame(wxDocManager* manager, wxFrame* frame, const wxString& title,
@@ -137,11 +131,6 @@ void MainFrame::OnToolBar(wxCommandEvent&)
 void MainFrame::OnUpdateToolBar(wxUpdateUIEvent& event)
 {
    event.Check(GetToolBar()->IsShown());
-}
-
-void MainFrame::OnUpdateDisable(wxUpdateUIEvent& event)
-{
-   event.Enable(false);
 }
 
 void MainFrame::OnFullscreen(wxCommandEvent&)

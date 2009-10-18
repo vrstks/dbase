@@ -100,32 +100,33 @@
 		<Unit filename="..\ioapi\ioapi.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename=".\src\app.cpp" />
-		<Unit filename=".\src\app.h" />
-		<Unit filename=".\src\appframe.cpp" />
-		<Unit filename=".\src\appframe.h" />
+		<Unit filename="src\app.cpp" />
+		<Unit filename="src\app.h" />
+		<Unit filename="src\appframe.cpp" />
+		<Unit filename="src\appframe.h" />
 		<Unit filename="src\datalist.cpp" />
 		<Unit filename="src\datamodel.cpp" />
-		<Unit filename=".\src\dbfdlgs.cpp" />
-		<Unit filename=".\src\dbfdlgs.h" />
-		<Unit filename=".\src\dbfdoc.cpp" />
-		<Unit filename=".\src\dbfdoc.h" />
-		<Unit filename=".\src\dbfframe.cpp" />
-		<Unit filename=".\src\dbfframe.h" />
+		<Unit filename="src\dbfdlgs.cpp" />
+		<Unit filename="src\dbfdlgs.h" />
+		<Unit filename="src\dbfdoc.cpp" />
+		<Unit filename="src\dbfdoc.h" />
+		<Unit filename="src\dbfframe.cpp" />
+		<Unit filename="src\dbfframe.h" />
 		<Unit filename="src\dbflist.cpp" />
 		<Unit filename="src\dbfmodel.cpp" />
 		<Unit filename="src\dbfutil.cpp" />
-		<Unit filename=".\src\dbfview.cpp" />
-		<Unit filename=".\src\dbfview.h" />
-		<Unit filename=".\src\doc.cpp" />
-		<Unit filename=".\src\precomp.h">
+		<Unit filename="src\dbfview.cpp" />
+		<Unit filename="src\dbfview.h" />
+		<Unit filename="src\doc.cpp" />
+		<Unit filename="src\precomp.h">
 			<Option compile="1" />
 			<Option weight="0" />
 		</Unit>
-		<Unit filename=".\src\wxdbf.rc">
+		<Unit filename="src\wxdbf.rc">
 			<Option compilerVar="WINDRES" />
 		</Unit>
-		<Unit filename=".\src\wxext.cpp" />
+		<Unit filename="src\wx29.cpp" />
+		<Unit filename="src\wxext.cpp" />
 		<Unit filename="src\wxstreamc.cpp" />
 		<Extensions>
 			<code_completion />
