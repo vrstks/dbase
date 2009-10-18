@@ -9,7 +9,7 @@
 #include "wxext.h"
 
 wxDBFFrame::wxDBFFrame(wxDocument* doc, wxView* view, wxMDIParentFrame* parent)
-   : wxDocMDIChildFrame(doc, view, parent, wxID_ANY, wxT("Child Frame"),
+   : wxDocMDIChildFrame(doc, view, parent, wxID_ANY, wxEmptyString,
                              wxDefaultPosition, wxDefaultSize,
                              wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE | wxMAXIMIZE)
 
