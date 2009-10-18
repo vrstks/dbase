@@ -405,11 +405,6 @@ wxRecentFileList::wxRecentFileList(wxDocManager* docManager) : m_docManager(docM
 {
 }
 
-void wxRecentFileList::Transfer(enum transfer transfer)
-{
-   Transfer(transfer, wxConfigBase::Get());
-}
-
 void wxRecentFileList::MenuAdd(wxFrame* frame)
 {
    wxMenu* menu = frame->GetMenuBar()->GetMenu(0);
@@ -422,18 +417,19 @@ void wxRecentFileList::MenuRemove(wxFrame* frame)
    m_docManager->FileHistoryRemoveMenu(menu);
 }
 
-void wxRecentFileList::Transfer(enum transfer transfer, wxConfigBase* config)
+void wxRecentFileList::Load(wxConfigBase* config)
 {
+   if (NULL == config) config = wxConfigBase::Get();
    config->SetPath(wxT("MRU"));
-   switch (transfer)
-   {
-      case transfer_save:
-         m_docManager->FileHistorySave(*config);
-         break;
-      case transfer_load:
-         m_docManager->FileHistoryLoad(*config);
-         break;
-   }
+   m_docManager->FileHistoryLoad(*config);
+   config->SetPath(wxT("/"));
+}
+
+void wxRecentFileList::Save(wxConfigBase* config)
+{
+   if (NULL == config) config = wxConfigBase::Get();
+   config->SetPath(wxT("MRU"));
+   m_docManager->FileHistorySave(*config);
    config->SetPath(wxT("/"));
 }
 

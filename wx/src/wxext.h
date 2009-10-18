@@ -139,16 +139,10 @@ protected:
    wxDocManager* m_docManager;
 
 public:
-   enum transfer
-   {
-      transfer_save,
-      transfer_load
-   };
-
    wxRecentFileList(wxDocManager*);
 
-   void Transfer(enum transfer);
-   void Transfer(enum transfer, wxConfigBase*);
+   void Load(wxConfigBase* config = NULL);
+   void Save(wxConfigBase* config = NULL);
 
    void MenuAdd(wxFrame*);
    void MenuRemove(wxFrame*);

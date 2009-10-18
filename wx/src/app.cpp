@@ -36,10 +36,10 @@ bool App::OnInit(void)
       {
          wxDocManager* docManager = CreateDocManager();
 
-         MainFrame* frame = new MainFrame(docManager, NULL, GetAppName(), wxDefaultPosition, wxSize(640,480),
+         MainFrame* frame = new MainFrame(docManager, NULL, GetAppName(), wxDefaultPosition, wxSize(700,610),
                             wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE);
 
-         m_mru->Transfer(wxRecentFileList::transfer_load);
+         m_mru->Load();
 
          SetTopWindow(frame);
          ::wxSetAcceleratorTable(frame, GetAccelerator());
@@ -59,7 +59,7 @@ int App::OnExit(void)
 {
    if (m_mru)
    {
-      m_mru->Transfer(wxRecentFileList::transfer_save);
+      m_mru->Save();
       wxDELETE(m_mru);
    }
    delete wxDocManager::GetDocumentManager();
