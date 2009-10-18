@@ -14,23 +14,8 @@ IMPLEMENT_APP(App)
 BEGIN_EVENT_TABLE(App, wxApp)
 END_EVENT_TABLE()
 
-App::App(void) : wxApp(), m_docManager(NULL)
+App::App(void) : wxApp(), m_mru(NULL)
 {
-}
-
-void App::FileHistoryUseMenu(wxMenu* file_menu)
-{
-   if(0)if (file_menu == NULL)
-   {
-      file_menu = GetMainFrame()->m_file_menu;
-   }
-   //m_docManager->FileHistoryUseMenu(file_menu);
-   //m_docManager->FileHistoryAddFilesToMenu();
-}
-
-void App::FileHistoryRemoveMenu(wxMenu* file_menu)
-{
-   m_docManager->FileHistoryRemoveMenu(file_menu);
 }
 
 bool App::OnInit(void)
@@ -49,46 +34,35 @@ bool App::OnInit(void)
       ok = ::wxInitXRC();
       if (ok)
       {
-         AddDocTemplates();
+         wxDocManager* docManager = CreateDocManager();
 
-         MainFrame* frame = new MainFrame(m_docManager, NULL, GetAppName(), wxDefaultPosition, wxSize(640,480),
+         MainFrame* frame = new MainFrame(docManager, NULL, GetAppName(), wxDefaultPosition, wxSize(640,480),
                             wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE);
 
-         wxMenuBar* menu = frame->GetMenuBar();
-         wxMenu* file_menu = menu->GetMenu(0);
-         m_docManager->FileHistoryUseMenu(file_menu);
-         FileHistoryLoadSave(false);
+         m_mru->Transfer(wxRecentFileList::transfer_load);
 
          SetTopWindow(frame);
          ::wxSetAcceleratorTable(frame, GetAccelerator());
          ::wxMenuBar_Fixup(frame->GetMenuBar(), GetAccelerator());
 
-         wxFileHistory* mru = m_docManager->GetFileHistory();
-         if (mru->GetCount()) m_docManager->CreateDocument(mru->GetHistoryFile(0), wxDOC_SILENT);
+         wxFileName filename;
+         if (m_mru->GetFile(0, &filename))
+         {
+            docManager->CreateDocument(filename.GetFullPath(), wxDOC_SILENT);
+         }
       }
    }
    return ok;
 }
 
-void App::FileHistoryLoadSave(bool save)
-{
-   wxConfigBase* pConfig = wxConfigBase::Get();
-   pConfig->SetPath(wxT("MRU"));
-   if (save)
-   {
-      m_docManager->FileHistorySave(*pConfig);
-   }
-   else
-   {
-      m_docManager->FileHistoryLoad(*pConfig);
-   }
-   pConfig->SetPath(wxT("/"));
-}
-
 int App::OnExit(void)
 {
-   FileHistoryLoadSave(true);
-   wxDELETE(m_docManager);
+   if (m_mru)
+   {
+      m_mru->Transfer(wxRecentFileList::transfer_save);
+      wxDELETE(m_mru);
+   }
+   delete wxDocManager::GetDocumentManager();
    wxTheClipboard->Flush(); 
    return wxApp::OnExit();
 }

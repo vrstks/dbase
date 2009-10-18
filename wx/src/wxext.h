@@ -123,3 +123,37 @@ inline void wxString_RemoveEllipsis(wxString* str)
 }
 
 #define wxMessageBoxCaption      wxGetAppDisplayName()
+
+/////////////////////////////////////////////////////////////////////////////
+// wxRecentFileList
+// wxFileHistory is confusing and difficult to use, esp in MDI:
+// wrap up the eccentricities
+
+class wxFileHistory;
+class wxDocManager;
+class wxConfigBase;
+
+class wxRecentFileList
+{
+protected:
+   wxDocManager* m_docManager;
+
+public:
+   enum transfer
+   {
+      transfer_save,
+      transfer_load
+   };
+
+   wxRecentFileList(wxDocManager*);
+
+   void Transfer(enum transfer);
+   void Transfer(enum transfer, wxConfigBase*);
+
+   void MenuAdd(wxFrame*);
+   void MenuRemove(wxFrame*);
+
+   wxFileHistory* GetImplementation() const;
+
+   bool GetFile(size_t, wxFileName*) const;
+};

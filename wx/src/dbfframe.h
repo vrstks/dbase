@@ -12,8 +12,6 @@ class wxDBFFrame : public wxDocMDIChildFrame
 {
    typedef wxDocMDIChildFrame base;
 public:
-   wxMenu* m_file_menu;
-
    wxDBFFrame(wxDocument*, wxView*, wxMDIParentFrame*);
 
    virtual ~wxDBFFrame();
@@ -28,7 +26,6 @@ public:
     }
 #endif
 protected:
-   void OnActivate(wxActivateEvent&);
    DECLARE_EVENT_TABLE()
 };
 

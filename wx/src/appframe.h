@@ -13,7 +13,6 @@ class MainFrame : public wxDocMDIParentFrame
    typedef wxDocMDIParentFrame base;
    DECLARE_CLASS(MainFrame)
 public:
-   wxMenu* m_file_menu;
    MainFrame(wxDocManager*, wxFrame*, const wxString& title, 
       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, 
       long type = wxDEFAULT_FRAME_STYLE);

@@ -20,28 +20,14 @@ wxDBFFrame::wxDBFFrame(wxDocument* doc, wxView* view, wxMDIParentFrame* parent)
    wxMenuBar* menu = wxXmlResource::Get()->LoadMenuBar(wxT("menu_dbf"));
    ::wxMenuBar_Fixup(menu, wxGetApp().GetAccelerator());
    SetMenuBar(menu);
-   m_file_menu = menu->GetMenu(0);
-   wxGetApp().FileHistoryUseMenu(m_file_menu);
+   wxGetApp().GetRecentFileList()->MenuAdd(this);
 }
 
 BEGIN_EVENT_TABLE(wxDBFFrame, wxDocMDIChildFrame)
-    EVT_ACTIVATE(wxDBFFrame::OnActivate)
 END_EVENT_TABLE()
 
 wxDBFFrame::~wxDBFFrame()
 {
-   wxGetApp().FileHistoryRemoveMenu(m_file_menu);
-}
-
-void wxDBFFrame::OnActivate(wxActivateEvent& event)
-{
-   if (event.GetActive())
-   {
-   }
-   else
-   {
-      wxGetApp().FileHistoryRemoveMenu(m_file_menu);
-   }
-   event.Skip();
+   wxGetApp().GetRecentFileList()->MenuRemove(this);
 }
 

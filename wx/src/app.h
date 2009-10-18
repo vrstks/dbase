@@ -10,12 +10,13 @@
 
 class MainFrame;
 class AcceleratorArray;
+class wxRecentFileList;
 
 class App : public wxApp
 {
    typedef wxApp base;
 protected:
-   wxDocManager* m_docManager;
+   wxRecentFileList* m_mru;
    wxLocale m_locale;
 public:
    App(void);
@@ -28,11 +29,10 @@ public:
    wxMDIChildFrame* NewFrame(wxDocument*, wxView*);
    static const AcceleratorArray& GetAccelerator();
 
-   void FileHistoryUseMenu(wxMenu*);
-   void FileHistoryRemoveMenu(wxMenu*);
-   void FileHistoryLoadSave(bool save);
+   wxRecentFileList* GetRecentFileList() const { return m_mru; }
+
 protected:
-   void AddDocTemplates();
+   wxDocManager* CreateDocManager();
    
 protected:
    DECLARE_EVENT_TABLE()

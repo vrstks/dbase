@@ -398,3 +398,59 @@ wxString wxGetStockLabelEx(wxWindowID id, bool withCodes)
    return stockLabel;
 }
 
+/////////////////////////////////////////////////////////////////////////////
+// wxRecentFileList
+
+wxRecentFileList::wxRecentFileList(wxDocManager* docManager) : m_docManager(docManager)
+{
+}
+
+void wxRecentFileList::Transfer(enum transfer transfer)
+{
+   Transfer(transfer, wxConfigBase::Get());
+}
+
+void wxRecentFileList::MenuAdd(wxFrame* frame)
+{
+   wxMenu* menu = frame->GetMenuBar()->GetMenu(0);
+   m_docManager->FileHistoryUseMenu(menu);
+   m_docManager->GetFileHistory()->AddFilesToMenu(menu);
+}
+void wxRecentFileList::MenuRemove(wxFrame* frame)
+{
+   wxMenu* menu = frame->GetMenuBar()->GetMenu(0);
+   m_docManager->FileHistoryRemoveMenu(menu);
+}
+
+void wxRecentFileList::Transfer(enum transfer transfer, wxConfigBase* config)
+{
+   config->SetPath(wxT("MRU"));
+   switch (transfer)
+   {
+      case transfer_save:
+         m_docManager->FileHistorySave(*config);
+         break;
+      case transfer_load:
+         m_docManager->FileHistoryLoad(*config);
+         break;
+   }
+   config->SetPath(wxT("/"));
+}
+
+wxFileHistory* wxRecentFileList::GetImplementation() const
+{
+   return m_docManager->GetFileHistory();
+}
+
+bool wxRecentFileList::GetFile(size_t index, wxFileName* str) const
+{
+   wxFileHistory* impl = GetImplementation();
+   bool ok = (index < impl->GetCount());
+   if (ok)
+   {
+      str->operator=(impl->GetHistoryFile(index));
+   }
+   return ok;
+}
+
+/////////////////////////////////////////////////////////////////////////////

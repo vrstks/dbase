@@ -9,6 +9,7 @@
 #include "dbfview.h"
 #include "dbfframe.h"
 #include "appframe.h"
+#include "wxext.h"
 
 class DocManager : public wxDocManager
 {
@@ -26,11 +27,12 @@ wxDocument* DocManager::CreateDocument(const wxString& path, long flags)
    return wxDBFDoc::CreateDocument(this, path, flags);
 }
 
-void App::AddDocTemplates()
+wxDocManager* App::CreateDocManager()
 {
-   m_docManager = new DocManager;
-
-   wxDBFDoc::CreateDocTemplate(m_docManager);
+   wxDocManager* docManager = new DocManager();
+   m_mru = new wxRecentFileList(docManager);
+   wxDBFDoc::CreateDocTemplate(docManager);
+   return docManager;
 }
 
 wxMDIChildFrame* App::NewFrame(wxDocument* doc, wxView* view)
