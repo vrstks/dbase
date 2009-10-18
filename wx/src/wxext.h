@@ -124,6 +124,8 @@ inline void wxString_RemoveEllipsis(wxString* str)
 
 #define wxMessageBoxCaption      wxGetAppDisplayName()
 
+extern wxString wxGetStockLabelEx(wxWindowID id, bool withCodes);
+
 #ifdef _WX_DOCH__
 inline void wxDocument_SetTitleFullPath(wxDocument* doc)
 {

@@ -90,11 +90,11 @@ wxToolBar* MainFrame::CreateToolBar()
          #endif
             const wxArtID art_id = element.id_art ? element.id_art : wxID2ArtID(element.id).c_str();
             wxBitmap icon = wxArtProviderEx::GetBitmap(art_id, wxART_OTHER, size);
-            wxString str = element.text ? element.text : wxGetStockLabel(element.id, false).c_str();
+            wxString str = element.text ? element.text : wxGetStockLabelEx(element.id, false).c_str();
             tool = tb->AddTool(element.id, str, icon);
             if (tool)
             {
-               str = element.help ? element.help : wxGetStockLabel(element.id, false).c_str();
+               str = element.help ? element.help : wxGetStockLabelEx(element.id, false).c_str();
                if (element.keyCode) str+=wxString::Format(wxT(" (%s)"), wxGetAccelText(element.flags, element.keyCode).c_str());
                tool->SetShortHelp(str);
             }
