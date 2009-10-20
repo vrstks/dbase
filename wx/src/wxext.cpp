@@ -440,7 +440,7 @@ wxFileHistory* wxRecentFileList::GetImplementation() const
 
 bool wxRecentFileList::GetFile(size_t index, wxFileName* str) const
 {
-   wxFileHistory* impl = GetImplementation();
+   const wxFileHistory* impl = GetImplementation();
    bool ok = (index < impl->GetCount());
    if (ok)
    {

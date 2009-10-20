@@ -117,7 +117,7 @@ extern void wxSetAcceleratorTable(wxWindow*, const AcceleratorArray&);
 
 #define wxELLIPSE_REPLACEMENT       wxT("...")
 
-inline void wxString_RemoveEllipsis(wxString*)
+inline void wxString_RemoveEllipsis(wxString* str)
 {
    str->Replace(wxELLIPSE_REPLACEMENT, wxEmptyString);
 }
