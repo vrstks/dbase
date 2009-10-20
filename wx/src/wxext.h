@@ -95,7 +95,7 @@ inline bool wxListView_SetCurSel(wxListCtrl* ctrl, long index, bool focus = true
 }
 #endif
 
-inline void wxPostCommandEvent(wxEvtHandler *dest, wxEventType commandType, int id)
+inline void wxPostCommandEvent(wxEvtHandler* dest, wxEventType commandType, int id)
 {
    wxCommandEvent event(commandType, id);
    if (dest == NULL) dest = wxTheApp->GetTopWindow();
@@ -109,7 +109,7 @@ inline void wxPostMenuCommand(wxEvtHandler* dest, int id)
 
 extern bool wxInitXRC();
 
-extern wxAcceleratorEntry wxGetStockAcceleratorEx(wxWindowID id);
+extern wxAcceleratorEntry wxGetStockAcceleratorEx(wxWindowID);
 
 class WXDLLIMPEXP_FWD_CORE wxMenuBar;
 extern void wxMenuBar_Fixup(wxMenuBar*, const AcceleratorArray&);
@@ -117,20 +117,20 @@ extern void wxSetAcceleratorTable(wxWindow*, const AcceleratorArray&);
 
 #define wxELLIPSE_REPLACEMENT       wxT("...")
 
-inline void wxString_RemoveEllipsis(wxString* str)
+inline void wxString_RemoveEllipsis(wxString*)
 {
    str->Replace(wxELLIPSE_REPLACEMENT, wxEmptyString);
 }
 
 #define wxMessageBoxCaption      wxGetAppDisplayName()
 
-extern wxString wxGetStockLabelEx(wxWindowID id, bool withCodes);
+extern wxString wxGetStockLabelEx(wxWindowID, bool withCodes);
 
 #ifdef _WX_DOCH__
-inline void wxDocument_SetTitleFullPath(wxDocument* doc)
+inline void wxDocument_SetTitleFullPath(wxDocument* doc, bool notifyViews = true)
 {
    doc->SetTitle(doc->GetFilename());
-   doc->SetFilename(doc->GetFilename(), true); // -> OnChangeFilename -> refresh caption
+   doc->SetFilename(doc->GetFilename(), notifyViews); // -> OnChangeFilename -> refresh caption
 }
 #endif
 
