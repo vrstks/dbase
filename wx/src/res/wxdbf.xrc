@@ -17,7 +17,7 @@
             <object class="separator">
             </object>
             <object class="wxMenuItem" name="wxID_EXIT">
-                <label>E&amp;xit</label>
+                <label>&amp;Quit</label>
             </object>
         </object>
         <object class="wxMenu">
@@ -90,7 +90,7 @@
             <object class="separator">
             </object>
             <object class="wxMenuItem" name="wxID_EXIT">
-                <label>E&amp;xit</label>
+                <label>&amp;Quit</label>
             </object>
         </object>
         <object class="wxMenu">

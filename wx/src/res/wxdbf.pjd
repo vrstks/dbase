@@ -340,7 +340,7 @@
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
-              <string name="title">"E&amp;xit: wxID_EXIT"</string>
+              <string name="title">"&amp;Quit: wxID_EXIT"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menuitem"</string>
@@ -352,7 +352,7 @@
               <string name="proxy-type">"wbMenuItemProxy"</string>
               <string name="proxy-Id name">"wxID_EXIT"</string>
               <long name="proxy-Id value">5006</long>
-              <string name="proxy-Label">"E&amp;xit"</string>
+              <string name="proxy-Label">"&amp;Quit"</string>
               <string name="proxy-Kind">"Normal"</string>
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>
@@ -836,7 +836,7 @@
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
-              <string name="title">"E&amp;xit: wxID_EXIT"</string>
+              <string name="title">"&amp;Quit: wxID_EXIT"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menuitem"</string>
@@ -848,7 +848,7 @@
               <string name="proxy-type">"wbMenuItemProxy"</string>
               <string name="proxy-Id name">"wxID_EXIT"</string>
               <long name="proxy-Id value">5006</long>
-              <string name="proxy-Label">"E&amp;xit"</string>
+              <string name="proxy-Label">"&amp;Quit"</string>
               <string name="proxy-Kind">"Normal"</string>
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>
