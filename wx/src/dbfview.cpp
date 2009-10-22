@@ -116,7 +116,7 @@ bool wxDBFView::OnClose(bool deleteWindow)
 
 wxDBFDoc* wxDBFView::GetDocument() const
 {
-   return wxStaticCast(wxView::GetDocument(), wxDBFDoc);
+   return wxStaticCast(base::GetDocument(), wxDBFDoc);
 }
 
 bool wxClipboard_Set(const wxString& str)
