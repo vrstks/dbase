@@ -101,7 +101,7 @@ void wxDBFView::OnUpdate(wxView *WXUNUSED(sender), wxObject* hint)
 
 bool wxDBFView::OnClose(bool deleteWindow)
 {
-  if (!GetDocument()->Close())
+  if (!base::OnClose(deleteWindow))
     return false;
 
   Activate(false);
