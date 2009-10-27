@@ -30,10 +30,10 @@ unsorted (wxDataViewListModel) or sorted (wxDataViewSortedListModel).
 
 #if (wxVERSION_NUMBER >= 2900)
 
-class wxDataViewIndexListModelEx : public wxDataViewIndexListModel
+class wxDataViewListModelEx : public wxDataViewListModel
 {
 public:
-   wxDataViewIndexListModelEx() : wxDataViewIndexListModel()
+   wxDataViewListModelEx() : wxDataViewListModel()
    {
    }
    virtual unsigned int GetRowCount() const = 0;
@@ -60,33 +60,26 @@ public:
    }
 
 private:
-   // unconst legacy interface
-   virtual bool SetValue(const wxVariant& var, unsigned int row, unsigned int col )
+   virtual unsigned int GetChildren(const wxDataViewItem&, wxDataViewItemArray&) const
    {
-      wxRowCol rowcol;
-      rowcol.row = row;
-      rowcol.col = col;
-      return SetValue(var, rowcol);
+      return 0;
    }
-   virtual void GetValue( wxVariant &var, unsigned int row, unsigned int col ) const
+   virtual unsigned GetRow( const wxDataViewItem&) const
    {
-      wxRowCol rowcol;
-      rowcol.row = row;
-      rowcol.col = col;
-      GetValue(&var, rowcol);
+      return 0;
    }
 };
 
 WX_DEFINE_SORTED_ARRAY_SIZE_T(unsigned int, wxDataViewSortedIndexArray);
 
-class wxDataViewSortedListModel : public wxDataViewIndexListModelEx
+class wxDataViewSortedListModel : public wxDataViewListModelEx
 {
 protected:
-   wxDataViewIndexListModelEx* m_child;
+   wxDataViewListModelEx* m_child;
    wxDataViewSortedIndexArray m_array;
    bool m_ascending;
 public:
-   wxDataViewSortedListModel( wxDataViewIndexListModelEx *child ) : wxDataViewIndexListModelEx(),
+   wxDataViewSortedListModel( wxDataViewListModelEx *child ) : wxDataViewListModelEx(),
       m_child(child), m_array(NULL), m_ascending(true)
    {
    }
@@ -128,7 +121,7 @@ public:
 };
 
 #else
-#define wxDataViewIndexListModelEx wxDataViewListModel
+#define wxDataViewListModelEx wxDataViewListModel
 #endif // wx2.9
 
 /////////////////////////////////////////////////////////////////////////////
@@ -138,12 +131,12 @@ class wxDataModel;
 class wxDataModelBase
 {
 protected:
-   wxDataViewIndexListModelEx* m_src;
+   wxDataViewListModelEx* m_src;
 
 public:
-   wxDataModelBase(wxDataViewIndexListModelEx* src) : m_src(src) {}
+   wxDataModelBase(wxDataViewListModelEx* src) : m_src(src) {}
 
-   wxDataViewIndexListModelEx* GetSource(void) const { return m_src; }
+   wxDataViewListModelEx* GetSource(void) const { return m_src; }
 
    virtual ~wxDataModelBase() {}
    virtual int FindColumn(const wxString& colname) const;
@@ -186,7 +179,7 @@ public:
 /////////////////////////////////////////////////////////////////////////////
 // wxDataModel
 
-class wxDataModel : public wxDataViewIndexListModelEx, public wxDataModelBase
+class wxDataModel : public wxDataViewListModelEx, public wxDataModelBase
 #if (wxVERSION_NUMBER >= 2900)
    , public wxObject
 #endif
@@ -260,7 +253,7 @@ public:
 
    virtual void GetColumn(unsigned int col, ColumnInfo*) const;
 
-   //virtual unsigned int GetRowCount() { return m_child->wxDataViewIndexListModelEx::GetNumberOfRows(); }
+   //virtual unsigned int GetRowCount() { return m_child->wxDataViewListModelEx::GetNumberOfRows(); }
    virtual unsigned int GetRowCount() const
    {
    #if (wxVERSION_NUMBER >= 2900)
@@ -363,7 +356,7 @@ inline bool wxDataModelBase::SetValue(const wxString& str, const wxRowCol& rowco
 /////////////////////////////////////////////////////////////////////////////
 // wxDataModel
 
-inline wxDataModel::wxDataModel() : wxDataViewIndexListModelEx(), wxDataModelBase(this)
+inline wxDataModel::wxDataModel() : wxDataViewListModelEx(), wxDataModelBase(this)
 {
 }
 

@@ -997,6 +997,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\datamodel.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dbf.h"
 				>
 			</File>
