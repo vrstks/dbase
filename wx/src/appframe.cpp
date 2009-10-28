@@ -136,10 +136,10 @@ void MainFrame::OnUpdateToolBar(wxUpdateUIEvent& event)
 void MainFrame::OnFullscreen(wxCommandEvent&)
 {
    long style = wxFULLSCREEN_NOBORDER|wxFULLSCREEN_NOCAPTION;
-   ShowFullScreen(!IsFullScreen(), style);
+   ::wxFrame_ToggleFullScreen(this, style);
 }
 
 void MainFrame::OnUpdateFullscreen (wxUpdateUIEvent& event)
 {
-   event.Check(IsFullScreen());
+   ::wxFrame_OnUpdateFullScreen(this, event);
 }

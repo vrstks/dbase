@@ -18,6 +18,9 @@ WX_DECLARE_OBJARRAY(wxAcceleratorEntry, AcceleratorArray);
 extern wxArtID wxID2ArtID(int wx_id);
 #endif
 
+extern void wxFrame_ToggleFullScreen(wxFrame*, long style);
+extern void wxFrame_OnUpdateFullScreen(wxFrame*, wxUpdateUIEvent&);
+
 inline bool wxWindow_Toggle(wxWindow* wnd, bool layout)
 {
    const bool show = !wnd->IsShown();

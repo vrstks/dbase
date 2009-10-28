@@ -8,6 +8,16 @@
 #include <wx/arrimpl.cpp>
 WX_DEFINE_OBJARRAY(AcceleratorArray)
 
+void wxFrame_ToggleFullScreen(wxFrame* wnd, long style)
+{
+   wnd->ShowFullScreen(!wnd->IsFullScreen(), style);
+}
+
+void wxFrame_OnUpdateFullScreen(wxFrame* wnd, wxUpdateUIEvent& event)
+{
+   event.Check(wnd->IsFullScreen());
+}
+
 bool wxGetExeFolder(wxFileName* filename)
 {
    filename->Assign(wxTheApp->argv[0]);
