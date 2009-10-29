@@ -91,7 +91,6 @@ MainFrame* App::GetMainFrame(void)
       array.Add(wxGetStockAcceleratorEx(wxID_SELECTALL));
       array.Add(wxGetStockAcceleratorEx(wxID_PROPERTIES));
       array.Add(wxGetStockAcceleratorEx(wxID_FIND));
-      array.Add(wxGetStockAcceleratorEx(wxID_SELECTALL));
 
       array.Add(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_F1, wxID_ABOUT));
 
