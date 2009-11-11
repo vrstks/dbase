@@ -316,7 +316,7 @@ wxString wxMenuItem_GetText(const wxMenuItem* item)
 {
    wxString str = item->GetItemLabel();
 #ifdef __WXGTK__
-   wxString_Replace(&str, '_', '&');
+   str.Replace(wxString('_'), wxString('&'));
 #endif
    return str;
 }
