@@ -38,7 +38,7 @@ bool wxInitXRC()
 {
    wxXmlResource::Get()->InitAllHandlers();
 
-   const wxString fullname = wxTheApp->GetAppName() + wxT(".xrc");
+   wxString fullname = wxTheApp->GetAppName().Lower() + wxT(".xrc");
 
    wxFileName filename;
    wxGetExeFolder(&filename);
