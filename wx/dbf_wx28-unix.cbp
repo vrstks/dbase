@@ -157,16 +157,15 @@
 		<ResourceCompiler>
 			<Add directory="$(#WX.INCLUDE)" />
 		</ResourceCompiler>
-		<Unit filename="../../code/str.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="../dbf.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../dbf_wx.cpp" />
+		<Unit filename="../ioapi/ioapi.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="src/app.cpp" />
 		<Unit filename="src/app.h" />
-		<Unit filename="src/doc.cpp" />
 		<Unit filename="src/appframe.cpp" />
 		<Unit filename="src/appframe.h" />
 		<Unit filename="src/datalist.cpp" />
@@ -178,6 +177,7 @@
 		<Unit filename="src/dbfmodel.cpp" />
 		<Unit filename="src/dbfutil.cpp" />
 		<Unit filename="src/dbfview.cpp" />
+		<Unit filename="src/doc.cpp" />
 		<Unit filename="src/fontutil.h" />
 		<Unit filename="src/pages/ismserver.h" />
 		<Unit filename="src/pages/panelfonts.h" />
@@ -192,9 +192,6 @@
 		<Unit filename="src/wxext.cpp" />
 		<Unit filename="src/wxext.h" />
 		<Unit filename="src/wxstreamc.cpp" />
-		<Unit filename="../ioapi/ioapi.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Extensions>
 			<code_completion />
 			<envvars />
