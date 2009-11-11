@@ -130,27 +130,25 @@ wxBitmap wxArtProviderEx::CreateBitmap(const wxArtID& id, const wxArtClient& cli
 
 wxString wxGetAccelText(int flags, int keyCode)
 {
+   // wxAcceleratorEntry.ToString() produces silly text
    wxString str;
-#if 0 && (wxVERSION_NUMBER >= 2800)
-   wxAcceleratorEntry entry(flags, keyCode);
-   str = entry.ToString(); // doesn't work (wxIsalnum(WXK_F2)), silly text (WXK_NUMPAD_ADD)
-#else
+   const wxChar sep = '-'; // the wx default
    if (flags & wxACCEL_CTRL)
    {
-      if (!str.IsEmpty()) str+='+';
+      if (str.Length()) str+=sep;
       str+=_("Ctrl");
    }
    if (flags & wxACCEL_ALT)
    {
-      if (!str.IsEmpty()) str+='+';
+      if (str.Length()) str+=sep;
       str+=_("Alt");
    }
    if (flags & wxACCEL_SHIFT)
    {
-      if (!str.IsEmpty()) str+='+';
+      if (str.Length()) str+=sep;
       str+=_("Shift");
    }
-   if (!str.IsEmpty()) str+='+';
+   if (str.Length()) str+=sep;
    switch (keyCode)
    {
       case WXK_INSERT         : str+=_("Insert" ); break;
@@ -170,7 +168,6 @@ wxString wxGetAccelText(int flags, int keyCode)
          else str+=(wxChar)keyCode;
          break;
    }
-#endif
    return str;
 }
 
