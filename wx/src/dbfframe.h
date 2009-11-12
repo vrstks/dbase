@@ -15,7 +15,7 @@ public:
    wxDBFFrame(wxDocument*, wxView*, wxMDIParentFrame*);
 
    virtual ~wxDBFFrame();
-#if (wxVERSION_NUMBER < 2900)
+#if defined(__WXMSW__) && (wxVERSION_NUMBER < 2900)
    // To get statusbar menu help
    virtual void DoGiveHelp(const wxString& text, bool show);
 #endif

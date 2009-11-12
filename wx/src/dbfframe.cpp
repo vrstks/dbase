@@ -31,7 +31,7 @@ wxDBFFrame::~wxDBFFrame()
    wxGetApp().GetRecentFileList()->MenuRemove(this);
 }
 
-#if (wxVERSION_NUMBER < 2900)
+#if defined(__WXMSW__) && (wxVERSION_NUMBER < 2900)
 void wxDBFFrame::DoGiveHelp(const wxString& text, bool show)
 {
    m_frameStatusBar = wxStaticCast(GetParent(), wxFrame)->GetStatusBar();
