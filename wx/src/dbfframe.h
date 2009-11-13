@@ -15,11 +15,11 @@ public:
    wxDBFFrame(wxDocument*, wxView*, wxMDIParentFrame*);
 
    virtual ~wxDBFFrame();
-#if defined(__WXMSW__) && (wxVERSION_NUMBER < 2900)
+#if (wxVERSION_NUMBER < 2900)
    // To get statusbar menu help
    virtual void DoGiveHelp(const wxString& text, bool show);
 #endif
-#ifndef __WXMSW__
+#ifdef __WXGTK__
     virtual void SetLabel(const wxString& label)
     {
        SetTitle(label);

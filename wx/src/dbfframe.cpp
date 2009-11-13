@@ -31,12 +31,11 @@ wxDBFFrame::~wxDBFFrame()
    wxGetApp().GetRecentFileList()->MenuRemove(this);
 }
 
-#if defined(__WXMSW__) && (wxVERSION_NUMBER < 2900)
+#if (wxVERSION_NUMBER < 2900)
 void wxDBFFrame::DoGiveHelp(const wxString& text, bool show)
 {
-   m_frameStatusBar = wxStaticCast(GetParent(), wxFrame)->GetStatusBar();
-   base::DoGiveHelp(text, show);
-   m_frameStatusBar = NULL;
+   //base::DoGiveHelp(text, show); // not working from wxMDIChildFrame
+   wxStaticCast(GetParent(), wxFrame)->DoGiveHelp(text, show); // this works, MSW+GTK
 }
 #endif
 
