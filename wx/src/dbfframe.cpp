@@ -34,8 +34,15 @@ wxDBFFrame::~wxDBFFrame()
 #if (wxVERSION_NUMBER < 2900)
 void wxDBFFrame::DoGiveHelp(const wxString& text, bool show)
 {
-   //base::DoGiveHelp(text, show); // not working from wxMDIChildFrame
-   wxStaticCast(wxTheApp->GetTopWindow(), wxFrame)->DoGiveHelp(text, show); // this works, MSW+GTK
+#ifdef __WXMSW__
+   wxMDIParentFrame* frame = wxStaticCast(m_parent->GetParent(), wxMDIParentFrame);
+   frame->DoGiveHelp(text, show);
+#elif __WXGTK__
+   wxMDIParentFrame* frame = wxStaticCast(m_parent->GetParent(), wxMDIParentFrame);
+   frame->DoGiveHelp(text, show); // this works, MSW+GTK
+#else
+   base::DoGiveHelp(text, show);
+#endif
 }
 #endif
 
