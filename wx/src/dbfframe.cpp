@@ -35,7 +35,7 @@ wxDBFFrame::~wxDBFFrame()
 void wxDBFFrame::DoGiveHelp(const wxString& text, bool show)
 {
    //base::DoGiveHelp(text, show); // not working from wxMDIChildFrame
-   wxStaticCast(GetParent(), wxFrame)->DoGiveHelp(text, show); // this works, MSW+GTK
+   wxStaticCast(wxTheApp->GetTopWindow(), wxFrame)->DoGiveHelp(text, show); // this works, MSW+GTK
 }
 #endif
 
