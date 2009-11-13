@@ -35,7 +35,7 @@ wxDBFFrame::~wxDBFFrame()
 void wxDBFFrame::DoGiveHelp(const wxString& text, bool show)
 {
 #ifdef __WXMSW__
-   wxMDIParentFrame* frame = wxStaticCast(m_parent->GetParent(), wxMDIParentFrame);
+   wxMDIParentFrame* frame = wxStaticCast(GetParent(), wxMDIParentFrame);
    frame->DoGiveHelp(text, show);
 #elif __WXGTK__
    wxMDIParentFrame* frame = wxStaticCast(m_parent->GetParent(), wxMDIParentFrame);
