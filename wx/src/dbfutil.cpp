@@ -32,10 +32,10 @@ wxString dbf_getstruct_c(const wxString& tablename, wxDBase* db)
    wxFileName::SplitPath(db->GetFilename(), NULL, &title, NULL);
 */
    wxString fieldname;
-   fieldname.Printf(wxT("%s_fields"), title.c_str());
+   fieldname.Printf(wxT("%s_fields"), title.wx_str());
 
-   strStruct.Printf(wxT("const DBF_FIELD_INFO %s[] =\n{\n"), fieldname.c_str());
-   strEnum  .Printf(wxT("enum dbf_%s\n{\n"), title.c_str());
+   strStruct.Printf(wxT("const DBF_FIELD_INFO %s[] =\n{\n"), fieldname.wx_str());
+   strEnum  .Printf(wxT("enum dbf_%s\n{\n"), title.wx_str());
 
    for (size_t i = 0; ; i++)
    {
@@ -58,23 +58,23 @@ wxString dbf_getstruct_c(const wxString& tablename, wxDBase* db)
       wxString name = wxConvertMB2WX(info.name);
       temp.Printf(wxT("   { %s, %-21s,%3d,%3d },\n"),
          //-(int)(WXSIZEOF(info.name)+1),
-         wxString::Format(wxT("\"%s\""), name.c_str()).c_str(),
+         wxString::Format(wxT("\"%s\""), name.wx_str()).wx_str(),
          asz[info.type],
          info.length,
          info.decimals
          );
       strStruct+=temp;
       name.MakeLower();
-      temp.Printf(wxT("   ENUM_dbf_%s_%s,\n"), title.c_str(), name.c_str());
+      temp.Printf(wxT("   ENUM_dbf_%s_%s,\n"), title.wx_str(), name.wx_str());
       strEnum+=temp;
    }
    strStruct+= wxT("};\n");
-   strEnum  += wxString::Format(wxT("   ENUM_dbf_%s_enumcount\n};\n"), title.c_str());
+   strEnum  += wxString::Format(wxT("   ENUM_dbf_%s_enumcount\n};\n"), title.wx_str());
    wxString str;
    str+=strEnum;
    str+=wxT("\n");
    str+=strStruct;
-   str+=wxString::Format(wxT("C_ASSERT(ENUM_dbf_%s_enumcount == WXSIZEOF(%s));\n"), title.c_str(), fieldname.c_str());
+   str+=wxString::Format(wxT("C_ASSERT(ENUM_dbf_%s_enumcount == WXSIZEOF(%s));\n"), title.wx_str(), fieldname.wx_str());
    return str;
 }
 
@@ -88,11 +88,11 @@ size_t dbf_getproperties(wxDBase* db, wxArrayString* as_ptr, bool header)
       wxString dt;
       db->GetLastUpdate(&dt);
 
-      //temp.Printf(wxT("File:\t%s"), db->GetFilename().c_str());
+      //temp.Printf(wxT("File:\t%s"), db->GetFilename().wx_str());
       //as.Add(temp);
       temp.Printf(_("Records:\t%d"), db->GetRecordCount());
       as.Add(temp);
-      temp.Printf(_("Last changed:\t%s"), dt.c_str());
+      temp.Printf(_("Last changed:\t%s"), dt.wx_str());
       as.Add(temp);
       as.Add(wxEmptyString);
       as.Add(_("Fields:"));
@@ -119,11 +119,11 @@ size_t dbf_getproperties(wxDBase* db, wxArrayString* as_ptr, bool header)
       wxString name = wxConvertMB2WX(info.name);
       temp.Printf(wxT("%d\t%s:\t%s\t%s"),
          (int)i,
-         name.c_str(),
+         name.wx_str(),
          asz[info.type],
          wxString::Format(info.decimals ? wxT("%d:%d") : wxT("%d"),
             info.length,
-            info.decimals).c_str()
+            info.decimals).wx_str()
 
          );
       as.Add(temp);

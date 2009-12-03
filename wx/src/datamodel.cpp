@@ -149,7 +149,7 @@ size_t wxDataModelBase::GetProperties(wxArrayString* as_ptr, bool header) const
    {
       if (GetTableName().Length())
       {
-         temp.Printf(_("Table:\t%s\t\t"), GetTableName().c_str());
+         temp.Printf(_("Table:\t%s\t\t"), GetTableName().wx_str());
          as.Add(temp);
       }
       temp.Printf(_("Records:\t%d\t\t"), GetRowCount());
@@ -165,8 +165,8 @@ size_t wxDataModelBase::GetProperties(wxArrayString* as_ptr, bool header) const
 
       temp.Printf(wxT("%d\t%s:\t%s\t%d"),
          (int)i,
-         info.name.c_str(),
-         info.type.c_str(),
+         info.name.wx_str(),
+         info.type.wx_str(),
          info.len
          );
       as.Add(temp);
