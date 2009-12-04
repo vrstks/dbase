@@ -11,10 +11,10 @@
 
 IMPLEMENT_APP(App)
 
-BEGIN_EVENT_TABLE(App, wxApp)
+BEGIN_EVENT_TABLE(App, wxAppEx)
 END_EVENT_TABLE()
 
-App::App(void) : wxApp(), m_mru(NULL)
+App::App(void) : wxAppEx(), m_mru(NULL)
 {
 }
 
@@ -64,7 +64,7 @@ int App::OnExit(void)
    }
    delete wxDocManager::GetDocumentManager();
    wxTheClipboard->Flush(); 
-   return wxApp::OnExit();
+   return base::OnExit();
 }
 
 MainFrame* App::GetMainFrame(void)

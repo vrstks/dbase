@@ -5,6 +5,8 @@
 #ifndef __APP_H__
 #define __APP_H__
 
+#include "wx29.h"
+
 /////////////////////////////////////////////////////////////////////////////
 // App
 
@@ -12,9 +14,9 @@ class MainFrame;
 class AcceleratorArray;
 class wxRecentFileList;
 
-class App : public wxApp
+class App : public wxAppEx
 {
-   typedef wxApp base;
+   typedef wxAppEx base;
 protected:
    wxRecentFileList* m_mru;
    wxLocale m_locale;

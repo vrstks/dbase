@@ -12,14 +12,23 @@ inline void wxAboutBox(const wxAboutDialogInfo& info, wxWindow* WXUNUSED(parent)
 }
 #endif
 
-inline wxString wxGetAppDisplayName()
+/////////////////////////////////////////////////////////////////////////////
+// wxAppEx
+
+class wxAppEx : public wxApp
 {
-#if (wxVERSION_NUMBER >= 2900)
-   return wxTheApp->GetAppDisplayName();
-#else
-   return wxTheApp->GetAppName();
+#if (wxVERSION_NUMBER < 2900)
+protected:
+   wxString m_appDisplayName;
+public:
+   wxString GetAppDisplayName() const { return m_appDisplayName; }
+
+    void SetAppDisplayName(const wxString& name) { m_appDisplayName = name; }
 #endif
-}
+};
+
+/////////////////////////////////////////////////////////////////////////////
+// wxDocManagerEx
 
 class wxDocManagerEx : public wxDocManager
 {

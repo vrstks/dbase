@@ -125,7 +125,7 @@ inline void wxString_RemoveEllipsis(wxString* str)
    str->Replace(wxELLIPSE_REPLACEMENT, wxEmptyString);
 }
 
-#define wxMessageBoxCaption      wxGetAppDisplayName()
+#define wxMessageBoxCaption      wxGetApp().GetAppDisplayName()
 
 extern wxString wxGetStockLabelEx(wxWindowID, bool withCodes);
 

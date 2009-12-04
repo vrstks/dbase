@@ -5,9 +5,8 @@
 #include "precomp.h"
 #include "appframe.h"
 #include "wxext.h"
-#include "app.h"
 #include <wx/aboutdlg.h>
-#include "wx29.h"
+#include "app.h"
 
 IMPLEMENT_CLASS(MainFrame, wxDocMDIParentFrame)
 
