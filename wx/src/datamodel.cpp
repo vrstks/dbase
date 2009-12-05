@@ -109,13 +109,13 @@ void wxDataModelSorted::Resort()
 
     wxDataViewSortedIndexArray temp(IsSortOrderAscending() ? wxDataViewIntermediateCmpAscend : wxDataViewIntermediateCmpDescend);
 #if (wxVERSION_NUMBER >= 2900)
-    const unsigned int n = wxDataViewSortedListModel::m_child->GetRowCount();
+    const unsigned int n = base::GetChild()->GetRowCount();
 #else
-    const unsigned int n = wxDataViewSortedListModel::m_child->GetNumberOfRows();
+    const unsigned int n = base::GetChild()->GetNumberOfRows();
 #endif
     for (unsigned int i = 0; i < n; i++)
         temp.Add( i);
-    m_array = temp;
+    SetSortArray(temp);
 }
 
 size_t wxDataModelBase::GetRow(size_t row, wxArrayString* as_ptr, bool header) const
