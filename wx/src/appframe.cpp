@@ -61,8 +61,8 @@ wxToolBar* MainFrame::CreateToolBar()
       { wxID_SEPARATOR     , NULL               , NULL         , NULL      , 0, 0                  },
       { wxID_FIND          , NULL               , NULL         , NULL      , wxACCEL_CTRL, 'F'},
       { wxID_SEPARATOR     , NULL               , NULL         , NULL      , 0, 0                  },
-      { wxID_ABOUT /*wxID_HELP*/, NULL          , _("Help")    , NULL      , wxACCEL_NORMAL, WXK_F1 },
-      { wxID_EXIT          , NULL               , NULL         , NULL      , wxACCEL_ALT   , WXK_F4  },
+      { wxID_ABOUT /*wxID_HELP*/, NULL          , _("Help")    , NULL      , wxACCEL_NORMAL, WXK_HELP },
+      { wxID_EXIT          , NULL               , NULL         , NULL      , wxACCEL_CTRL, 'Q' },
       { wxID_SEPARATOR     , NULL               , NULL         , NULL      , 0, 0                  },
    };
    for (size_t i = 0; i < WXSIZEOF(aID); i++)

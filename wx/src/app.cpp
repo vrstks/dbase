@@ -92,7 +92,7 @@ MainFrame* App::GetMainFrame(void)
       array.Add(wxGetStockAcceleratorEx(wxID_PROPERTIES));
       array.Add(wxGetStockAcceleratorEx(wxID_FIND));
 
-      array.Add(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_F1, wxID_ABOUT));
+      array.Add(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_HELP, wxID_ABOUT));
 
       array.Add(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_FULLSCREEN, XRCID("view_fullscreen")));
 
