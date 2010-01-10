@@ -113,23 +113,28 @@
             </object>
             <object class="separator">
             </object>
+            <object class="wxMenuItem" name="wxID_SELECTALL">
+                <label>Select &amp;All</label>
+                <help>Select the entire document</help>
+            </object>
+        </object>
+        <object class="wxMenu">
+            <label>&amp;Search</label>
             <object class="wxMenuItem" name="wxID_FIND">
                 <label>&amp;Find...</label>
                 <help>Find</help>
             </object>
-            <object class="wxMenuItem" name="next">
-                <label>Find &amp;Next...</label>
+            <object class="wxMenuItem" name="find_next">
+                <label>Find &amp;Next</label>
+                <help>Find next</help>
+            </object>
+            <object class="wxMenuItem" name="find_prev">
+                <label>Find Pre&amp;vious</label>
                 <help>Find next</help>
             </object>
             <object class="wxMenuItem" name="wxID_REPLACE">
                 <label>&amp;Replace...</label>
                 <help>Undelete the selection</help>
-            </object>
-            <object class="separator">
-            </object>
-            <object class="wxMenuItem" name="wxID_SELECTALL">
-                <label>Select &amp;All</label>
-                <help>Select the entire document</help>
             </object>
         </object>
         <object class="wxMenu">

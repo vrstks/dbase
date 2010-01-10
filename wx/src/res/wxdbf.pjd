@@ -24,6 +24,7 @@
     <bool name="generate_virtual_eventhandlers">0</bool>
     <string name="current_platform">"&lt;All platforms&gt;"</string>
     <string name="target_wx_version">"&lt;Any&gt;"</string>
+    <string name="app_kind">"Standard"</string>
     <string name="cpp_header_comment">"/////////////////////////////////////////////////////////////////////////////
 // Name:        %HEADER-FILENAME%
 // Purpose:     
@@ -151,26 +152,38 @@
         <string name="Runtime linking">"Dynamic"</string>
         <string name="Use exceptions">"Yes"</string>
         <string name="Use ODBC">"No"</string>
+        <string name="Use XRC">"Yes"</string>
         <string name="Use OpenGL">"No"</string>
         <string name="Use wxMediaCtrl">"No"</string>
         <string name="Use wxRichTextCtrl">"Yes"</string>
-        <string name="wxWidgets version">"%WXVERSION%"</string>
+        <string name="Use wxHTML">"Yes"</string>
+        <string name="Use wxPropertyGrid">"Yes"</string>
+        <string name="Use wxAUI">"Yes"</string>
+        <string name="Use wxSTC">"Yes"</string>
+        <string name="Use wxRibbonControl">"Yes"</string>
         <string name="Executable name">"%EXECUTABLE%"</string>
         <string name="Program arguments">""</string>
         <string name="Working path">"%AUTO%"</string>
         <string name="Output path">"%AUTO%"</string>
         <string name="Objects path">"%AUTO%"</string>
-        <string name="Compiler location">"%AUTO%"</string>
-        <string name="wxWidgets location">"%AUTO%"</string>
-        <string name="C++ command">"%AUTO%"</string>
-        <string name="C command">"%AUTO%"</string>
-        <string name="Resource compiler">"%AUTO%"</string>
-        <string name="Make command">"%AUTO%"</string>
         <string name="Project makefile">"%AUTO%"</string>
+        <string name="wxWidgets version">"%WXVERSION%"</string>
         <string name="wxWidgets makefile">"%AUTO%"</string>
+        <string name="wxWidgets location">"%AUTO%"</string>
+        <string name="wxWidgets build path">"%AUTO%"</string>
+        <string name="wxWidgets build command">"%AUTO%"</string>
+        <string name="wxWidgets clean command">"%AUTO%"</string>
+        <string name="CFG">""</string>
+        <string name="Compiler location">"%AUTO%"</string>
         <string name="Compiler bin path">"%AUTO%"</string>
         <string name="Compiler include path">"%AUTO%"</string>
         <string name="Compiler lib path">"%AUTO%"</string>
+        <string name="PATH variable">"%AUTO%"</string>
+        <string name="C++ command">"%AUTO%"</string>
+        <string name="C command">"%AUTO%"</string>
+        <string name="Linker command">"%AUTO%"</string>
+        <string name="Resource compiler">"%AUTO%"</string>
+        <string name="Make command">"%AUTO%"</string>
         <string name="Preprocessor flags">"%AUTO%"</string>
         <string name="Optimizations">"%AUTO%"</string>
         <string name="Warnings">"%AUTO%"</string>
@@ -182,13 +195,8 @@
         <string name="Include path">"%AUTO%"</string>
         <string name="Resource flags">"%AUTO%"</string>
         <string name="Resource path">"%AUTO%"</string>
-        <string name="wxWidgets build path">"%AUTO%"</string>
-        <string name="wxWidgets build command">"%AUTO%"</string>
-        <string name="wxWidgets clean command">"%AUTO%"</string>
-        <string name="PATH variable">"%AUTO%"</string>
         <bool name="Suppress source rules">0</bool>
         <bool name="Enable makefile generation">1</bool>
-        <string name="CFG">""</string>
       </document>
     </document>
   </data>
@@ -227,6 +235,7 @@
           <string name="id-prefix">""</string>
           <bool name="use-id-suffix">0</bool>
           <string name="id-suffix">""</string>
+          <string name="app-kind">"Standard"</string>
           <long name="use-xrc">0</long>
           <long name="working-mode">0</long>
           <string name="proxy-Id name">"menu_mdi"</string>
@@ -512,6 +521,7 @@
           <string name="id-prefix">""</string>
           <bool name="use-id-suffix">0</bool>
           <string name="id-suffix">""</string>
+          <string name="app-kind">"Standard"</string>
           <long name="use-xrc">0</long>
           <long name="working-mode">0</long>
           <string name="proxy-Id name">"menu_dbf"</string>
@@ -975,85 +985,6 @@
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
-              <string name="title">"&amp;Find...: wxID_FIND"</string>
-              <string name="type">"dialog-control-document"</string>
-              <string name="filename">""</string>
-              <string name="icon-name">"menuitem"</string>
-              <long name="is-transient">0</long>
-              <long name="owns-file">1</long>
-              <long name="title-mode">0</long>
-              <long name="locked">0</long>
-              <string name="created">"14/8/2006"</string>
-              <string name="proxy-type">"wbMenuItemProxy"</string>
-              <string name="proxy-Id name">"wxID_FIND"</string>
-              <long name="proxy-Id value">5034</long>
-              <string name="proxy-Label">"&amp;Find..."</string>
-              <string name="proxy-Kind">"Normal"</string>
-              <bool name="proxy-Checked">0</bool>
-              <bool name="proxy-Enabled">1</bool>
-              <string name="proxy-Help text">"Find"</string>
-              <string name="proxy-Bitmap">""</string>
-              <string name="proxy-Bitmap unchecked">""</string>
-              <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
-            </document>
-            <document>
-              <string name="title">"Find &amp;Next...: next"</string>
-              <string name="type">"dialog-control-document"</string>
-              <string name="filename">""</string>
-              <string name="icon-name">"menuitem"</string>
-              <long name="is-transient">0</long>
-              <long name="owns-file">1</long>
-              <long name="title-mode">0</long>
-              <long name="locked">0</long>
-              <string name="created">"14/8/2006"</string>
-              <string name="proxy-type">"wbMenuItemProxy"</string>
-              <string name="proxy-Id name">"next"</string>
-              <long name="proxy-Id value">10003</long>
-              <string name="proxy-Label">"Find &amp;Next..."</string>
-              <string name="proxy-Kind">"Normal"</string>
-              <bool name="proxy-Checked">0</bool>
-              <bool name="proxy-Enabled">1</bool>
-              <string name="proxy-Help text">"Find next"</string>
-              <string name="proxy-Bitmap">""</string>
-              <string name="proxy-Bitmap unchecked">""</string>
-              <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
-            </document>
-            <document>
-              <string name="title">"&amp;Replace...: wxID_REPLACE"</string>
-              <string name="type">"dialog-control-document"</string>
-              <string name="filename">""</string>
-              <string name="icon-name">"menuitem"</string>
-              <long name="is-transient">0</long>
-              <long name="owns-file">1</long>
-              <long name="title-mode">0</long>
-              <long name="locked">0</long>
-              <string name="created">"14/8/2006"</string>
-              <string name="proxy-type">"wbMenuItemProxy"</string>
-              <string name="proxy-Id name">"wxID_REPLACE"</string>
-              <long name="proxy-Id value">5038</long>
-              <string name="proxy-Label">"&amp;Replace..."</string>
-              <string name="proxy-Kind">"Normal"</string>
-              <bool name="proxy-Checked">0</bool>
-              <bool name="proxy-Enabled">1</bool>
-              <string name="proxy-Help text">"Undelete the selection"</string>
-              <string name="proxy-Bitmap">""</string>
-              <string name="proxy-Bitmap unchecked">""</string>
-              <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
-            </document>
-            <document>
-              <string name="title">"------------"</string>
-              <string name="type">"dialog-control-document"</string>
-              <string name="filename">""</string>
-              <string name="icon-name">"menuitem"</string>
-              <long name="is-transient">0</long>
-              <long name="owns-file">1</long>
-              <long name="title-mode">0</long>
-              <long name="locked">0</long>
-              <string name="created">"14/8/2006"</string>
-              <string name="proxy-type">"wbMenuSeparatorProxy"</string>
-              <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
-            </document>
-            <document>
               <string name="title">"Select &amp;All: wxID_SELECTALL"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
@@ -1071,6 +1002,105 @@
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Help text">"Select the entire document"</string>
+              <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
+              <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
+            </document>
+          </document>
+          <document>
+            <string name="title">"Search"</string>
+            <string name="type">"dialog-control-document"</string>
+            <string name="filename">""</string>
+            <string name="icon-name">"menu"</string>
+            <long name="is-transient">0</long>
+            <long name="owns-file">1</long>
+            <long name="title-mode">0</long>
+            <long name="locked">0</long>
+            <string name="proxy-type">"wbMenuProxy"</string>
+            <string name="proxy-Label">"&amp;Search"</string>
+            <bool name="proxy-Enabled">1</bool>
+            <string name="proxy-Member variable name">""</string>
+            <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
+            <document>
+              <string name="title">"&amp;Find...: wxID_FIND"</string>
+              <string name="type">"dialog-control-document"</string>
+              <string name="filename">""</string>
+              <string name="icon-name">"menuitem"</string>
+              <long name="is-transient">0</long>
+              <long name="owns-file">1</long>
+              <long name="title-mode">0</long>
+              <long name="locked">0</long>
+              <string name="proxy-type">"wbMenuItemProxy"</string>
+              <string name="proxy-Id name">"wxID_FIND"</string>
+              <long name="proxy-Id value">5035</long>
+              <string name="proxy-Label">"&amp;Find..."</string>
+              <string name="proxy-Kind">"Normal"</string>
+              <bool name="proxy-Checked">0</bool>
+              <bool name="proxy-Enabled">1</bool>
+              <string name="proxy-Help text">"Find"</string>
+              <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
+              <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
+            </document>
+            <document>
+              <string name="title">"Find &amp;Next: find_next"</string>
+              <string name="type">"dialog-control-document"</string>
+              <string name="filename">""</string>
+              <string name="icon-name">"menuitem"</string>
+              <long name="is-transient">0</long>
+              <long name="owns-file">1</long>
+              <long name="title-mode">0</long>
+              <long name="locked">0</long>
+              <string name="proxy-type">"wbMenuItemProxy"</string>
+              <string name="proxy-Id name">"find_next"</string>
+              <long name="proxy-Id value">10010</long>
+              <string name="proxy-Label">"Find &amp;Next"</string>
+              <string name="proxy-Kind">"Normal"</string>
+              <bool name="proxy-Checked">0</bool>
+              <bool name="proxy-Enabled">1</bool>
+              <string name="proxy-Help text">"Find next"</string>
+              <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
+              <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
+            </document>
+            <document>
+              <string name="title">"Find Pre&amp;vious: find_prev"</string>
+              <string name="type">"dialog-control-document"</string>
+              <string name="filename">""</string>
+              <string name="icon-name">"menuitem"</string>
+              <long name="is-transient">0</long>
+              <long name="owns-file">1</long>
+              <long name="title-mode">0</long>
+              <long name="locked">0</long>
+              <string name="proxy-type">"wbMenuItemProxy"</string>
+              <string name="proxy-Id name">"find_prev"</string>
+              <long name="proxy-Id value">10003</long>
+              <string name="proxy-Label">"Find Pre&amp;vious"</string>
+              <string name="proxy-Kind">"Normal"</string>
+              <bool name="proxy-Checked">0</bool>
+              <bool name="proxy-Enabled">1</bool>
+              <string name="proxy-Help text">"Find next"</string>
+              <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
+              <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
+            </document>
+            <document>
+              <string name="title">"&amp;Replace...: wxID_REPLACE"</string>
+              <string name="type">"dialog-control-document"</string>
+              <string name="filename">""</string>
+              <string name="icon-name">"menuitem"</string>
+              <long name="is-transient">0</long>
+              <long name="owns-file">1</long>
+              <long name="title-mode">0</long>
+              <long name="locked">0</long>
+              <string name="proxy-type">"wbMenuItemProxy"</string>
+              <string name="proxy-Id name">"wxID_REPLACE"</string>
+              <long name="proxy-Id value">5039</long>
+              <string name="proxy-Label">"&amp;Replace..."</string>
+              <string name="proxy-Kind">"Normal"</string>
+              <bool name="proxy-Checked">0</bool>
+              <bool name="proxy-Enabled">1</bool>
+              <string name="proxy-Help text">"Undelete the selection"</string>
               <string name="proxy-Bitmap">""</string>
               <string name="proxy-Bitmap unchecked">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
@@ -1264,6 +1294,7 @@
           <string name="id-prefix">""</string>
           <bool name="use-id-suffix">0</bool>
           <string name="id-suffix">""</string>
+          <string name="app-kind">"Standard"</string>
           <long name="use-xrc">0</long>
           <long name="working-mode">0</long>
           <string name="proxy-Id name">"struct"</string>
@@ -1306,6 +1337,7 @@
           <bool name="proxy-wxNO_BORDER">0</bool>
           <bool name="proxy-wxSIMPLE_BORDER">0</bool>
           <bool name="proxy-wxDOUBLE_BORDER">0</bool>
+          <bool name="proxy-wxBORDER_THEME">0</bool>
           <bool name="proxy-wxSUNKEN_BORDER">0</bool>
           <bool name="proxy-wxRAISED_BORDER">0</bool>
           <bool name="proxy-wxSTATIC_BORDER">0</bool>
@@ -1408,6 +1440,7 @@
               <bool name="proxy-wxNO_BORDER">0</bool>
               <bool name="proxy-wxSIMPLE_BORDER">0</bool>
               <bool name="proxy-wxDOUBLE_BORDER">0</bool>
+              <bool name="proxy-wxBORDER_THEME">0</bool>
               <bool name="proxy-wxSUNKEN_BORDER">0</bool>
               <bool name="proxy-wxRAISED_BORDER">0</bool>
               <bool name="proxy-wxSTATIC_BORDER">0</bool>
@@ -1953,6 +1986,7 @@
           <string name="id-prefix">""</string>
           <bool name="use-id-suffix">0</bool>
           <string name="id-suffix">""</string>
+          <string name="app-kind">"Standard"</string>
           <long name="use-xrc">0</long>
           <long name="working-mode">0</long>
           <string name="proxy-Id name">"field_edit"</string>
@@ -1995,6 +2029,7 @@
           <bool name="proxy-wxNO_BORDER">0</bool>
           <bool name="proxy-wxSIMPLE_BORDER">0</bool>
           <bool name="proxy-wxDOUBLE_BORDER">0</bool>
+          <bool name="proxy-wxBORDER_THEME">0</bool>
           <bool name="proxy-wxSUNKEN_BORDER">0</bool>
           <bool name="proxy-wxRAISED_BORDER">0</bool>
           <bool name="proxy-wxSTATIC_BORDER">0</bool>
@@ -2116,6 +2151,7 @@
                 <bool name="proxy-wxNO_BORDER">0</bool>
                 <bool name="proxy-wxSIMPLE_BORDER">0</bool>
                 <bool name="proxy-wxDOUBLE_BORDER">0</bool>
+                <bool name="proxy-wxBORDER_THEME">0</bool>
                 <bool name="proxy-wxSUNKEN_BORDER">0</bool>
                 <bool name="proxy-wxRAISED_BORDER">0</bool>
                 <bool name="proxy-wxSTATIC_BORDER">0</bool>
@@ -2198,6 +2234,7 @@
                 <bool name="proxy-wxNO_BORDER">0</bool>
                 <bool name="proxy-wxSIMPLE_BORDER">0</bool>
                 <bool name="proxy-wxDOUBLE_BORDER">0</bool>
+                <bool name="proxy-wxBORDER_THEME">0</bool>
                 <bool name="proxy-wxSUNKEN_BORDER">0</bool>
                 <bool name="proxy-wxRAISED_BORDER">0</bool>
                 <bool name="proxy-wxSTATIC_BORDER">0</bool>
@@ -2269,6 +2306,7 @@
                 <bool name="proxy-wxNO_BORDER">0</bool>
                 <bool name="proxy-wxSIMPLE_BORDER">0</bool>
                 <bool name="proxy-wxDOUBLE_BORDER">0</bool>
+                <bool name="proxy-wxBORDER_THEME">0</bool>
                 <bool name="proxy-wxSUNKEN_BORDER">0</bool>
                 <bool name="proxy-wxRAISED_BORDER">0</bool>
                 <bool name="proxy-wxSTATIC_BORDER">0</bool>
@@ -2403,6 +2441,7 @@
                 <bool name="proxy-wxNO_BORDER">0</bool>
                 <bool name="proxy-wxSIMPLE_BORDER">0</bool>
                 <bool name="proxy-wxDOUBLE_BORDER">0</bool>
+                <bool name="proxy-wxBORDER_THEME">0</bool>
                 <bool name="proxy-wxSUNKEN_BORDER">0</bool>
                 <bool name="proxy-wxRAISED_BORDER">0</bool>
                 <bool name="proxy-wxSTATIC_BORDER">0</bool>
@@ -2485,6 +2524,7 @@
                 <bool name="proxy-wxNO_BORDER">0</bool>
                 <bool name="proxy-wxSIMPLE_BORDER">0</bool>
                 <bool name="proxy-wxDOUBLE_BORDER">0</bool>
+                <bool name="proxy-wxBORDER_THEME">0</bool>
                 <bool name="proxy-wxSUNKEN_BORDER">0</bool>
                 <bool name="proxy-wxRAISED_BORDER">0</bool>
                 <bool name="proxy-wxSTATIC_BORDER">0</bool>
@@ -2556,6 +2596,7 @@
                 <bool name="proxy-wxNO_BORDER">0</bool>
                 <bool name="proxy-wxSIMPLE_BORDER">0</bool>
                 <bool name="proxy-wxDOUBLE_BORDER">0</bool>
+                <bool name="proxy-wxBORDER_THEME">0</bool>
                 <bool name="proxy-wxSUNKEN_BORDER">0</bool>
                 <bool name="proxy-wxRAISED_BORDER">0</bool>
                 <bool name="proxy-wxSTATIC_BORDER">0</bool>
@@ -2638,6 +2679,7 @@
                 <bool name="proxy-wxNO_BORDER">0</bool>
                 <bool name="proxy-wxSIMPLE_BORDER">0</bool>
                 <bool name="proxy-wxDOUBLE_BORDER">0</bool>
+                <bool name="proxy-wxBORDER_THEME">0</bool>
                 <bool name="proxy-wxSUNKEN_BORDER">0</bool>
                 <bool name="proxy-wxRAISED_BORDER">0</bool>
                 <bool name="proxy-wxSTATIC_BORDER">0</bool>

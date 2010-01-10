@@ -99,7 +99,7 @@ MainFrame* App::GetMainFrame(void)
       array.Add(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_INSERT, wxID_ADD));
       array.Add(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_DELETE, wxID_DELETE));
       array.Add(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_F2, XRCID("edit")));
-      array.Add(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_F3, XRCID("next")));
+      array.Add(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_F3, XRCID("find_next")));
       array.Add(wxAcceleratorEntry(wxACCEL_CTRL, 'H', wxID_REPLACE));
       array.Add(wxAcceleratorEntry(wxACCEL_CTRL, 'X', XRCID("export")));
       array.Add(wxAcceleratorEntry(wxACCEL_CTRL, 'D', XRCID("pack")));
