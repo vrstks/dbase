@@ -45,6 +45,7 @@
 #define HEADER_LENGTH     32         /*   length of header without field desc   */
 #define MEMO_BLOCK_SIZE   512         /*  memo block size (dBase III) */
 #define MAGIC_MEMO_BLOCK 0x0008FFFF
+#define FIELDDATAOFFSET 1
 
 static void  strcpy_dos2host(char* buf, const char* src, size_t buf_len, enum dbf_charconv);
 static void  strcpy_host2dos(char* buf, const char* src, size_t buf_len, enum dbf_charconv);
@@ -271,7 +272,7 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
             handle->recordlength = header.recordlength;
             handle->headerlength = header.headerlength;
 
-            if (handle->recordcount == 0)
+            if ((handle->recordcount == 0) && header.recordlength)
             {
                ZSEEK(handle->api, stream, 0, ZLIB_FILEFUNC_SEEK_END);
                handle->recordcount = (size_t)(ZTELL(handle->api, stream) - header.headerlength) / header.recordlength;
@@ -288,12 +289,12 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
             tm.tm_isdst = 0;
 
             handle->lastupdate = mktime(&tm);
-            handle->fieldcount = (uint8_t)((handle->headerlength - (FIELD_REC_LENGTH+1)) / HEADER_LENGTH);
+            handle->fieldcount = (uint8_t)((handle->headerlength - (HEADER_LENGTH+FIELDDATAOFFSET)) / FIELD_REC_LENGTH);
             handle->recorddataptr = (char*)malloc(handle->recordlength + 1); // + zeroterm.
             if (handle->recorddataptr)
             {
                size_t i;
-               size_t fielddata_pos = 1;//v4 ? 1 : 1;
+               size_t fielddata_pos = FIELDDATAOFFSET;
 
                ZSEEK(handle->api, stream, HEADER_LENGTH, ZLIB_FILEFUNC_SEEK_SET);
 
@@ -1347,6 +1348,7 @@ DBF_HANDLE dbf_create(const char* filename, const DBF_FIELD_INFO* array, size_t 
    void* stream;
    void* memo = NULL;
    zlib_filefunc_def api;
+
    fill_fopen_filefunc(&api);
    stream = (*api.zopen_file)(api.opaque, filename, ZLIB_FILEFUNC_MODE_CREATE | ZLIB_FILEFUNC_MODE_WRITE);
 
