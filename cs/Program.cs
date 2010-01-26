@@ -21,7 +21,7 @@ namespace DBase.Test
          }
          Console.WriteLine(str);
 
-         for (file.Position = 0; file.Position < file.Recordcount; file.Position++)
+         for (file.Position = 0; file.Position < file.RecordCount; file.Position++)
          {
             str = string.Empty;
             for (i = 0; i < file.FieldCount; i++)

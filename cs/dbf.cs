@@ -236,9 +236,14 @@ namespace DBase
             if (Const.HEADER_LENGTH == bytes.GetLength(0))
             {
                DBF_FILEHEADER header = Utility.PtrToStructure<DBF_FILEHEADER>(bytes);
-               Recordcount = (int)header.recordcount;
+               RecordCount = header.recordcount;
                RecordLength = header.recordlength;
                HeaderLength = header.headerlength;
+
+               if ( (RecordCount == 0) && (RecordLength != 0) )
+               {
+                  RecordCount = (m_stream.Length - header.headerlength) / header.recordlength;
+               }
 
                int fieldcount = (header.headerlength - (Const.HEADER_LENGTH + 1)) / Const.FIELD_REC_LENGTH;
                _Fields = new DBF_FIELD_DATA[fieldcount];
@@ -265,9 +270,6 @@ namespace DBase
          {
             m_stream.Seek(0, io.SeekOrigin.Begin);
 
-            //byte[] bytes = new byte[Const.HEADER_LENGTH];
-            //DBF_FILEHEADER header = Utility.StructureToPtr<DBF_FILEHEADER>(header);
-            
             DBF_FILEHEADER header = new DBF_FILEHEADER();
             header.headerlength = (ushort)HeaderLength;
             header.crypt = 0;
@@ -278,8 +280,8 @@ namespace DBase
             header.lastupdate.yy = (byte)(now.Year - 1900);
             header.lastupdate.mm = (byte)now.Month;
             header.lastupdate.dd = (byte)now.Day;
-            header.recordcount = (ushort)Recordcount;
-            header.recordlength = 0;
+            header.recordcount = (ushort)RecordCount;
+            header.recordlength = (ushort)RecordLength;
             header.version = Const.MAGIC_DBASE3;
             header.unused_0 = 0;
             for (int i = 0; i < 16; i++)
@@ -325,8 +327,9 @@ namespace DBase
                HeaderLength = Const.HEADER_LENGTH + Const.FIELDDATAOFFSET + Const.FIELD_REC_LENGTH * FieldCount;
                IsDirty = true;
                m_stream.SetLength(HeaderLength);
-               long pos = m_stream.Seek(Const.HEADER_LENGTH, io.SeekOrigin.Begin);
+               m_stream.Seek(Const.HEADER_LENGTH, io.SeekOrigin.Begin);
 
+               RecordLength = 0;
                for (int i = 0; i < FieldCount; i++)
                {
                   DBF_FILEFIELD field = new DBF_FILEFIELD();
@@ -336,6 +339,7 @@ namespace DBase
                   field.deccount = (byte)fields[i].DecCount;
                   byte[] bytes = Utility.StructureToPtr<DBF_FILEFIELD>(field);
                   m_writer.Write(bytes);
+                  RecordLength += fields[i].Length;
                }
             }
          }
@@ -363,7 +367,7 @@ namespace DBase
          }
       }
 
-      public int Recordcount { get; private set; }
+      public long RecordCount { get; private set; }
       public int RecordLength { get; private set; }
       private int HeaderLength { get; set; }
 
