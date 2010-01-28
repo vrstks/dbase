@@ -259,6 +259,7 @@ namespace DBase
                   field.DecCount = item.deccount;
                   _Fields[i] = field;
                }
+               _RecordBuf = new byte[RecordLength];
                Position = 0;
             }
          }
