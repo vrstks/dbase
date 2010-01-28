@@ -1,6 +1,6 @@
-﻿// dbf.cs
-// Copyright (c) 2010 by Troels K. All rights reserved.
-// License: zlib
+﻿// dbf library (sf.net/projects/dbase)
+// License: zlib (opensource.org/licenses/zlib-license.php)
+// TODO: memo file header/put/get
 
 using System;
 using System.Runtime.InteropServices;
@@ -19,12 +19,16 @@ namespace DBase
       public const int HEADER_LENGTH = 32;
       public const int FIELD_REC_LENGTH = 32;
       public const string DataTypes = "CNFDCCML";
-      public const int FIELDDATAOFFSET = 1;
+      public const byte CPM_TEXT_TERMINATOR = 0x1A;
+      public const char FIELDTERMINATOR = '\r';
+      public const int FIELDTERMINATOR_LEN = 1;
       public const int MAGIC_DBASE3 = 0x03;
       public const int MAGIC_DBASE3_MEMO = 0x83;
       public const int MAGIC_DBASE4      = 0x04;
       public const int MAGIC_DBASE4_MEMO = 0x8B;
       public const int MAGIC_FOXPRO      = 0x30;
+      public const string Fileext = "dbf";
+      public const string FileextMemo = "dbt";
 
       public static void StructCheck<T>(int size_desired)
       {
@@ -189,12 +193,10 @@ namespace DBase
    public class File : IOpenClose
    {
       private io.FileStream m_stream = null;
-      private io.BinaryReader m_reader = null;
-      private io.BinaryWriter m_writer = null;
+      private io.FileStream m_stream_memo = null;
 
       public string Filename { get; private set; }
-      public static string Fileext { get { return "dbf"; } }
-      public static string FileextMemo { get { return "dbt"; } }
+      public string FilenameMemo { get; private set; }
       public bool IsOpen { get { return (m_stream != null); } }
 
       private DBF_FIELD_DATA[] _Fields;
@@ -226,14 +228,10 @@ namespace DBase
 
             m_stream = stream;
             Filename = filename;
-            m_reader = new io.BinaryReader(m_stream);
-            if (m_stream.CanWrite)
-            {
-               m_writer = new io.BinaryWriter(m_stream);
-            }
-            
-            byte[] bytes = m_reader.ReadBytes(Const.HEADER_LENGTH);
-            if (Const.HEADER_LENGTH == bytes.GetLength(0))
+
+            byte[] bytes = new byte[Const.HEADER_LENGTH];
+
+            if (Const.HEADER_LENGTH == m_stream.Read(bytes, 0, Const.HEADER_LENGTH))
             {
                DBF_FILEHEADER header = Utility.PtrToStructure<DBF_FILEHEADER>(bytes);
                RecordCount = header.recordcount;
@@ -247,9 +245,12 @@ namespace DBase
 
                int fieldcount = (header.headerlength - (Const.HEADER_LENGTH + 1)) / Const.FIELD_REC_LENGTH;
                _Fields = new DBF_FIELD_DATA[fieldcount];
+
+               bytes = new byte[Const.FIELD_REC_LENGTH];
+
                for (int i = 0; i < fieldcount; i++)
                {
-                  bytes = m_reader.ReadBytes(Const.FIELD_REC_LENGTH);
+                  m_stream.Read(bytes, 0, Const.FIELD_REC_LENGTH);
                   DBF_FILEFIELD item = Utility.PtrToStructure<DBF_FILEFIELD>(bytes);
                   DBF_FIELD_DATA field = new DBF_FIELD_DATA();
                   field.Name = item.title;
@@ -264,13 +265,21 @@ namespace DBase
          return ok;
       }
 
-      public io.FileStream Detach()
+      public bool AttachMemo(io.FileStream stream, string filename)
+      {
+         m_stream_memo = stream;
+         FilenameMemo = filename;
+         return true;
+      }
+
+      public void Detach(out io.FileStream stream, out io.FileStream memostream)
       {
          if (IsDirty)
          {
             m_stream.Seek(0, io.SeekOrigin.Begin);
 
             DBF_FILEHEADER header = new DBF_FILEHEADER();
+            
             header.headerlength = (ushort)HeaderLength;
             header.crypt = 0;
             header.incomplete = 0;
@@ -282,22 +291,24 @@ namespace DBase
             header.lastupdate.dd = (byte)now.Day;
             header.recordcount = (ushort)RecordCount;
             header.recordlength = (ushort)RecordLength;
-            header.version = Const.MAGIC_DBASE3;
+            header.version = (byte)((m_stream_memo != null) ? Const.MAGIC_DBASE3_MEMO : Const.MAGIC_DBASE3);
             header.unused_0 = 0;
             for (int i = 0; i < 16; i++)
             {
                //header.unused[i] = 0;
             }
             byte[] bytes = Utility.StructureToPtr<DBF_FILEHEADER>(header);
-            m_writer.Write(bytes);
+            m_stream.Write(bytes, 0, bytes.GetLength(0));
+            m_stream.Seek(HeaderLength + RecordCount * RecordLength, io.SeekOrigin.Begin);
+
+            bytes[0] = Const.CPM_TEXT_TERMINATOR;
+            m_stream.Write(bytes, 0, 1);
          }
-         io.FileStream stream = m_stream;
+         stream = m_stream;
+         memostream = m_stream_memo;
          m_stream = null;
          Filename = string.Empty;
-         m_reader = null;
-         m_writer = null;
          IsDirty = false;
-         return stream;
       }
 
       public bool Open(string filename, io.FileMode mode)
@@ -316,20 +327,36 @@ namespace DBase
 
       public bool Create(string filename, DBF_FIELD_DATA[] fields)
       {
-         var stream = new io.FileStream(filename, io.FileMode.Create, io.FileAccess.ReadWrite);
+         string filename_memo = string.Empty;
+         bool memo = false;
+         for (int i = 0; i < fields.GetLength(0); i++)
+         {
+            memo = memo || (fields[i].Type == DataType.Memo);
+         }
+         io.FileStream stream = new io.FileStream(filename, io.FileMode.Create, io.FileAccess.ReadWrite);
+         io.FileStream stream_memo = null;
          bool ok = (stream != null);
+
+         if (ok && memo)
+         {
+            filename_memo = io.Path.ChangeExtension(filename, DBase.Const.FileextMemo);
+            stream_memo = new io.FileStream(filename_memo, io.FileMode.Create, io.FileAccess.ReadWrite);
+            ok = (stream_memo != null);
+         }
          if (ok)
          {
             ok = Attach(stream, filename);
             if (ok)
             {
+               byte[] bytes;
+
                _Fields = fields;
-               HeaderLength = Const.HEADER_LENGTH + Const.FIELDDATAOFFSET + Const.FIELD_REC_LENGTH * FieldCount;
+               HeaderLength = Const.HEADER_LENGTH + Const.FIELDTERMINATOR_LEN + Const.FIELD_REC_LENGTH * FieldCount;
                IsDirty = true;
                m_stream.SetLength(HeaderLength);
                m_stream.Seek(Const.HEADER_LENGTH, io.SeekOrigin.Begin);
 
-               RecordLength = 0;
+               RecordLength = 1;
                for (int i = 0; i < FieldCount; i++)
                {
                   DBF_FILEFIELD field = new DBF_FILEFIELD();
@@ -337,10 +364,18 @@ namespace DBase
                   field.type = Const.DataTypes[(int)fields[i].Type];
                   field.length = (byte)fields[i].Length;
                   field.deccount = (byte)fields[i].DecCount;
-                  byte[] bytes = Utility.StructureToPtr<DBF_FILEFIELD>(field);
-                  m_writer.Write(bytes);
+                  bytes = Utility.StructureToPtr<DBF_FILEFIELD>(field);
+                  m_stream.Write(bytes, 0, bytes.GetLength(0));
                   RecordLength += fields[i].Length;
                }
+               bytes = new byte[1];
+               bytes[0] = (byte)Const.FIELDTERMINATOR;
+               m_stream.Write(bytes, 0, bytes.GetLength(0));
+               _RecordBuf = new byte[RecordLength];
+            }
+            if (stream_memo != null)
+            {
+               AttachMemo(stream_memo, filename_memo);
             }
          }
          return ok;
@@ -348,24 +383,30 @@ namespace DBase
 
       public void Close()
       {
-         Detach().Close();
+         io.FileStream stream;
+         io.FileStream memostream;
+         Detach(out stream, out memostream);
+         if (stream     != null) stream    .Close();
+         if (memostream != null) memostream.Close();
       }
 
-      private byte[] _Record = null;
-      private int _Position = -1;
-      public int Position
+      private byte[] _RecordBuf = null;
+      private long _Position = -1;
+      public long Position
       {
          get { return _Position; }
          set
          {
             if (_Position != value)
             {
-               m_stream.Seek(HeaderLength + value * RecordLength + Const.FIELDDATAOFFSET, io.SeekOrigin.Begin);
-               _Record = m_reader.ReadBytes(RecordLength);
+               m_stream.Seek(HeaderLength + value * RecordLength + Const.FIELDTERMINATOR_LEN, io.SeekOrigin.Begin);
+               m_stream.Read(_RecordBuf, 0, RecordLength);
                _Position = value;
             }
          }
       }
+
+      private long _NextMemoPosition = 0;
 
       public long RecordCount { get; private set; }
       public int RecordLength { get; private set; }
@@ -373,39 +414,112 @@ namespace DBase
 
       private static char[] FieldTrim = new char[] { ' ', '\0' };
 
+      private void ClearRecordBuf()
+      {
+         for (int i = 0; i < _RecordBuf.GetLength(0); i++)
+         {
+            _RecordBuf[0] = 0;
+         }
+      }
+      public bool AddRecord()
+      {
+         _Position = RecordCount;
+         m_stream.Seek(HeaderLength + _Position * RecordLength + Const.FIELDTERMINATOR_LEN, io.SeekOrigin.Begin);
+         ClearRecordBuf();
+         m_stream.Write(_RecordBuf, 0, _RecordBuf.GetLength(0));
+         RecordCount++;
+         return true;
+      }
+
+      public bool PutRecord()
+      {
+         m_stream.Seek(HeaderLength + _Position * RecordLength + Const.FIELDTERMINATOR_LEN, io.SeekOrigin.Begin);
+         m_stream.Write(_RecordBuf, 0, _RecordBuf.GetLength(0));
+         return true;
+      }
+
+      public bool PutField(int field, string str)
+      {
+         DBF_FIELD_DATA fielddata = _Fields[field];
+         switch (fielddata.Type)
+         {
+            case DataType.Memo:
+            {
+               m_stream_memo.Seek(_NextMemoPosition * Const.MEMO_BLOCK_SIZE, io.SeekOrigin.Begin);
+               str = _NextMemoPosition.ToString();
+               _NextMemoPosition++;
+               break;
+            }
+         }
+         byte[] bytes = System.Text.Encoding.Default.GetBytes(str);
+         int pos = GetRecordBufPos(field);
+         int len = Math.Min(fielddata.Length, bytes.GetLength(0));
+         Buffer.BlockCopy(bytes, 0, _RecordBuf, pos, len);
+         return true;
+      }
+
+      public bool PutField(int field, int n)
+      {
+         return PutField(field, n.ToString());
+      }
+
+      public bool PutField(int field, DateTimeOffset date)
+      {
+         string str = string.Format("{0:0000}{1:00}{2:00}", date.Year, date.Month, date.Day);
+         return PutField(field, str);
+      }
+
+      public bool PutField(int field, bool b)
+      {
+         return PutField(field, b ? "T" : "F");
+      }
+
+      public bool PutField(int field, double n)
+      {
+         DBF_FIELD_DATA fielddata = _Fields[field];
+         string fmt = "{0:0";
+         if (fielddata.DecCount != 0)
+         {
+            fmt += ".";
+            for (int i = 0; i < fielddata.DecCount; i++)
+            {
+               fmt += "0";
+            }
+         }
+         fmt += "}";
+         string str = string.Format(fmt, n);
+         str = str.Replace(',', '.');
+         return PutField(field, str);
+      }
+
+      private int GetRecordBufPos(int field)
+      {
+         int pos = 0;
+         for (int i = 0; i < field; i++)
+         {
+            pos += _Fields[i].Length;
+         }
+         return pos;
+      }
+
       public string GetField(int index)
       {
          string str = string.Empty;
-         DBF_FIELD_DATA field;
          int pos = 0;
          for (int i = 0; i < index; i++)
          {
-            field = _Fields[i];
-            pos += field.Length;
+            pos += _Fields[i].Length;
          }
-         field = _Fields[index];
-         /*
-         byte[] bytes = new byte[field.Length + 1];
-         Buffer.BlockCopy(_Record, pos, bytes, 0, field.Length); // faster than Array.Copy
-         bytes[field.Length] = 0;
-         str = System.Text.Encoding.Default.GetString(bytes);
-         */
-         str = System.Text.Encoding.Default.GetString(_Record, pos, field.Length);
+         DBF_FIELD_DATA fielddata = _Fields[index];
+         str = System.Text.Encoding.Default.GetString(_RecordBuf, pos, fielddata.Length);
          str = str.TrimEnd(FieldTrim);
-         /*
-         switch (field.Type)
+         switch (fielddata.Type)
          {
-            case DataType.DBF_DATA_TYPE_CHAR:
-               str = System.Text.Encoding.Default.GetString(_Record, pos, field.Length);
+            case DataType.Memo:
+            {
                break;
-            case DataType.DBF_DATA_TYPE_INTEGER:
-
-               break;
-            default:
-               Console.Write("");
-               break;
+            }
          }
-         */
          return str;
       }
    }
