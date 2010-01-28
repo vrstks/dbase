@@ -45,7 +45,8 @@
 #define HEADER_LENGTH     32         /*   length of header without field desc   */
 #define MEMO_BLOCK_SIZE   512         /*  memo block size (dBase III) */
 #define MAGIC_MEMO_BLOCK 0x0008FFFF
-#define FIELDDATAOFFSET 1
+#define FIELDTERMINATOR '\r'
+#define FIELDTERMINATOR_LEN 1
 
 static void  strcpy_dos2host(char* buf, const char* src, size_t buf_len, enum dbf_charconv);
 static void  strcpy_host2dos(char* buf, const char* src, size_t buf_len, enum dbf_charconv);
@@ -89,7 +90,7 @@ typedef struct _DBT_FILEHEADER
 typedef struct _DBF_FILEFIELD
 {
    char      name[11];   // field name in ASCII zero-filled
-   char      type;         // field type in ASCII
+   char      type;        // field type in ASCII
    uint8_t   unused_0[4];
    uint8_t   length;     // field length in binary
    uint8_t   deccount;   // field decimal count in binary
@@ -289,12 +290,12 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
             tm.tm_isdst = 0;
 
             handle->lastupdate = mktime(&tm);
-            handle->fieldcount = (uint8_t)((handle->headerlength - (HEADER_LENGTH+FIELDDATAOFFSET)) / FIELD_REC_LENGTH);
+            handle->fieldcount = (uint8_t)((handle->headerlength - (HEADER_LENGTH+FIELDTERMINATOR_LEN)) / FIELD_REC_LENGTH);
             handle->recorddataptr = (char*)malloc(handle->recordlength + 1); // + zeroterm.
             if (handle->recorddataptr)
             {
                size_t i;
-               size_t fielddata_pos = FIELDDATAOFFSET;
+               size_t fielddata_pos = 0;
 
                ZSEEK(handle->api, stream, HEADER_LENGTH, ZLIB_FILEFUNC_SEEK_SET);
 
@@ -583,7 +584,7 @@ BOOL dbf_setposition(DBF_HANDLE handle, size_t record)
 
    if (ok)
    {
-      ok = (0 == ZSEEK(handle->api, handle->stream, handle->headerlength + (record - 0) * handle->recordlength, ZLIB_FILEFUNC_SEEK_SET));
+      ok = (0 == ZSEEK(handle->api, handle->stream, handle->headerlength + FIELDTERMINATOR_LEN + (record - 0) * handle->recordlength, ZLIB_FILEFUNC_SEEK_SET));
       if (ok) ok = (handle->recordlength == ZREAD(handle->api, handle->stream, handle->recorddataptr, handle->recordlength));
       if (ok)
       {
@@ -1390,6 +1391,7 @@ DBF_HANDLE dbf_create_attach(void* stream, zlib_filefunc_def* api,
    DBF_FILEHEADER header;
    DBF_FIELD* fieldarray;
    char* recorddataptr;
+   char ch;
 
    memset(&header, 0, sizeof(header));
    header.version = (uint8_t)(memo ? MAGIC_DBASE3_MEMO : MAGIC_DBASE3);
@@ -1446,12 +1448,15 @@ DBF_HANDLE dbf_create_attach(void* stream, zlib_filefunc_def* api,
       ZWRITE(*api, stream, &temp, sizeof(temp));
       header.recordlength = (uint16_t)(header.recordlength + field->m_Length);
    }
-   ZWRITE(*api, stream, "\xd", 1); // crucial - reqd by OpenOffice 2
+   ch = FIELDTERMINATOR;
+   ZWRITE(*api, stream, &ch, sizeof(ch)); // crucial - reqd by OpenOffice 2
    ZSEEK (*api, stream, 0, ZLIB_FILEFUNC_SEEK_SET);
    ZWRITE(*api, stream, &header, sizeof(header));
    ZSEEK (*api, stream, 0, ZLIB_FILEFUNC_SEEK_END);
-   ZWRITE(*api, stream, "\0x0d", 1);
-   ZWRITE(*api, stream, "\0x1a", 1);
+   ch = FIELDTERMINATOR;
+   ZWRITE(*api, stream, &ch, sizeof(ch));
+   ch = CPM_TEXT_TERMINATOR; 
+   ZWRITE(*api, stream, &ch, sizeof(ch));
 
    handle = dbf_alloc();
    handle->api          = *api;
