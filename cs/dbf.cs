@@ -4,6 +4,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using io = System.IO;
 
 /// <summary>
@@ -118,12 +119,16 @@ namespace DBase
       Any = -2
    }
 
-   public struct DBF_FIELD_DATA
+   public class DBF_FIELD_DATA
    {
       public string Name;
       public DataType Type;
       public int Length;
       public int DecCount;
+
+      public DBF_FIELD_DATA()
+      {
+      }
 
       public DBF_FIELD_DATA(string _Name, DataType _Type, int _Length, int _DecCount)
       {
@@ -199,9 +204,8 @@ namespace DBase
       public string FilenameMemo { get; private set; }
       public bool IsOpen { get { return (m_stream != null); } }
 
-      private DBF_FIELD_DATA[] _Fields;
-      public int FieldCount { get { return (_Fields != null) ? _Fields.GetLength(0) : 0; } }
-      public DBF_FIELD_DATA GetFieldInfo(int field) { return _Fields[field]; }
+      public List<DBF_FIELD_DATA> Fields { get; private set; }
+
       public bool IsEditable { get { return (m_stream != null) && m_stream.CanWrite; } }
       public bool IsDirty { get; private set; }
 
@@ -213,6 +217,7 @@ namespace DBase
       public File()
       {
          IsDirty = false;
+         Fields = new List<DBF_FIELD_DATA>();
       }
       ~File()
       {
@@ -244,7 +249,6 @@ namespace DBase
                }
 
                int fieldcount = (header.headerlength - (Const.HEADER_LENGTH + 1)) / Const.FIELD_REC_LENGTH;
-               _Fields = new DBF_FIELD_DATA[fieldcount];
 
                bytes = new byte[Const.FIELD_REC_LENGTH];
 
@@ -257,7 +261,7 @@ namespace DBase
                   field.Length = item.length;
                   field.Type = (DataType)Const.DataTypes.IndexOf(item.type);
                   field.DecCount = item.deccount;
-                  _Fields[i] = field;
+                  Fields.Add(field);
                }
                _RecordBuf = new byte[RecordLength];
                Position = 0;
@@ -326,13 +330,23 @@ namespace DBase
          return ok;
       }
 
-      public bool Create(string filename, DBF_FIELD_DATA[] fields)
+      public bool Create(string filename, DBF_FIELD_DATA[] array)
+      {
+         var list = new List<DBF_FIELD_DATA>();
+         foreach (var item in array)
+         {
+            list.Add(item);
+         }
+         return Create(filename, list);
+      }
+
+      public bool Create(string filename, List<DBF_FIELD_DATA> fields)
       {
          string filename_memo = string.Empty;
          bool memo = false;
-         for (int i = 0; i < fields.GetLength(0); i++)
+         foreach (var item in fields)
          {
-            memo = memo || (fields[i].Type == DataType.Memo);
+            memo = memo || (item.Type == DataType.Memo);
          }
          io.FileStream stream = new io.FileStream(filename, io.FileMode.Create, io.FileAccess.ReadWrite);
          io.FileStream stream_memo = null;
@@ -351,23 +365,23 @@ namespace DBase
             {
                byte[] bytes;
 
-               _Fields = fields;
-               HeaderLength = Const.HEADER_LENGTH + Const.FIELDTERMINATOR_LEN + Const.FIELD_REC_LENGTH * FieldCount;
+               HeaderLength = Const.HEADER_LENGTH + Const.FIELDTERMINATOR_LEN + Const.FIELD_REC_LENGTH * fields.Count;
                IsDirty = true;
                m_stream.SetLength(HeaderLength);
                m_stream.Seek(Const.HEADER_LENGTH, io.SeekOrigin.Begin);
+               Fields = fields;
 
                RecordLength = 1;
-               for (int i = 0; i < FieldCount; i++)
+               foreach (DBF_FIELD_DATA item in fields)
                {
                   DBF_FILEFIELD field = new DBF_FILEFIELD();
-                  field.title = fields[i].Name;
-                  field.type = Const.DataTypes[(int)fields[i].Type];
-                  field.length = (byte)fields[i].Length;
-                  field.deccount = (byte)fields[i].DecCount;
+                  field.title = item.Name;
+                  field.type = Const.DataTypes[(int)item.Type];
+                  field.length = (byte)item.Length;
+                  field.deccount = (byte)item.DecCount;
                   bytes = Utility.StructureToPtr<DBF_FILEFIELD>(field);
                   m_stream.Write(bytes, 0, bytes.GetLength(0));
-                  RecordLength += fields[i].Length;
+                  RecordLength += item.Length;
                }
                bytes = new byte[1];
                bytes[0] = (byte)Const.FIELDTERMINATOR;
@@ -389,6 +403,9 @@ namespace DBase
          Detach(out stream, out memostream);
          if (stream     != null) stream    .Close();
          if (memostream != null) memostream.Close();
+         Fields.Clear();
+         RecordCount = 0;
+         RecordLength = 0;
       }
 
       private byte[] _RecordBuf = null;
@@ -439,10 +456,9 @@ namespace DBase
          return true;
       }
 
-      public bool PutField(int field, string str)
+      public bool PutField(DBF_FIELD_DATA field, string str)
       {
-         DBF_FIELD_DATA fielddata = _Fields[field];
-         switch (fielddata.Type)
+         switch (field.Type)
          {
             case DataType.Memo:
             {
@@ -454,35 +470,34 @@ namespace DBase
          }
          byte[] bytes = System.Text.Encoding.Default.GetBytes(str);
          int pos = GetRecordBufPos(field);
-         int len = Math.Min(fielddata.Length, bytes.GetLength(0));
+         int len = Math.Min(field.Length, bytes.GetLength(0));
          Buffer.BlockCopy(bytes, 0, _RecordBuf, pos, len);
          return true;
       }
 
-      public bool PutField(int field, int n)
+      public bool PutField(DBF_FIELD_DATA field, int n)
       {
          return PutField(field, n.ToString());
       }
 
-      public bool PutField(int field, DateTimeOffset date)
+      public bool PutField(DBF_FIELD_DATA field, DateTimeOffset date)
       {
          string str = string.Format("{0:0000}{1:00}{2:00}", date.Year, date.Month, date.Day);
          return PutField(field, str);
       }
 
-      public bool PutField(int field, bool b)
+      public bool PutField(DBF_FIELD_DATA field, bool b)
       {
          return PutField(field, b ? "T" : "F");
       }
 
-      public bool PutField(int field, double n)
+      public bool PutField(DBF_FIELD_DATA field, double n)
       {
-         DBF_FIELD_DATA fielddata = _Fields[field];
          string fmt = "{0:0";
-         if (fielddata.DecCount != 0)
+         if (field.DecCount != 0)
          {
             fmt += ".";
-            for (int i = 0; i < fielddata.DecCount; i++)
+            for (int i = 0; i < field.DecCount; i++)
             {
                fmt += "0";
             }
@@ -493,28 +508,24 @@ namespace DBase
          return PutField(field, str);
       }
 
-      private int GetRecordBufPos(int field)
+      private int GetRecordBufPos(DBF_FIELD_DATA field)
       {
          int pos = 0;
-         for (int i = 0; i < field; i++)
+         foreach (DBF_FIELD_DATA item in Fields)
          {
-            pos += _Fields[i].Length;
+            if (item == field) break;
+            pos += item.Length;
          }
          return pos;
       }
 
-      public string GetField(int index)
+      public string GetField(DBF_FIELD_DATA field)
       {
          string str = string.Empty;
-         int pos = 0;
-         for (int i = 0; i < index; i++)
-         {
-            pos += _Fields[i].Length;
-         }
-         DBF_FIELD_DATA fielddata = _Fields[index];
-         str = System.Text.Encoding.Default.GetString(_RecordBuf, pos, fielddata.Length);
+         int pos = GetRecordBufPos(field);
+         str = System.Text.Encoding.Default.GetString(_RecordBuf, pos, field.Length);
          str = str.TrimEnd(FieldTrim);
-         switch (fielddata.Type)
+         switch (field.Type)
          {
             case DataType.Memo:
             {

@@ -12,26 +12,25 @@ namespace DBase.Test
    {
       private static void ConsoleDump(DBase.File file)
       {
-         int i;
          string str = string.Empty;
 
-         for (i = 0; i < file.FieldCount; i++)
+         foreach (DBF_FIELD_DATA field in file.Fields)
          {
-            if (i != 0) str += ",";
-            str += file.GetFieldInfo(i).Name;
+            if (field != file.Fields[0]) str += ",";
+            str += field.Name;
          }
          Console.WriteLine(str);
 
          for (file.Position = 0; file.Position < file.RecordCount; file.Position++)
          {
             str = string.Empty;
-            for (i = 0; i < file.FieldCount; i++)
+            foreach (DBF_FIELD_DATA field in file.Fields)
             {
-               if (i != 0) str += ",";
-               str += file.GetField(i);
+               if (field != file.Fields[0]) str += ",";
+               str += file.GetField(field);
                //break;
             }
-            Console.WriteLine("{0,5} {1}", i, str);
+            Console.WriteLine("{0,5} {1}", file.Position, str);
             //break;
          }
       }
@@ -53,12 +52,12 @@ namespace DBase.Test
          if (file.Create(filename, fields))
          {
             file.AddRecord();
-            file.PutField(0, "sjov");
-            file.PutField(1, 10);
-            file.PutField(2, true);
-            file.PutField(3, DateTimeOffset.UtcNow);
-            file.PutField(4, 11.1);
-            //file.PutField(5, "memo");
+            file.PutField(fields[0], "sjov");
+            file.PutField(fields[1], 10);
+            file.PutField(fields[2], true);
+            file.PutField(fields[3], DateTimeOffset.UtcNow);
+            file.PutField(fields[4], 11.1);
+            //file.PutField(fields[5], "memo");
             file.PutRecord();
             file.Close();
          }
@@ -83,12 +82,12 @@ namespace DBase.Test
          if (file.Create(filename, fields))
          {
             file.AddRecord();
-            file.PutField(0, "sjov");
-            /*file.PutField(1, 10);
-            file.PutField(2, true);
-            file.PutField(3, DateTimeOffset.UtcNow);
-            file.PutField(4, 11.1);
-            file.PutField(5, "memo");
+            file.PutField(fields[0], "sjov");
+            /*file.PutField(fields[1], 10);
+            file.PutField(fields[2], true);
+            file.PutField(fields[3], DateTimeOffset.UtcNow);
+            file.PutField(fields[4], 11.1);
+            file.PutField(fields[5], "memo");
             */
             file.PutRecord();
 
