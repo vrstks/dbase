@@ -30,6 +30,7 @@ namespace DBase
       public const int MAGIC_DBASE4      = 0x04;
       public const int MAGIC_DBASE4_MEMO = 0x8B;
       public const int MAGIC_FOXPRO      = 0x30;
+      public const int EnumeratorDefault = -1;
       public const string Fileext = "dbf";
       public const string FileextMemo = "dbt";
 
@@ -127,6 +128,7 @@ namespace DBase
       public DataType Type;
       public int Length;
       public int DecCount;
+      public int Position;
 
       public FieldInfo()
       {
@@ -265,7 +267,6 @@ namespace DBase
                   field.DecCount = item.deccount;
                   Fields.Add(field);
                }
-               Position = -1;
             }
          }
          return ok;
@@ -406,10 +407,11 @@ namespace DBase
          Fields.Clear();
          RecordCount = 0;
          RecordLength = 0;
+         _Position = Const.EnumeratorDefault;
       }
 
       private string _RecordBuf = null;
-      private long _Position = -1;
+      private long _Position = Const.EnumeratorDefault;
       public long Position
       {
          get { return _Position; }
@@ -417,11 +419,11 @@ namespace DBase
          {
             if (_Position != value)
             {
+               _Position = value;
                m_stream.Seek(HeaderLength + value * RecordLength + Const.FIELDTERMINATOR_LEN, io.SeekOrigin.Begin);
                byte[] bytes = new byte[RecordLength];
                m_stream.Read(bytes, 0, RecordLength);
                _RecordBuf = System.Text.Encoding.Default.GetString(bytes, 0, RecordLength);
-               _Position = value;
             }
          }
       }
@@ -601,7 +603,7 @@ namespace DBase
 
       public void Reset()
       {
-         Position = -1;
+         Position = Const.EnumeratorDefault;
       }
       #endregion
    }
@@ -636,7 +638,7 @@ namespace DBase
 
       public void Reset()
       {
-         FieldPosition = -1;
+         FieldPosition = Const.EnumeratorDefault;
       }
       #endregion
    }
