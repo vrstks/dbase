@@ -492,11 +492,7 @@ namespace DBase
          string fmt = "{0:0";
          if (field.DecCount != 0)
          {
-            fmt += ".";
-            for (int i = 0; i < field.DecCount; i++)
-            {
-               fmt += "0";
-            }
+            fmt += "." + new string('0', field.DecCount);
          }
          fmt += "}";
          string str = string.Format(fmt, n);
@@ -576,7 +572,7 @@ namespace DBase
    }
 
    #region Recordset
-   // Just File with a richer api supporting foreach 
+   // Adds a richer "syntactical sugar" api to File, supporting foreach
    public class Recordset : File, IEnumerable, IEnumerator
    {
       private Record _Record;
