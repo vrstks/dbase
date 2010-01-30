@@ -14,9 +14,10 @@ namespace DBase.Test
       {
          string str = string.Empty;
 
-         foreach (DBF_FIELD_DATA field in file.Fields)
+         int i = 0;
+         foreach (FieldInfo field in file.Fields)
          {
-            if (field != file.Fields[0]) str += ",";
+            if (0 != i++) str += ",";
             str += field.Name;
          }
          Console.WriteLine(str);
@@ -24,9 +25,10 @@ namespace DBase.Test
          for (file.Position = 0; file.Position < file.RecordCount; file.Position++)
          {
             str = string.Empty;
-            foreach (DBF_FIELD_DATA field in file.Fields)
+            i = 0;
+            foreach (FieldInfo field in file.Fields)
             {
-               if (field != file.Fields[0]) str += ",";
+               if (0 != i++) str += ",";
                str += file.GetField(field);
                //break;
             }
@@ -35,18 +37,45 @@ namespace DBase.Test
          }
       }
 
+      private static void ConsoleDump(DBase.Recordset recordset)
+      {
+         string str = string.Empty;
+
+         int i = 0;
+         foreach (FieldInfo field in recordset.Fields)
+         {
+            if (0 != i++) str += ",";
+            str += field.Name;
+         }
+         Console.WriteLine(str);
+
+         foreach (DBase.Record record in recordset)
+         {
+            str = string.Empty;
+            i = 0;
+            foreach (Field field in record)
+            {
+               if (0 != i++) str += ",";
+               str += field.Data;
+               //break;
+            }
+            Console.WriteLine("{0,5} {1}", recordset.Position, str);
+            //break;
+         }
+      }
+
       private static void Create(string filename)
       {
          var file = new DBase.File();
 
-         DBF_FIELD_DATA[] fields = new DBF_FIELD_DATA[]
+         FieldInfo[] fields = new FieldInfo[]
          { 
-            new DBF_FIELD_DATA("TITLE", DataType.Char, 4, 0),
-            new DBF_FIELD_DATA("INTEGER", DataType.Integer, 10, 0),
-            new DBF_FIELD_DATA("BOOLEAN", DataType.Boolean, 1, 0),
-            new DBF_FIELD_DATA("DATE", DataType.Date, 8, 0),
-            new DBF_FIELD_DATA("FLOAT", DataType.Float, 10, 5),
-            //new DBF_FIELD_DATA("MEMO", DataType.Memo, 10, 0),
+            new FieldInfo("TITLE", DataType.Char, 4, 0),
+            new FieldInfo("INTEGER", DataType.Integer, 10, 0),
+            new FieldInfo("BOOLEAN", DataType.Boolean, 1, 0),
+            new FieldInfo("DATE", DataType.Date, 8, 0),
+            new FieldInfo("FLOAT", DataType.Float, 10, 5),
+            //new FieldInfo("MEMO", DataType.Memo, 10, 0),
          };
 
          if (file.Create(filename, fields))
@@ -59,6 +88,16 @@ namespace DBase.Test
             file.PutField(fields[4], 11.1);
             //file.PutField(fields[5], "memo");
             file.PutRecord();
+
+            file.AddRecord();
+            file.PutField(fields[0], "sjov");
+            file.PutField(fields[1], 10);
+            file.PutField(fields[2], true);
+            file.PutField(fields[3], DateTimeOffset.UtcNow);
+            file.PutField(fields[4], 11.1);
+            //file.PutField(fields[5], "memo");
+            file.PutRecord();
+
             file.Close();
          }
       }
@@ -67,16 +106,16 @@ namespace DBase.Test
       {
          var file = new DBase.File();
 
-         DBF_FIELD_DATA[] fields = new DBF_FIELD_DATA[]
+         FieldInfo[] fields = new FieldInfo[]
          { 
             /*
-            new DBF_FIELD_DATA("TITLE", DataType.Char, 4, 0),
-            new DBF_FIELD_DATA("INTEGER", DataType.Integer, 10, 0),
-            new DBF_FIELD_DATA("BOOLEAN", DataType.Boolean, 1, 0),
-            new DBF_FIELD_DATA("DATE", DataType.Date, 8, 0),
-            new DBF_FIELD_DATA("FLOAT", DataType.Float, 10, 5),
+            new FieldInfo("TITLE", DataType.Char, 4, 0),
+            new FieldInfo("INTEGER", DataType.Integer, 10, 0),
+            new FieldInfo("BOOLEAN", DataType.Boolean, 1, 0),
+            new FieldInfo("DATE", DataType.Date, 8, 0),
+            new FieldInfo("FLOAT", DataType.Float, 10, 5),
             */
-            new DBF_FIELD_DATA("MEMO", DataType.Memo, 10, 0),
+            new FieldInfo("MEMO", DataType.Memo, 10, 0),
          };
 
          if (file.Create(filename, fields))
@@ -104,6 +143,15 @@ namespace DBase.Test
             file.Close();
          }
       }
+      private static void OpenRecordset(string filename)
+      {
+         var recordset = new DBase.Recordset();
+         if (recordset.Open(filename, io.FileMode.Open))
+         {
+            ConsoleDump(recordset);
+            recordset.Close();
+         }
+      }
       
       static void Main(string[] args)
       {
@@ -113,7 +161,7 @@ namespace DBase.Test
          Create(filename);
          //CreateMemo(filename);
          Open(filename);
-
+         OpenRecordset(filename);
       }
    }
 }

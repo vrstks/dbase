@@ -6,6 +6,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using io = System.IO;
+using System.Collections;
 
 /// <summary>
 /// Driverless dbf access
@@ -119,18 +120,18 @@ namespace DBase
       Any = -2
    }
 
-   public class DBF_FIELD_DATA
+   public class FieldInfo
    {
       public string Name;
       public DataType Type;
       public int Length;
       public int DecCount;
 
-      public DBF_FIELD_DATA()
+      public FieldInfo()
       {
       }
 
-      public DBF_FIELD_DATA(string _Name, DataType _Type, int _Length, int _DecCount)
+      public FieldInfo(string _Name, DataType _Type, int _Length, int _DecCount)
       {
          Name = _Name;
          Type = _Type;
@@ -204,7 +205,7 @@ namespace DBase
       public string FilenameMemo { get; private set; }
       public bool IsOpen { get { return (m_stream != null); } }
 
-      public List<DBF_FIELD_DATA> Fields { get; private set; }
+      public List<FieldInfo> Fields { get; private set; }
 
       public bool IsEditable { get { return (m_stream != null) && m_stream.CanWrite; } }
       public bool IsDirty { get; private set; }
@@ -217,7 +218,7 @@ namespace DBase
       public File()
       {
          IsDirty = false;
-         Fields = new List<DBF_FIELD_DATA>();
+         Fields = new List<FieldInfo>();
       }
       ~File()
       {
@@ -256,15 +257,14 @@ namespace DBase
                {
                   m_stream.Read(bytes, 0, Const.FIELD_REC_LENGTH);
                   DBF_FILEFIELD item = Utility.PtrToStructure<DBF_FILEFIELD>(bytes);
-                  DBF_FIELD_DATA field = new DBF_FIELD_DATA();
+                  FieldInfo field = new FieldInfo();
                   field.Name = item.title;
                   field.Length = item.length;
                   field.Type = (DataType)Const.DataTypes.IndexOf(item.type);
                   field.DecCount = item.deccount;
                   Fields.Add(field);
                }
-               _RecordBuf = new byte[RecordLength];
-               Position = 0;
+               Position = -1;
             }
          }
          return ok;
@@ -330,9 +330,9 @@ namespace DBase
          return ok;
       }
 
-      public bool Create(string filename, DBF_FIELD_DATA[] array)
+      public bool Create(string filename, FieldInfo[] array)
       {
-         var list = new List<DBF_FIELD_DATA>();
+         var list = new List<FieldInfo>();
          foreach (var item in array)
          {
             list.Add(item);
@@ -340,7 +340,7 @@ namespace DBase
          return Create(filename, list);
       }
 
-      public bool Create(string filename, List<DBF_FIELD_DATA> fields)
+      public bool Create(string filename, List<FieldInfo> fields)
       {
          string filename_memo = string.Empty;
          bool memo = false;
@@ -372,7 +372,7 @@ namespace DBase
                Fields = fields;
 
                RecordLength = 1;
-               foreach (DBF_FIELD_DATA item in fields)
+               foreach (FieldInfo item in fields)
                {
                   DBF_FILEFIELD field = new DBF_FILEFIELD();
                   field.title = item.Name;
@@ -386,7 +386,6 @@ namespace DBase
                bytes = new byte[1];
                bytes[0] = (byte)Const.FIELDTERMINATOR;
                m_stream.Write(bytes, 0, bytes.GetLength(0));
-               _RecordBuf = new byte[RecordLength];
             }
             if (stream_memo != null)
             {
@@ -408,7 +407,7 @@ namespace DBase
          RecordLength = 0;
       }
 
-      private byte[] _RecordBuf = null;
+      private string _RecordBuf = null;
       private long _Position = -1;
       public long Position
       {
@@ -418,7 +417,9 @@ namespace DBase
             if (_Position != value)
             {
                m_stream.Seek(HeaderLength + value * RecordLength + Const.FIELDTERMINATOR_LEN, io.SeekOrigin.Begin);
-               m_stream.Read(_RecordBuf, 0, RecordLength);
+               byte[] bytes = new byte[RecordLength];
+               m_stream.Read(bytes, 0, RecordLength);
+               _RecordBuf = System.Text.Encoding.Default.GetString(bytes, 0, RecordLength);
                _Position = value;
             }
          }
@@ -432,19 +433,13 @@ namespace DBase
 
       private static char[] FieldTrim = new char[] { ' ', '\0' };
 
-      private void ClearRecordBuf()
-      {
-         for (int i = 0; i < _RecordBuf.GetLength(0); i++)
-         {
-            _RecordBuf[0] = 0;
-         }
-      }
       public bool AddRecord()
       {
          _Position = RecordCount;
          m_stream.Seek(HeaderLength + _Position * RecordLength + Const.FIELDTERMINATOR_LEN, io.SeekOrigin.Begin);
-         ClearRecordBuf();
-         m_stream.Write(_RecordBuf, 0, _RecordBuf.GetLength(0));
+         _RecordBuf = new string(' ', RecordLength);
+         byte[] bytes = System.Text.Encoding.Default.GetBytes(_RecordBuf);
+         m_stream.Write(bytes, 0, RecordLength);
          RecordCount++;
          return true;
       }
@@ -452,11 +447,12 @@ namespace DBase
       public bool PutRecord()
       {
          m_stream.Seek(HeaderLength + _Position * RecordLength + Const.FIELDTERMINATOR_LEN, io.SeekOrigin.Begin);
-         m_stream.Write(_RecordBuf, 0, _RecordBuf.GetLength(0));
+         byte[] bytes = System.Text.Encoding.Default.GetBytes(_RecordBuf);
+         m_stream.Write(bytes, 0, RecordLength);
          return true;
       }
 
-      public bool PutField(DBF_FIELD_DATA field, string str)
+      public bool PutField(FieldInfo field, string str)
       {
          switch (field.Type)
          {
@@ -468,30 +464,31 @@ namespace DBase
                break;
             }
          }
-         byte[] bytes = System.Text.Encoding.Default.GetBytes(str);
          int pos = GetRecordBufPos(field);
-         int len = Math.Min(field.Length, bytes.GetLength(0));
-         Buffer.BlockCopy(bytes, 0, _RecordBuf, pos, len);
+         string temp = str;
+         while (temp.Length < field.Length) temp+=' ';
+         _RecordBuf = _RecordBuf.Remove(pos, field.Length);
+         _RecordBuf = _RecordBuf.Insert(pos, temp);
          return true;
       }
 
-      public bool PutField(DBF_FIELD_DATA field, int n)
+      public bool PutField(FieldInfo field, int n)
       {
          return PutField(field, n.ToString());
       }
 
-      public bool PutField(DBF_FIELD_DATA field, DateTimeOffset date)
+      public bool PutField(FieldInfo field, DateTimeOffset date)
       {
          string str = string.Format("{0:0000}{1:00}{2:00}", date.Year, date.Month, date.Day);
          return PutField(field, str);
       }
 
-      public bool PutField(DBF_FIELD_DATA field, bool b)
+      public bool PutField(FieldInfo field, bool b)
       {
          return PutField(field, b ? "T" : "F");
       }
 
-      public bool PutField(DBF_FIELD_DATA field, double n)
+      public bool PutField(FieldInfo field, double n)
       {
          string fmt = "{0:0";
          if (field.DecCount != 0)
@@ -508,10 +505,10 @@ namespace DBase
          return PutField(field, str);
       }
 
-      private int GetRecordBufPos(DBF_FIELD_DATA field)
+      private int GetRecordBufPos(FieldInfo field)
       {
          int pos = 0;
-         foreach (DBF_FIELD_DATA item in Fields)
+         foreach (FieldInfo item in Fields)
          {
             if (item == field) break;
             pos += item.Length;
@@ -519,11 +516,11 @@ namespace DBase
          return pos;
       }
 
-      public string GetField(DBF_FIELD_DATA field)
+      public string GetField(FieldInfo field)
       {
          string str = string.Empty;
          int pos = GetRecordBufPos(field);
-         str = System.Text.Encoding.Default.GetString(_RecordBuf, pos, field.Length);
+         str = _RecordBuf.Substring(pos, field.Length);
          str = str.TrimEnd(FieldTrim);
          switch (field.Type)
          {
@@ -535,4 +532,86 @@ namespace DBase
          return str;
       }
    }
+
+   #region Recordset
+   // Just File with a richer api supporting foreach 
+   public class Recordset : File, IEnumerable, IEnumerator
+   {
+      private Record _Record;
+
+      public Recordset()
+      {
+         _Record = new Record(this);
+      }
+
+      #region IEnumerable Members
+      public IEnumerator GetEnumerator()
+      {
+         return this;
+      }
+      #endregion
+
+      #region IEnumerator Members
+      public object Current { get { return _Record; } }
+
+      public bool MoveNext()
+      {
+         _Record.FieldPosition = 0;
+         Position++;
+         return (Position < RecordCount);
+      }
+
+      public void Reset()
+      {
+         Position = -1;
+      }
+      #endregion
+   }
+
+   public class Record : IEnumerable, IEnumerator
+   {
+      public Recordset Recordset { get; private set; }
+      private Field _Field;
+      public int FieldPosition { get; set; }
+      public Record(Recordset recordset)
+      {
+         Recordset = recordset;
+         _Field = new Field(this);
+         Reset();
+      }
+      
+      #region IEnumerable Members
+      public IEnumerator GetEnumerator()
+      {
+         return this;
+      }
+      #endregion
+
+      #region IEnumerator Members
+      public object Current { get { return _Field; } }
+
+      public bool MoveNext()
+      {
+         FieldPosition++;
+         return (FieldPosition < Recordset.Fields.Count);
+      }
+
+      public void Reset()
+      {
+         FieldPosition = -1;
+      }
+      #endregion
+   }
+
+   public class Field
+   {
+      public Record Record { get; private set; }
+      public Field(Record record)
+      {
+         Record = record;
+      }
+      public string Data { get { return Record.Recordset.GetField(Record.Recordset.Fields[Record.FieldPosition]); } }
+   }
+
+   #endregion Recordset
 }
