@@ -1,13 +1,12 @@
 ﻿// dbf library (sf.net/projects/dbase)
 // License: zlib (opensource.org/licenses/zlib-license.php)
-// TODO: memo file header/put/get
 
 using System;
 using System.Collections;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Globalization;
-using io = System.IO;
+using System.IO;
 
 /// <summary>
 /// Driverless dbf access
@@ -207,22 +206,22 @@ namespace DBase
    {
       private class MemoFile
       {
-         public io.FileStream m_stream = null;
+         public FileStream _Stream = null;
          public string Title;
          public long Next = 1;
          private byte[] _Buf = new byte[Const.MEMO_BLOCK_SIZE];
          public static string CreateFileName(string filename)
          {
-            return io.Path.ChangeExtension(filename, DBase.Const.FileextMemo);
+            return Path.ChangeExtension(filename, DBase.Const.FileextMemo);
          }
 
          public string Read(long pos)
          {
-            m_stream.Seek(pos * Const.MEMO_BLOCK_SIZE, io.SeekOrigin.Begin);
+            _Stream.Seek(pos * Const.MEMO_BLOCK_SIZE, SeekOrigin.Begin);
             string str = string.Empty;
             for (;;)
             {
-               int val = m_stream.ReadByte();
+               int val = _Stream.ReadByte();
                if (val == -1) break;
                char c = (char)val;
                if (c == Const.CPM_TEXT_TERMINATOR) break;
@@ -234,9 +233,9 @@ namespace DBase
          public long Write(string str)
          {
             long pos = Next;
-            m_stream.Seek(pos * Const.MEMO_BLOCK_SIZE, io.SeekOrigin.Begin);
+            _Stream.Seek(pos * Const.MEMO_BLOCK_SIZE, SeekOrigin.Begin);
             byte[] bytes = System.Text.Encoding.Default.GetBytes(str + Const.CPM_TEXT_TERMINATOR + Const.CPM_TEXT_TERMINATOR);
-            m_stream.Write(bytes, 0, bytes.GetLength(0));
+            _Stream.Write(bytes, 0, bytes.GetLength(0));
             Next +=    (bytes.GetLength(0) / Const.MEMO_BLOCK_SIZE)
                    + (((bytes.GetLength(0) % Const.MEMO_BLOCK_SIZE) != 0) ? 1 : 0);
             return pos;
@@ -244,7 +243,7 @@ namespace DBase
 
          public void WriteHeader()
          {
-            m_stream.Seek(0, io.SeekOrigin.Begin);
+            _Stream.Seek(0, SeekOrigin.Begin);
             string title = Title;
             if (title.Length > 8) title = title.Substring(0, 8);
             DBT_FILEHEADER header = new DBT_FILEHEADER();
@@ -253,19 +252,19 @@ namespace DBase
             header.flag = 0;
             header.blocksize = Const.MEMO_BLOCK_SIZE;
             byte[] bytes = Utility.StructureToPtr<DBT_FILEHEADER>(header);
-            m_stream.Write(bytes, 0, bytes.GetLength(0));
+            _Stream.Write(bytes, 0, bytes.GetLength(0));
          }
       }
       private MemoFile _MemoFile = new MemoFile();
-      private io.FileStream m_stream = null;
+      private FileStream _Stream = null;
 
       public string Filename { get; private set; }
-      public bool IsOpen { get { return (m_stream != null); } }
-      public bool HasMemo { get { return (_MemoFile.m_stream != null); } }
+      public bool IsOpen { get { return (_Stream != null); } }
+      public bool HasMemo { get { return (_MemoFile._Stream != null); } }
 
       public List<FieldInfo> Fields { get; private set; }
 
-      public bool IsEditable { get { return (m_stream != null) && m_stream.CanWrite; } }
+      public bool IsEditable { get { return (_Stream != null) && _Stream.CanWrite; } }
       public bool IsDirty { get; private set; }
 
       static File()
@@ -283,14 +282,12 @@ namespace DBase
          if (IsOpen) Close();
       }
 
-      public bool Attach(io.FileStream stream, string filename)
+      public bool Attach(FileStream stream, string filename)
       {
          bool ok = (stream != null);
          if (ok)
          {
-            //!( (mode == io.FileMode.Create) || (mode == io.FileMode.CreateNew)) 
-
-            m_stream = stream;
+            _Stream = stream;
             Filename = filename;
 
             byte[] bytes = new byte[Const.HEADER_LENGTH];
@@ -304,7 +301,7 @@ namespace DBase
 
                if ( (RecordCount == 0) && (RecordLength != 0) )
                {
-                  RecordCount = (m_stream.Length - header.headerlength) / header.recordlength;
+                  RecordCount = (_Stream.Length - header.headerlength) / header.recordlength;
                }
 
                int fieldcount = (header.headerlength - (Const.HEADER_LENGTH + 1)) / Const.FIELD_REC_LENGTH;
@@ -324,14 +321,14 @@ namespace DBase
          return ok;
       }
 
-      public bool AttachMemo(io.FileStream stream, string filename)
+      public bool AttachMemo(FileStream stream, string filename)
       {
-         _MemoFile.m_stream = stream;
-         _MemoFile.Title = io.Path.GetFileNameWithoutExtension(filename);
+         _MemoFile._Stream = stream;
+         _MemoFile.Title = Path.GetFileNameWithoutExtension(filename);
          return true;
       }
 
-      public void Detach(out io.FileStream stream, out io.FileStream memostream)
+      public void Detach(out FileStream stream, out FileStream memostream)
       {
          if (IsDirty)
          {
@@ -368,19 +365,19 @@ namespace DBase
                _MemoFile.WriteHeader();
             }
          }
-         stream = m_stream;
-         memostream = _MemoFile.m_stream;
-         m_stream = _MemoFile.m_stream = null;
+         stream = _Stream;
+         memostream = _MemoFile._Stream;
+         _Stream = _MemoFile._Stream = null;
          Filename = string.Empty;
          IsDirty = false;
       }
 
-      public bool Open(string filename, io.FileMode mode)
+      public bool Open(string filename, FileMode mode)
       {
-         io.FileAccess access = (mode == io.FileMode.Open)
-           ? io.FileAccess.Read      // non-exclusive
-           : io.FileAccess.ReadWrite; // exclusive
-         var stream = new io.FileStream(filename, mode, access);
+         FileAccess access = (mode == FileMode.Open)
+           ? FileAccess.Read      // non-exclusive
+           : FileAccess.ReadWrite; // exclusive
+         var stream = new FileStream(filename, mode, access);
          bool ok = (stream != null);
          if (ok)
          {
@@ -395,7 +392,7 @@ namespace DBase
                if (memo)
                {
                   string filename_memo = MemoFile.CreateFileName(filename);
-                  var stream_memo = new io.FileStream(filename_memo, mode, access);
+                  var stream_memo = new FileStream(filename_memo, mode, access);
                   ok = (stream_memo != null);
                   if (ok)
                   {
@@ -423,22 +420,22 @@ namespace DBase
 
       public bool Create(string filename, List<FieldInfo> fields)
       {
-         io.FileMode mode = io.FileMode.Create;
-         io.FileAccess access = io.FileAccess.ReadWrite; // exclusive
+         FileMode mode = FileMode.Create;
+         FileAccess access = FileAccess.ReadWrite; // exclusive
          string filename_memo = string.Empty;
          bool memo = false;
          foreach (FieldInfo item in fields)
          {
             memo = memo || (item.Type == DataType.Memo);
          }
-         io.FileStream stream = new io.FileStream(filename, mode, access);
-         io.FileStream stream_memo = null;
+         FileStream stream = new FileStream(filename, mode, access);
+         FileStream stream_memo = null;
          bool ok = (stream != null);
 
          if (ok && memo)
          {
             filename_memo = MemoFile.CreateFileName(filename);
-            stream_memo = new io.FileStream(filename_memo, mode, access);
+            stream_memo = new FileStream(filename_memo, mode, access);
             ok = (stream_memo != null);
          }
          if (ok)
@@ -450,7 +447,7 @@ namespace DBase
             {
                HeaderLength = Const.HEADER_LENGTH + Const.FIELDTERMINATOR_LEN + Const.FIELD_REC_LENGTH * fields.Count;
                IsDirty = true;
-               m_stream.SetLength(HeaderLength);
+               _Stream.SetLength(HeaderLength);
                StreamSeek(Const.HEADER_LENGTH);
                Fields = fields;
 
@@ -479,8 +476,8 @@ namespace DBase
 
       public void Close()
       {
-         io.FileStream stream;
-         io.FileStream memostream;
+         FileStream stream;
+         FileStream memostream;
          Detach(out stream, out memostream);
          if (stream     != null) stream    .Close();
          if (memostream != null) memostream.Close();
@@ -492,15 +489,15 @@ namespace DBase
 
       private int StreamRead(byte[] bytes)
       {
-         return m_stream.Read(bytes, 0, bytes.GetLength(0));
+         return _Stream.Read(bytes, 0, bytes.GetLength(0));
       }
       private void StreamWrite(byte[] bytes)
       {
-         m_stream.Write(bytes, 0, bytes.GetLength(0));
+         _Stream.Write(bytes, 0, bytes.GetLength(0));
       }
       private long StreamSeek(long offset)
       {
-         return m_stream.Seek(offset, io.SeekOrigin.Begin);
+         return _Stream.Seek(offset, SeekOrigin.Begin);
       }      
 
       private string _RecordBuf = null;
