@@ -598,7 +598,7 @@ namespace DBase
 
       public bool MoveNext()
       {
-         _Record.FieldPosition = 0;
+         _Record.Reset();
          Position++;
          return (Position < RecordCount);
       }
