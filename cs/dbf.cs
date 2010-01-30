@@ -427,16 +427,16 @@ namespace DBase
       private long _Position = Const.EnumeratorDefault;
       public long Position
       {
-         get { return _Position; }
+         get
+         { 
+            return _Position;
+         }
          set
          {
             if (_Position != value)
             {
                _Position = value;
-               StreamSeek(HeaderLength + value * RecordLength + Const.FIELDTERMINATOR_LEN);
-               byte[] bytes = new byte[RecordLength];
-               StreamRead(bytes);
-               _RecordBuf = System.Text.Encoding.Default.GetString(bytes, 0, RecordLength);
+               ReadRecord();
             }
          }
       }
@@ -450,12 +450,9 @@ namespace DBase
       public bool AppendRecord()
       {
          _Position = RecordCount;
-         StreamSeek(HeaderLength + _Position * RecordLength + Const.FIELDTERMINATOR_LEN);
          _RecordBuf = new string(Const.DBF_FILLER, RecordLength);
-         byte[] bytes = System.Text.Encoding.Default.GetBytes(_RecordBuf);
-         StreamWrite(bytes);
          RecordCount++;
-         return true;
+         return SaveRecord();
       }
 
       public bool SaveRecord()
@@ -463,6 +460,15 @@ namespace DBase
          StreamSeek(HeaderLength + _Position * RecordLength + Const.FIELDTERMINATOR_LEN);
          byte[] bytes = System.Text.Encoding.Default.GetBytes(_RecordBuf);
          StreamWrite(bytes);
+         return true;
+      }
+
+      private bool ReadRecord()
+      {
+         StreamSeek(HeaderLength + _Position * RecordLength + Const.FIELDTERMINATOR_LEN);
+         byte[] bytes = new byte[RecordLength];
+         StreamRead(bytes);
+         _RecordBuf = System.Text.Encoding.Default.GetString(bytes, 0, RecordLength);
          return true;
       }
 
