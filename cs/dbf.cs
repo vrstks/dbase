@@ -22,7 +22,7 @@ namespace DBase
       public const int HEADER_LENGTH = 32;
       public const int FIELD_REC_LENGTH = 32;
       public const string DataTypes = "CNFDCCML";
-      public const byte CPM_TEXT_TERMINATOR = 0x1A;
+      public const char CPM_TEXT_TERMINATOR = '\x1A';
       public const char FIELDTERMINATOR = '\r';
       public const char DBF_FILLER = ' ';
       public const int FIELDTERMINATOR_LEN = 1;
@@ -205,12 +205,63 @@ namespace DBase
    /// </summary>
    public class File : IOpenClose
    {
+      private class MemoFile
+      {
+         public io.FileStream m_stream = null;
+         public string Title;
+         public long Next = 1;
+         private byte[] _Buf = new byte[Const.MEMO_BLOCK_SIZE];
+         public static string CreateFileName(string filename)
+         {
+            return io.Path.ChangeExtension(filename, DBase.Const.FileextMemo);
+         }
+
+         public string Read(long pos)
+         {
+            m_stream.Seek(pos * Const.MEMO_BLOCK_SIZE, io.SeekOrigin.Begin);
+            string str = string.Empty;
+            for (;;)
+            {
+               int val = m_stream.ReadByte();
+               if (val == -1) break;
+               char c = (char)val;
+               if (c == Const.CPM_TEXT_TERMINATOR) break;
+               str += c;
+            }
+            return str;
+         }
+
+         public long Write(string str)
+         {
+            long pos = Next;
+            m_stream.Seek(pos * Const.MEMO_BLOCK_SIZE, io.SeekOrigin.Begin);
+            byte[] bytes = System.Text.Encoding.Default.GetBytes(str + Const.CPM_TEXT_TERMINATOR + Const.CPM_TEXT_TERMINATOR);
+            m_stream.Write(bytes, 0, bytes.GetLength(0));
+            Next +=    (bytes.GetLength(0) / Const.MEMO_BLOCK_SIZE)
+                   + (((bytes.GetLength(0) % Const.MEMO_BLOCK_SIZE) != 0) ? 1 : 0);
+            return pos;
+         }
+
+         public void WriteHeader()
+         {
+            m_stream.Seek(0, io.SeekOrigin.Begin);
+            string title = Title;
+            if (title.Length > 8) title = title.Substring(0, 8);
+            DBT_FILEHEADER header = new DBT_FILEHEADER();
+            header.next = (uint)Next;
+            header.title = title;
+            header.flag = 0;
+            header.blocksize = Const.MEMO_BLOCK_SIZE;
+            byte[] bytes = Utility.StructureToPtr<DBT_FILEHEADER>(header);
+            m_stream.Write(bytes, 0, bytes.GetLength(0));
+         }
+      }
+      private MemoFile _MemoFile = new MemoFile();
       private io.FileStream m_stream = null;
-      private io.FileStream m_stream_memo = null;
 
       public string Filename { get; private set; }
-      public string FilenameMemo { get; private set; }
       public bool IsOpen { get { return (m_stream != null); } }
+      public bool HasMemo { get { return (_MemoFile.m_stream != null); } }
 
       public List<FieldInfo> Fields { get; private set; }
 
@@ -275,8 +326,8 @@ namespace DBase
 
       public bool AttachMemo(io.FileStream stream, string filename)
       {
-         m_stream_memo = stream;
-         FilenameMemo = filename;
+         _MemoFile.m_stream = stream;
+         _MemoFile.Title = io.Path.GetFileNameWithoutExtension(filename);
          return true;
       }
 
@@ -299,7 +350,7 @@ namespace DBase
             header.lastupdate.dd = (byte)now.Day;
             header.recordcount = (ushort)RecordCount;
             header.recordlength = (ushort)RecordLength;
-            header.version = (byte)((m_stream_memo != null) ? Const.MAGIC_DBASE3_MEMO : Const.MAGIC_DBASE3);
+            header.version = (byte)(HasMemo ? Const.MAGIC_DBASE3_MEMO : Const.MAGIC_DBASE3);
             header.unused_0 = 0;
             for (int i = 0; i < 16; i++)
             {
@@ -309,26 +360,53 @@ namespace DBase
             StreamWrite(bytes);
             StreamSeek(HeaderLength + RecordCount * RecordLength);
 
-            bytes = new byte[] { Const.CPM_TEXT_TERMINATOR };
+            bytes = new byte[] { (byte)Const.CPM_TEXT_TERMINATOR };
             StreamWrite(bytes);
+
+            if (HasMemo)
+            {
+               _MemoFile.WriteHeader();
+            }
          }
          stream = m_stream;
-         memostream = m_stream_memo;
-         m_stream = null;
+         memostream = _MemoFile.m_stream;
+         m_stream = _MemoFile.m_stream = null;
          Filename = string.Empty;
          IsDirty = false;
       }
 
       public bool Open(string filename, io.FileMode mode)
       {
-         var stream = new io.FileStream(filename, mode, (mode == io.FileMode.Open)
-           ? io.FileAccess.Read      /* non-exclusive */
-           : io.FileAccess.ReadWrite /* exclusive     */
-           );
+         io.FileAccess access = (mode == io.FileMode.Open)
+           ? io.FileAccess.Read      // non-exclusive
+           : io.FileAccess.ReadWrite; // exclusive
+         var stream = new io.FileStream(filename, mode, access);
          bool ok = (stream != null);
          if (ok)
          {
             ok = Attach(stream, filename);
+            if (ok)
+            {
+               bool memo = false;
+               foreach (FieldInfo item in Fields)
+               {
+                  memo = memo || (item.Type == DataType.Memo);
+               }
+               if (memo)
+               {
+                  string filename_memo = MemoFile.CreateFileName(filename);
+                  var stream_memo = new io.FileStream(filename_memo, mode, access);
+                  ok = (stream_memo != null);
+                  if (ok)
+                  {
+                     ok = AttachMemo(stream_memo, filename_memo);
+                  }
+                  if (!ok)
+                  {
+                     Close();
+                  }
+               }
+            }
          }
          return ok;
       }
@@ -345,29 +423,31 @@ namespace DBase
 
       public bool Create(string filename, List<FieldInfo> fields)
       {
+         io.FileMode mode = io.FileMode.Create;
+         io.FileAccess access = io.FileAccess.ReadWrite; // exclusive
          string filename_memo = string.Empty;
          bool memo = false;
          foreach (FieldInfo item in fields)
          {
             memo = memo || (item.Type == DataType.Memo);
          }
-         io.FileStream stream = new io.FileStream(filename, io.FileMode.Create, io.FileAccess.ReadWrite);
+         io.FileStream stream = new io.FileStream(filename, mode, access);
          io.FileStream stream_memo = null;
          bool ok = (stream != null);
 
          if (ok && memo)
          {
-            filename_memo = io.Path.ChangeExtension(filename, DBase.Const.FileextMemo);
-            stream_memo = new io.FileStream(filename_memo, io.FileMode.Create, io.FileAccess.ReadWrite);
+            filename_memo = MemoFile.CreateFileName(filename);
+            stream_memo = new io.FileStream(filename_memo, mode, access);
             ok = (stream_memo != null);
          }
          if (ok)
          {
+            byte[] bytes;
+
             ok = Attach(stream, filename);
             if (ok)
             {
-               byte[] bytes;
-
                HeaderLength = Const.HEADER_LENGTH + Const.FIELDTERMINATOR_LEN + Const.FIELD_REC_LENGTH * fields.Count;
                IsDirty = true;
                m_stream.SetLength(HeaderLength);
@@ -441,8 +521,6 @@ namespace DBase
          }
       }
 
-      private long _NextMemoPosition = 0;
-
       public long RecordCount { get; private set; }
       public int RecordLength { get; private set; }
       private int HeaderLength { get; set; }
@@ -477,12 +555,8 @@ namespace DBase
          switch (field.Type)
          {
             case DataType.Memo:
-            {
-               m_stream_memo.Seek(_NextMemoPosition * Const.MEMO_BLOCK_SIZE, io.SeekOrigin.Begin);
-               str = _NextMemoPosition.ToString();
-               _NextMemoPosition++;
+               str = _MemoFile.Write(str).ToString();
                break;
-            }
          }
          int pos = GetRecordBufPos(field);
          string temp = str;
@@ -535,10 +609,15 @@ namespace DBase
       private static char[] _FieldDataTrim = new char[] { Const.DBF_FILLER, '\0' };
       public string GetString(FieldInfo field)
       {
-         string str = string.Empty;
          int pos = GetRecordBufPos(field);
-         str = _RecordBuf.Substring(pos, field.Length);
+         string str = _RecordBuf.Substring(pos, field.Length);
          str = str.TrimEnd(_FieldDataTrim);
+         switch (field.Type)
+         {
+            case DataType.Memo:
+               str = _MemoFile.Read(long.Parse(str));
+               break;
+         }
          return str;
       }
 

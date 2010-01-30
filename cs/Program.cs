@@ -76,7 +76,7 @@ namespace DBase.Test
             new FieldInfo("BOOLEAN", DataType.Boolean, 1),
             new FieldInfo("DATE", DataType.Date, 8),
             new FieldInfo("FLOAT", DataType.Float, 10, 5),
-            //new FieldInfo("MEMO", DataType.Memo, 10),
+            new FieldInfo("MEMO", DataType.Memo, 10),
          };
 
          if (file.Create(filename, fields))
@@ -87,7 +87,7 @@ namespace DBase.Test
             file.WriteField(fields[2], true);
             file.WriteField(fields[3], DateTimeOffset.UtcNow);
             file.WriteField(fields[4], 11.1);
-            //file.WriteField(fields[5], "memo");
+            file.WriteField(fields[5], "memo");
             file.SaveRecord();
 
             file.AppendRecord();
@@ -96,7 +96,7 @@ namespace DBase.Test
             file.WriteField(fields[2], true);
             file.WriteField(fields[3], DateTimeOffset.UtcNow);
             file.WriteField(fields[4], 11.1);
-            //file.WriteField(fields[5], "memo");
+            file.WriteField(fields[5], "memo");
             file.SaveRecord();
 
             file.Close();
@@ -109,26 +109,16 @@ namespace DBase.Test
 
          FieldInfo[] fields = new FieldInfo[]
          { 
-            /*
-            new FieldInfo("TITLE", DataType.Char, 4),
-            new FieldInfo("INTEGER", DataType.Integer, 10),
-            new FieldInfo("BOOLEAN", DataType.Boolean, 1),
-            new FieldInfo("DATE", DataType.Date, 8),
-            new FieldInfo("FLOAT", DataType.Float, 10, 5),
-            */
             new FieldInfo("MEMO", DataType.Memo, 10),
          };
 
          if (file.Create(filename, fields))
          {
             file.AppendRecord();
-            file.WriteField(fields[0], "sjov");
-            /*file.WriteField(fields[1], 10);
-            file.WriteField(fields[2], true);
-            file.WriteField(fields[3], DateTimeOffset.UtcNow);
-            file.WriteField(fields[4], 11.1);
-            file.WriteField(fields[5], "memo");
-            */
+            file.WriteField(fields[0], "sjov1");
+            file.SaveRecord();
+            file.AppendRecord();
+            file.WriteField(fields[0], "sjov2");
             file.SaveRecord();
 
             file.Close();
