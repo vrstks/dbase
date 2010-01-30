@@ -10,6 +10,7 @@ namespace DBase.Test
 {
    static class Program
    {
+      private static char sep = ';';
       private static void ConsoleDump(DBase.File file)
       {
          string str = string.Empty;
@@ -17,7 +18,7 @@ namespace DBase.Test
          int i = 0;
          foreach (FieldInfo field in file.Fields)
          {
-            if (0 != i++) str += ",";
+            if (0 != i++) str += sep;
             str += field.Name;
          }
          Console.WriteLine(str);
@@ -28,8 +29,8 @@ namespace DBase.Test
             i = 0;
             foreach (FieldInfo field in file.Fields)
             {
-               if (0 != i++) str += ",";
-               str += file.GetData(field);
+               if (0 != i++) str += sep;
+               str += file.GetString(field);
                //break;
             }
             Console.WriteLine("{0,5} {1}", file.Position, str);
@@ -44,7 +45,7 @@ namespace DBase.Test
          int i = 0;
          foreach (FieldInfo field in recordset.Fields)
          {
-            if (0 != i++) str += ",";
+            if (0 != i++) str += sep;
             str += field.Name;
          }
          Console.WriteLine(str);
@@ -55,7 +56,7 @@ namespace DBase.Test
             i = 0;
             foreach (Field field in record)
             {
-               if (0 != i++) str += ",";
+               if (0 != i++) str += sep;
                str += field.Data;
                //break;
             }
