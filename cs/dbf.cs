@@ -24,6 +24,7 @@ namespace DBase
       public const string DataTypes = "CNFDCCML";
       public const byte CPM_TEXT_TERMINATOR = 0x1A;
       public const char FIELDTERMINATOR = '\r';
+      public const char DBF_FILLER = ' ';
       public const int FIELDTERMINATOR_LEN = 1;
       public const int MAGIC_DBASE3 = 0x03;
       public const int MAGIC_DBASE3_MEMO = 0x83;
@@ -335,7 +336,7 @@ namespace DBase
       public bool Create(string filename, FieldInfo[] array)
       {
          var list = new List<FieldInfo>();
-         foreach (var item in array)
+         foreach (FieldInfo item in array)
          {
             list.Add(item);
          }
@@ -346,7 +347,7 @@ namespace DBase
       {
          string filename_memo = string.Empty;
          bool memo = false;
-         foreach (var item in fields)
+         foreach (FieldInfo item in fields)
          {
             memo = memo || (item.Type == DataType.Memo);
          }
@@ -385,8 +386,7 @@ namespace DBase
                   StreamWrite(bytes);
                   RecordLength += item.Length;
                }
-               bytes = new byte[1];
-               bytes[0] = (byte)Const.FIELDTERMINATOR;
+               bytes = new byte[] { (byte)Const.FIELDTERMINATOR };
                StreamWrite(bytes);
             }
             if (stream_memo != null)
@@ -451,7 +451,7 @@ namespace DBase
       {
          _Position = RecordCount;
          StreamSeek(HeaderLength + _Position * RecordLength + Const.FIELDTERMINATOR_LEN);
-         _RecordBuf = new string(' ', RecordLength);
+         _RecordBuf = new string(Const.DBF_FILLER, RecordLength);
          byte[] bytes = System.Text.Encoding.Default.GetBytes(_RecordBuf);
          StreamWrite(bytes);
          RecordCount++;
@@ -480,7 +480,7 @@ namespace DBase
          }
          int pos = GetRecordBufPos(field);
          string temp = str;
-         while (temp.Length < field.Length) temp+=' ';
+         while (temp.Length < field.Length) temp += Const.DBF_FILLER;
          _RecordBuf = _RecordBuf.Remove(pos, field.Length);
          _RecordBuf = _RecordBuf.Insert(pos, temp);
          return true;
@@ -526,7 +526,7 @@ namespace DBase
          return pos;
       }
 
-      private static char[] _FieldDataTrim = new char[] { ' ', '\0' };
+      private static char[] _FieldDataTrim = new char[] { Const.DBF_FILLER, '\0' };
       public string GetString(FieldInfo field)
       {
          string str = string.Empty;
