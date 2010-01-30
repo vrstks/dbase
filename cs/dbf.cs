@@ -660,15 +660,15 @@ namespace DBase
       }
       public double Float
       {
-         get { return (double)Record.Recordset.GetData(Record.Recordset.Fields[Record.FieldPosition]); }
+         get { return (double)Data; }
       }
       public int Integer
       {
-         get { return (int)Record.Recordset.GetData(Record.Recordset.Fields[Record.FieldPosition]); }
+         get { return (int)Data; }
       }
       public DateTimeOffset DateTimeOffset
       {
-         get { return (DateTimeOffset)Record.Recordset.GetData(Record.Recordset.Fields[Record.FieldPosition]); }
+         get { return (DateTimeOffset)Data; }
       }
       public DateTime DateTime
       {
@@ -676,7 +676,7 @@ namespace DBase
       }
       public bool Boolean
       {
-         get { return (bool)Record.Recordset.GetData(Record.Recordset.Fields[Record.FieldPosition]); }
+         get { return (bool)Data; }
       }
    }
 
