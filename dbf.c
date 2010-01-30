@@ -41,8 +41,6 @@
 #define MAGIC_DBASE4_MEMO 0x8B
 #define MAGIC_FOXPRO      0x30
 
-#define FIELD_REC_LENGTH  32         /*   length of field description record   */
-#define HEADER_LENGTH     32         /*   length of header without field desc   */
 #define MEMO_BLOCK_SIZE   512         /*  memo block size (dBase III) */
 #define MAGIC_MEMO_BLOCK 0x0008FFFF
 #define FIELDTERMINATOR '\r'
@@ -113,10 +111,10 @@ typedef union _DBF_MEMO_BLOCK
 
 #pragma pack()
 
-C_ASSERT_(1, sizeof(DBF_MEMO_BLOCK) == MEMO_BLOCK_SIZE );
-C_ASSERT_(2, sizeof(DBF_FILEHEADER) == HEADER_LENGTH);
-C_ASSERT_(3, sizeof(DBT_FILEHEADER) == MEMO_BLOCK_SIZE );
-C_ASSERT_(4, sizeof(DBF_FILEFIELD ) == FIELD_REC_LENGTH);
+C_ASSERT_(1, sizeof(DBF_MEMO_BLOCK) == MEMO_BLOCK_SIZE);
+C_ASSERT_(2, sizeof(DBF_FILEHEADER) == 32);
+C_ASSERT_(3, sizeof(DBT_FILEHEADER) == MEMO_BLOCK_SIZE);
+C_ASSERT_(4, sizeof(DBF_FILEFIELD ) == 32);
 
 typedef struct _DBF_MEMO_DATA
 {
@@ -290,14 +288,14 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
             tm.tm_isdst = 0;
 
             handle->lastupdate = mktime(&tm);
-            handle->fieldcount = (uint8_t)((handle->headerlength - (HEADER_LENGTH+FIELDTERMINATOR_LEN)) / FIELD_REC_LENGTH);
+            handle->fieldcount = (uint8_t)((handle->headerlength - (sizeof(DBF_FILEHEADER) + FIELDTERMINATOR_LEN)) / sizeof(DBF_FILEFIELD));
             handle->recorddataptr = (char*)malloc(handle->recordlength + 1); // + zeroterm.
             if (handle->recorddataptr)
             {
                size_t i;
                size_t fielddata_pos = 0;
 
-               ZSEEK(handle->api, stream, HEADER_LENGTH, ZLIB_FILEFUNC_SEEK_SET);
+               ZSEEK(handle->api, stream, sizeof(DBF_FILEHEADER), ZLIB_FILEFUNC_SEEK_SET);
 
                handle->fieldarray = (DBF_FIELD*)realloc(handle->fieldarray, sizeof(DBF_FIELD) * handle->fieldcount);
                for (i = 0; i < handle->fieldcount; i++)
@@ -1425,7 +1423,7 @@ DBF_HANDLE dbf_create_attach(void* stream, zlib_filefunc_def* api,
    ZSEEK(*api, stream, 0, ZLIB_FILEFUNC_SEEK_SET);
    ZWRITE(*api, stream, &header, sizeof(header));
 
-   header.headerlength = (uint16_t)(HEADER_LENGTH + (array_count * FIELD_REC_LENGTH) + 1);
+   header.headerlength = (uint16_t)(sizeof(DBF_FILEHEADER) + (array_count * sizeof(DBF_FILEFIELD)) + 1);
    header.recordlength = 1;
 
    for (i = 0; i < array_count; i++)
