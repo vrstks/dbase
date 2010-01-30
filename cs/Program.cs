@@ -29,7 +29,7 @@ namespace DBase.Test
             foreach (FieldInfo field in file.Fields)
             {
                if (0 != i++) str += ",";
-               str += file.GetField(field);
+               str += file.GetData(field);
                //break;
             }
             Console.WriteLine("{0,5} {1}", file.Position, str);

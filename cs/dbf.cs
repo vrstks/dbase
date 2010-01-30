@@ -3,10 +3,10 @@
 // TODO: memo file header/put/get
 
 using System;
+using System.Collections;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using io = System.IO;
-using System.Collections;
 
 /// <summary>
 /// Driverless dbf access
@@ -431,8 +431,6 @@ namespace DBase
       public int RecordLength { get; private set; }
       private int HeaderLength { get; set; }
 
-      private static char[] FieldTrim = new char[] { ' ', '\0' };
-
       public bool AddRecord()
       {
          _Position = RecordCount;
@@ -516,20 +514,63 @@ namespace DBase
          return pos;
       }
 
-      public string GetField(FieldInfo field)
+      private static char[] _FieldDataTrim = new char[] { ' ', '\0' };
+      public string GetString(FieldInfo field)
       {
          string str = string.Empty;
          int pos = GetRecordBufPos(field);
          str = _RecordBuf.Substring(pos, field.Length);
-         str = str.TrimEnd(FieldTrim);
+         str = str.TrimEnd(_FieldDataTrim);
+         return str;
+      }
+
+      public object GetData(FieldInfo field)
+      {
+         object obj = null;
+         string str = GetString(field);
          switch (field.Type)
          {
+            case DataType.Char:
+               obj = str;
+               break;
+            case DataType.Integer:
+            {
+               long n = 0;
+               long.TryParse(str, out n);
+               obj = n;
+               break;
+            }
+            case DataType.Float:
+            {
+               double n = 0;
+               double.TryParse(str, out n);
+               obj = n;
+               break;
+            }
+            case DataType.Date:
+            {
+               DateTimeOffset n = new DateTimeOffset(
+                  int.Parse(str.Substring(0, 4)), 
+                  int.Parse(str.Substring(4, 2)), 
+                  int.Parse(str.Substring(6, 2)),
+                  0,0,0, DateTimeOffset.Now.Offset
+                  );
+               obj = n;
+               break;
+            }
+            case DataType.Boolean:
+            {
+               bool b = (-1 != str.IndexOfAny("YyTt".ToCharArray()));
+               obj = b;
+               break;
+            }
             case DataType.Memo:
             {
+               obj = str;
                break;
             }
          }
-         return str;
+         return obj;
       }
    }
 
@@ -610,7 +651,8 @@ namespace DBase
       {
          Record = record;
       }
-      public string Data { get { return Record.Recordset.GetField(Record.Recordset.Fields[Record.FieldPosition]); } }
+      public object Data { get { return Record.Recordset.GetData(Record.Recordset.Fields[Record.FieldPosition]); } }
+      public string String { get { return Record.Recordset.GetString(Record.Recordset.Fields[Record.FieldPosition]); } }
    }
 
    #endregion Recordset
