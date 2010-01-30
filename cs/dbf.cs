@@ -434,7 +434,7 @@ namespace DBase
       public int RecordLength { get; private set; }
       private int HeaderLength { get; set; }
 
-      public bool AddRecord()
+      public bool AppendRecord()
       {
          _Position = RecordCount;
          m_stream.Seek(HeaderLength + _Position * RecordLength + Const.FIELDTERMINATOR_LEN, io.SeekOrigin.Begin);
@@ -445,7 +445,7 @@ namespace DBase
          return true;
       }
 
-      public bool PutRecord()
+      public bool SaveRecord()
       {
          m_stream.Seek(HeaderLength + _Position * RecordLength + Const.FIELDTERMINATOR_LEN, io.SeekOrigin.Begin);
          byte[] bytes = System.Text.Encoding.Default.GetBytes(_RecordBuf);

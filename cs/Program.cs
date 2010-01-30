@@ -81,23 +81,23 @@ namespace DBase.Test
 
          if (file.Create(filename, fields))
          {
-            file.AddRecord();
+            file.AppendRecord();
             file.PutField(fields[0], "sjov");
             file.PutField(fields[1], 10);
             file.PutField(fields[2], true);
             file.PutField(fields[3], DateTimeOffset.UtcNow);
             file.PutField(fields[4], 11.1);
             //file.PutField(fields[5], "memo");
-            file.PutRecord();
+            file.SaveRecord();
 
-            file.AddRecord();
+            file.AppendRecord();
             file.PutField(fields[0], "sjov");
             file.PutField(fields[1], 10);
             file.PutField(fields[2], true);
             file.PutField(fields[3], DateTimeOffset.UtcNow);
             file.PutField(fields[4], 11.1);
             //file.PutField(fields[5], "memo");
-            file.PutRecord();
+            file.SaveRecord();
 
             file.Close();
          }
@@ -121,7 +121,7 @@ namespace DBase.Test
 
          if (file.Create(filename, fields))
          {
-            file.AddRecord();
+            file.AppendRecord();
             file.PutField(fields[0], "sjov");
             /*file.PutField(fields[1], 10);
             file.PutField(fields[2], true);
@@ -129,7 +129,7 @@ namespace DBase.Test
             file.PutField(fields[4], 11.1);
             file.PutField(fields[5], "memo");
             */
-            file.PutRecord();
+            file.SaveRecord();
 
             file.Close();
          }
