@@ -17,14 +17,14 @@ namespace DBase
    internal static class Const
    {
       public const int Pack = 1;
-      public const int MEMO_BLOCK_SIZE = 512;
-      public const int HEADER_LENGTH = 32;
-      public const int FIELD_REC_LENGTH = 32;
+      public const int MemoBlockLen = 512;
+      public static int HeaderLen { get; private set; }
+      public static int FieldLen { get; private set; }
       public const string DataTypes = "CNFDCCML";
       public const char CPM_TEXT_TERMINATOR = '\x1A';
-      public const char FIELDTERMINATOR = '\r';
-      public const char DBF_FILLER = ' ';
-      public const int FIELDTERMINATOR_LEN = 1;
+      public const char FieldTerminator = '\r';
+      public const int FieldTerminatorLen = 1;
+      public const char FieldFillChar = ' ';
       public const int MAGIC_DBASE3 = 0x03;
       public const int MAGIC_DBASE3_MEMO = 0x83;
       public const int MAGIC_DBASE4      = 0x04;
@@ -33,6 +33,12 @@ namespace DBase
       public const int EnumeratorDefault = -1;
       public const string Fileext = "dbf";
       public const string FileextMemo = "dbt";
+
+      static Const()
+      {
+         HeaderLen = Marshal.SizeOf(typeof(DBF_FILEHEADER));
+         FieldLen  = Marshal.SizeOf(typeof(DBF_FILEFIELD));
+      }
 
       public static void StructCheck<T>(int size_desired)
       {
@@ -46,9 +52,9 @@ namespace DBase
       public static void StructCheck()
       {
          StructCheck<DBF_FILEHEADER_TIME>(3);
-         StructCheck<DBF_FILEHEADER>(HEADER_LENGTH);
-         StructCheck<DBT_FILEHEADER>(MEMO_BLOCK_SIZE);
-         StructCheck<DBF_FILEFIELD>(FIELD_REC_LENGTH);
+         StructCheck<DBF_FILEHEADER>(32);
+         StructCheck<DBT_FILEHEADER>(MemoBlockLen);
+         StructCheck<DBF_FILEFIELD>(32);
       }
    }
 
@@ -88,7 +94,7 @@ namespace DBase
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
       public Byte[] unused1;
       public UInt16 blocksize;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = Const.MEMO_BLOCK_SIZE - 22)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = Const.MemoBlockLen - 22)]
       public Byte[] unused2;
    }
 
@@ -210,7 +216,7 @@ namespace DBase
          public FileStream _Stream = null;
          public string Title;
          public long Next = 1;
-         private byte[] _Buf = new byte[Const.MEMO_BLOCK_SIZE];
+         private byte[] _Buf = new byte[Const.MemoBlockLen];
          public static string CreateFileName(string filename)
          {
             return Path.ChangeExtension(filename, DBase.Const.FileextMemo);
@@ -218,7 +224,7 @@ namespace DBase
 
          public string Read(long pos)
          {
-            _Stream.Seek(pos * Const.MEMO_BLOCK_SIZE, SeekOrigin.Begin);
+            _Stream.Seek(pos * Const.MemoBlockLen, SeekOrigin.Begin);
             string str = string.Empty;
             for (;;)
             {
@@ -234,11 +240,11 @@ namespace DBase
          public long Write(string str)
          {
             long pos = Next;
-            _Stream.Seek(pos * Const.MEMO_BLOCK_SIZE, SeekOrigin.Begin);
+            _Stream.Seek(pos * Const.MemoBlockLen, SeekOrigin.Begin);
             byte[] bytes = System.Text.Encoding.Default.GetBytes(str + Const.CPM_TEXT_TERMINATOR + Const.CPM_TEXT_TERMINATOR);
             _Stream.Write(bytes, 0, bytes.GetLength(0));
-            Next +=    (bytes.GetLength(0) / Const.MEMO_BLOCK_SIZE)
-                   + (((bytes.GetLength(0) % Const.MEMO_BLOCK_SIZE) != 0) ? 1 : 0);
+            Next +=    (bytes.GetLength(0) / Const.MemoBlockLen)
+                   + (((bytes.GetLength(0) % Const.MemoBlockLen) != 0) ? 1 : 0);
             return pos;
          }
 
@@ -265,7 +271,7 @@ namespace DBase
             header.next = (uint)Next;
             header.title = title;
             header.flag = 0;
-            header.blocksize = Const.MEMO_BLOCK_SIZE;
+            header.blocksize = Const.MemoBlockLen;
             byte[] bytes = Utility.StructureToPtr<DBT_FILEHEADER>(header);
             _Stream.Write(bytes, 0, bytes.GetLength(0));
          }
@@ -464,10 +470,10 @@ namespace DBase
             ok = Attach(stream, filename);
             if (ok)
             {
-               HeaderLength = Const.HEADER_LENGTH + Const.FIELDTERMINATOR_LEN + Const.FIELD_REC_LENGTH * fields.Count;
+               HeaderLength = Const.HeaderLen + Const.FieldTerminatorLen + Const.FieldLen * fields.Count;
                IsDirty = true;
                _Stream.SetLength(HeaderLength);
-               StreamSeek(Const.HEADER_LENGTH);
+               StreamSeek(Const.HeaderLen);
                Fields = fields;
 
                RecordLength = 1;
@@ -482,7 +488,7 @@ namespace DBase
                   StreamWrite(bytes);
                   RecordLength += item.Length;
                }
-               bytes = new byte[] { (byte)Const.FIELDTERMINATOR };
+               bytes = new byte[] { (byte)Const.FieldTerminator };
                StreamWrite(bytes);
             }
             if (stream_memo != null)
@@ -544,14 +550,14 @@ namespace DBase
       public bool AppendRecord()
       {
          _Position = RecordCount;
-         _RecordBuf = new string(Const.DBF_FILLER, RecordLength);
+         _RecordBuf = new string(Const.FieldFillChar, RecordLength);
          RecordCount++;
          return SaveRecord();
       }
 
       public bool SaveRecord()
       {
-         StreamSeek(HeaderLength + _Position * RecordLength + Const.FIELDTERMINATOR_LEN);
+         StreamSeek(HeaderLength + _Position * RecordLength + Const.FieldTerminatorLen);
          byte[] bytes = System.Text.Encoding.Default.GetBytes(_RecordBuf);
          StreamWrite(bytes);
          return true;
@@ -559,7 +565,7 @@ namespace DBase
 
       private bool ReadRecord()
       {
-         StreamSeek(HeaderLength + _Position * RecordLength + Const.FIELDTERMINATOR_LEN);
+         StreamSeek(HeaderLength + _Position * RecordLength + Const.FieldTerminatorLen);
          byte[] bytes = new byte[RecordLength];
          StreamRead(bytes);
          _RecordBuf = System.Text.Encoding.Default.GetString(bytes, 0, RecordLength);
@@ -576,7 +582,7 @@ namespace DBase
          }
          int pos = GetRecordBufPos(field);
          string temp = str;
-         while (temp.Length < field.Length) temp += Const.DBF_FILLER;
+         while (temp.Length < field.Length) temp += Const.FieldFillChar;
          _RecordBuf = _RecordBuf.Remove(pos, field.Length);
          _RecordBuf = _RecordBuf.Insert(pos, temp);
          return true;
@@ -622,7 +628,7 @@ namespace DBase
          return pos;
       }
 
-      private static char[] _FieldDataTrim = new char[] { Const.DBF_FILLER, '\0' };
+      private static char[] _FieldDataTrim = new char[] { Const.FieldFillChar, '\0' };
       public string GetString(FieldInfo field)
       {
          int pos = GetRecordBufPos(field);
