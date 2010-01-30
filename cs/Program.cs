@@ -71,12 +71,12 @@ namespace DBase.Test
 
          FieldInfo[] fields = new FieldInfo[]
          { 
-            new FieldInfo("TITLE", DataType.Char, 4, 0),
-            new FieldInfo("INTEGER", DataType.Integer, 10, 0),
-            new FieldInfo("BOOLEAN", DataType.Boolean, 1, 0),
-            new FieldInfo("DATE", DataType.Date, 8, 0),
+            new FieldInfo("TITLE", DataType.Char, 4),
+            new FieldInfo("INTEGER", DataType.Integer, 10),
+            new FieldInfo("BOOLEAN", DataType.Boolean, 1),
+            new FieldInfo("DATE", DataType.Date, 8),
             new FieldInfo("FLOAT", DataType.Float, 10, 5),
-            //new FieldInfo("MEMO", DataType.Memo, 10, 0),
+            //new FieldInfo("MEMO", DataType.Memo, 10),
          };
 
          if (file.Create(filename, fields))
@@ -110,13 +110,13 @@ namespace DBase.Test
          FieldInfo[] fields = new FieldInfo[]
          { 
             /*
-            new FieldInfo("TITLE", DataType.Char, 4, 0),
-            new FieldInfo("INTEGER", DataType.Integer, 10, 0),
-            new FieldInfo("BOOLEAN", DataType.Boolean, 1, 0),
-            new FieldInfo("DATE", DataType.Date, 8, 0),
+            new FieldInfo("TITLE", DataType.Char, 4),
+            new FieldInfo("INTEGER", DataType.Integer, 10),
+            new FieldInfo("BOOLEAN", DataType.Boolean, 1),
+            new FieldInfo("DATE", DataType.Date, 8),
             new FieldInfo("FLOAT", DataType.Float, 10, 5),
             */
-            new FieldInfo("MEMO", DataType.Memo, 10, 0),
+            new FieldInfo("MEMO", DataType.Memo, 10),
          };
 
          if (file.Create(filename, fields))

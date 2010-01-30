@@ -130,16 +130,19 @@ namespace DBase
       public int DecCount;
       public int Position;
 
-      public FieldInfo()
+      public FieldInfo(string name, DataType type, int length)
       {
+         Name = name;
+         Type = type;
+         Length = length;
+         DecCount = 0;
       }
-
-      public FieldInfo(string _Name, DataType _Type, int _Length, int _DecCount)
+      public FieldInfo(string name, DataType type, int length, int deccount)
       {
-         Name = _Name;
-         Type = _Type;
-         Length = _Length;
-         DecCount = _DecCount;
+         Name = name;
+         Type = type;
+         Length = length;
+         DecCount = deccount;
       }
    }
 #endregion Definitions
@@ -260,11 +263,8 @@ namespace DBase
                {
                   m_stream.Read(bytes, 0, Const.FIELD_REC_LENGTH);
                   DBF_FILEFIELD item = Utility.PtrToStructure<DBF_FILEFIELD>(bytes);
-                  FieldInfo field = new FieldInfo();
-                  field.Name = item.title;
-                  field.Length = item.length;
-                  field.Type = (DataType)Const.DataTypes.IndexOf(item.type);
-                  field.DecCount = item.deccount;
+                  var type = (DataType)Const.DataTypes.IndexOf(item.type);
+                  var field = new FieldInfo(item.title, type, item.length, item.deccount);
                   Fields.Add(field);
                }
             }
