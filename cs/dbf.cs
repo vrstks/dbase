@@ -658,6 +658,26 @@ namespace DBase
       { 
          get { return Record.Recordset.GetString(Record.Recordset.Fields[Record.FieldPosition]); } 
       }
+      public double Float
+      {
+         get { return (double)Record.Recordset.GetData(Record.Recordset.Fields[Record.FieldPosition]); }
+      }
+      public int Integer
+      {
+         get { return (int)Record.Recordset.GetData(Record.Recordset.Fields[Record.FieldPosition]); }
+      }
+      public DateTimeOffset DateTimeOffset
+      {
+         get { return (DateTimeOffset)Record.Recordset.GetData(Record.Recordset.Fields[Record.FieldPosition]); }
+      }
+      public DateTime DateTime
+      {
+         get { return DateTimeOffset.DateTime; }
+      }
+      public bool Boolean
+      {
+         get { return (bool)Record.Recordset.GetData(Record.Recordset.Fields[Record.FieldPosition]); }
+      }
    }
 
    #endregion Recordset
