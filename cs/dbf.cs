@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.Globalization;
 using io = System.IO;
 
 /// <summary>
@@ -543,7 +544,7 @@ namespace DBase
             case DataType.Float:
             {
                double n = 0;
-               double.TryParse(str, out n);
+               double.TryParse(str, System.Globalization.NumberStyles.Any, CultureInfo.InvariantCulture, out n);
                obj = n;
                break;
             }
@@ -651,8 +652,14 @@ namespace DBase
       {
          Record = record;
       }
-      public object Data { get { return Record.Recordset.GetData(Record.Recordset.Fields[Record.FieldPosition]); } }
-      public string String { get { return Record.Recordset.GetString(Record.Recordset.Fields[Record.FieldPosition]); } }
+      public object Data
+      { 
+         get { return Record.Recordset.GetData(Record.Recordset.Fields[Record.FieldPosition]); } 
+      }
+      public string String
+      { 
+         get { return Record.Recordset.GetString(Record.Recordset.Fields[Record.FieldPosition]); } 
+      }
    }
 
    #endregion Recordset
