@@ -453,7 +453,7 @@ namespace DBase
          return true;
       }
 
-      public bool PutField(FieldInfo field, string str)
+      public bool WriteField(FieldInfo field, string str)
       {
          switch (field.Type)
          {
@@ -473,23 +473,23 @@ namespace DBase
          return true;
       }
 
-      public bool PutField(FieldInfo field, int n)
+      public bool WriteField(FieldInfo field, int n)
       {
-         return PutField(field, n.ToString());
+         return WriteField(field, n.ToString());
       }
 
-      public bool PutField(FieldInfo field, DateTimeOffset date)
+      public bool WriteField(FieldInfo field, DateTimeOffset date)
       {
          string str = string.Format("{0:0000}{1:00}{2:00}", date.Year, date.Month, date.Day);
-         return PutField(field, str);
+         return WriteField(field, str);
       }
 
-      public bool PutField(FieldInfo field, bool b)
+      public bool WriteField(FieldInfo field, bool b)
       {
-         return PutField(field, b ? "T" : "F");
+         return WriteField(field, b ? "T" : "F");
       }
 
-      public bool PutField(FieldInfo field, double n)
+      public bool WriteField(FieldInfo field, double n)
       {
          string fmt = "{0:0";
          if (field.DecCount != 0)
@@ -499,7 +499,7 @@ namespace DBase
          fmt += "}";
          string str = string.Format(fmt, n);
          str = str.Replace(',', '.');
-         return PutField(field, str);
+         return WriteField(field, str);
       }
 
       private int GetRecordBufPos(FieldInfo field)

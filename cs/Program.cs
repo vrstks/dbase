@@ -82,21 +82,21 @@ namespace DBase.Test
          if (file.Create(filename, fields))
          {
             file.AppendRecord();
-            file.PutField(fields[0], "sjov");
-            file.PutField(fields[1], 10);
-            file.PutField(fields[2], true);
-            file.PutField(fields[3], DateTimeOffset.UtcNow);
-            file.PutField(fields[4], 11.1);
-            //file.PutField(fields[5], "memo");
+            file.WriteField(fields[0], "sjov");
+            file.WriteField(fields[1], 10);
+            file.WriteField(fields[2], true);
+            file.WriteField(fields[3], DateTimeOffset.UtcNow);
+            file.WriteField(fields[4], 11.1);
+            //file.WriteField(fields[5], "memo");
             file.SaveRecord();
 
             file.AppendRecord();
-            file.PutField(fields[0], "sjov");
-            file.PutField(fields[1], 10);
-            file.PutField(fields[2], true);
-            file.PutField(fields[3], DateTimeOffset.UtcNow);
-            file.PutField(fields[4], 11.1);
-            //file.PutField(fields[5], "memo");
+            file.WriteField(fields[0], "sjov");
+            file.WriteField(fields[1], 10);
+            file.WriteField(fields[2], true);
+            file.WriteField(fields[3], DateTimeOffset.UtcNow);
+            file.WriteField(fields[4], 11.1);
+            //file.WriteField(fields[5], "memo");
             file.SaveRecord();
 
             file.Close();
@@ -122,12 +122,12 @@ namespace DBase.Test
          if (file.Create(filename, fields))
          {
             file.AppendRecord();
-            file.PutField(fields[0], "sjov");
-            /*file.PutField(fields[1], 10);
-            file.PutField(fields[2], true);
-            file.PutField(fields[3], DateTimeOffset.UtcNow);
-            file.PutField(fields[4], 11.1);
-            file.PutField(fields[5], "memo");
+            file.WriteField(fields[0], "sjov");
+            /*file.WriteField(fields[1], 10);
+            file.WriteField(fields[2], true);
+            file.WriteField(fields[3], DateTimeOffset.UtcNow);
+            file.WriteField(fields[4], 11.1);
+            file.WriteField(fields[5], "memo");
             */
             file.SaveRecord();
 
