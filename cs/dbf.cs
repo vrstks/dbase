@@ -204,6 +204,7 @@ namespace DBase
    /// </summary>
    public class File : IOpenClose
    {
+#region Memo
       private class MemoFile
       {
          public FileStream _Stream = null;
@@ -241,6 +242,20 @@ namespace DBase
             return pos;
          }
 
+         public bool ReadHeader()
+         {
+            int len = Marshal.SizeOf(typeof(DBT_FILEHEADER));
+            byte[] bytes = new byte[len];
+
+            bool ok = (len == _Stream.Read(bytes, 0, len));
+            if (ok)
+            {
+               DBT_FILEHEADER header = Utility.PtrToStructure<DBT_FILEHEADER>(bytes);
+               Next = header.next;
+            }
+            return ok;
+         }
+
          public void WriteHeader()
          {
             _Stream.Seek(0, SeekOrigin.Begin);
@@ -255,6 +270,7 @@ namespace DBase
             _Stream.Write(bytes, 0, bytes.GetLength(0));
          }
       }
+#endregion Memo
       private MemoFile _MemoFile = new MemoFile();
       private FileStream _Stream = null;
 
@@ -290,9 +306,12 @@ namespace DBase
             _Stream = stream;
             Filename = filename;
 
-            byte[] bytes = new byte[Const.HEADER_LENGTH];
+            int len_header = Marshal.SizeOf(typeof(DBF_FILEHEADER));
+            int len_field = Marshal.SizeOf(typeof(DBF_FILEFIELD));
 
-            if (Const.HEADER_LENGTH == StreamRead(bytes))
+            byte[] bytes = new byte[len_header];
+
+            if (len_header == StreamRead(bytes))
             {
                DBF_FILEHEADER header = Utility.PtrToStructure<DBF_FILEHEADER>(bytes);
                RecordCount = header.recordcount;
@@ -304,9 +323,9 @@ namespace DBase
                   RecordCount = (_Stream.Length - header.headerlength) / header.recordlength;
                }
 
-               int fieldcount = (header.headerlength - (Const.HEADER_LENGTH + 1)) / Const.FIELD_REC_LENGTH;
+               int fieldcount = (header.headerlength - (len_header + 1)) / len_field;
 
-               bytes = new byte[Const.FIELD_REC_LENGTH];
+               bytes = new byte[len_field];
 
                for (int i = 0; i < fieldcount; i++)
                {
@@ -325,7 +344,7 @@ namespace DBase
       {
          _MemoFile._Stream = stream;
          _MemoFile.Title = Path.GetFileNameWithoutExtension(filename);
-         return true;
+         return _MemoFile.ReadHeader();
       }
 
       public void Detach(out FileStream stream, out FileStream memostream)
