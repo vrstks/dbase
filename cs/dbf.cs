@@ -243,7 +243,7 @@ namespace DBase
 
             byte[] bytes = new byte[Const.HEADER_LENGTH];
 
-            if (Const.HEADER_LENGTH == m_stream.Read(bytes, 0, Const.HEADER_LENGTH))
+            if (Const.HEADER_LENGTH == StreamRead(bytes))
             {
                DBF_FILEHEADER header = Utility.PtrToStructure<DBF_FILEHEADER>(bytes);
                RecordCount = header.recordcount;
@@ -261,7 +261,7 @@ namespace DBase
 
                for (int i = 0; i < fieldcount; i++)
                {
-                  m_stream.Read(bytes, 0, Const.FIELD_REC_LENGTH);
+                  StreamRead(bytes);
                   DBF_FILEFIELD item = Utility.PtrToStructure<DBF_FILEFIELD>(bytes);
                   var type = (DataType)Const.DataTypes.IndexOf(item.type);
                   var field = new FieldInfo(item.title, type, item.length, item.deccount);
@@ -283,7 +283,7 @@ namespace DBase
       {
          if (IsDirty)
          {
-            m_stream.Seek(0, io.SeekOrigin.Begin);
+            StreamSeek(0);
 
             DBF_FILEHEADER header = new DBF_FILEHEADER();
             
@@ -305,11 +305,11 @@ namespace DBase
                //header.unused[i] = 0;
             }
             byte[] bytes = Utility.StructureToPtr<DBF_FILEHEADER>(header);
-            m_stream.Write(bytes, 0, bytes.GetLength(0));
-            m_stream.Seek(HeaderLength + RecordCount * RecordLength, io.SeekOrigin.Begin);
+            StreamWrite(bytes);
+            StreamSeek(HeaderLength + RecordCount * RecordLength);
 
-            bytes[0] = Const.CPM_TEXT_TERMINATOR;
-            m_stream.Write(bytes, 0, 1);
+            bytes = new byte[] { Const.CPM_TEXT_TERMINATOR };
+            StreamWrite(bytes);
          }
          stream = m_stream;
          memostream = m_stream_memo;
@@ -370,7 +370,7 @@ namespace DBase
                HeaderLength = Const.HEADER_LENGTH + Const.FIELDTERMINATOR_LEN + Const.FIELD_REC_LENGTH * fields.Count;
                IsDirty = true;
                m_stream.SetLength(HeaderLength);
-               m_stream.Seek(Const.HEADER_LENGTH, io.SeekOrigin.Begin);
+               StreamSeek(Const.HEADER_LENGTH);
                Fields = fields;
 
                RecordLength = 1;
@@ -382,12 +382,12 @@ namespace DBase
                   field.length = (byte)item.Length;
                   field.deccount = (byte)item.DecCount;
                   bytes = Utility.StructureToPtr<DBF_FILEFIELD>(field);
-                  m_stream.Write(bytes, 0, bytes.GetLength(0));
+                  StreamWrite(bytes);
                   RecordLength += item.Length;
                }
                bytes = new byte[1];
                bytes[0] = (byte)Const.FIELDTERMINATOR;
-               m_stream.Write(bytes, 0, bytes.GetLength(0));
+               StreamWrite(bytes);
             }
             if (stream_memo != null)
             {
@@ -410,6 +410,19 @@ namespace DBase
          _Position = Const.EnumeratorDefault;
       }
 
+      private int StreamRead(byte[] bytes)
+      {
+         return m_stream.Read(bytes, 0, bytes.GetLength(0));
+      }
+      private void StreamWrite(byte[] bytes)
+      {
+         m_stream.Write(bytes, 0, bytes.GetLength(0));
+      }
+      private long StreamSeek(long offset)
+      {
+         return m_stream.Seek(offset, io.SeekOrigin.Begin);
+      }      
+
       private string _RecordBuf = null;
       private long _Position = Const.EnumeratorDefault;
       public long Position
@@ -420,9 +433,9 @@ namespace DBase
             if (_Position != value)
             {
                _Position = value;
-               m_stream.Seek(HeaderLength + value * RecordLength + Const.FIELDTERMINATOR_LEN, io.SeekOrigin.Begin);
+               StreamSeek(HeaderLength + value * RecordLength + Const.FIELDTERMINATOR_LEN);
                byte[] bytes = new byte[RecordLength];
-               m_stream.Read(bytes, 0, RecordLength);
+               StreamRead(bytes);
                _RecordBuf = System.Text.Encoding.Default.GetString(bytes, 0, RecordLength);
             }
          }
@@ -437,19 +450,19 @@ namespace DBase
       public bool AppendRecord()
       {
          _Position = RecordCount;
-         m_stream.Seek(HeaderLength + _Position * RecordLength + Const.FIELDTERMINATOR_LEN, io.SeekOrigin.Begin);
+         StreamSeek(HeaderLength + _Position * RecordLength + Const.FIELDTERMINATOR_LEN);
          _RecordBuf = new string(' ', RecordLength);
          byte[] bytes = System.Text.Encoding.Default.GetBytes(_RecordBuf);
-         m_stream.Write(bytes, 0, RecordLength);
+         StreamWrite(bytes);
          RecordCount++;
          return true;
       }
 
       public bool SaveRecord()
       {
-         m_stream.Seek(HeaderLength + _Position * RecordLength + Const.FIELDTERMINATOR_LEN, io.SeekOrigin.Begin);
+         StreamSeek(HeaderLength + _Position * RecordLength + Const.FIELDTERMINATOR_LEN);
          byte[] bytes = System.Text.Encoding.Default.GetBytes(_RecordBuf);
-         m_stream.Write(bytes, 0, RecordLength);
+         StreamWrite(bytes);
          return true;
       }
 
