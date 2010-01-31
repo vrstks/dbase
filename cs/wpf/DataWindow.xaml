@@ -1,0 +1,8 @@
+﻿<Window x:Class="wpf.DataWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Window1" Width="Auto" Height="Auto">
+    <Grid>
+      <ListView Name="list"/>
+   </Grid>
+</Window>

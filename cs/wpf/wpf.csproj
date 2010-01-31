@@ -30,7 +30,7 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <StartupObject>wpf.Program</StartupObject>
+    <StartupObject>wpf.App</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -49,9 +49,15 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.XML" />
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="PresentationCore">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="PresentationFramework">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -60,7 +66,6 @@
     </ApplicationDefinition>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Component</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -83,6 +88,10 @@
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="DataWindow.xaml.cs">
+      <DependentUpon>DataWindow.xaml</DependentUpon>
+      <SubType>Component</SubType>
     </Compile>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
@@ -123,6 +132,12 @@
       <Project>{D232F196-92B6-4571-83BD-02F7158716AB}</Project>
       <Name>dbf</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="DataWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
