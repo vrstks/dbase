@@ -149,10 +149,10 @@ namespace DBase.Test
          //string filename = @"h:\cpcload.dbf";
          string filename = @"sjov.dbf";
 
-         Create(filename);
-         //CreateMemo(filename);
+         //Create(filename);
+         CreateMemo(filename);
          Open(filename);
-         OpenRecordset(filename);
+         //OpenRecordset(filename);
       }
    }
 }
