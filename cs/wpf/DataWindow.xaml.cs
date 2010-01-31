@@ -16,12 +16,11 @@ namespace Test
          InitializeComponent();
          
          //string filename = @"h:\cpcload.dbf";
-         string filename = "sjov.dbf";
-         DBase.Test.CreateDatabase(filename);
+         string filename = "sjov.dbf"; DBase.Test.CreateDatabase(filename);
          var recordset = new DBase.Recordset();
          recordset.Open(filename, System.IO.FileMode.Open);
-         var table = new MyDataTable(recordset);
-         Title = string.Format("{0} [{1}] - dbf library", System.IO.Path.GetDirectoryName(recordset.Filename), table.TableName);
+         //var table = new MyDataTable(recordset);
+         Title = string.Format("{0} [{1}] - dbf library", System.IO.Path.GetDirectoryName(recordset.Filename), recordset.TableName);
 
          var gridview = new GridView();
 
@@ -29,7 +28,7 @@ namespace Test
          {
             var gvcolumn = new GridViewColumn();
             gvcolumn.Header = field.Name;
-            gvcolumn.DisplayMemberBinding = new Binding(field.Name);
+            gvcolumn.DisplayMemberBinding = new Binding(field.Name); // makes wpf look for a property of this name - which doesn't exist
             gridview.Columns.Add(gvcolumn);
          }
 
@@ -44,6 +43,7 @@ namespace Test
       }
    }
 
+   // not used
    class MyDataTable : DataTable
    {
       public MyDataTable(DBase.Recordset recordset) : base(recordset.TableName)
