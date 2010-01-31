@@ -130,26 +130,11 @@ namespace DBase
 
    public class FieldInfo
    {
-      public string Name;
-      public DataType DataType;
-      public int Length;
-      public int DecCount;
-      public int Position;
+      public string Name = string.Empty;
+      public DataType DataType = DataType.Unknown;
+      public int Length = 0;
+      public int DecCount = 0;
 
-      public FieldInfo(string name, DataType type, int length)
-      {
-         Name = name;
-         DataType = type;
-         Length = length;
-         DecCount = 0;
-      }
-      public FieldInfo(string name, DataType type, int length, int deccount)
-      {
-         Name = name;
-         DataType = type;
-         Length = length;
-         DecCount = deccount;
-      }
       public Type GetType()
       {
          Type type;
@@ -364,7 +349,7 @@ namespace DBase
                   StreamRead(bytes);
                   DBF_FILEFIELD item = Utility.PtrToStructure<DBF_FILEFIELD>(bytes);
                   var type = (DataType)Const.DataTypes.IndexOf(item.type);
-                  var field = new FieldInfo(item.title, type, item.length, item.deccount);
+                  var field = new FieldInfo() { Name = item.title, DataType = type, Length = item.length, DecCount = item.deccount };
                   Fields.Add(field);
                }
             }
@@ -752,6 +737,21 @@ namespace DBase
          Position = Const.EnumeratorDefault;
       }
       #endregion
+
+/*
+   #region ToString
+      public override String ToString()
+      {
+         return ToString(null, null);
+      }
+      public string ToString(string format, IFormatProvider formatProvider)
+      {
+         return string.Format(formatProvider, "{0}",
+            Position);
+         //(_Field != null) ? _Field.String : "");
+      }
+      #endregion ToString
+   */
    }
 
    public class Record : IEnumerable, IEnumerator
@@ -787,6 +787,20 @@ namespace DBase
          FieldPosition = Const.EnumeratorDefault;
       }
       #endregion
+/*
+   #region ToString
+      public override String ToString()
+      {
+         return ToString(null, null);
+      }
+      public string ToString(string format, IFormatProvider formatProvider)
+      {
+         return string.Format(formatProvider, "{0}",
+            Recordset.Position);
+            //(_Field != null) ? _Field.String : "");
+      }
+   #endregion ToString
+*/
    }
 
    public class Field
@@ -824,6 +838,20 @@ namespace DBase
       {
          get { return (bool)Data; }
       }
+/*
+      #region ToString
+      public override String ToString()
+      {
+         return ToString(null, null);
+      }
+      public string ToString(string format, IFormatProvider formatProvider)
+      {
+         return string.Format(formatProvider, "{0}",
+            Record.Recordset.Position);
+         //(_Field != null) ? _Field.String : "");
+      }
+      #endregion ToString
+*/
    }
 
    #endregion Recordset
