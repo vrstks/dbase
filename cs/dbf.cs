@@ -186,6 +186,49 @@ namespace DBase
    }
 #endregion Convert
 
+#region Test
+   public static class Test
+   {
+      public static bool CreateDatabase(string filename)
+      {
+         var fields = new FieldInfo[]
+         { 
+            new FieldInfo() { Name="TITLE"  , DataType=DataType.Char   , Length= 4 },
+            new FieldInfo() { Name="INTEGER", DataType=DataType.Integer, Length=10 },
+            new FieldInfo() { Name="BOOLEAN", DataType=DataType.Boolean, Length= 1 },
+            new FieldInfo() { Name="DATE"   , DataType=DataType.Date   , Length= 8 },
+            new FieldInfo() { Name="FLOAT"  , DataType=DataType.Float  , Length=10, DecCount = 5 },
+            new FieldInfo() { Name="MEMO"   , DataType=DataType.Memo   , Length=10 },
+         };
+         var file = new DBase.File();
+         bool ok = file.Create(filename, fields);
+         if (ok)
+         {
+            file.AppendRecord();
+            file.WriteField(fields[0], "sjov");
+            file.WriteField(fields[1], 10);
+            file.WriteField(fields[2], true);
+            file.WriteField(fields[3], DateTimeOffset.UtcNow);
+            file.WriteField(fields[4], 11.1);
+            file.WriteField(fields[5], "memo");
+            file.SaveRecord();
+
+            file.AppendRecord();
+            file.WriteField(fields[0], "sjov");
+            file.WriteField(fields[1], 10);
+            file.WriteField(fields[2], true);
+            file.WriteField(fields[3], DateTimeOffset.UtcNow);
+            file.WriteField(fields[4], 11.1);
+            file.WriteField(fields[5], "memo");
+            file.SaveRecord();
+
+            file.Close();
+         }
+         return ok;
+      }
+   }
+#endregion Test
+
 #region Utility
    public interface IOpenClose
    {

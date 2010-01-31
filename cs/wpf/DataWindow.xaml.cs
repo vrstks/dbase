@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace wpf
+namespace Test
 {
    /// <summary>
    /// Interaction logic for DataWindow.xaml
@@ -15,7 +15,9 @@ namespace wpf
       {
          InitializeComponent();
          
-         string filename = @"h:\cpcload.dbf";
+         //string filename = @"h:\cpcload.dbf";
+         string filename = "sjov.dbf";
+         DBase.Test.CreateDatabase(filename);
          var recordset = new DBase.Recordset();
          recordset.Open(filename, System.IO.FileMode.Open);
          var table = new MyDataTable(recordset);

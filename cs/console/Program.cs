@@ -6,7 +6,7 @@
 using System;
 using io = System.IO;
 
-namespace DBase.Test
+namespace Test
 {
    static class Program
    {
@@ -16,7 +16,7 @@ namespace DBase.Test
          string str = string.Empty;
 
          int i = 0;
-         foreach (FieldInfo field in file.Fields)
+         foreach (DBase.FieldInfo field in file.Fields)
          {
             if (0 != i++) str += sep;
             str += field.Name;
@@ -27,7 +27,7 @@ namespace DBase.Test
          {
             str = string.Empty;
             i = 0;
-            foreach (FieldInfo field in file.Fields)
+            foreach (DBase.FieldInfo field in file.Fields)
             {
                if (0 != i++) str += sep;
                str += file.GetString(field);
@@ -43,7 +43,7 @@ namespace DBase.Test
          string str = string.Empty;
 
          int i = 0;
-         foreach (FieldInfo field in recordset.Fields)
+         foreach (DBase.FieldInfo field in recordset.Fields)
          {
             if (0 != i++) str += sep;
             str += field.Name;
@@ -54,7 +54,7 @@ namespace DBase.Test
          {
             str = string.Empty;
             i = 0;
-            foreach (Field field in record)
+            foreach (DBase.Field field in record)
             {
                if (0 != i++) str += sep;
                str += field.Data;
@@ -65,53 +65,13 @@ namespace DBase.Test
          }
       }
 
-      private static void Create(string filename)
-      {
-         var file = new DBase.File();
-
-         FieldInfo[] fields = new FieldInfo[]
-         { 
-            new FieldInfo() { Name="TITLE"  , DataType=DataType.Char   , Length= 4 },
-            new FieldInfo() { Name="INTEGER", DataType=DataType.Integer, Length=10 },
-            new FieldInfo() { Name="BOOLEAN", DataType=DataType.Boolean, Length= 1 },
-            new FieldInfo() { Name="DATE"   , DataType=DataType.Date   , Length= 8 },
-            new FieldInfo() { Name="FLOAT"  , DataType=DataType.Float  , Length=10, DecCount = 5 },
-            new FieldInfo() { Name="MEMO"   , DataType=DataType.Memo   , Length=10 },
-         };
-
-         if (file.Create(filename, fields))
-         {
-            file.AppendRecord();
-            file.WriteField(fields[0], "sjov");
-            file.WriteField(fields[1], 10);
-            file.WriteField(fields[2], true);
-            file.WriteField(fields[3], DateTimeOffset.UtcNow);
-            file.WriteField(fields[4], 11.1);
-            file.WriteField(fields[5], "memo");
-            file.SaveRecord();
-
-            file.AppendRecord();
-            file.WriteField(fields[0], "sjov");
-            file.WriteField(fields[1], 10);
-            file.WriteField(fields[2], true);
-            file.WriteField(fields[3], DateTimeOffset.UtcNow);
-            file.WriteField(fields[4], 11.1);
-            file.WriteField(fields[5], "memo");
-            file.SaveRecord();
-
-            file.Close();
-         }
-      }
-
       private static void CreateMemo(string filename)
       {
-         var file = new DBase.File();
-
-         FieldInfo[] fields = new FieldInfo[]
+         var fields = new DBase.FieldInfo[]
          { 
-            new FieldInfo() { Name="MEMO", DataType=DataType.Memo, Length=10 }
+            new DBase.FieldInfo() { Name="MEMO", DataType=DBase.DataType.Memo, Length=10 }
          };
-
+         var file = new DBase.File();
          if (file.Create(filename, fields))
          {
             file.AppendRecord();
@@ -149,8 +109,8 @@ namespace DBase.Test
          //string filename = @"h:\cpcload.dbf";
          string filename = @"sjov.dbf";
 
-         //Create(filename);
-         CreateMemo(filename);
+         DBase.Test.CreateDatabase(filename);
+         //CreateMemo(filename);
          Open(filename);
          //OpenRecordset(filename);
       }
