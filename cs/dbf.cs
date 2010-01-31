@@ -131,7 +131,7 @@ namespace DBase
    public class FieldInfo
    {
       public string Name;
-      public DataType Type;
+      public DataType DataType;
       public int Length;
       public int DecCount;
       public int Position;
@@ -139,16 +139,41 @@ namespace DBase
       public FieldInfo(string name, DataType type, int length)
       {
          Name = name;
-         Type = type;
+         DataType = type;
          Length = length;
          DecCount = 0;
       }
       public FieldInfo(string name, DataType type, int length, int deccount)
       {
          Name = name;
-         Type = type;
+         DataType = type;
          Length = length;
          DecCount = deccount;
+      }
+      public Type GetType()
+      {
+         Type type;
+         switch (DataType)
+         {
+            case DataType.Date:
+               type = typeof(DateTimeOffset);
+               break;
+            case DataType.Float:
+               type = typeof(double);
+               break;
+            case DataType.Integer:
+               type = typeof(int);
+               break;
+            case DataType.Boolean:
+               type = typeof(bool);
+               break;
+            case DataType.Char:
+            case DataType.Memo:
+            default:
+               type = typeof(string);
+               break;
+         }
+         return type;
       }
    }
 #endregion Definitions
@@ -281,6 +306,7 @@ namespace DBase
       private FileStream _Stream = null;
 
       public string Filename { get; private set; }
+      public string TableName { get { return System.IO.Path.GetFileNameWithoutExtension(Filename); } }
       public bool IsOpen { get { return (_Stream != null); } }
       public bool HasMemo { get { return (_MemoFile._Stream != null); } }
 
@@ -412,7 +438,7 @@ namespace DBase
                bool memo = false;
                foreach (FieldInfo item in Fields)
                {
-                  memo = memo || (item.Type == DataType.Memo);
+                  memo = memo || (item.DataType == DataType.Memo);
                }
                if (memo)
                {
@@ -451,7 +477,7 @@ namespace DBase
          bool memo = false;
          foreach (FieldInfo item in fields)
          {
-            memo = memo || (item.Type == DataType.Memo);
+            memo = memo || (item.DataType == DataType.Memo);
          }
          FileStream stream = new FileStream(filename, mode, access);
          FileStream stream_memo = null;
@@ -481,7 +507,7 @@ namespace DBase
                {
                   DBF_FILEFIELD field = new DBF_FILEFIELD();
                   field.title = item.Name;
-                  field.type = Const.DataTypes[(int)item.Type];
+                  field.type = Const.DataTypes[(int)item.DataType];
                   field.length = (byte)item.Length;
                   field.deccount = (byte)item.DecCount;
                   bytes = Utility.StructureToPtr<DBF_FILEFIELD>(field);
@@ -574,7 +600,7 @@ namespace DBase
 
       public bool WriteField(FieldInfo field, string str)
       {
-         switch (field.Type)
+         switch (field.DataType)
          {
             case DataType.Memo:
                str = _MemoFile.Write(str).ToString();
@@ -634,7 +660,7 @@ namespace DBase
          int pos = GetRecordBufPos(field);
          string str = _RecordBuf.Substring(pos, field.Length);
          str = str.TrimEnd(_FieldDataTrim);
-         switch (field.Type)
+         switch (field.DataType)
          {
             case DataType.Memo:
                str = _MemoFile.Read(long.Parse(str));
@@ -647,7 +673,7 @@ namespace DBase
       {
          object obj = null;
          string str = GetString(field);
-         switch (field.Type)
+         switch (field.DataType)
          {
             case DataType.Char:
                obj = str;
