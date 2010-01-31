@@ -16,10 +16,10 @@ namespace Test
          string str = string.Empty;
 
          int i = 0;
-         foreach (DBase.FieldInfo field in file.Fields)
+         foreach (DBase.ColumnInfo col in file.Columns)
          {
             if (0 != i++) str += sep;
-            str += field.Name;
+            str += col.Name;
          }
          Console.WriteLine(str);
 
@@ -27,10 +27,10 @@ namespace Test
          {
             str = string.Empty;
             i = 0;
-            foreach (DBase.FieldInfo field in file.Fields)
+            foreach (DBase.ColumnInfo col in file.Columns)
             {
                if (0 != i++) str += sep;
-               str += file.GetString(field);
+               str += file.GetString(col);
                //break;
             }
             Console.WriteLine("{0,5} {1}", file.Position, str);
@@ -43,10 +43,10 @@ namespace Test
          string str = string.Empty;
 
          int i = 0;
-         foreach (DBase.FieldInfo field in recordset.Fields)
+         foreach (DBase.ColumnInfo col in recordset.Columns)
          {
             if (0 != i++) str += sep;
-            str += field.Name;
+            str += col.Name;
          }
          Console.WriteLine(str);
 
@@ -54,10 +54,10 @@ namespace Test
          {
             str = string.Empty;
             i = 0;
-            foreach (DBase.Field field in record)
+            foreach (DBase.Column col in record)
             {
                if (0 != i++) str += sep;
-               str += field.Data;
+               str += col.Data;
                //break;
             }
             Console.WriteLine("{0,5} {1}", recordset.Position, str);
@@ -67,18 +67,18 @@ namespace Test
 
       private static void CreateMemo(string filename)
       {
-         var fields = new DBase.FieldInfo[]
+         var columns = new DBase.ColumnInfo[]
          { 
-            new DBase.FieldInfo() { Name="MEMO", DataType=DBase.DataType.Memo, Length=10 }
+            new DBase.ColumnInfo() { Name="MEMO", DataType=DBase.DataType.Memo, Length=10 }
          };
          var file = new DBase.File();
-         if (file.Create(filename, fields))
+         if (file.Create(filename, columns))
          {
             file.AppendRecord();
-            file.WriteField(fields[0], "sjov1");
+            file.WriteField(columns[0], "sjov1");
             file.SaveRecord();
             file.AppendRecord();
-            file.WriteField(fields[0], "sjov2");
+            file.WriteField(columns[0], "sjov2");
             file.SaveRecord();
 
             file.Close();
@@ -112,7 +112,7 @@ namespace Test
          DBase.Test.CreateDatabase(filename);
          //CreateMemo(filename);
          Open(filename);
-         //OpenRecordset(filename);
+         OpenRecordset(filename);
       }
    }
 }

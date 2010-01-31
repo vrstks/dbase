@@ -24,11 +24,11 @@ namespace Test
 
          var gridview = new GridView();
 
-         foreach (DBase.FieldInfo field in recordset.Fields)
+         foreach (DBase.ColumnInfo col in recordset.Columns)
          {
             var gvcolumn = new GridViewColumn();
-            gvcolumn.Header = field.Name;
-            gvcolumn.DisplayMemberBinding = new Binding(field.Name); // makes wpf look for a property of this name - which doesn't exist
+            gvcolumn.Header = col.Name;
+            gvcolumn.DisplayMemberBinding = new Binding(col.Name); // makes wpf look for a property of this name - which doesn't exist
             gridview.Columns.Add(gvcolumn);
          }
 
@@ -48,10 +48,10 @@ namespace Test
    {
       public MyDataTable(DBase.Recordset recordset) : base(recordset.TableName)
       {
-         foreach (DBase.FieldInfo field in recordset.Fields)
+         foreach (DBase.ColumnInfo col in recordset.Columns)
          {
-            var column = new DataColumn(field.Name);
-            column.DataType = field.GetType();
+            var column = new DataColumn(col.Name);
+            column.DataType = col.GetType();
             Columns.Add(column);
          }
       }

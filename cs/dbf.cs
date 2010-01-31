@@ -128,7 +128,7 @@ namespace DBase
       Any = -2
    }
 
-   public class FieldInfo
+   public class ColumnInfo
    {
       public string Name = string.Empty;
       public DataType DataType = DataType.Unknown;
@@ -191,35 +191,35 @@ namespace DBase
    {
       public static bool CreateDatabase(string filename)
       {
-         var fields = new FieldInfo[]
+         var columns = new ColumnInfo[]
          { 
-            new FieldInfo() { Name="TITLE"  , DataType=DataType.Char   , Length= 4 },
-            new FieldInfo() { Name="INTEGER", DataType=DataType.Integer, Length=10 },
-            new FieldInfo() { Name="BOOLEAN", DataType=DataType.Boolean, Length= 1 },
-            new FieldInfo() { Name="DATE"   , DataType=DataType.Date   , Length= 8 },
-            new FieldInfo() { Name="FLOAT"  , DataType=DataType.Float  , Length=10, DecCount = 5 },
-            new FieldInfo() { Name="MEMO"   , DataType=DataType.Memo   , Length=10 },
+            new ColumnInfo() { Name="TITLE"  , DataType=DataType.Char   , Length= 4 },
+            new ColumnInfo() { Name="INTEGER", DataType=DataType.Integer, Length=10 },
+            new ColumnInfo() { Name="BOOLEAN", DataType=DataType.Boolean, Length= 1 },
+            new ColumnInfo() { Name="DATE"   , DataType=DataType.Date   , Length= 8 },
+            new ColumnInfo() { Name="FLOAT"  , DataType=DataType.Float  , Length=10, DecCount = 5 },
+            new ColumnInfo() { Name="MEMO"   , DataType=DataType.Memo   , Length=10 },
          };
          var file = new DBase.File();
-         bool ok = file.Create(filename, fields);
+         bool ok = file.Create(filename, columns);
          if (ok)
          {
             file.AppendRecord();
-            file.WriteField(fields[0], "sjov");
-            file.WriteField(fields[1], 10);
-            file.WriteField(fields[2], true);
-            file.WriteField(fields[3], DateTimeOffset.UtcNow);
-            file.WriteField(fields[4], 11.1);
-            file.WriteField(fields[5], "memo");
+            file.WriteField(columns[0], "sjov1");
+            file.WriteField(columns[1], 10);
+            file.WriteField(columns[2], true);
+            file.WriteField(columns[3], DateTimeOffset.UtcNow);
+            file.WriteField(columns[4], 11.1);
+            file.WriteField(columns[5], "memo1");
             file.SaveRecord();
 
             file.AppendRecord();
-            file.WriteField(fields[0], "sjov");
-            file.WriteField(fields[1], 10);
-            file.WriteField(fields[2], true);
-            file.WriteField(fields[3], DateTimeOffset.UtcNow);
-            file.WriteField(fields[4], 11.1);
-            file.WriteField(fields[5], "memo");
+            file.WriteField(columns[0], "sjov2");
+            file.WriteField(columns[1], 20);
+            file.WriteField(columns[2], false);
+            file.WriteField(columns[3], DateTimeOffset.UtcNow);
+            file.WriteField(columns[4], 22.2);
+            file.WriteField(columns[5], "memo2");
             file.SaveRecord();
 
             file.Close();
@@ -338,7 +338,7 @@ namespace DBase
       public bool IsOpen { get { return (_Stream != null); } }
       public bool HasMemo { get { return (_MemoFile._Stream != null); } }
 
-      public List<FieldInfo> Fields { get; private set; }
+      public List<ColumnInfo> Columns { get; private set; }
 
       public bool IsEditable { get { return (_Stream != null) && _Stream.CanWrite; } }
       public bool IsDirty { get; private set; }
@@ -351,7 +351,7 @@ namespace DBase
       public File()
       {
          IsDirty = false;
-         Fields = new List<FieldInfo>();
+         Columns = new List<ColumnInfo>();
       }
       ~File()
       {
@@ -392,8 +392,8 @@ namespace DBase
                   StreamRead(bytes);
                   DBF_FILEFIELD item = Utility.PtrToStructure<DBF_FILEFIELD>(bytes);
                   var type = (DataType)Const.DataTypes.IndexOf(item.type);
-                  var field = new FieldInfo() { Name = item.title, DataType = type, Length = item.length, DecCount = item.deccount };
-                  Fields.Add(field);
+                  var field = new ColumnInfo() { Name = item.title, DataType = type, Length = item.length, DecCount = item.deccount };
+                  Columns.Add(field);
                }
             }
          }
@@ -464,7 +464,7 @@ namespace DBase
             if (ok)
             {
                bool memo = false;
-               foreach (FieldInfo item in Fields)
+               foreach (ColumnInfo item in Columns)
                {
                   memo = memo || (item.DataType == DataType.Memo);
                }
@@ -487,23 +487,23 @@ namespace DBase
          return ok;
       }
 
-      public bool Create(string filename, FieldInfo[] array)
+      public bool Create(string filename, ColumnInfo[] array)
       {
-         var list = new List<FieldInfo>();
-         foreach (FieldInfo item in array)
+         var list = new List<ColumnInfo>();
+         foreach (ColumnInfo item in array)
          {
             list.Add(item);
          }
          return Create(filename, list);
       }
 
-      public bool Create(string filename, List<FieldInfo> fields)
+      public bool Create(string filename, List<ColumnInfo> fields)
       {
          FileMode mode = FileMode.Create;
          FileAccess access = FileAccess.ReadWrite; // exclusive
          string filename_memo = string.Empty;
          bool memo = false;
-         foreach (FieldInfo item in fields)
+         foreach (ColumnInfo item in fields)
          {
             memo = memo || (item.DataType == DataType.Memo);
          }
@@ -528,10 +528,10 @@ namespace DBase
                IsDirty = true;
                _Stream.SetLength(HeaderLength);
                StreamSeek(Const.HeaderLen);
-               Fields = fields;
+               Columns = fields;
 
                RecordLength = 1;
-               foreach (FieldInfo item in fields)
+               foreach (ColumnInfo item in fields)
                {
                   DBF_FILEFIELD field = new DBF_FILEFIELD();
                   field.title = item.Name;
@@ -560,7 +560,7 @@ namespace DBase
          Detach(out stream, out memostream);
          if (stream     != null) stream    .Close();
          if (memostream != null) memostream.Close();
-         Fields.Clear();
+         Columns.Clear();
          RecordCount = 0;
          RecordLength = 0;
          _Position = Const.EnumeratorDefault;
@@ -626,7 +626,7 @@ namespace DBase
          return true;
       }
 
-      public bool WriteField(FieldInfo field, string str)
+      public bool WriteField(ColumnInfo field, string str)
       {
          switch (field.DataType)
          {
@@ -642,23 +642,23 @@ namespace DBase
          return true;
       }
 
-      public bool WriteField(FieldInfo field, int n)
+      public bool WriteField(ColumnInfo field, int n)
       {
          return WriteField(field, n.ToString());
       }
 
-      public bool WriteField(FieldInfo field, DateTimeOffset date)
+      public bool WriteField(ColumnInfo field, DateTimeOffset date)
       {
          string str = string.Format("{0:0000}{1:00}{2:00}", date.Year, date.Month, date.Day);
          return WriteField(field, str);
       }
 
-      public bool WriteField(FieldInfo field, bool b)
+      public bool WriteField(ColumnInfo field, bool b)
       {
          return WriteField(field, b ? "T" : "F");
       }
 
-      public bool WriteField(FieldInfo field, double n)
+      public bool WriteField(ColumnInfo field, double n)
       {
          string fmt = "{0:0";
          if (field.DecCount != 0)
@@ -671,10 +671,10 @@ namespace DBase
          return WriteField(field, str);
       }
 
-      private int GetRecordBufPos(FieldInfo field)
+      private int GetRecordBufPos(ColumnInfo field)
       {
          int pos = 0;
-         foreach (FieldInfo item in Fields)
+         foreach (ColumnInfo item in Columns)
          {
             if (item == field) break;
             pos += item.Length;
@@ -683,7 +683,7 @@ namespace DBase
       }
 
       private static char[] _FieldDataTrim = new char[] { Const.FieldFillChar, '\0' };
-      public string GetString(FieldInfo field)
+      public string GetString(ColumnInfo field)
       {
          int pos = GetRecordBufPos(field);
          string str = _RecordBuf.Substring(pos, field.Length);
@@ -697,7 +697,7 @@ namespace DBase
          return str;
       }
 
-      public object GetData(FieldInfo field)
+      public object GetData(ColumnInfo field)
       {
          object obj = null;
          string str = GetString(field);
@@ -800,12 +800,12 @@ namespace DBase
    public class Record : IEnumerable, IEnumerator
    {
       public Recordset Recordset { get; private set; }
-      private Field _Field;
+      private Column _Field;
       public int FieldPosition { get; set; }
       public Record(Recordset recordset)
       {
          Recordset = recordset;
-         _Field = new Field(this);
+         _Field = new Column(this);
          Reset();
       }
       
@@ -822,7 +822,7 @@ namespace DBase
       public bool MoveNext()
       {
          FieldPosition++;
-         return (FieldPosition < Recordset.Fields.Count);
+         return (FieldPosition < Recordset.Columns.Count);
       }
 
       public void Reset()
@@ -846,20 +846,20 @@ namespace DBase
 */
    }
 
-   public class Field
+   public class Column
    {
       public Record Record { get; private set; }
-      public Field(Record record)
+      public Column(Record record)
       {
          Record = record;
       }
       public object Data
       { 
-         get { return Record.Recordset.GetData(Record.Recordset.Fields[Record.FieldPosition]); } 
+         get { return Record.Recordset.GetData(Record.Recordset.Columns[Record.FieldPosition]); } 
       }
       public string String
       { 
-         get { return Record.Recordset.GetString(Record.Recordset.Fields[Record.FieldPosition]); } 
+         get { return Record.Recordset.GetString(Record.Recordset.Columns[Record.FieldPosition]); } 
       }
       public double Float
       {
