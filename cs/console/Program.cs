@@ -1,10 +1,7 @@
-﻿// Program.cs
-// Copyright (c) 2010 by Troels K. All rights reserved.
-// Project website: sf.net/projects/dbase
+﻿// dbf library (sf.net/projects/dbase)
 // License: zlib (opensource.org/licenses/zlib-license.php)
 
 using System;
-using io = System.IO;
 
 namespace Test
 {
@@ -88,7 +85,7 @@ namespace Test
       private static void Open(string filename)
       {
          var file = new DBase.File();
-         if (file.Open(filename, io.FileMode.Open))
+         if (file.Open(filename, System.IO.FileMode.Open))
          {
             ConsoleDump(file);
             file.Close();
@@ -97,7 +94,7 @@ namespace Test
       private static void OpenRecordset(string filename)
       {
          var recordset = new DBase.Recordset();
-         if (recordset.Open(filename, io.FileMode.Open))
+         if (recordset.Open(filename, System.IO.FileMode.Open))
          {
             ConsoleDump(recordset);
             recordset.Close();
