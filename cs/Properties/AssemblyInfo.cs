@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Troels K")]
-[assembly: AssemblyProduct("")]
+[assembly: AssemblyProduct("dbf library")]
 [assembly: AssemblyCopyright("Copyright © 2010 Troels K")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
