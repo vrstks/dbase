@@ -118,16 +118,15 @@ class WXDLLIMPEXP_FWD_CORE wxMenuBar;
 extern void wxMenuBar_Fixup(wxMenuBar*, const AcceleratorArray&);
 extern void wxSetAcceleratorTable(wxWindow*, const AcceleratorArray&);
 
-#define wxELLIPSE_REPLACEMENT       wxT("...")
-
-inline void wxString_RemoveEllipsis(wxString* str)
-{
-   str->Replace(wxELLIPSE_REPLACEMENT, wxEmptyString);
-}
-
 #define wxMessageBoxCaption      wxGetApp().GetAppDisplayName()
 
-extern wxString wxGetStockLabelEx(wxWindowID, bool withCodes);
+#ifdef _WX_STOCKITEM_H_
+#if (wxVERSION_NUMBER < 2900)
+#define wxSTOCK_FOR_BUTTON (4 | wxSTOCK_WITH_MNEMONIC)
+#endif
+#define wxSTOCK_PLAINTEXT 8 // trac.wxwidgets.org/ticket/11683
+extern wxString wxGetStockLabelEx(wxWindowID, long flags = wxSTOCK_WITH_MNEMONIC);
+#endif
 
 #ifdef _WX_DOCH__
 inline void wxDocument_SetTitleFullPath(wxDocument* doc, bool notifyViews = true)

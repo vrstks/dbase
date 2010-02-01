@@ -367,7 +367,7 @@ void wxMenuBar_Fixup(wxMenuBar* menu, const AcceleratorArray& array)
    }
 }
 
-wxString wxGetStockLabelEx(wxWindowID id, bool withCodes)
+wxString wxGetStockLabelEx(wxWindowID id, long flags)
 {
     #define STOCKITEM(stockid, label) \
         case stockid:                 \
@@ -392,16 +392,48 @@ wxString wxGetStockLabelEx(wxWindowID id, bool withCodes)
          //else if (id == wxXRCID_RUN) stockLabel = _("&Run");
          break;
    }
-    #undef STOCKITEM
-#if (wxVERSION_NUMBER >= 2800)
-   if (stockLabel.IsEmpty()) stockLabel = wxGetStockLabel(id, withCodes ? wxSTOCK_WITH_MNEMONIC : 0);
-#else
-   if (stockLabel.IsEmpty()) stockLabel = wxGetStockLabel(id, withCodes, accelerator);
-#endif
-   if (!withCodes)
+#undef STOCKITEM
+   if (stockLabel.Length())
    {
+       if ( !(flags & wxSTOCK_WITH_MNEMONIC) )
+       {
+           stockLabel = wxStripMenuCodes(stockLabel);
+       }
+#if (wxVERSION_NUMBER >= 2900)
+       if ( (flags & wxSTOCK_FOR_BUTTON) == wxSTOCK_FOR_BUTTON)
+       {
+           wxString baseLabel;
+           if ( stockLabel.EndsWith(wxT("..."), &baseLabel) )
+               stockLabel = baseLabel;
+
+           wxASSERT_MSG( !(flags & wxSTOCK_WITH_ACCELERATOR),
+                           wxT("button labels never use accelerators"));
+       }
+#else 
+       // handled below
+#endif
+   }
+   else
+   {
+      stockLabel = wxGetStockLabel(id, flags);
+   }
+#if (wxVERSION_NUMBER < 2900)
+   if ( (flags & wxSTOCK_FOR_BUTTON) == wxSTOCK_FOR_BUTTON)
+   {
+      wxString baseLabel;
+      if ( stockLabel.EndsWith(wxT("..."), &baseLabel) )
+         stockLabel = baseLabel;
+
+      wxASSERT_MSG( !(flags & wxSTOCK_WITH_ACCELERATOR),
+                     wxT("button labels never use accelerators"));
+   }
+#endif
+   if (flags & wxSTOCK_PLAINTEXT)
+   {
+      wxString baseLabel;
+      if ( stockLabel.EndsWith(wxT("..."), &baseLabel) )
+         stockLabel = baseLabel;
       stockLabel = wxStripMenuCodes(stockLabel);
-      wxString_RemoveEllipsis(&stockLabel);
    }
    return stockLabel;
 }
