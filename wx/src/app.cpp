@@ -105,7 +105,7 @@ MainFrame* App::GetMainFrame(void)
       array.Add(wxAcceleratorEntry(wxACCEL_CTRL, 'D', XRCID("pack")));
       array.Add(wxAcceleratorEntry(wxACCEL_CTRL, 'M', XRCID("struct")));
 
-      array.Add(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_F12, wxID_SAVEAS));
+      array.Add(wxAcceleratorEntry(wxACCEL_CMD | wxACCEL_SHIFT, 'S', wxID_SAVEAS));
    }
    return array;
 }
