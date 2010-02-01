@@ -45,6 +45,8 @@
 #define MAGIC_MEMO_BLOCK 0x0008FFFF
 #define FIELDTERMINATOR '\r'
 #define FIELDTERMINATOR_LEN 1
+#define RECORD_POS_DELETED 0
+#define RECORD_POS_DATA    1
 
 static void  strcpy_dos2host(char* buf, const char* src, size_t buf_len, enum dbf_charconv);
 static void  strcpy_host2dos(char* buf, const char* src, size_t buf_len, enum dbf_charconv);
@@ -293,7 +295,7 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
             if (handle->recorddataptr)
             {
                size_t i;
-               size_t fielddata_pos = 0;
+               size_t fielddata_pos = RECORD_POS_DATA;
 
                ZSEEK(handle->api, stream, sizeof(DBF_FILEHEADER), ZLIB_FILEFUNC_SEEK_SET);
 
@@ -582,7 +584,7 @@ BOOL dbf_setposition(DBF_HANDLE handle, size_t record)
 
    if (ok)
    {
-      ok = (0 == ZSEEK(handle->api, handle->stream, handle->headerlength + FIELDTERMINATOR_LEN + (record - 0) * handle->recordlength, ZLIB_FILEFUNC_SEEK_SET));
+      ok = (0 == ZSEEK(handle->api, handle->stream, handle->headerlength + (record - 0) * handle->recordlength, ZLIB_FILEFUNC_SEEK_SET));
       if (ok) ok = (handle->recordlength == ZREAD(handle->api, handle->stream, handle->recorddataptr, handle->recordlength));
       if (ok)
       {
@@ -626,7 +628,7 @@ BOOL dbf_putrecord(DBF_HANDLE handle, size_t record)
 
 BOOL dbf_isrecorddeleted(DBF_HANDLE handle)
 {
-   return (*handle->recorddataptr == '*');
+   return (handle->recorddataptr[RECORD_POS_DELETED] == '*');
 }
 
 BOOL dbf_deleterecord(DBF_HANDLE handle, BOOL do_delete)
@@ -635,7 +637,7 @@ BOOL dbf_deleterecord(DBF_HANDLE handle, BOOL do_delete)
 
    if (ok)
    {
-      *handle->recorddataptr = (char)(do_delete ? '*' : ' ');
+      handle->recorddataptr[RECORD_POS_DELETED] = (char)(do_delete ? '*' : ' ');
 
       handle->modified = TRUE;
       ok = dbf_putrecord(handle, dbf_getposition(handle));
@@ -1415,7 +1417,7 @@ DBF_HANDLE dbf_create_attach(void* stream, zlib_filefunc_def* api,
       dst->ptr = NULL;
       header.recordlength = (uint16_t)(header.recordlength + src->length);
    }
-   recorddataptr = (char*)malloc(header.recordlength);
+   recorddataptr = (char*)malloc(header.recordlength + 1);
    header.lastupdate.dd = (uint8_t) ptm->tm_mday;
    header.lastupdate.mm = (uint8_t)(ptm->tm_mon+1);
    header.lastupdate.yy = (uint8_t) ptm->tm_year;
@@ -1424,7 +1426,7 @@ DBF_HANDLE dbf_create_attach(void* stream, zlib_filefunc_def* api,
    ZWRITE(*api, stream, &header, sizeof(header));
 
    header.headerlength = (uint16_t)(sizeof(DBF_FILEHEADER) + (array_count * sizeof(DBF_FILEFIELD)) + 1);
-   header.recordlength = 1;
+   header.recordlength = RECORD_POS_DATA;
 
    for (i = 0; i < array_count; i++)
    {
