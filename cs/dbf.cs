@@ -14,10 +14,11 @@ using System.IO;
 namespace DBase
 {
 #region Definitions
-   internal static class Const
+   public static class Const
    {
       public const int Pack = 1;
       public const int MemoBlockLen = 512;
+      public const int MemoBlockTermLen = 2;
       public static int HeaderLen { get; private set; }
       public static int FieldLen { get; private set; }
       public const string DataTypes = "CNFDCCML";
@@ -299,7 +300,11 @@ namespace DBase
          {
             long pos = Next;
             _Stream.Seek(pos * Const.MemoBlockLen, SeekOrigin.Begin);
-            byte[] bytes = System.Text.Encoding.Default.GetBytes(str + Const.CPM_TEXT_TERMINATOR + Const.CPM_TEXT_TERMINATOR);
+            for (int i = 0; i < Const.MemoBlockTermLen; i++)
+            {
+               str += Const.CPM_TEXT_TERMINATOR;
+            }
+            byte[] bytes = System.Text.Encoding.Default.GetBytes(str);
             _Stream.Write(bytes, 0, bytes.GetLength(0));
             Next +=    (bytes.GetLength(0) / Const.MemoBlockLen)
                    + (((bytes.GetLength(0) % Const.MemoBlockLen) != 0) ? 1 : 0);
@@ -363,6 +368,14 @@ namespace DBase
          if (IsOpen) Close();
       }
 
+      private static bool sanity_check(DBF_FILEHEADER header)
+      {
+         bool ok =    ((header.lastupdate.mm >= 1) && (header.lastupdate.mm <= 12))
+                   && ((header.lastupdate.dd >= 1) && (header.lastupdate.dd <= 31))
+                   ;
+         return ok;
+      }
+
       public bool Attach(FileStream stream, string filename)
       {
          bool ok = (stream != null);
@@ -379,26 +392,47 @@ namespace DBase
             if (len_header == StreamRead(bytes))
             {
                DBF_FILEHEADER header = Utility.PtrToStructure<DBF_FILEHEADER>(bytes);
-               RecordCount = header.recordcount;
-               RecordLength = header.recordlength;
-               HeaderLength = header.headerlength;
-
-               if ( (RecordCount == 0) && (RecordLength != 0) )
+               ok = sanity_check(header);
+               if (ok) switch (header.version)
                {
-                  RecordCount = (_Stream.Length - header.headerlength) / header.recordlength;
-               }
+                  case Const.MAGIC_DBASE3:
+                  case Const.MAGIC_DBASE3_MEMO:
+                  case Const.MAGIC_DBASE4:
+                  case Const.MAGIC_DBASE4_MEMO:
+                  case Const.MAGIC_FOXPRO:
+                  {
+                     RecordCount = header.recordcount;
+                     RecordLength = header.recordlength;
+                     HeaderLength = header.headerlength;
 
-               int fieldcount = (header.headerlength - (len_header + 1)) / len_field;
+                     if ((RecordCount == 0) && (RecordLength != 0))
+                     {
+                        RecordCount = (_Stream.Length - header.headerlength) / header.recordlength;
+                     }
 
-               bytes = new byte[len_field];
+                     int fieldcount = (header.headerlength - (len_header + 1)) / len_field;
 
-               for (int i = 0; i < fieldcount; i++)
-               {
-                  StreamRead(bytes);
-                  DBF_FILEFIELD item = Utility.PtrToStructure<DBF_FILEFIELD>(bytes);
-                  var type = (DataType)Const.DataTypes.IndexOf(item.type);
-                  var field = new ColumnInfo() { Name = item.title, DataType = type, Length = item.length, DecCount = item.deccount };
-                  Columns.Add(field);
+                     bytes = new byte[len_field];
+
+                     for (int i = 0; i < fieldcount; i++)
+                     {
+                        StreamRead(bytes);
+                        if ( (bytes[0] >= 0) && (bytes[0] <= (byte)' '))
+                        {
+                           break;
+                        }
+                        DBF_FILEFIELD item = Utility.PtrToStructure<DBF_FILEFIELD>(bytes);
+
+                        var type = (DataType)Const.DataTypes.IndexOf(item.type);
+                        var field = new ColumnInfo() { Name = item.title, DataType = type, Length = item.length, DecCount = item.deccount };
+                        Columns.Add(field);
+                     }
+                     break;
+                  }
+                  //case Const.MAGIC_FOXPRO:
+                  default:
+                     ok = false;
+                     break;
                }
             }
          }
@@ -476,11 +510,14 @@ namespace DBase
                if (memo)
                {
                   string filename_memo = MemoFile.CreateFileName(filename);
-                  var stream_memo = new FileStream(filename_memo, mode, access);
-                  ok = (stream_memo != null);
-                  if (ok)
+                  if (System.IO.File.Exists(filename_memo))
                   {
-                     ok = AttachMemo(stream_memo, filename_memo);
+                     var stream_memo = new FileStream(filename_memo, mode, access);
+                     ok = (stream_memo != null);
+                     if (ok)
+                     {
+                        ok = AttachMemo(stream_memo, filename_memo);
+                     }
                   }
                   if (!ok)
                   {
@@ -640,8 +677,11 @@ namespace DBase
          switch (field.DataType)
          {
             case DataType.Memo:
-               str = _MemoFile.Write(str).ToString();
+            {
+               string fmt = "{0:" + new string('0', field.Length) + "}";
+               str = string.Format(fmt, _MemoFile.Write(str));
                break;
+            }
          }
          int pos = GetRecordBufPos(field);
          string temp = str;
@@ -700,7 +740,14 @@ namespace DBase
          switch (field.DataType)
          {
             case DataType.Memo:
-               str = _MemoFile.Read(long.Parse(str));
+               if (_MemoFile._Stream != null)
+               {
+                  str = _MemoFile.Read(long.Parse(str));
+               }
+               else
+               {
+                  str = string.Empty;
+               }
                break;
          }
          return str;
