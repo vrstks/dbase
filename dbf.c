@@ -1417,7 +1417,7 @@ DBF_HANDLE dbf_create_attach(void* stream, zlib_filefunc_def* api,
       dst->ptr = NULL;
       header.recordlength = (uint16_t)(header.recordlength + src->length);
    }
-   recorddataptr = (char*)malloc(header.recordlength + 1);
+   recorddataptr = (char*)malloc(header.recordlength + 1); // + zeroterm.
    header.lastupdate.dd = (uint8_t) ptm->tm_mday;
    header.lastupdate.mm = (uint8_t)(ptm->tm_mon+1);
    header.lastupdate.yy = (uint8_t) ptm->tm_year;
@@ -1425,7 +1425,7 @@ DBF_HANDLE dbf_create_attach(void* stream, zlib_filefunc_def* api,
    ZSEEK(*api, stream, 0, ZLIB_FILEFUNC_SEEK_SET);
    ZWRITE(*api, stream, &header, sizeof(header));
 
-   header.headerlength = (uint16_t)(sizeof(DBF_FILEHEADER) + (array_count * sizeof(DBF_FILEFIELD)) + 1);
+   header.headerlength = (uint16_t)(sizeof(DBF_FILEHEADER) + (array_count * sizeof(DBF_FILEFIELD)) + FIELDTERMINATOR_LEN);
    header.recordlength = RECORD_POS_DATA;
 
    for (i = 0; i < array_count; i++)
