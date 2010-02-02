@@ -33,6 +33,8 @@ namespace DBase
       public const int EnumeratorDefault = -1;
       public const string Fileext = "dbf";
       public const string FileextMemo = "dbt";
+      public const int RECORD_POS_DELETED = 0;
+      public const int RECORD_POS_DATA = 1;
 
       static Const()
       {
@@ -135,30 +137,33 @@ namespace DBase
       public int Length = 0;
       public int DecCount = 0;
 
-      public Type GetType()
+      public Type DotNetDataType
       {
-         Type type;
-         switch (DataType)
+         get
          {
-            case DataType.Date:
-               type = typeof(DateTimeOffset);
-               break;
-            case DataType.Float:
-               type = typeof(double);
-               break;
-            case DataType.Integer:
-               type = typeof(int);
-               break;
-            case DataType.Boolean:
-               type = typeof(bool);
-               break;
-            case DataType.Char:
-            case DataType.Memo:
-            default:
-               type = typeof(string);
-               break;
+            Type type;
+            switch (DataType)
+            {
+               case DataType.Date:
+                  type = typeof(DateTimeOffset);
+                  break;
+               case DataType.Float:
+                  type = typeof(double);
+                  break;
+               case DataType.Integer:
+                  type = typeof(int);
+                  break;
+               case DataType.Boolean:
+                  type = typeof(bool);
+                  break;
+               case DataType.Char:
+               case DataType.Memo:
+               default:
+                  type = typeof(string);
+                  break;
+            }
+            return type;
          }
-         return type;
       }
    }
 #endregion Definitions
@@ -193,7 +198,7 @@ namespace DBase
       {
          var columns = new ColumnInfo[]
          { 
-            new ColumnInfo() { Name="TITLE"  , DataType=DataType.Char   , Length= 4 },
+            new ColumnInfo() { Name="TITLE"  , DataType=DataType.Char   , Length= 5 },
             new ColumnInfo() { Name="INTEGER", DataType=DataType.Integer, Length=10 },
             new ColumnInfo() { Name="BOOLEAN", DataType=DataType.Boolean, Length= 1 },
             new ColumnInfo() { Name="DATE"   , DataType=DataType.Date   , Length= 8 },
@@ -530,7 +535,7 @@ namespace DBase
                StreamSeek(Const.HeaderLen);
                Columns = fields;
 
-               RecordLength = 1;
+               RecordLength = Const.RECORD_POS_DATA;
                foreach (ColumnInfo item in fields)
                {
                   DBF_FILEFIELD field = new DBF_FILEFIELD();
@@ -589,6 +594,10 @@ namespace DBase
          }
          set
          {
+            if (value >= RecordCount)
+            {
+               //throw new Exception("Out of range");
+            }
             if (_Position != value)
             {
                _Position = value;
@@ -611,7 +620,7 @@ namespace DBase
 
       public bool SaveRecord()
       {
-         StreamSeek(HeaderLength + _Position * RecordLength + Const.FieldTerminatorLen);
+         StreamSeek(HeaderLength + _Position * RecordLength);
          byte[] bytes = System.Text.Encoding.Default.GetBytes(_RecordBuf);
          StreamWrite(bytes);
          return true;
@@ -619,7 +628,7 @@ namespace DBase
 
       private bool ReadRecord()
       {
-         StreamSeek(HeaderLength + _Position * RecordLength + Const.FieldTerminatorLen);
+         StreamSeek(HeaderLength + _Position * RecordLength);
          byte[] bytes = new byte[RecordLength];
          StreamRead(bytes);
          _RecordBuf = System.Text.Encoding.Default.GetString(bytes, 0, RecordLength);
@@ -673,7 +682,7 @@ namespace DBase
 
       private int GetRecordBufPos(ColumnInfo field)
       {
-         int pos = 0;
+         int pos = Const.RECORD_POS_DATA;
          foreach (ColumnInfo item in Columns)
          {
             if (item == field) break;
@@ -800,12 +809,12 @@ namespace DBase
    public class Record : IEnumerable, IEnumerator
    {
       public Recordset Recordset { get; private set; }
-      private Column _Field;
-      public int FieldPosition { get; set; }
+      private Column _Column;
+      public int ColumnPosition { get; set; }
       public Record(Recordset recordset)
       {
          Recordset = recordset;
-         _Field = new Column(this);
+         _Column = new Column(this);
          Reset();
       }
       
@@ -817,17 +826,17 @@ namespace DBase
       #endregion
 
       #region IEnumerator Members
-      public object Current { get { return _Field; } }
+      public object Current { get { return _Column; } }
 
       public bool MoveNext()
       {
-         FieldPosition++;
-         return (FieldPosition < Recordset.Columns.Count);
+         ColumnPosition++;
+         return (ColumnPosition < Recordset.Columns.Count);
       }
 
       public void Reset()
       {
-         FieldPosition = Const.EnumeratorDefault;
+         ColumnPosition = Const.EnumeratorDefault;
       }
       #endregion
 /*
@@ -855,11 +864,11 @@ namespace DBase
       }
       public object Data
       { 
-         get { return Record.Recordset.GetData(Record.Recordset.Columns[Record.FieldPosition]); } 
+         get { return Record.Recordset.GetData(Record.Recordset.Columns[Record.ColumnPosition]); } 
       }
       public string String
       { 
-         get { return Record.Recordset.GetString(Record.Recordset.Columns[Record.FieldPosition]); } 
+         get { return Record.Recordset.GetString(Record.Recordset.Columns[Record.ColumnPosition]); } 
       }
       public double Float
       {
