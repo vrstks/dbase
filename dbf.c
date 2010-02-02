@@ -47,6 +47,8 @@
 #define FIELDTERMINATOR_LEN 1
 #define RECORD_POS_DELETED 0
 #define RECORD_POS_DATA    1
+#define RECORD_DELETED_MARKER '*'
+#define FIELD_FILL_CHAR ' '
 
 static void  strcpy_dos2host(char* buf, const char* src, size_t buf_len, enum dbf_charconv);
 static void  strcpy_host2dos(char* buf, const char* src, size_t buf_len, enum dbf_charconv);
@@ -628,7 +630,7 @@ BOOL dbf_putrecord(DBF_HANDLE handle, size_t record)
 
 BOOL dbf_isrecorddeleted(DBF_HANDLE handle)
 {
-   return (handle->recorddataptr[RECORD_POS_DELETED] == '*');
+   return (handle->recorddataptr[RECORD_POS_DELETED] == RECORD_DELETED_MARKER);
 }
 
 BOOL dbf_deleterecord(DBF_HANDLE handle, BOOL do_delete)
@@ -637,7 +639,7 @@ BOOL dbf_deleterecord(DBF_HANDLE handle, BOOL do_delete)
 
    if (ok)
    {
-      handle->recorddataptr[RECORD_POS_DELETED] = (char)(do_delete ? '*' : ' ');
+      handle->recorddataptr[RECORD_POS_DELETED] = (char)(do_delete ? RECORD_DELETED_MARKER : FIELD_FILL_CHAR);
 
       handle->modified = TRUE;
       ok = dbf_putrecord(handle, dbf_getposition(handle));
@@ -652,7 +654,7 @@ BOOL dbf_deleterecord(DBF_HANDLE handle, BOOL do_delete)
 BOOL dbf_addrecord(DBF_HANDLE handle)
 {
    BOOL ok;
-   memset(handle->recorddataptr, ' ', handle->recordlength);
+   memset(handle->recorddataptr, FIELD_FILL_CHAR, handle->recordlength);
    ZSEEK(handle->api, handle->stream, handle->headerlength + handle->recordcount * handle->recordlength, ZLIB_FILEFUNC_SEEK_SET);
    ok = (handle->recordlength == ZWRITE(handle->api, handle->stream, handle->recorddataptr, handle->recordlength));
    if (ok)
@@ -758,7 +760,7 @@ BOOL dbf_isnull(DBF_HANDLE handle, const DBF_FIELD* field)
 
    for (i = 0; i < field->m_Length; i++)
    {
-      if (field->ptr[i] != ' ') return FALSE;
+      if (field->ptr[i] != FIELD_FILL_CHAR) return FALSE;
    }
    return TRUE;
 }
@@ -794,7 +796,7 @@ BOOL dbf_putfield(DBF_HANDLE handle, const DBF_FIELD* field, const char* buf)
          //case DBF_DATA_TYPE_MEMO:
          {
             char* ptr = dup;
-            Trim(ptr, ' ');
+            Trim(ptr, FIELD_FILL_CHAR);
             while (*ptr)
             {
                if (strchr("+-.,0123456789", *ptr))
@@ -839,7 +841,7 @@ BOOL dbf_putfield(DBF_HANDLE handle, const DBF_FIELD* field, const char* buf)
          {
             case DBF_DATA_TYPE_INTEGER:
                snprintf(dup, buf_len + 1, "%d", atoi(dup)); // normalize
-               memset(field->ptr, ' ', field->m_Length);
+               memset(field->ptr, FIELD_FILL_CHAR, field->m_Length);
                strncpy(field->ptr, dup, field->m_Length);
                break;
             case DBF_DATA_TYPE_MEMO:
@@ -874,12 +876,12 @@ BOOL dbf_putfield(DBF_HANDLE handle, const DBF_FIELD* field, const char* buf)
                      ZSEEK(handle->api, handle->memo.stream, block * handle->memo.header.blocksize, ZLIB_FILEFUNC_SEEK_SET);
                      temp->normal.len = min(handle->memo.header.blocksize - offsetof(DBF_MEMO_BLOCK, normal.text), buf_len);
                      temp->normal.reserved = MAGIC_MEMO_BLOCK;
-                     memset(text, ' ', temp->normal.len);
+                     memset(text, FIELD_FILL_CHAR, temp->normal.len);
                      strncpy(text, dup, temp->normal.len);
                      ok = (sizeof(*temp) == ZWRITE(handle->api, handle->memo.stream, temp, sizeof(*temp)));
                      if (ok)
                      {
-                        memset(field->ptr, ' ', field->m_Length);
+                        memset(field->ptr, FIELD_FILL_CHAR, field->m_Length);
                         snprintf(field->ptr, field->m_Length, "%08d", (int)block);
                      }
                      break;
@@ -906,14 +908,14 @@ BOOL dbf_putfield(DBF_HANDLE handle, const DBF_FIELD* field, const char* buf)
 
                for (; i < field->m_Length; i++)
                {
-                  field->ptr[i] = ' ';
+                  field->ptr[i] = FIELD_FILL_CHAR;
                }
                break;
             }
             default:
             {
                size_t nLength = min(buf_len, field->m_Length);
-               memset(field->ptr, ' ', field->m_Length);
+               memset(field->ptr, FIELD_FILL_CHAR, field->m_Length);
                strncpy(field->ptr, dup, nLength);
                break;
             }
@@ -1565,7 +1567,7 @@ size_t dbf_getfield(DBF_HANDLE handle, const DBF_FIELD* field, char* buf, size_t
                            len = i;
                            break;
                      }
-                     for (; trim && len && (text[len-1] == ' '); len--)
+                     for (; trim && len && (text[len-1] == FIELD_FILL_CHAR); len--)
                      {
                      }
                      if (buf)
@@ -1589,7 +1591,7 @@ size_t dbf_getfield(DBF_HANDLE handle, const DBF_FIELD* field, char* buf, size_t
                break;
             }
             default:
-               for (len = field->m_Length; trim && len && (field->ptr[len-1] == ' '); len--)
+               for (len = field->m_Length; trim && len && (field->ptr[len-1] == FIELD_FILL_CHAR); len--)
                {
                }
                if (buf)
@@ -1623,7 +1625,7 @@ size_t dbf_getfield(DBF_HANDLE handle, const DBF_FIELD* field, char* buf, size_t
       size_t i;
 
       buf[len] = 0;
-      for (i = 0; len && (' ' == *buf); i++, len--)
+      for (i = 0; len && (FIELD_FILL_CHAR == *buf); i++, len--)
       {
          strcpy(buf, buf + 1);
       }
