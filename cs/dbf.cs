@@ -26,6 +26,9 @@ namespace DBase
       public const char FieldTerminator = '\r';
       public const int FieldTerminatorLen = 1;
       public const char FieldFillChar = ' ';
+      public const char RecordDeletedMarker = '*';
+      public const int FieldNameLen = 10;
+      public const int FileTitleLen = 8;
       public const int MAGIC_DBASE3 = 0x03;
       public const int MAGIC_DBASE3_MEMO = 0x83;
       public const int MAGIC_DBASE4      = 0x04;
@@ -91,8 +94,8 @@ namespace DBase
       public UInt32 next;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
       public Byte[] unused0;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 8)]
-      public string title;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = Const.FileTitleLen)]
+      public Byte[] title; // char array really, only not zeroterminated
       public Byte flag;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
       public Byte[] unused1;
@@ -104,7 +107,7 @@ namespace DBase
    [StructLayout(LayoutKind.Sequential, Pack = Const.Pack)]
    internal struct DBF_FILEFIELD
    {
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 11)]
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = Const.FieldNameLen + 1)] // zero term
       public string title;
       public char type;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
@@ -329,10 +332,11 @@ namespace DBase
          {
             _Stream.Seek(0, SeekOrigin.Begin);
             string title = Title;
-            if (title.Length > 8) title = title.Substring(0, 8);
+            if (title.Length > Const.FileTitleLen) title = title.Substring(0, Const.FileTitleLen);
+            else while (title.Length < Const.FileTitleLen) title += Const.FieldFillChar;
             DBT_FILEHEADER header = new DBT_FILEHEADER();
             header.next = (uint)Next;
-            header.title = title;
+            header.title = System.Text.Encoding.Default.GetBytes(title);
             header.flag = 0;
             header.blocksize = Const.MemoBlockLen;
             byte[] bytes = Utility.StructureToPtr<DBT_FILEHEADER>(header);
@@ -401,7 +405,7 @@ namespace DBase
                   case Const.MAGIC_DBASE4_MEMO:
                   case Const.MAGIC_FOXPRO:
                   {
-                     RecordCount = header.recordcount;
+                     _RecordCount = header.recordcount;
                      RecordLength = header.recordlength;
                      HeaderLength = header.headerlength;
 
@@ -576,6 +580,7 @@ namespace DBase
                foreach (ColumnInfo item in fields)
                {
                   DBF_FILEFIELD field = new DBF_FILEFIELD();
+                  if (item.Name.Length > Const.FieldNameLen) throw new Exception("Name too long");
                   field.title = item.Name;
                   field.type = Const.DataTypes[(int)item.DataType];
                   field.length = (byte)item.Length;
@@ -603,7 +608,7 @@ namespace DBase
          if (stream     != null) stream    .Close();
          if (memostream != null) memostream.Close();
          Columns.Clear();
-         RecordCount = 0;
+         _RecordCount = 0;
          RecordLength = 0;
          _Position = Const.EnumeratorDefault;
       }
@@ -643,7 +648,19 @@ namespace DBase
          }
       }
 
-      public long RecordCount { get; private set; }
+      private long _RecordCount = 0;
+      public long RecordCount
+      {
+         get
+         {
+            return _RecordCount;
+         }
+         set
+         {
+            if (!IsEditable) throw new Exception("Table is read only");
+            _RecordCount = value;
+         }
+      }
       public int RecordLength { get; private set; }
       private int HeaderLength { get; set; }
 
@@ -652,6 +669,7 @@ namespace DBase
          _Position = RecordCount;
          _RecordBuf = new string(Const.FieldFillChar, RecordLength);
          RecordCount++;
+         IsDirty = true;
          return SaveRecord();
       }
 
@@ -660,6 +678,7 @@ namespace DBase
          StreamSeek(HeaderLength + _Position * RecordLength);
          byte[] bytes = System.Text.Encoding.Default.GetBytes(_RecordBuf);
          StreamWrite(bytes);
+         IsDirty = true;
          return true;
       }
 
@@ -689,6 +708,11 @@ namespace DBase
          _RecordBuf = _RecordBuf.Remove(pos, field.Length);
          _RecordBuf = _RecordBuf.Insert(pos, temp);
          return true;
+      }
+
+      public bool WriteField(ColumnInfo field, char ch)
+      {
+         return WriteField(field, new string(new char[] { ch } ));
       }
 
       public bool WriteField(ColumnInfo field, int n)
@@ -729,6 +753,20 @@ namespace DBase
             pos += item.Length;
          }
          return pos;
+      }
+
+      public bool IsRecordDeleted
+      {
+         get
+         {
+            return (Const.RecordDeletedMarker == _RecordBuf[Const.RECORD_POS_DELETED]);
+         }
+         set
+         {
+            if (!IsEditable) throw new Exception("Table is read only");
+            _RecordBuf = new string(new char[] { value ? Const.RecordDeletedMarker : Const.FieldFillChar} )
+                        + _RecordBuf.Substring(Const.RECORD_POS_DELETED + 1);
+         }
       }
 
       private static char[] _FieldDataTrim = new char[] { Const.FieldFillChar, '\0' };
