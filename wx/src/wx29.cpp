@@ -1,5 +1,5 @@
 // wx29.cpp
-// Copyright (c) 2009 by Troels K. All rights reserved.
+// Copyright (c) 2010 by Troels K. All rights reserved.
 // License: wxWindows
 
 #include "precomp.h"
