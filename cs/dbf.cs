@@ -39,6 +39,7 @@ namespace DBase
       public const string FileextMemo = "dbt";
       public const int RECORD_POS_DELETED = 0;
       public const int RECORD_POS_DATA = 1;
+      public const string VersionString = "dbf library r163";
 
       static Const()
       {

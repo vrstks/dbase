@@ -1703,3 +1703,8 @@ static char* strdup_host2dos(const char* src, size_t len, enum dbf_charconv mode
    return dup;
 }
 
+const char* dbf_versionstring()
+{
+   return "dbf library r163";
+}
+

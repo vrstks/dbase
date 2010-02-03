@@ -157,6 +157,7 @@ EXTERN_C void        dbf_getmemofilename(const char* file_dbf, char* buf, size_t
 EXTERN_C const char* dbf_gettypetext  (enum dbf_data_type);
 EXTERN_C enum        dbf_data_type dbf_gettype_int2ext(char type);
 EXTERN_C char        dbf_gettype_ext2int(enum dbf_data_type);
+EXTERN_C const char* dbf_versionstring();
 
 /* Remove all trailing and leading spaces.                  */
 //EXTERN_C char* Trim(char *str, char trimchar);

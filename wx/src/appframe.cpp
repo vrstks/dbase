@@ -7,6 +7,8 @@
 #include "wxext.h"
 #include <wx/aboutdlg.h>
 #include "app.h"
+#include "..\..\bool.h"
+#include "..\..\dbf.h"
 
 IMPLEMENT_CLASS(MainFrame, wxDocMDIParentFrame)
 
@@ -102,12 +104,15 @@ wxToolBar* MainFrame::CreateToolBar()
 void MainFrame::OnAbout(wxCommandEvent& WXUNUSED(event) )
 {
    wxAboutDialogInfo info;
-   info.SetDescription(wxString(wxT("\nThis demo program demonstrates the usage of wxDBase\n\n")) + wxVERSION_STRING);
-   info.SetCopyright(wxT("Copyright (c) 2007-2009 Troels K"));
+   info.SetDescription(wxString::Format(wxT("\nThis demo program demonstrates the usage of wxDBase\n\nUsing:\n%s\n%s\n"),
+                       wxString(wxConvertMB2WX(::dbf_versionstring())).wx_str(),
+                       wxVERSION_STRING
+                       ));
+   info.SetCopyright(wxT("Copyright (c) 2007-2010 Troels K"));
    info.AddDeveloper(wxT("Troels K"));
    info.SetWebSite(wxT("http://sf.net/projects/dbase"));
    info.SetLicense(wxT("wxWindows"));
-   wxAboutBox(info, this);
+   ::wxAboutBox(info, this);
 }
 
 void MainFrame::OnStatusBar(wxCommandEvent&)
