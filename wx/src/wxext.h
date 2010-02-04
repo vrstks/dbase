@@ -121,10 +121,11 @@ extern void wxSetAcceleratorTable(wxWindow*, const AcceleratorArray&);
 #define wxMessageBoxCaption      wxGetApp().GetAppDisplayName()
 
 #ifdef _WX_STOCKITEM_H_
-#if (wxVERSION_NUMBER < 2900)
-#define wxSTOCK_FOR_BUTTON (4 | wxSTOCK_WITH_MNEMONIC)
+#if (wxVERSION_NUMBER < 2901)
+#define wxSTOCK_WITHOUT_ELLIPSIS 4
+#define wxSTOCK_FOR_BUTTON (wxSTOCK_WITH_MNEMONIC | wxSTOCK_WITHOUT_ELLIPSIS)
 #endif
-#define wxSTOCK_PLAINTEXT 8 // trac.wxwidgets.org/ticket/11683
+#define wxSTOCK_PLAINTEXT wxSTOCK_WITHOUT_ELLIPSIS
 extern wxString wxGetStockLabelEx(wxWindowID, long flags = wxSTOCK_WITH_MNEMONIC);
 #endif
 
