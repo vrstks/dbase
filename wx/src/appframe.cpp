@@ -47,24 +47,24 @@ wxToolBar* MainFrame::CreateToolBar()
 
    static const wxTOOLBARITEM aID[] =
    {
-      { wxID_NEW           , NULL               , NULL         , NULL      , wxACCEL_CTRL, 'N' },
-      { wxID_OPEN          , NULL               , NULL         , NULL      , wxACCEL_CTRL, 'O' },
-      { wxID_SAVE          , NULL               , NULL         , NULL      , wxACCEL_CTRL, 'S' },
+      { wxID_NEW           , NULL               , NULL         , NULL      , wxACCEL_CMD, 'N' },
+      { wxID_OPEN          , NULL               , NULL         , NULL      , wxACCEL_CMD, 'O' },
+      { wxID_SAVE          , NULL               , NULL         , NULL      , wxACCEL_CMD, 'S' },
       { wxID_SEPARATOR     , NULL               , NULL         , NULL      , 0, 0                  },
       { wxID_ADD           , NULL               , NULL         , NULL      , wxACCEL_NORMAL, WXK_NUMPAD_ADD },
       { XRCID("edit")      , wxART_HELP_SETTINGS, _("Edit")  , _("Edit"), wxACCEL_NORMAL, WXK_F2 },
       { wxID_DELETE        , NULL               , NULL         , NULL      , wxACCEL_NORMAL, WXK_DELETE },
       { wxID_SEPARATOR     , NULL               , NULL         , NULL      , 0, 0                  },
-      { wxID_PRINT         , NULL               , NULL         , NULL      , wxACCEL_CTRL, 'P' },
-      { wxID_PREVIEW       , NULL               , _("Preview"), NULL     , wxACCEL_CTRL | wxACCEL_SHIFT, 'P' },
+      { wxID_PRINT         , NULL               , NULL         , NULL      , wxACCEL_CMD, 'P' },
+      { wxID_PREVIEW       , NULL               , _("Preview"), NULL     , wxACCEL_CMD | wxACCEL_SHIFT, 'P' },
       { wxID_SEPARATOR     , NULL               , NULL         , NULL      , 0, 0                  },
-      { XRCID("struct")    , wxART_HELP_SIDE_PANEL, _("Structure"), _("Modify Structure"), wxACCEL_CTRL, 'M' },
-      { XRCID("pack")      , wxART_DEL_BOOKMARK , _("Pack")  , _("Pack Database"), wxACCEL_CTRL, 'D' },
+      { XRCID("struct")    , wxART_HELP_SIDE_PANEL, _("Structure"), _("Modify Structure"), wxACCEL_CMD, 'M' },
+      { XRCID("pack")      , wxART_DEL_BOOKMARK , _("Pack")  , _("Pack Database"), wxACCEL_CMD, 'D' },
       { wxID_SEPARATOR     , NULL               , NULL         , NULL      , 0, 0                  },
-      { wxID_FIND          , NULL               , NULL         , NULL      , wxACCEL_CTRL, 'F'},
+      { wxID_FIND          , NULL               , NULL         , NULL      , wxACCEL_CMD, 'F'},
       { wxID_SEPARATOR     , NULL               , NULL         , NULL      , 0, 0                  },
       { wxID_ABOUT /*wxID_HELP*/, NULL          , _("Help")    , NULL      , wxACCEL_NORMAL, WXK_HELP },
-      { wxID_EXIT          , NULL               , NULL         , NULL      , wxACCEL_CTRL, 'Q' },
+      { wxID_EXIT          , NULL               , NULL         , NULL      , wxACCEL_CMD, 'Q' },
       { wxID_SEPARATOR     , NULL               , NULL         , NULL      , 0, 0                  },
    };
    for (size_t i = 0; i < WXSIZEOF(aID); i++)
