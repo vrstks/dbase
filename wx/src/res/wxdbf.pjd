@@ -301,6 +301,44 @@
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
+              <string name="title">"Open Recent: ID_MENU"</string>
+              <string name="type">"dialog-control-document"</string>
+              <string name="filename">""</string>
+              <string name="icon-name">"menu"</string>
+              <long name="is-transient">0</long>
+              <long name="owns-file">1</long>
+              <long name="title-mode">0</long>
+              <long name="locked">0</long>
+              <string name="proxy-type">"wbSubmenuProxy"</string>
+              <string name="proxy-Id name">"ID_MENU"</string>
+              <long name="proxy-Id value">10013</long>
+              <string name="proxy-Label">"Open &amp;Recent"</string>
+              <string name="proxy-Help text">""</string>
+              <bool name="proxy-Enabled">1</bool>
+              <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
+              <document>
+                <string name="title">"&lt;recent&gt;: wxID_FILE1"</string>
+                <string name="type">"dialog-control-document"</string>
+                <string name="filename">""</string>
+                <string name="icon-name">"menuitem"</string>
+                <long name="is-transient">0</long>
+                <long name="owns-file">1</long>
+                <long name="title-mode">0</long>
+                <long name="locked">0</long>
+                <string name="proxy-type">"wbMenuItemProxy"</string>
+                <string name="proxy-Id name">"wxID_FILE1"</string>
+                <long name="proxy-Id value">10014</long>
+                <string name="proxy-Label">"&lt;recent&gt;"</string>
+                <string name="proxy-Kind">"Normal"</string>
+                <bool name="proxy-Checked">0</bool>
+                <bool name="proxy-Enabled">1</bool>
+                <string name="proxy-Help text">""</string>
+                <string name="proxy-Bitmap">""</string>
+                <string name="proxy-Bitmap unchecked">""</string>
+                <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
+              </document>
+            </document>
+            <document>
               <string name="title">"------------"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
@@ -587,6 +625,77 @@
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
+              <string name="title">"Open Recent: ID_MENU"</string>
+              <string name="type">"dialog-control-document"</string>
+              <string name="filename">""</string>
+              <string name="icon-name">"menu"</string>
+              <long name="is-transient">0</long>
+              <long name="owns-file">1</long>
+              <long name="title-mode">0</long>
+              <long name="locked">0</long>
+              <string name="proxy-type">"wbSubmenuProxy"</string>
+              <string name="proxy-Id name">"ID_MENU"</string>
+              <long name="proxy-Id value">10013</long>
+              <string name="proxy-Label">"Open &amp;Recent"</string>
+              <string name="proxy-Help text">""</string>
+              <bool name="proxy-Enabled">1</bool>
+              <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
+              <document>
+                <string name="title">"&lt;recent&gt;: wxID_FILE1"</string>
+                <string name="type">"dialog-control-document"</string>
+                <string name="filename">""</string>
+                <string name="icon-name">"menuitem"</string>
+                <long name="is-transient">0</long>
+                <long name="owns-file">1</long>
+                <long name="title-mode">0</long>
+                <long name="locked">0</long>
+                <string name="proxy-type">"wbMenuItemProxy"</string>
+                <string name="proxy-Id name">"wxID_FILE1"</string>
+                <long name="proxy-Id value">10009</long>
+                <string name="proxy-Label">"&lt;recent&gt;"</string>
+                <string name="proxy-Kind">"Normal"</string>
+                <bool name="proxy-Checked">0</bool>
+                <bool name="proxy-Enabled">1</bool>
+                <string name="proxy-Help text">""</string>
+                <string name="proxy-Bitmap">""</string>
+                <string name="proxy-Bitmap unchecked">""</string>
+                <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
+              </document>
+            </document>
+            <document>
+              <string name="title">"------------"</string>
+              <string name="type">"dialog-control-document"</string>
+              <string name="filename">""</string>
+              <string name="icon-name">"menuitem"</string>
+              <long name="is-transient">0</long>
+              <long name="owns-file">1</long>
+              <long name="title-mode">0</long>
+              <long name="locked">0</long>
+              <string name="proxy-type">"wbMenuSeparatorProxy"</string>
+              <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
+            </document>
+            <document>
+              <string name="title">"&amp;Close: wxID_CLOSE"</string>
+              <string name="type">"dialog-control-document"</string>
+              <string name="filename">""</string>
+              <string name="icon-name">"menuitem"</string>
+              <long name="is-transient">0</long>
+              <long name="owns-file">1</long>
+              <long name="title-mode">0</long>
+              <long name="locked">0</long>
+              <string name="proxy-type">"wbMenuItemProxy"</string>
+              <string name="proxy-Id name">"wxID_CLOSE"</string>
+              <long name="proxy-Id value">5001</long>
+              <string name="proxy-Label">"&amp;Close"</string>
+              <string name="proxy-Kind">"Normal"</string>
+              <bool name="proxy-Checked">0</bool>
+              <bool name="proxy-Enabled">1</bool>
+              <string name="proxy-Help text">""</string>
+              <string name="proxy-Bitmap">""</string>
+              <string name="proxy-Bitmap unchecked">""</string>
+              <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
+            </document>
+            <document>
               <string name="title">"&amp;Save: wxID_SAVE"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
@@ -622,28 +731,6 @@
               <string name="proxy-Id name">"wxID_SAVEAS"</string>
               <long name="proxy-Id value">5004</long>
               <string name="proxy-Label">"Save &amp;As..."</string>
-              <string name="proxy-Kind">"Normal"</string>
-              <bool name="proxy-Checked">0</bool>
-              <bool name="proxy-Enabled">1</bool>
-              <string name="proxy-Help text">""</string>
-              <string name="proxy-Bitmap">""</string>
-              <string name="proxy-Bitmap unchecked">""</string>
-              <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
-            </document>
-            <document>
-              <string name="title">"&amp;Close: wxID_CLOSE"</string>
-              <string name="type">"dialog-control-document"</string>
-              <string name="filename">""</string>
-              <string name="icon-name">"menuitem"</string>
-              <long name="is-transient">0</long>
-              <long name="owns-file">1</long>
-              <long name="title-mode">0</long>
-              <long name="locked">0</long>
-              <string name="created">"14/8/2006"</string>
-              <string name="proxy-type">"wbMenuItemProxy"</string>
-              <string name="proxy-Id name">"wxID_CLOSE"</string>
-              <long name="proxy-Id value">5001</long>
-              <string name="proxy-Label">"&amp;Close"</string>
               <string name="proxy-Kind">"Normal"</string>
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>

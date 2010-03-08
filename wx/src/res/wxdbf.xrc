@@ -9,6 +9,12 @@
             <object class="wxMenuItem" name="wxID_OPEN">
                 <label>&amp;Open...</label>
             </object>
+            <object class="wxMenu" name="ID_MENU">
+                <label>Open &amp;Recent</label>
+                <object class="wxMenuItem" name="wxID_FILE1">
+                    <label>&lt;recent&gt;</label>
+                </object>
+            </object>
             <object class="separator">
             </object>
             <object class="wxMenuItem" name="wxID_PRINT_SETUP">
@@ -53,14 +59,22 @@
             <object class="wxMenuItem" name="wxID_OPEN">
                 <label>&amp;Open...</label>
             </object>
+            <object class="wxMenu" name="ID_MENU">
+                <label>Open &amp;Recent</label>
+                <object class="wxMenuItem" name="wxID_FILE1">
+                    <label>&lt;recent&gt;</label>
+                </object>
+            </object>
+            <object class="separator">
+            </object>
+            <object class="wxMenuItem" name="wxID_CLOSE">
+                <label>&amp;Close</label>
+            </object>
             <object class="wxMenuItem" name="wxID_SAVE">
                 <label>&amp;Save</label>
             </object>
             <object class="wxMenuItem" name="wxID_SAVEAS">
                 <label>Save &amp;As...</label>
-            </object>
-            <object class="wxMenuItem" name="wxID_CLOSE">
-                <label>&amp;Close</label>
             </object>
             <object class="separator">
             </object>

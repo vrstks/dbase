@@ -432,16 +432,25 @@ wxRecentFileList::wxRecentFileList(wxDocManager* docManager) : m_docManager(docM
 {
 }
 
+static wxMenuItem* GetOpenRecentSubMenu(wxFrame* frame, wxMenu** submenu)
+{
+   return frame->GetMenuBar()->FindItem(wxID_FILE1, submenu);
+}
+
 void wxRecentFileList::MenuAdd(wxFrame* frame)
 {
-   wxMenu* menu = frame->GetMenuBar()->GetMenu(0);
-   m_docManager->FileHistoryUseMenu(menu);
-   m_docManager->GetFileHistory()->AddFilesToMenu(menu);
+   wxMenu* submenu;
+   wxMenuItem* item = ::GetOpenRecentSubMenu(frame, &submenu);
+   submenu->Delete(item);
+   m_docManager->FileHistoryUseMenu(submenu);
+   m_docManager->GetFileHistory()->AddFilesToMenu(submenu);
 }
+
 void wxRecentFileList::MenuRemove(wxFrame* frame)
 {
-   wxMenu* menu = frame->GetMenuBar()->GetMenu(0);
-   m_docManager->FileHistoryRemoveMenu(menu);
+   wxMenu* submenu;
+   ::GetOpenRecentSubMenu(frame, &submenu);
+   m_docManager->FileHistoryRemoveMenu(submenu);
 }
 
 void wxRecentFileList::Load(wxConfigBase* config)
