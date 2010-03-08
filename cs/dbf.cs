@@ -39,7 +39,7 @@ namespace DBase
       public const string FileextMemo = "dbt";
       public const int RECORD_POS_DELETED = 0;
       public const int RECORD_POS_DATA = 1;
-      public const string VersionString = "dbf library r163";
+      public const string VersionString = "dbf library r167";
 
       static Const()
       {
@@ -285,17 +285,34 @@ namespace DBase
             return Path.ChangeExtension(filename, DBase.Const.FileextMemo);
          }
 
+         private byte[] m_buf_read = new byte[64 * 1024];
+
          public string Read(long pos)
          {
             _Stream.Seek(pos * Const.MemoBlockLen, SeekOrigin.Begin);
             string str = string.Empty;
             for (;;)
             {
-               int val = _Stream.ReadByte();
-               if (val == -1) break;
-               char c = (char)val;
-               if (c == Const.CPM_TEXT_TERMINATOR) break;
-               str += c;
+               int i; 
+               int read = _Stream.Read(m_buf_read, 0, m_buf_read.Length);
+
+               for (i = 0; i < read; i++)
+               {
+                  char c = (char)m_buf_read[i];
+                  if (c == Const.CPM_TEXT_TERMINATOR)
+                  {
+                     break;
+                  }
+               }
+               if (i == 0)
+               {
+                  break;
+               }
+               str+= TextEncoding.GetString(m_buf_read, 0, i);
+               if (read < m_buf_read.Length)
+               {
+                  break;
+               }
             }
             return str;
          }
@@ -304,11 +321,8 @@ namespace DBase
          {
             long pos = Next;
             _Stream.Seek(pos * Const.MemoBlockLen, SeekOrigin.Begin);
-            for (int i = 0; i < Const.MemoBlockTermLen; i++)
-            {
-               str += Const.CPM_TEXT_TERMINATOR;
-            }
-            byte[] bytes = System.Text.Encoding.Default.GetBytes(str);
+            str += new string(Const.CPM_TEXT_TERMINATOR, Const.MemoBlockTermLen); // term
+            byte[] bytes = TextEncoding.GetBytes(str);
             _Stream.Write(bytes, 0, bytes.GetLength(0));
             Next +=    (bytes.GetLength(0) / Const.MemoBlockLen)
                    + (((bytes.GetLength(0) % Const.MemoBlockLen) != 0) ? 1 : 0);
@@ -337,7 +351,7 @@ namespace DBase
             else while (title.Length < Const.FileTitleLen) title += Const.FieldFillChar;
             DBT_FILEHEADER header = new DBT_FILEHEADER();
             header.next = (uint)Next;
-            header.title = System.Text.Encoding.Default.GetBytes(title);
+            header.title = TextEncoding.GetBytes(title);
             header.flag = 0;
             header.blocksize = Const.MemoBlockLen;
             byte[] bytes = Utility.StructureToPtr<DBT_FILEHEADER>(header);
@@ -345,6 +359,9 @@ namespace DBase
          }
       }
 #endregion Memo
+
+      public static System.Text.Encoding TextEncoding { get; set; }
+      
       private MemoFile _MemoFile = new MemoFile();
       private FileStream _Stream = null;
 
@@ -361,6 +378,7 @@ namespace DBase
       static File()
       {
          Const.StructCheck();
+         TextEncoding = System.Text.Encoding.Default;
       }
 
       public File()
@@ -677,7 +695,7 @@ namespace DBase
       public bool SaveRecord()
       {
          StreamSeek(HeaderLength + _Position * RecordLength);
-         byte[] bytes = System.Text.Encoding.Default.GetBytes(_RecordBuf);
+         byte[] bytes = TextEncoding.GetBytes(_RecordBuf);
          StreamWrite(bytes);
          IsDirty = true;
          return true;
@@ -688,7 +706,7 @@ namespace DBase
          StreamSeek(HeaderLength + _Position * RecordLength);
          byte[] bytes = new byte[RecordLength];
          StreamRead(bytes);
-         _RecordBuf = System.Text.Encoding.Default.GetString(bytes, 0, RecordLength);
+         _RecordBuf = TextEncoding.GetString(bytes, 0, RecordLength);
          return true;
       }
 
