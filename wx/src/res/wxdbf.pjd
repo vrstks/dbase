@@ -301,7 +301,7 @@
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
-              <string name="title">"Open Recent: ID_MENU"</string>
+              <string name="title">"Open Recent"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menu"</string>
@@ -310,7 +310,7 @@
               <long name="title-mode">0</long>
               <long name="locked">0</long>
               <string name="proxy-type">"wbSubmenuProxy"</string>
-              <string name="proxy-Id name">"ID_MENU"</string>
+              <string name="proxy-Id name">""</string>
               <long name="proxy-Id value">10013</long>
               <string name="proxy-Label">"Open &amp;Recent"</string>
               <string name="proxy-Help text">""</string>
@@ -625,7 +625,7 @@
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
-              <string name="title">"Open Recent: ID_MENU"</string>
+              <string name="title">"Open Recent"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menu"</string>
@@ -634,7 +634,7 @@
               <long name="title-mode">0</long>
               <long name="locked">0</long>
               <string name="proxy-type">"wbSubmenuProxy"</string>
-              <string name="proxy-Id name">"ID_MENU"</string>
+              <string name="proxy-Id name">""</string>
               <long name="proxy-Id value">10013</long>
               <string name="proxy-Label">"Open &amp;Recent"</string>
               <string name="proxy-Help text">""</string>

@@ -9,7 +9,7 @@
             <object class="wxMenuItem" name="wxID_OPEN">
                 <label>&amp;Open...</label>
             </object>
-            <object class="wxMenu" name="ID_MENU">
+            <object class="wxMenu">
                 <label>Open &amp;Recent</label>
                 <object class="wxMenuItem" name="wxID_FILE1">
                     <label>&lt;recent&gt;</label>
@@ -59,7 +59,7 @@
             <object class="wxMenuItem" name="wxID_OPEN">
                 <label>&amp;Open...</label>
             </object>
-            <object class="wxMenu" name="ID_MENU">
+            <object class="wxMenu">
                 <label>Open &amp;Recent</label>
                 <object class="wxMenuItem" name="wxID_FILE1">
                     <label>&lt;recent&gt;</label>
