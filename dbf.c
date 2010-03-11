@@ -40,7 +40,8 @@
 #define MAGIC_DBASE4      0x04
 #define MAGIC_DBASE4_MEMO 0x8B
 #define MAGIC_FOXPRO      0x30
-#define MAGIC_DBASE_DEFAULT MAGIC_DBASE3
+#define MAGIC_DBASE_DEFAULT      MAGIC_DBASE3
+#define MAGIC_DBASE_DEFAULT_MEMO MAGIC_DBASE3_MEMO
 
 #define MEMO_BLOCK_SIZE   512         /*  memo block size (dBase III) */
 #define MAGIC_MEMO_BLOCK 0x0008FFFF
@@ -126,12 +127,11 @@ typedef struct _DBF_FILEFIELD_3
 typedef struct _DBF_FILEFIELD_4
 {
    char      name[11];   // field name in ASCII zero-filled
-   uint8_t   unused_0[17];
-   uint8_t   unused_1[4];
+   uint8_t   unused_0[21];
    char      type;        // field type in ASCII
    uint8_t   length;     // field length in binary
    uint8_t   deccount;   // field decimal count in binary
-   uint8_t   unused_2[13];
+   uint8_t   unused_1[13];
 } DBF_FILEFIELD_4;
 
 typedef union _DBF_FILEFIELD
@@ -472,7 +472,7 @@ void* dbf_detach(DBF_HANDLE* handle_ptr)
 
       DBF_FILEHEADER_3 header;
       memset(&header, 0, sizeof(header));
-      header.version = handle->diskversion;
+      header.version = handle->memo.stream ? MAGIC_DBASE_DEFAULT_MEMO : MAGIC_DBASE_DEFAULT;
       header.lastupdate.dd = (uint8_t) ptm->tm_mday;
       header.lastupdate.mm = (uint8_t)(ptm->tm_mon+1);
       header.lastupdate.yy = (uint8_t) ptm->tm_year;
@@ -491,7 +491,10 @@ void* dbf_detach(DBF_HANDLE* handle_ptr)
 //      ZWRITE(m_api, handle->stream, "\0x1a", 1);
    }
 
-   if (handle->memo.stream) dbf_close_memo(handle);
+   if (handle->memo.stream)
+   {
+      dbf_close_memo(handle);
+   }
 
    free(handle->dup);
    free(handle->fieldarray);
@@ -1801,5 +1804,5 @@ static char* strdup_host2dos(const char* src, size_t len, enum dbf_charconv mode
 
 const char* dbf_libversionstring()
 {
-   return "dbf library svn r173";
+   return "dbf library svn r174";
 }
