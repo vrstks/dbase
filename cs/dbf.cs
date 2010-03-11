@@ -399,64 +399,70 @@ namespace DBase
          return ok;
       }
 
-      public bool Attach(FileStream stream, string filename)
+      public bool Attach(FileStream stream, string filename, bool read_header)
       {
          bool ok = (stream != null);
          if (ok)
          {
-            _Stream = stream;
-            Filename = filename;
-
             int len_header = Marshal.SizeOf(typeof(DBF_FILEHEADER));
             int len_field = Marshal.SizeOf(typeof(DBF_FILEFIELD));
 
             byte[] bytes = new byte[len_header];
 
-            if (len_header == StreamRead(bytes))
+            if (read_header)
             {
-               DBF_FILEHEADER header = Utility.PtrToStructure<DBF_FILEHEADER>(bytes);
-               ok = sanity_check(header);
-               if (ok) switch (header.version)
+               ok = (len_header == StreamRead(stream, bytes));
+               if (ok)
                {
-                  case Const.MAGIC_DBASE3:
-                  case Const.MAGIC_DBASE3_MEMO:
-                  case Const.MAGIC_DBASE4:
-                  case Const.MAGIC_DBASE4_MEMO:
-                  case Const.MAGIC_FOXPRO:
+                  DBF_FILEHEADER header = Utility.PtrToStructure<DBF_FILEHEADER>(bytes);
+                  ok = sanity_check(header);
+                  if (ok) switch (header.version)
                   {
-                     _RecordCount = header.recordcount;
-                     RecordLength = header.recordlength;
-                     HeaderLength = header.headerlength;
-
-                     if ((RecordCount == 0) && (RecordLength != 0))
+                     case Const.MAGIC_DBASE3:
+                     case Const.MAGIC_DBASE3_MEMO:
+                     case Const.MAGIC_DBASE4:
+                     case Const.MAGIC_DBASE4_MEMO:
+                     case Const.MAGIC_FOXPRO:
                      {
-                        RecordCount = (_Stream.Length - header.headerlength) / header.recordlength;
-                     }
+                        _RecordCount = header.recordcount;
+                        RecordLength = header.recordlength;
+                        HeaderLength = header.headerlength;
 
-                     int fieldcount = (header.headerlength - (len_header + 1)) / len_field;
-
-                     bytes = new byte[len_field];
-
-                     for (int i = 0; i < fieldcount; i++)
-                     {
-                        StreamRead(bytes);
-                        if ( (bytes[0] >= 0) && (bytes[0] <= (byte)' '))
+                        if ((RecordCount == 0) && (RecordLength != 0))
                         {
-                           break;
+                           _RecordCount = (stream.Length - header.headerlength) / header.recordlength;
                         }
-                        DBF_FILEFIELD item = Utility.PtrToStructure<DBF_FILEFIELD>(bytes);
 
-                        var type = (DataType)Const.DataTypes.IndexOf(item.type);
-                        var field = new ColumnInfo() { Name = item.title, DataType = type, Length = item.length, DecCount = item.deccount };
-                        Columns.Add(field);
+                        int fieldcount = (header.headerlength - (len_header + 1)) / len_field;
+
+                        bytes = new byte[len_field];
+
+                        for (int i = 0; i < fieldcount; i++)
+                        {
+                           StreamRead(stream, bytes);
+                           if ((bytes[0] >= 0) && (bytes[0] <= (byte)' '))
+                           {
+                              break;
+                           }
+                           DBF_FILEFIELD item = Utility.PtrToStructure<DBF_FILEFIELD>(bytes);
+
+                           var type = (DataType)Const.DataTypes.IndexOf(item.type);
+                           var field = new ColumnInfo() { Name = item.title, DataType = type, Length = item.length, DecCount = item.deccount };
+                           Columns.Add(field);
+                        }
+                        break;
                      }
-                     break;
+                     //case Const.MAGIC_FOXPRO:
+                     default:
+                        ok = false;
+                        break;
                   }
-                  //case Const.MAGIC_FOXPRO:
-                  default:
-                     ok = false;
-                     break;
                }
+            }
+            if (ok)
+            {
+              _Stream = stream;
+              Filename = filename;
             }
          }
          return ok;
@@ -473,7 +479,7 @@ namespace DBase
       {
          if (IsDirty)
          {
-            StreamSeek(0);
+            StreamSeek(_Stream, 0);
 
             DBF_FILEHEADER header = new DBF_FILEHEADER();
             
@@ -495,11 +501,11 @@ namespace DBase
                //header.unused[i] = 0;
             }
             byte[] bytes = Utility.StructureToPtr<DBF_FILEHEADER>(header);
-            StreamWrite(bytes);
-            StreamSeek(HeaderLength + RecordCount * RecordLength);
+            StreamWrite(_Stream, bytes);
+            StreamSeek(_Stream, HeaderLength + RecordCount * RecordLength);
 
             bytes = new byte[] { (byte)Const.CPM_TEXT_TERMINATOR };
-            StreamWrite(bytes);
+            StreamWrite(_Stream, bytes);
 
             if (HasMemo)
             {
@@ -522,7 +528,7 @@ namespace DBase
          bool ok = (stream != null);
          if (ok)
          {
-            ok = Attach(stream, filename);
+            ok = Attach(stream, filename, true);
             if (ok)
             {
                bool memo = false;
@@ -586,13 +592,13 @@ namespace DBase
          {
             byte[] bytes;
 
-            ok = Attach(stream, filename);
+            ok = Attach(stream, filename, false);
             if (ok)
             {
                HeaderLength = Const.HeaderLen + Const.FieldTerminatorLen + Const.FieldLen * fields.Count;
                IsDirty = true;
-               _Stream.SetLength(HeaderLength);
-               StreamSeek(Const.HeaderLen);
+               stream.SetLength(HeaderLength);
+               StreamSeek(stream, Const.HeaderLen);
                Columns = fields;
 
                RecordLength = Const.RECORD_POS_DATA;
@@ -605,11 +611,11 @@ namespace DBase
                   field.length = (byte)item.Length;
                   field.deccount = (byte)item.DecCount;
                   bytes = Utility.StructureToPtr<DBF_FILEFIELD>(field);
-                  StreamWrite(bytes);
+                  StreamWrite(stream, bytes);
                   RecordLength += item.Length;
                }
                bytes = new byte[] { (byte)Const.FieldTerminator };
-               StreamWrite(bytes);
+               StreamWrite(stream, bytes);
             }
             if (stream_memo != null)
             {
@@ -632,17 +638,17 @@ namespace DBase
          _Position = Const.EnumeratorDefault;
       }
 
-      private int StreamRead(byte[] bytes)
+      private int StreamRead(FileStream stream, byte[] bytes)
       {
-         return _Stream.Read(bytes, 0, bytes.GetLength(0));
+         return stream.Read(bytes, 0, bytes.GetLength(0));
       }
-      private void StreamWrite(byte[] bytes)
+      private void StreamWrite(FileStream stream, byte[] bytes)
       {
-         _Stream.Write(bytes, 0, bytes.GetLength(0));
+         stream.Write(bytes, 0, bytes.GetLength(0));
       }
-      private long StreamSeek(long offset)
+      private long StreamSeek(FileStream stream, long offset)
       {
-         return _Stream.Seek(offset, SeekOrigin.Begin);
+         return stream.Seek(offset, SeekOrigin.Begin);
       }      
 
       private string _RecordBuf = null;
@@ -694,18 +700,18 @@ namespace DBase
 
       public bool SaveRecord()
       {
-         StreamSeek(HeaderLength + _Position * RecordLength);
+         StreamSeek(_Stream, HeaderLength + _Position * RecordLength);
          byte[] bytes = TextEncoding.GetBytes(_RecordBuf);
-         StreamWrite(bytes);
+         StreamWrite(_Stream, bytes);
          IsDirty = true;
          return true;
       }
 
       private bool ReadRecord()
       {
-         StreamSeek(HeaderLength + _Position * RecordLength);
+         StreamSeek(_Stream, HeaderLength + _Position * RecordLength);
          byte[] bytes = new byte[RecordLength];
-         StreamRead(bytes);
+         StreamRead(_Stream, bytes);
          _RecordBuf = TextEncoding.GetString(bytes, 0, RecordLength);
          return true;
       }
