@@ -62,19 +62,42 @@ typedef struct _DBF_FILEHEADER_TIME
    uint8_t dd;
 } DBF_FILEHEADER_TIME;
 
-typedef struct _DBF_FILEHEADER
+typedef struct _DBF_FILEHEADER_3
 {
    uint8_t  version;
    DBF_FILEHEADER_TIME lastupdate;
    uint32_t recordcount;
-   uint16_t   headerlength;
-   uint16_t   recordlength;
+   uint16_t headerlength;
+   uint16_t recordlength;
 
-   uint16_t unused_0;
+   uint16_t unused0;
    uint8_t  incomplete;
    uint8_t  crypt;
 
-   uint8_t  unused[16];
+   uint8_t  unused1[16];
+} DBF_FILEHEADER_3;
+
+typedef struct _DBF_FILEHEADER_4
+{
+   uint8_t  version;
+   DBF_FILEHEADER_TIME lastupdate;
+   uint32_t recordcount;
+   uint16_t headerlength;
+   uint16_t recordlength;
+
+   uint16_t unused0;
+   uint8_t  incomplete;
+   uint8_t  crypt;
+
+   uint8_t  unused1[16];
+   uint8_t  unused2[36];
+} DBF_FILEHEADER_4;
+
+typedef union _DBF_FILEHEADER
+{
+   uint8_t  version;
+   DBF_FILEHEADER_3 v3;
+   DBF_FILEHEADER_4 v4;
 } DBF_FILEHEADER;
 
 typedef struct _DBT_FILEHEADER
@@ -89,7 +112,7 @@ typedef struct _DBT_FILEHEADER
    uint8_t  unused2[MEMO_BLOCK_SIZE-22];
 } DBT_FILEHEADER;
 
-typedef struct _DBF_FILEFIELD
+typedef struct _DBF_FILEFIELD_3
 {
    char      name[11];   // field name in ASCII zero-filled
    char      type;        // field type in ASCII
@@ -97,6 +120,24 @@ typedef struct _DBF_FILEFIELD
    uint8_t   length;     // field length in binary
    uint8_t   deccount;   // field decimal count in binary
    uint8_t   unused_1[14];
+} DBF_FILEFIELD_3;
+
+typedef struct _DBF_FILEFIELD_4
+{
+   char      name[11];   // field name in ASCII zero-filled
+   uint8_t   unused_0[17];
+   uint8_t   unused_1[4];
+   char      type;        // field type in ASCII
+   uint8_t   length;     // field length in binary
+   uint8_t   deccount;   // field decimal count in binary
+   uint8_t   unused_2[13];
+} DBF_FILEFIELD_4;
+
+typedef union _DBF_FILEFIELD
+{
+   char      name[11];   // field name in ASCII zero-filled
+   DBF_FILEFIELD_3 v3;
+   DBF_FILEFIELD_4 v4;
 } DBF_FILEFIELD;
 
 typedef union _DBF_MEMO_BLOCK
@@ -116,9 +157,11 @@ typedef union _DBF_MEMO_BLOCK
 #pragma pack()
 
 C_ASSERT_(1, sizeof(DBF_MEMO_BLOCK) == MEMO_BLOCK_SIZE);
-C_ASSERT_(2, sizeof(DBF_FILEHEADER) == 32);
-C_ASSERT_(3, sizeof(DBT_FILEHEADER) == MEMO_BLOCK_SIZE);
-C_ASSERT_(4, sizeof(DBF_FILEFIELD ) == 32);
+C_ASSERT_(2, sizeof(DBF_FILEHEADER_3) == 32);
+C_ASSERT_(3, sizeof(DBF_FILEHEADER_4) == 68);
+C_ASSERT_(4, sizeof(DBT_FILEHEADER) == MEMO_BLOCK_SIZE);
+C_ASSERT_(5, sizeof(DBF_FILEFIELD_3) == 32);
+C_ASSERT_(6, sizeof(DBF_FILEFIELD_4) == 48);
 
 typedef struct _DBF_MEMO_DATA
 {
@@ -236,7 +279,15 @@ EXTERN_C DBF_HANDLE dbf_alloc(void)
    return handle;
 }
 
-static BOOL sanity_check(const DBF_FILEHEADER* header)
+static BOOL sanity_check_3(const DBF_FILEHEADER_3* header)
+{
+   BOOL ok =    ((header->lastupdate.mm >= 1) && (header->lastupdate.mm <= 12))
+             && ((header->lastupdate.dd >= 1) && (header->lastupdate.dd <= 31))
+             ;
+   return ok;
+}
+
+static BOOL sanity_check_4(const DBF_FILEHEADER_4* header)
 {
    BOOL ok =    ((header->lastupdate.mm >= 1) && (header->lastupdate.mm <= 12))
              && ((header->lastupdate.dd >= 1) && (header->lastupdate.dd <= 31))
@@ -249,104 +300,150 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
    DBF_HANDLE handle = NULL;
    size_t len = 0;
    DBF_FILEHEADER header;
+   BOOL ok;
 
    ZSEEK(*api, stream, 0, ZLIB_FILEFUNC_SEEK_SET);
-   len+=ZREAD(*api, stream, &header, sizeof(header));
+   len+=ZREAD(*api, stream, &header.version, sizeof(header.version));
 
    switch (header.version)
+   {
+      case MAGIC_DBASE4:
+      case MAGIC_DBASE4_MEMO:
+         len+=ZREAD(*api, stream, &header.v4.lastupdate, sizeof(header.v4) - sizeof(header.version));
+         ok = sanity_check_4(&header.v4) && (len == sizeof(header.v4));
+         break;
+      case MAGIC_DBASE3:
+      case MAGIC_DBASE3_MEMO:
+      case MAGIC_FOXPRO:
+      default:
+         len+=ZREAD(*api, stream, &header.v3.lastupdate, sizeof(header.v3) - sizeof(header.version));
+         ok = sanity_check_3(&header.v3) && (len == sizeof(header.v3));
+         break;
+   }
+
+   if (ok) switch (header.version)
    {
       case MAGIC_DBASE3:
       case MAGIC_DBASE3_MEMO:
       case MAGIC_DBASE4:
       case MAGIC_DBASE4_MEMO:
       case MAGIC_FOXPRO:
-         // sanity check
-         if (sanity_check(&header) && (len == sizeof(header)))
+      {
+         struct tm tm;
+         size_t field_len;
+         size_t header_len;
+
+         handle = dbf_alloc();
+         handle->stream = stream;
+         handle->api = *api;
+         tm.tm_sec   = 0;
+         tm.tm_min   = 0;
+         tm.tm_hour  = 0;
+         tm.tm_wday  = 0;
+         tm.tm_yday  = 0;
+         tm.tm_isdst = 0;
+         switch (header.version)
          {
-            //const BOOL v3 = (header.version == DBASE3) || (header.version == DBASE3_MEMO);
-            //const BOOL v4 = (header.version == DBASE4) || (header.version == DBASE4_MEMO);
+            case MAGIC_DBASE4:
+            case MAGIC_DBASE4_MEMO:
+               header_len = sizeof(DBF_FILEHEADER_4);
+               field_len  = sizeof(DBF_FILEFIELD_4);
+               handle->version      = header.v4.version;
+               handle->recordcount  = header.v4.recordcount;
+               handle->recordlength = header.v4.recordlength;
+               handle->headerlength = header.v4.headerlength;
+               tm.tm_mday  = header.v4.lastupdate.dd;
+               tm.tm_mon   = header.v4.lastupdate.mm - 1;
+               tm.tm_year  = header.v4.lastupdate.yy;
+               break;
+            default:
+               header_len = sizeof(DBF_FILEHEADER_3);
+               field_len  = sizeof(DBF_FILEFIELD_3);
+               handle->version      = header.v3.version;
+               handle->recordcount  = header.v3.recordcount;
+               handle->recordlength = header.v3.recordlength;
+               handle->headerlength = header.v3.headerlength;
+               tm.tm_mday  = header.v3.lastupdate.dd;
+               tm.tm_mon   = header.v3.lastupdate.mm - 1;
+               tm.tm_year  = header.v3.lastupdate.yy;
+               break;
+         }
 
-            struct tm tm;
-            handle = dbf_alloc();
-            handle->stream       = stream;
-            handle->api          = *api;
-            handle->version      = header.version;
-            handle->recordcount  = header.recordcount;
-            handle->recordlength = header.recordlength;
-            handle->headerlength = header.headerlength;
+         if ((handle->recordcount == 0) && handle->recordlength)
+         {
+            ZSEEK(handle->api, stream, 0, ZLIB_FILEFUNC_SEEK_END);
+            handle->recordcount = (size_t)(ZTELL(handle->api, stream) - handle->headerlength) / handle->recordlength;
+         }
 
-            if ((handle->recordcount == 0) && header.recordlength)
+         handle->lastupdate = mktime(&tm);
+         handle->fieldcount = (uint8_t)((handle->headerlength - (header_len + FIELDTERMINATOR_LEN)) / field_len);
+         handle->recorddataptr = (char*)malloc(handle->recordlength + 1); // + zeroterm.
+         if (handle->recorddataptr)
+         {
+            size_t i;
+            size_t fielddata_pos = RECORD_POS_DATA;
+
+            ZSEEK(handle->api, stream, header_len, ZLIB_FILEFUNC_SEEK_SET);
+
+            handle->fieldarray = (DBF_FIELD*)realloc(handle->fieldarray, sizeof(DBF_FIELD) * handle->fieldcount);
+            for (i = 0; i < handle->fieldcount; i++)
             {
-               ZSEEK(handle->api, stream, 0, ZLIB_FILEFUNC_SEEK_END);
-               handle->recordcount = (size_t)(ZTELL(handle->api, stream) - header.headerlength) / header.recordlength;
-            }
+               DBF_FILEFIELD temp;
+               DBF_FIELD* field = handle->fieldarray + i;
 
-            tm.tm_sec   = 0;
-            tm.tm_min   = 0;
-            tm.tm_hour  = 0;
-            tm.tm_mday  = header.lastupdate.dd;
-            tm.tm_mon   = header.lastupdate.mm - 1;
-            tm.tm_year  = header.lastupdate.yy;
-            tm.tm_wday  = 0;
-            tm.tm_yday  = 0;
-            tm.tm_isdst = 0;
+               ZREAD(handle->api, stream, &temp, field_len);
 
-            handle->lastupdate = mktime(&tm);
-            handle->fieldcount = (uint8_t)((handle->headerlength - (sizeof(DBF_FILEHEADER) + FIELDTERMINATOR_LEN)) / sizeof(DBF_FILEFIELD));
-            handle->recorddataptr = (char*)malloc(handle->recordlength + 1); // + zeroterm.
-            if (handle->recorddataptr)
-            {
-               size_t i;
-               size_t fielddata_pos = RECORD_POS_DATA;
-
-               ZSEEK(handle->api, stream, sizeof(DBF_FILEHEADER), ZLIB_FILEFUNC_SEEK_SET);
-
-               handle->fieldarray = (DBF_FIELD*)realloc(handle->fieldarray, sizeof(DBF_FIELD) * handle->fieldcount);
-               for (i = 0; i < handle->fieldcount; i++)
+               if ( (*temp.name >= 0) && (*temp.name <= ' '))
                {
-                  DBF_FILEFIELD temp;
-                  DBF_FIELD* field = handle->fieldarray + i;
-
-                  ZREAD(handle->api, stream, &temp, sizeof(temp));
-
-                  if ( (*temp.name >= 0) && (*temp.name <= ' '))
-                  {
-                     handle->fieldcount = i;
-                     break;
-                  }
-                  strncpy(field->m_Name, temp.name, _countof(field->m_Name)-1);
-                  field->m_Name[_countof(field->m_Name)-1] = 0;
-                  field->type       = temp.deccount ? DBF_DATA_TYPE_FLOAT : dbf_gettype_int2ext(temp.type);
-                  field->m_Length   = temp.length  ;
-                  field->m_DecCount = temp.deccount;
-                  field->ptr        = handle->recorddataptr + fielddata_pos;
-                  field->namehash   = strhash(field->m_Name, FALSE);
-
-                  fielddata_pos += field->m_Length;// + (v4 ? 1 : 0) + ((v4 && (temp.type == 'C')) ? 1 : 0);
+                  handle->fieldcount = i;
+                  break;
                }
-               handle->modified = FALSE;
-               handle->editable = editable;
-               handle->charconv = charconv;
-
+               strncpy(field->m_Name, temp.name, _countof(field->m_Name)-1);
+               field->m_Name[_countof(field->m_Name)-1] = 0;
+               
                switch (header.version)
                {
-                  case MAGIC_DBASE3_MEMO:
+                  case MAGIC_DBASE4:
                   case MAGIC_DBASE4_MEMO:
-                     dbf_memo_attach(handle, memo);
+                     field->type       = temp.v4.deccount ? DBF_DATA_TYPE_FLOAT : dbf_gettype_int2ext(temp.v4.type);
+                     field->m_Length   = temp.v4.length  ;
+                     field->m_DecCount = temp.v4.deccount;
                      break;
                   default:
+                     field->type       = temp.v3.deccount ? DBF_DATA_TYPE_FLOAT : dbf_gettype_int2ext(temp.v3.type);
+                     field->m_Length   = temp.v3.length  ;
+                     field->m_DecCount = temp.v3.deccount;
                      break;
                }
+               
+               field->ptr        = handle->recorddataptr + fielddata_pos;
+               field->namehash   = strhash(field->m_Name, FALSE);
 
+               fielddata_pos += field->m_Length;// + (v4 ? 1 : 0) + ((v4 && (temp.type == 'C')) ? 1 : 0);
             }
-            else
+            handle->modified = FALSE;
+            handle->editable = editable;
+            handle->charconv = charconv;
+
+            switch (header.version)
             {
-               strncpy(handle->lasterrormsg, "Out of memory", _countof(handle->lasterrormsg));
-               handle->lasterror = DBASE_OUT_OF_MEM;
-               dbf_detach(&handle);
+               case MAGIC_DBASE3_MEMO:
+               case MAGIC_DBASE4_MEMO:
+                  dbf_memo_attach(handle, memo);
+                  break;
+               default:
+                  break;
             }
+
+         }
+         else
+         {
+            strncpy(handle->lasterrormsg, "Out of memory", _countof(handle->lasterrormsg));
+            handle->lasterror = DBASE_OUT_OF_MEM;
+            dbf_detach(&handle);
          }
          break;
+      }
       //case DBASE4_MEMO:
       default:
          break;
@@ -372,7 +469,7 @@ void* dbf_detach(DBF_HANDLE* handle_ptr)
       const time_t now     = time(NULL);
       const struct tm* ptm = localtime(&now);
 
-      DBF_FILEHEADER header;
+      DBF_FILEHEADER_3 header;
       memset(&header, 0, sizeof(header));
       header.version = handle->version;
       header.lastupdate.dd = (uint8_t) ptm->tm_mday;
@@ -1390,7 +1487,7 @@ DBF_HANDLE dbf_create_attach(void* stream, zlib_filefunc_def* api,
    const time_t now = time(NULL);
    const struct tm* ptm = localtime(&now);
    size_t i;
-   DBF_FILEHEADER header;
+   DBF_FILEHEADER_3 header;
    DBF_FIELD* fieldarray;
    char* recorddataptr;
    char ch;
@@ -1427,13 +1524,13 @@ DBF_HANDLE dbf_create_attach(void* stream, zlib_filefunc_def* api,
    ZSEEK(*api, stream, 0, ZLIB_FILEFUNC_SEEK_SET);
    ZWRITE(*api, stream, &header, sizeof(header));
 
-   header.headerlength = (uint16_t)(sizeof(DBF_FILEHEADER) + (array_count * sizeof(DBF_FILEFIELD)) + FIELDTERMINATOR_LEN);
+   header.headerlength = (uint16_t)(sizeof(DBF_FILEHEADER_3) + (array_count * sizeof(DBF_FILEFIELD_3)) + FIELDTERMINATOR_LEN);
    header.recordlength = RECORD_POS_DATA;
 
    for (i = 0; i < array_count; i++)
    {
       DBF_FIELD* field = fieldarray + i;
-      DBF_FILEFIELD temp;
+      DBF_FILEFIELD_3 temp;
 
       memset(&temp, 0, sizeof(temp));
 
@@ -1705,6 +1802,5 @@ static char* strdup_host2dos(const char* src, size_t len, enum dbf_charconv mode
 
 const char* dbf_versionstring()
 {
-   return "dbf library r163";
+   return "dbf library svn r170";
 }
-
