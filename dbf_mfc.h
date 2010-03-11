@@ -46,7 +46,6 @@ public:
       enum dbf_charconv charconv = ENUM_dbf_charconv_compatible, void* memo = NULL);
 	bool CloneDatabase(const TCHAR* lpszCloneName, bool bCopyRecords = FALSE, bool bSkipDeleted = FALSE);
 
-	CString GetLastUpdate();
 	const char* GetLastError(void) const;
    const CString& GetFilename(void) const;
 

@@ -1,4 +1,3 @@
-
 /* dbf.h */
 /* Copyright (c) 2007-2010 by Troels K. All rights reserved. */
 /* License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt */
@@ -100,7 +99,6 @@ EXTERN_C void        dbf_getfileapi    (DBF_HANDLE, struct zlib_filefunc_def_s*)
 EXTERN_C void*       dbf_getmemofile   (DBF_HANDLE);
 EXTERN_C BOOL        dbf_iseditable    (DBF_HANDLE);
 EXTERN_C BOOL        dbf_ismodified    (DBF_HANDLE);
-EXTERN_C int         dbf_getversion    (DBF_HANDLE);
 
 //EXTERN_C BOOL        dbf_memo_attach   (DBF_HANDLE, void* stream);
 EXTERN_C BOOL        dbf_memo_create   (DBF_HANDLE, void* stream);
@@ -111,7 +109,16 @@ EXTERN_C void        dbf_close_memo    (DBF_HANDLE);
 EXTERN_C size_t      dbf_getposition   (DBF_HANDLE);
 EXTERN_C size_t      dbf_getrecordcount(DBF_HANDLE);
 EXTERN_C size_t      dbf_getfieldcount (DBF_HANDLE);
-EXTERN_C time_t      dbf_getlastupdate (DBF_HANDLE);
+
+typedef struct _DBF_INFO
+{
+   int    version;
+   size_t fieldcount;
+   size_t recordcount;
+   time_t lastupdate;
+} DBF_INFO;
+
+EXTERN_C void        dbf_getinfo       (DBF_HANDLE, DBF_INFO*);
 EXTERN_C BOOL        dbf_isvaliddate   (const char *buf, enum dbf_data_type);
 EXTERN_C BOOL        dbf_parsedate(const char*, struct tm*, int* ms, enum dbf_data_type);
 EXTERN_C BOOL        dbf_setposition   (DBF_HANDLE, size_t index);
@@ -157,11 +164,6 @@ EXTERN_C void        dbf_getmemofilename(const char* file_dbf, char* buf, size_t
 EXTERN_C const char* dbf_gettypetext  (enum dbf_data_type);
 EXTERN_C enum        dbf_data_type dbf_gettype_int2ext(char type);
 EXTERN_C char        dbf_gettype_ext2int(enum dbf_data_type);
-EXTERN_C const char* dbf_versionstring();
-
-/* Remove all trailing and leading spaces.                  */
-//EXTERN_C char* Trim(char *str, char trimchar);
-//EXTERN_C void field_init(DBF_FIELD* ptr);
-//EXTERN_C void field_init_ex(DBF_FIELD* ptr, const char* lpszName, char Type, Byte Length, Byte DecCount, Byte FieldNum);
+EXTERN_C const char* dbf_libversionstring();
 
 #endif /* __DBF_H__ */

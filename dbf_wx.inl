@@ -274,19 +274,19 @@ inline bool wxDBase::Write(size_t field, double value)
    return base::Write(field, value);
 }
 
-inline wxDateTime wxDBase::GetLastUpdate(wxString* str) const
+inline void wxDBase::GetInfo(DBF_INFO* info, wxDateTime* dt) const
 {
-   // avoid wxDateTime(time_t) ctor to enable compilation
-   // against "old" wx compilation (MSVC6+7: time_t = 32bits, MSVC8: time_t=64 bits)
-   const time_t utc = base::GetLastUpdate();
-   const struct tm* ptm = localtime(&utc);
-   wxDateTime t;
-   if (ptm)
+   base::GetInfo(info);
+   if (dt)
    {
-      t.Set(*ptm);
-      if (str) str->operator=(t.Format(wxT("%x")));
+      // avoid wxDateTime(time_t) ctor to enable compilation
+      // against "old" wx compilation (MSVC6+7: time_t = 32bits, MSVC8: time_t=64 bits)
+      const struct tm* ptm = localtime(&info->lastupdate);
+      if (ptm)
+      {
+         dt->Set(*ptm);
+      }
    }
-   return t;
 }
 
 inline bool wxDBase::ParseDate(const wxString& buf, wxDateTime::Tm* dtm, enum dbf_data_type type)

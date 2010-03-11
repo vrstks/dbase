@@ -41,7 +41,7 @@ public:
    bool IsEditable(void) const;
    bool IsModified(void) const;
 
-   time_t GetLastUpdate(void) const;
+   void        GetInfo(DBF_INFO*) const;
    int         GetLastError(void) const;
    const char* GetLastErrorStr(void) const;
 

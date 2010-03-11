@@ -34,12 +34,6 @@ inline const CString& CDbaseFile::GetFilename(void) const
    return m_strFileName;
 }
 
-// Get last update date
-inline CString CDbaseFile::GetLastUpdate()
-{
-   return CTime(base::GetLastUpdate()).Format(_T("%x"));
-}
-
 // Load record from dBase file into memory
 inline int CDbaseFile::GetRecord(size_t index)
 {

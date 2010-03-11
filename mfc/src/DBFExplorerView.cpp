@@ -1203,7 +1203,11 @@ void CDBFExplorerView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 	strText = "Last update: ";
 	pDC->TextOut(rectPage.left, rectPage.top, strText);
 	pDC->SelectObject(&fontNormalText);
-	pDC->TextOut(rectPage.left + 350, rectPage.top, pDoc->m_dBaseFile->GetLastUpdate());
+
+   DBF_INFO info;
+   pDoc->m_dBaseFile->GetInfo(&info);
+
+	pDC->TextOut(rectPage.left + 350, rectPage.top, CTime(info.lastupdate).Format(_T("%x")));
 	rectPage.top += nLineOffset;
 
 	rectPage.top += nLineOffset;

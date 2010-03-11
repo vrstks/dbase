@@ -40,6 +40,7 @@
 #define MAGIC_DBASE4      0x04
 #define MAGIC_DBASE4_MEMO 0x8B
 #define MAGIC_FOXPRO      0x30
+#define MAGIC_DBASE_DEFAULT MAGIC_DBASE3
 
 #define MEMO_BLOCK_SIZE   512         /*  memo block size (dBase III) */
 #define MAGIC_MEMO_BLOCK 0x0008FFFF
@@ -180,7 +181,7 @@ typedef struct _DBF_DATA
    void* stream;
    zlib_filefunc_def api;
 
-   uint8_t version;
+   uint8_t diskversion;
    size_t recordcount;
    size_t recordlength;
    size_t headerlength;
@@ -271,7 +272,7 @@ EXTERN_C DBF_HANDLE dbf_alloc(void)
    handle->recordlength    = 0;
    handle->headerlength    = 0;
    handle->lasterror       = DBASE_SUCCESS;
-   handle->version         = MAGIC_DBASE3;
+   handle->diskversion     = MAGIC_DBASE_DEFAULT;
    handle->dup             = NULL;
    *handle->lasterrormsg   = 0;
    fill_fopen_filefunc(&handle->api);
@@ -348,7 +349,7 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
             case MAGIC_DBASE4_MEMO:
                header_len = sizeof(DBF_FILEHEADER_4);
                field_len  = sizeof(DBF_FILEFIELD_4);
-               handle->version      = header.v4.version;
+               handle->diskversion  = header.v4.version;
                handle->recordcount  = header.v4.recordcount;
                handle->recordlength = header.v4.recordlength;
                handle->headerlength = header.v4.headerlength;
@@ -359,7 +360,7 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
             default:
                header_len = sizeof(DBF_FILEHEADER_3);
                field_len  = sizeof(DBF_FILEFIELD_3);
-               handle->version      = header.v3.version;
+               handle->diskversion  = header.v3.version;
                handle->recordcount  = header.v3.recordcount;
                handle->recordlength = header.v3.recordlength;
                handle->headerlength = header.v3.headerlength;
@@ -471,7 +472,7 @@ void* dbf_detach(DBF_HANDLE* handle_ptr)
 
       DBF_FILEHEADER_3 header;
       memset(&header, 0, sizeof(header));
-      header.version = handle->version;
+      header.version = handle->diskversion;
       header.lastupdate.dd = (uint8_t) ptm->tm_mday;
       header.lastupdate.mm = (uint8_t)(ptm->tm_mon+1);
       header.lastupdate.yy = (uint8_t) ptm->tm_year;
@@ -551,7 +552,7 @@ DBF_HANDLE dbf_open(const char* file, zlib_filefunc_def* api, BOOL editable, enu
       handle = dbf_attach(stream, api, editable, charconv, memostream);
       if (handle)
       {
-         switch (handle->version)
+         switch (handle->diskversion)
          {
             case MAGIC_DBASE3_MEMO:
             case MAGIC_DBASE4_MEMO:
@@ -607,9 +608,12 @@ static char* Trim(char *str, char trimchar)
    return str;
 }
 
-time_t dbf_getlastupdate(DBF_HANDLE handle)
+void dbf_getinfo(DBF_HANDLE handle, DBF_INFO* info)
 {
-   return handle->lastupdate;
+   info->version     = handle->diskversion & 0x0F;
+   info->fieldcount  = handle->fieldcount;
+   info->recordcount = handle->recordcount;
+   info->lastupdate  = handle->lastupdate;
 }
 
 #define FMT_DATE     "%04d%02d%02d"
@@ -1560,7 +1564,7 @@ DBF_HANDLE dbf_create_attach(void* stream, zlib_filefunc_def* api,
    handle = dbf_alloc();
    handle->api          = *api;
    handle->stream       = stream;
-   handle->version      = header.version;
+   handle->diskversion  = header.version;
    handle->charconv     = charconv;
    handle->editable     = TRUE;
    handle->fieldarray   = fieldarray;
@@ -1601,11 +1605,6 @@ BOOL dbf_iseditable(DBF_HANDLE handle)
 BOOL dbf_ismodified(DBF_HANDLE handle)
 {
    return handle->modified;
-}
-
-BOOL dbf_getversion(DBF_HANDLE handle)
-{
-   return handle->version;
 }
 
 size_t dbf_getfield(DBF_HANDLE handle, const DBF_FIELD* field, char* buf, size_t buf_len, enum dbf_data_type type)
@@ -1800,7 +1799,7 @@ static char* strdup_host2dos(const char* src, size_t len, enum dbf_charconv mode
    return dup;
 }
 
-const char* dbf_versionstring()
+const char* dbf_libversionstring()
 {
    return "dbf library svn r170";
 }

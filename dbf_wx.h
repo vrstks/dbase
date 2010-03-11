@@ -87,7 +87,7 @@ public:
 
    bool Write(const char* field, const char*);
 
-   wxDateTime GetLastUpdate(wxString* str = NULL) const;
+   void       GetInfo(DBF_INFO*, wxDateTime* dt = NULL) const;
 
    bool       Attach(/*const wxString& filename, */void* stream, struct zlib_filefunc_def_s*, 
                      bool editable = true, enum dbf_charconv conv = ENUM_dbf_charconv_compatible, void* memo = NULL);

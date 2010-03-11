@@ -326,9 +326,9 @@ inline const char* CDBase::GetLastErrorStr(void) const
    return ::dbf_getlasterror_str(m_handle);
 }
 
-inline time_t CDBase::GetLastUpdate(void) const
+inline void CDBase::GetInfo(DBF_INFO* info) const
 {
-   return ::dbf_getlastupdate(m_handle);
+   ::dbf_getinfo(m_handle, info);
 }
 
 inline bool CDBase::GetFieldInfo(size_t index, DBF_FIELD_INFO* info) const
