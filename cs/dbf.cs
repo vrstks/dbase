@@ -19,8 +19,8 @@ namespace DBase
       public const int Pack = 1;
       public const int MemoBlockLen = 512;
       public const int MemoBlockTermLen = 2;
-      public static int HeaderLen { get; private set; }
-      public static int FieldLen { get; private set; }
+      public static int DefaultHeaderLen { get; private set; }
+      public static int DefaultFieldLen { get; private set; }
       public const string DataTypes = "CNFDCCML";
       public const char CPM_TEXT_TERMINATOR = '\x1A';
       public const char FieldTerminator = '\r';
@@ -29,22 +29,24 @@ namespace DBase
       public const char RecordDeletedMarker = '*';
       public const int FieldNameLen = 10;
       public const int FileTitleLen = 8;
-      public const int MAGIC_DBASE3 = 0x03;
+      public const int MAGIC_DBASE3      = 0x03;
       public const int MAGIC_DBASE3_MEMO = 0x83;
       public const int MAGIC_DBASE4      = 0x04;
       public const int MAGIC_DBASE4_MEMO = 0x8B;
       public const int MAGIC_FOXPRO      = 0x30;
+      public const int MAGIC_DBASE_DEFAULT = MAGIC_DBASE3;
+      public const int MAGIC_DBASE_DEFAULT_MEMO = MAGIC_DBASE3_MEMO;
       public const int EnumeratorDefault = -1;
       public const string Fileext = "dbf";
       public const string FileextMemo = "dbt";
       public const int RECORD_POS_DELETED = 0;
       public const int RECORD_POS_DATA = 1;
-      public const string VersionString = "dbf library r167";
+      public const string VersionString = "dbf library r175";
 
       static Const()
       {
-         HeaderLen = Marshal.SizeOf(typeof(DBF_FILEHEADER));
-         FieldLen  = Marshal.SizeOf(typeof(DBF_FILEFIELD));
+         DefaultHeaderLen = Marshal.SizeOf(typeof(DBF_FILEHEADER_3));
+         DefaultFieldLen  = Marshal.SizeOf(typeof(DBF_FILEFIELD_3));
       }
 
       public static void StructCheck<T>(int size_desired)
@@ -59,9 +61,11 @@ namespace DBase
       public static void StructCheck()
       {
          StructCheck<DBF_FILEHEADER_TIME>(3);
-         StructCheck<DBF_FILEHEADER>(32);
+         StructCheck<DBF_FILEHEADER_3>(32);
+         StructCheck<DBF_FILEHEADER_4>(68);
          StructCheck<DBT_FILEHEADER>(MemoBlockLen);
-         StructCheck<DBF_FILEFIELD>(32);
+         StructCheck<DBF_FILEFIELD_3>(32);
+         StructCheck<DBF_FILEFIELD_4>(48);
       }
    }
 
@@ -74,7 +78,7 @@ namespace DBase
    }
 
    [StructLayout(LayoutKind.Sequential, Pack = Const.Pack)]
-   internal struct DBF_FILEHEADER
+   internal struct DBF_FILEHEADER_3
    {
       public Byte version;
       public DBF_FILEHEADER_TIME lastupdate;
@@ -87,6 +91,24 @@ namespace DBase
 
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
       public Byte[] unused;
+   }
+
+   [StructLayout(LayoutKind.Sequential, Pack = Const.Pack)]
+   internal struct DBF_FILEHEADER_4
+   {
+      public Byte version;
+      public DBF_FILEHEADER_TIME lastupdate;
+      public UInt32 recordcount;
+      public UInt16 headerlength;
+      public UInt16 recordlength;
+      public UInt16 unused_0;
+      public Byte incomplete;
+      public Byte crypt;
+
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+      public Byte[] unused_1;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 36)]
+      public Byte[] unused_2;
    }
 
    [StructLayout(LayoutKind.Sequential, Pack = Const.Pack)]
@@ -106,7 +128,7 @@ namespace DBase
    }
 
    [StructLayout(LayoutKind.Sequential, Pack = Const.Pack)]
-   internal struct DBF_FILEFIELD
+   internal struct DBF_FILEFIELD_3
    {
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = Const.FieldNameLen + 1)] // zero term
       public string title;
@@ -116,6 +138,20 @@ namespace DBase
       public Byte length;
       public Byte deccount;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)]
+      public Byte[] unused1;
+   }
+   
+   [StructLayout(LayoutKind.Sequential, Pack = Const.Pack)]
+   internal struct DBF_FILEFIELD_4
+   {
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = Const.FieldNameLen + 1)] // zero term
+      public string title;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 21)]
+      public Byte[] unused0;
+      public char type;
+      public Byte length;
+      public Byte deccount;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 13)]
       public Byte[] unused1;
    }
 
@@ -391,9 +427,17 @@ namespace DBase
          if (IsOpen) Close();
       }
 
-      private static bool sanity_check(DBF_FILEHEADER header)
+      private static bool sanity_check(DBF_FILEHEADER_3 header)
       {
          bool ok =    ((header.lastupdate.mm >= 1) && (header.lastupdate.mm <= 12))
+                   && ((header.lastupdate.dd >= 1) && (header.lastupdate.dd <= 31))
+                   ;
+         return ok;
+      }
+
+      private static bool sanity_check(DBF_FILEHEADER_4 header)
+      {
+         bool ok = ((header.lastupdate.mm >= 1) && (header.lastupdate.mm <= 12))
                    && ((header.lastupdate.dd >= 1) && (header.lastupdate.dd <= 31))
                    ;
          return ok;
@@ -402,68 +446,114 @@ namespace DBase
       public bool Attach(FileStream stream, string filename, bool read_header)
       {
          bool ok = (stream != null);
-         if (ok)
+         if (ok && read_header)
          {
-            int len_header = Marshal.SizeOf(typeof(DBF_FILEHEADER));
-            int len_field = Marshal.SizeOf(typeof(DBF_FILEFIELD));
-
-            byte[] bytes = new byte[len_header];
-
-            if (read_header)
+            byte[] bytes = new byte[Marshal.SizeOf(typeof(Byte))];
+            ok = (bytes.Length == StreamRead(stream, bytes));
+            if (ok)
             {
+               Byte version = bytes[0];
+               int len_header;
+               int len_field;
+
+               switch (version)
+               {
+                  case Const.MAGIC_DBASE4:
+                  case Const.MAGIC_DBASE4_MEMO:
+                     len_header = Marshal.SizeOf(typeof(DBF_FILEHEADER_4));
+                     len_field = Marshal.SizeOf(typeof(DBF_FILEFIELD_4));
+                     break;
+                  case Const.MAGIC_DBASE3:
+                  case Const.MAGIC_DBASE3_MEMO:
+                  case Const.MAGIC_FOXPRO:
+                  default:
+                     len_header = Marshal.SizeOf(typeof(DBF_FILEHEADER_3));
+                     len_field = Marshal.SizeOf(typeof(DBF_FILEFIELD_3));
+                     break;
+               }
+
+               bytes = new byte[len_header];
+               StreamSeek(stream, 0);
+
                ok = (len_header == StreamRead(stream, bytes));
                if (ok)
                {
-                  DBF_FILEHEADER header = Utility.PtrToStructure<DBF_FILEHEADER>(bytes);
-                  ok = sanity_check(header);
-                  if (ok) switch (header.version)
+                  switch (version)
                   {
-                     case Const.MAGIC_DBASE3:
-                     case Const.MAGIC_DBASE3_MEMO:
                      case Const.MAGIC_DBASE4:
                      case Const.MAGIC_DBASE4_MEMO:
-                     case Const.MAGIC_FOXPRO:
                      {
+                        DBF_FILEHEADER_4 header = Utility.PtrToStructure<DBF_FILEHEADER_4>(bytes);
                         _RecordCount = header.recordcount;
                         RecordLength = header.recordlength;
                         HeaderLength = header.headerlength;
-
-                        if ((RecordCount == 0) && (RecordLength != 0))
-                        {
-                           _RecordCount = (stream.Length - header.headerlength) / header.recordlength;
-                        }
-
-                        int fieldcount = (header.headerlength - (len_header + 1)) / len_field;
-
-                        bytes = new byte[len_field];
-
-                        for (int i = 0; i < fieldcount; i++)
-                        {
-                           StreamRead(stream, bytes);
-                           if ((bytes[0] >= 0) && (bytes[0] <= (byte)' '))
-                           {
-                              break;
-                           }
-                           DBF_FILEFIELD item = Utility.PtrToStructure<DBF_FILEFIELD>(bytes);
-
-                           var type = (DataType)Const.DataTypes.IndexOf(item.type);
-                           var field = new ColumnInfo() { Name = item.title, DataType = type, Length = item.length, DecCount = item.deccount };
-                           Columns.Add(field);
-                        }
+                        ok = sanity_check(header);
                         break;
                      }
-                     //case Const.MAGIC_FOXPRO:
+                     case Const.MAGIC_DBASE3:
+                     case Const.MAGIC_DBASE3_MEMO:
+                     case Const.MAGIC_FOXPRO:
                      default:
-                        ok = false;
+                     {
+                        DBF_FILEHEADER_3 header = Utility.PtrToStructure<DBF_FILEHEADER_3>(bytes);
+                        _RecordCount = header.recordcount;
+                        RecordLength = header.recordlength;
+                        HeaderLength = header.headerlength;
+                        ok = sanity_check(header);
                         break;
+                     }
+                  }
+                  if (ok)
+                  {
+                     if ((RecordCount == 0) && (RecordLength != 0))
+                     {
+                        _RecordCount = (stream.Length - HeaderLength) / RecordLength;
+                     }
+
+                     int fieldcount = (HeaderLength - (len_header + 1)) / len_field;
+
+                     bytes = new byte[len_field];
+
+                     for (int i = 0; i < fieldcount; i++)
+                     {
+                        ColumnInfo field;
+
+                        StreamRead(stream, bytes);
+                        if ((bytes[0] >= 0) && (bytes[0] <= (byte)' '))
+                        {
+                           break;
+                        }
+                        switch (version)
+                        {
+                           case Const.MAGIC_DBASE4:
+                           case Const.MAGIC_DBASE4_MEMO:
+                           {
+                              DBF_FILEFIELD_4 item = Utility.PtrToStructure<DBF_FILEFIELD_4>(bytes);
+                              DataType type = (DataType)Const.DataTypes.IndexOf(item.type);
+                              field = new ColumnInfo() { Name = item.title, DataType = type, Length = item.length, DecCount = item.deccount };
+                              break;
+                           }
+                           case Const.MAGIC_DBASE3:
+                           case Const.MAGIC_DBASE3_MEMO:
+                           case Const.MAGIC_FOXPRO:
+                           default:
+                           {
+                              DBF_FILEFIELD_3 item = Utility.PtrToStructure<DBF_FILEFIELD_3>(bytes);
+                              DataType type = (DataType)Const.DataTypes.IndexOf(item.type);
+                              field = new ColumnInfo() { Name = item.title, DataType = type, Length = item.length, DecCount = item.deccount };
+                              break;
+                           }
+                        }
+                        Columns.Add(field);
+                     }
                   }
                }
             }
-            if (ok)
-            {
-              _Stream = stream;
-              Filename = filename;
-            }
+         }
+         if (ok)
+         {
+           _Stream = stream;
+           Filename = filename;
          }
          return ok;
       }
@@ -481,7 +571,7 @@ namespace DBase
          {
             StreamSeek(_Stream, 0);
 
-            DBF_FILEHEADER header = new DBF_FILEHEADER();
+            DBF_FILEHEADER_3 header = new DBF_FILEHEADER_3();
             
             header.headerlength = (ushort)HeaderLength;
             header.crypt = 0;
@@ -494,13 +584,13 @@ namespace DBase
             header.lastupdate.dd = (byte)now.Day;
             header.recordcount = (ushort)RecordCount;
             header.recordlength = (ushort)RecordLength;
-            header.version = (byte)(HasMemo ? Const.MAGIC_DBASE3_MEMO : Const.MAGIC_DBASE3);
+            header.version = (byte)(HasMemo ? Const.MAGIC_DBASE_DEFAULT_MEMO : Const.MAGIC_DBASE_DEFAULT);
             header.unused_0 = 0;
             for (int i = 0; i < 16; i++)
             {
                //header.unused[i] = 0;
             }
-            byte[] bytes = Utility.StructureToPtr<DBF_FILEHEADER>(header);
+            byte[] bytes = Utility.StructureToPtr<DBF_FILEHEADER_3>(header);
             StreamWrite(_Stream, bytes);
             StreamSeek(_Stream, HeaderLength + RecordCount * RecordLength);
 
@@ -595,22 +685,22 @@ namespace DBase
             ok = Attach(stream, filename, false);
             if (ok)
             {
-               HeaderLength = Const.HeaderLen + Const.FieldTerminatorLen + Const.FieldLen * fields.Count;
+               HeaderLength = Const.DefaultHeaderLen + Const.FieldTerminatorLen + Const.DefaultFieldLen * fields.Count;
                IsDirty = true;
                stream.SetLength(HeaderLength);
-               StreamSeek(stream, Const.HeaderLen);
+               StreamSeek(stream, Const.DefaultHeaderLen);
                Columns = fields;
 
                RecordLength = Const.RECORD_POS_DATA;
                foreach (ColumnInfo item in fields)
                {
-                  DBF_FILEFIELD field = new DBF_FILEFIELD();
+                  DBF_FILEFIELD_3 field = new DBF_FILEFIELD_3();
                   if (item.Name.Length > Const.FieldNameLen) throw new Exception("Name too long");
                   field.title = item.Name;
                   field.type = Const.DataTypes[(int)item.DataType];
                   field.length = (byte)item.Length;
                   field.deccount = (byte)item.DecCount;
-                  bytes = Utility.StructureToPtr<DBF_FILEFIELD>(field);
+                  bytes = Utility.StructureToPtr<DBF_FILEFIELD_3>(field);
                   StreamWrite(stream, bytes);
                   RecordLength += item.Length;
                }
