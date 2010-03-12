@@ -401,7 +401,7 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
                }
                strncpy(field->m_Name, temp.name, _countof(field->m_Name)-1);
                field->m_Name[_countof(field->m_Name)-1] = 0;
-               
+
                switch (header.version)
                {
                   case MAGIC_DBASE4:
@@ -416,7 +416,7 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
                      field->m_DecCount = temp.v3.deccount;
                      break;
                }
-               
+
                field->ptr        = handle->recorddataptr + fielddata_pos;
                field->namehash   = strhash(field->m_Name, FALSE);
 
@@ -628,7 +628,7 @@ BOOL dbf_parsedate(const char *buf, struct tm* tm_ptr, int* ms_ptr, enum dbf_dat
    BOOL ok;
    struct tm tm;
    int ms = 0;
-   
+
    memset(&tm, 0, sizeof(tm));
    switch (type)
    {
@@ -638,7 +638,7 @@ BOOL dbf_parsedate(const char *buf, struct tm* tm_ptr, int* ms_ptr, enum dbf_dat
          {
             tm.tm_mon--;
             tm.tm_year-=1900;
-            ok = (tm.tm_mon  >= 0) && (tm.tm_mon  <= 11) 
+            ok = (tm.tm_mon  >= 0) && (tm.tm_mon  <= 11)
               && (tm.tm_mday >= 1) && (tm.tm_mday <= 31);
          }
          break;
@@ -646,22 +646,22 @@ BOOL dbf_parsedate(const char *buf, struct tm* tm_ptr, int* ms_ptr, enum dbf_dat
          ok = (4 == sscanf(buf, FMT_TIME, &tm.tm_hour, &tm.tm_min, &tm.tm_sec, &ms));
          if (ok)
          {
-            ok = (tm.tm_hour >= 0) && (tm.tm_hour <= 23) 
+            ok = (tm.tm_hour >= 0) && (tm.tm_hour <= 23)
               && (tm.tm_min  >= 0) && (tm.tm_min  <= 59)
               && (tm.tm_sec  >= 0) && (tm.tm_sec  <= 59)
               && (ms         >= 0) && (ms         <= 999);
          }
          break;
       case DBF_DATA_TYPE_DATETIME:
-         ok = (7 == sscanf(buf, FMT_DATETIME, 
+         ok = (7 == sscanf(buf, FMT_DATETIME,
                &tm.tm_year, &tm.tm_mon, &tm.tm_mday, &tm.tm_hour, &tm.tm_min, &tm.tm_sec, &ms));
          if (ok)
          {
             tm.tm_mon--;
             tm.tm_year-=1900;
-            ok = (tm.tm_mon  >= 0) && (tm.tm_mon  <= 11) 
+            ok = (tm.tm_mon  >= 0) && (tm.tm_mon  <= 11)
               && (tm.tm_mday >= 1) && (tm.tm_mday <= 31)
-              && (tm.tm_hour >= 0) && (tm.tm_hour <= 23) 
+              && (tm.tm_hour >= 0) && (tm.tm_hour <= 23)
               && (tm.tm_min  >= 0) && (tm.tm_min  <= 59)
               && (tm.tm_sec  >= 0) && (tm.tm_sec  <= 59)
               && (ms         >= 0) && (ms         <= 999);
@@ -1183,7 +1183,7 @@ BOOL dbf_getfield_tm(DBF_HANDLE handle, const DBF_FIELD* field, struct tm* tm, i
 BOOL dbf_putfield_tm(DBF_HANDLE handle, const DBF_FIELD* field, const struct tm* tm, int ms, enum dbf_data_type type)
 {
    BOOL ok = tm && field;
-   
+
    if (type < 0) type = field->type;
 
    if (ok) switch (type)
@@ -1297,7 +1297,7 @@ BOOL dbf_putfield_numeric(DBF_HANDLE handle, const DBF_FIELD* field, long value)
 }
 
 static const char mod_type_int[] = "CNFDCCML";
-C_ASSERT_(5, (sizeof(mod_type_int) - 1) == DBF_DATA_TYPE_ENUMCOUNT);
+C_ASSERT_(7, (sizeof(mod_type_int) - 1) == DBF_DATA_TYPE_ENUMCOUNT);
 
 char dbf_gettype_ext2int(enum dbf_data_type type)
 {
@@ -1561,7 +1561,7 @@ DBF_HANDLE dbf_create_attach(void* stream, zlib_filefunc_def* api,
    ZSEEK (*api, stream, 0, ZLIB_FILEFUNC_SEEK_END);
    ch = FIELDTERMINATOR;
    ZWRITE(*api, stream, &ch, sizeof(ch));
-   ch = CPM_TEXT_TERMINATOR; 
+   ch = CPM_TEXT_TERMINATOR;
    ZWRITE(*api, stream, &ch, sizeof(ch));
 
    handle = dbf_alloc();
@@ -1804,5 +1804,5 @@ static char* strdup_host2dos(const char* src, size_t len, enum dbf_charconv mode
 
 const char* dbf_libversionstring()
 {
-   return "dbf library svn r174";
+   return "dbf library svn r176";
 }
