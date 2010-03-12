@@ -106,6 +106,8 @@ EXTERN_C BOOL        dbf_memo_open     (DBF_HANDLE, void* stream);
 
 EXTERN_C void        dbf_close         (DBF_HANDLE*);
 EXTERN_C void        dbf_close_memo    (DBF_HANDLE);
+EXTERN_C void        dbf_write_header  (DBF_HANDLE);
+EXTERN_C void        dbf_write_header_memo(DBF_HANDLE);
 EXTERN_C size_t      dbf_getposition   (DBF_HANDLE);
 EXTERN_C size_t      dbf_getrecordcount(DBF_HANDLE);
 EXTERN_C size_t      dbf_getfieldcount (DBF_HANDLE);
@@ -116,6 +118,9 @@ typedef struct _DBF_INFO
    size_t fieldcount;
    size_t recordcount;
    time_t lastupdate;
+   BOOL memo;
+   BOOL editable;
+   BOOL modified;
 } DBF_INFO;
 
 EXTERN_C void        dbf_getinfo       (DBF_HANDLE, DBF_INFO*);

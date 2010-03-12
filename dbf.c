@@ -460,6 +460,32 @@ void dbf_close_memo(DBF_HANDLE handle)
    //handle->memo.dataptr = NULL;
 }
 
+void dbf_write_header(DBF_HANDLE handle)
+{
+   const time_t now     = time(NULL);
+   const struct tm* ptm = localtime(&now);
+
+   DBF_FILEHEADER_3 header;
+   memset(&header, 0, sizeof(header));
+   header.version = handle->memo.stream ? MAGIC_DBASE_DEFAULT_MEMO : MAGIC_DBASE_DEFAULT;
+   header.lastupdate.dd = (uint8_t) ptm->tm_mday;
+   header.lastupdate.mm = (uint8_t)(ptm->tm_mon+1);
+   header.lastupdate.yy = (uint8_t) ptm->tm_year;
+   header.recordcount   = (uint16_t)handle->recordcount;
+   header.headerlength  = (uint16_t)handle->headerlength;
+   header.recordlength  = (uint16_t)handle->recordlength;
+
+   // set file pointer to begin of file
+   ZSEEK(handle->api, handle->stream, 0, ZLIB_FILEFUNC_SEEK_SET);
+
+   ZWRITE(handle->api, handle->stream, &header, sizeof(header));
+
+   // set pointer to end of file
+   ZSEEK(handle->api, handle->stream, 0, ZLIB_FILEFUNC_SEEK_END);
+   // write eof character
+   //      ZWRITE(m_api, handle->stream, "\0x1a", 1);
+}
+
 void* dbf_detach(DBF_HANDLE* handle_ptr)
 {
    DBF_DATA* handle = *handle_ptr;
@@ -467,28 +493,7 @@ void* dbf_detach(DBF_HANDLE* handle_ptr)
 
    if (handle->modified)
    {
-      const time_t now     = time(NULL);
-      const struct tm* ptm = localtime(&now);
-
-      DBF_FILEHEADER_3 header;
-      memset(&header, 0, sizeof(header));
-      header.version = handle->memo.stream ? MAGIC_DBASE_DEFAULT_MEMO : MAGIC_DBASE_DEFAULT;
-      header.lastupdate.dd = (uint8_t) ptm->tm_mday;
-      header.lastupdate.mm = (uint8_t)(ptm->tm_mon+1);
-      header.lastupdate.yy = (uint8_t) ptm->tm_year;
-      header.recordcount   = (uint16_t)handle->recordcount;
-      header.headerlength  = (uint16_t)handle->headerlength;
-      header.recordlength  = (uint16_t)handle->recordlength;
-
-      // set file pointer to begin of file
-      ZSEEK(handle->api, handle->stream, 0, ZLIB_FILEFUNC_SEEK_SET);
-
-      ZWRITE(handle->api, handle->stream, &header, sizeof(header));
-
-      // set pointer to end of file
-      ZSEEK(handle->api, handle->stream, 0, ZLIB_FILEFUNC_SEEK_END);
-      // write eof character
-//      ZWRITE(m_api, handle->stream, "\0x1a", 1);
+	   dbf_write_header(handle);
    }
 
    if (handle->memo.stream)
@@ -613,10 +618,13 @@ static char* Trim(char *str, char trimchar)
 
 void dbf_getinfo(DBF_HANDLE handle, DBF_INFO* info)
 {
-   info->version     = handle->diskversion & 0x0F;
+   info->version     = handle->diskversion;
    info->fieldcount  = handle->fieldcount;
    info->recordcount = handle->recordcount;
    info->lastupdate  = handle->lastupdate;
+   info->memo        = (handle->memo.stream != NULL);
+   info->editable    = handle->editable;
+   info->modified    = handle->modified;
 }
 
 #define FMT_DATE     "%04d%02d%02d"
@@ -884,6 +892,12 @@ static int dotnormalize(char* str, char dot, size_t len)
    return -1;
 }
 
+void dbf_write_header_memo(DBF_HANDLE handle)
+{
+   ZSEEK (handle->api, handle->memo.stream, 0, ZLIB_FILEFUNC_SEEK_SET);
+   ZWRITE(handle->api, handle->memo.stream, &handle->memo.header, sizeof(handle->memo.header));
+}
+
 BOOL dbf_putfield(DBF_HANDLE handle, const DBF_FIELD* field, const char* buf)
 {
    BOOL ok = field && handle->editable;
@@ -969,8 +983,7 @@ BOOL dbf_putfield(DBF_HANDLE handle, const DBF_FIELD* field, const char* buf)
                               + ((filelen % handle->memo.header.blocksize) ? 1 : 0);
                      }
                      handle->memo.header.next = block + 1;
-                     ZSEEK (handle->api, handle->memo.stream, 0, ZLIB_FILEFUNC_SEEK_SET);
-                     ZWRITE(handle->api, handle->memo.stream, &handle->memo.header, sizeof(handle->memo.header));
+                     dbf_write_header_memo(handle);
                      // fall through
                   default:
                   {
@@ -1804,5 +1817,5 @@ static char* strdup_host2dos(const char* src, size_t len, enum dbf_charconv mode
 
 const char* dbf_libversionstring()
 {
-   return "dbf library svn r176";
+   return "dbf library svn r178";
 }

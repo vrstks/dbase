@@ -89,9 +89,14 @@ size_t dbf_getproperties(wxDBase* db, wxArrayString* as_ptr, bool header)
       wxDateTime dt;
       db->GetInfo(&info, &dt);
 
-      temp.Printf(_("Version:\t%d"), info.version); as.Add(temp);
+      temp.Printf(_("Version:\t%X"), info.version); as.Add(temp);
+      temp.Printf(_("Memo file:\t%s"), info.memo ? _("Yes") : _("No")); as.Add(temp);
       temp.Printf(_("Records:\t%d"), info.recordcount); as.Add(temp);
-      temp.Printf(_("Last changed:\t%s"), dt.Format(wxT("%x")).wx_str()); as.Add(temp);
+      temp.Printf(_("Modified:\t%s"), info.modified ? _("Yes") : _("No")); as.Add(temp);
+      if (dt.IsValid())
+      {
+         temp.Printf(_("Last changed:\t%s"), dt.Format(wxT("%x")).wx_str()); as.Add(temp);
+      }
       temp.Printf(_("Field count:\t%d"), info.fieldcount); as.Add(temp);
    }
    for (size_t i = 0; ; i++)

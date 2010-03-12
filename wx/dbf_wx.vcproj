@@ -1033,6 +1033,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\dbfmodel.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\dbfutil.h"
+				>
+			</File>
+			<File
 				RelativePath="src\dbfview.h"
 				>
 			</File>
