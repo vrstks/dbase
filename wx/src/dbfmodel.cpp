@@ -42,9 +42,9 @@ int wxDBFModel::FindColumn(const wxString& colname) const
    return m_database->FindField(colname.mb_str());
 }
 
-size_t wxDBFModel::GetProperties(wxArrayString* as) const
+size_t wxDBFModel::GetProperties(wxArrayString* as, bool header) const
 {
-   return ::dbf_getproperties(m_database, as, false);
+   return ::dbf_getproperties(m_database, as, header);
 }
 
 void wxDBFModel::GetColumn( unsigned int col, ColumnInfo* info) const

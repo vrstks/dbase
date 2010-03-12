@@ -141,7 +141,10 @@ void wxDBFView::OnStructClipboard(wxCommandEvent&)
 void wxDBFView::OnProperties(wxCommandEvent&)
 {
    wxArrayString as;
-   ::dbf_getproperties(GetDocument()->GetDatabase(), &as);
+   //::dbf_getproperties(GetDocument()->GetDatabase(), &as);
+
+   wxDBFModel datamodel(GetDocument()->GetDatabase());
+   datamodel.GetProperties(&as, true);
 
    wxString temp;
 

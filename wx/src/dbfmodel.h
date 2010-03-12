@@ -1,5 +1,5 @@
 // dbfmodel.h
-// Copyright (c) 2007-2009 by Troels K. All rights reserved.
+// Copyright (c) 2007-2010 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __DBFMODEL_H__
@@ -43,7 +43,7 @@ public:
    virtual bool DeleteRow(unsigned int row, bool bDelete = true);
    virtual bool GetValue(      wxString*, const wxRowCol&) const;
    virtual bool SetValue(const wxString&, const wxRowCol&);
-   virtual size_t GetProperties(wxArrayString*) const;
+   virtual size_t GetProperties(wxArrayString*, bool header) const;
    virtual bool IsOpen(void) const;
    virtual bool IsEditable(void) const;
    virtual bool AddNew(void);

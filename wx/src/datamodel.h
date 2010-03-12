@@ -144,7 +144,7 @@ public:
    virtual int FindColumn(const wxString& colname) const;
 
    //virtual wxString GetFilename(void) const;
-   virtual size_t GetProperties(wxArrayString*, bool header = true) const;
+   virtual size_t GetProperties(wxArrayString*, bool header) const;
 
    virtual bool DeleteRow(unsigned int row, bool bDelete = true );
    virtual bool IsOpen(void) const;
