@@ -41,7 +41,7 @@ namespace DBase
       public const string FileextMemo = "dbt";
       public const int RECORD_POS_DELETED = 0;
       public const int RECORD_POS_DATA = 1;
-      public const string VersionString = "dbf library r175";
+      public const string VersionString = "dbf library r179";
 
       static Const()
       {
@@ -565,42 +565,47 @@ namespace DBase
          return _MemoFile.ReadHeader();
       }
 
+      void WriteHeader()
+      {
+         StreamSeek(_Stream, 0);
+
+         DBF_FILEHEADER_3 header = new DBF_FILEHEADER_3();
+
+         header.headerlength = (ushort)HeaderLength;
+         header.crypt = 0;
+         header.incomplete = 0;
+
+         DateTimeOffset now = DateTimeOffset.UtcNow;
+
+         header.lastupdate.yy = (byte)(now.Year - 1900);
+         header.lastupdate.mm = (byte)now.Month;
+         header.lastupdate.dd = (byte)now.Day;
+         header.recordcount = (ushort)RecordCount;
+         header.recordlength = (ushort)RecordLength;
+         header.version = (byte)(HasMemo ? Const.MAGIC_DBASE_DEFAULT_MEMO : Const.MAGIC_DBASE_DEFAULT);
+         header.unused_0 = 0;
+         for (int i = 0; i < 16; i++)
+         {
+           //header.unused[i] = 0;
+         }
+         byte[] bytes = Utility.StructureToPtr<DBF_FILEHEADER_3>(header);
+         StreamWrite(_Stream, bytes);
+         StreamSeek(_Stream, HeaderLength + RecordCount * RecordLength);
+
+         bytes = new byte[] { (byte)Const.CPM_TEXT_TERMINATOR };
+         StreamWrite(_Stream, bytes);
+
+         if (HasMemo)
+         {
+            _MemoFile.WriteHeader();
+         }
+      }
+      
       public void Detach(out FileStream stream, out FileStream memostream)
       {
          if (IsDirty)
          {
-            StreamSeek(_Stream, 0);
-
-            DBF_FILEHEADER_3 header = new DBF_FILEHEADER_3();
-            
-            header.headerlength = (ushort)HeaderLength;
-            header.crypt = 0;
-            header.incomplete = 0;
-
-            DateTimeOffset now = DateTimeOffset.UtcNow;
-
-            header.lastupdate.yy = (byte)(now.Year - 1900);
-            header.lastupdate.mm = (byte)now.Month;
-            header.lastupdate.dd = (byte)now.Day;
-            header.recordcount = (ushort)RecordCount;
-            header.recordlength = (ushort)RecordLength;
-            header.version = (byte)(HasMemo ? Const.MAGIC_DBASE_DEFAULT_MEMO : Const.MAGIC_DBASE_DEFAULT);
-            header.unused_0 = 0;
-            for (int i = 0; i < 16; i++)
-            {
-               //header.unused[i] = 0;
-            }
-            byte[] bytes = Utility.StructureToPtr<DBF_FILEHEADER_3>(header);
-            StreamWrite(_Stream, bytes);
-            StreamSeek(_Stream, HeaderLength + RecordCount * RecordLength);
-
-            bytes = new byte[] { (byte)Const.CPM_TEXT_TERMINATOR };
-            StreamWrite(_Stream, bytes);
-
-            if (HasMemo)
-            {
-               _MemoFile.WriteHeader();
-            }
+            WriteHeader();
          }
          stream = _Stream;
          memostream = _MemoFile._Stream;
