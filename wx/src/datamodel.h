@@ -197,6 +197,7 @@ public:
    virtual unsigned int GetRowCount() const = 0;
    virtual unsigned int GetColumnCount() const = 0;
 #endif
+   virtual wxString GetDataModelName(void) const = 0;
 
 private:
 #if (wxVERSION_NUMBER >= 2900)
@@ -224,7 +225,6 @@ private:
       GetColumn(col, &info);
       return info.type;
    }
-   virtual wxString GetDataModelName(void) const = 0;
 #endif
 };
 
