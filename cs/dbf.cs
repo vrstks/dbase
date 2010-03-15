@@ -314,7 +314,8 @@ namespace DBase
       {
          public FileStream _Stream = null;
          public string Title;
-         public long Next = 1;
+         private const long FirstBlock = 1;
+         private long Next = FirstBlock;
          private byte[] _Buf = new byte[Const.MemoBlockLen];
          public static string CreateFileName(string filename)
          {
@@ -392,6 +393,11 @@ namespace DBase
             header.blocksize = Const.MemoBlockLen;
             byte[] bytes = Utility.StructureToPtr<DBT_FILEHEADER>(header);
             _Stream.Write(bytes, 0, bytes.GetLength(0));
+         }
+
+         public void Clear()
+         {
+           Next = FirstBlock;
          }
       }
 #endregion Memo
@@ -565,7 +571,7 @@ namespace DBase
          return _MemoFile.ReadHeader();
       }
 
-      void WriteHeader()
+      public void WriteHeader()
       {
          StreamSeek(_Stream, 0);
 
@@ -768,27 +774,29 @@ namespace DBase
          }
       }
 
-      private long _RecordCount = 0;
-      public long RecordCount
+      private void CheckEditable()
       {
-         get
-         {
-            return _RecordCount;
-         }
-         set
-         {
-            if (!IsEditable) throw new Exception("Table is read only");
-            _RecordCount = value;
-         }
+        if (!IsEditable) throw new Exception("Table is read only");
       }
+
+      private long _RecordCount = 0;
+      public long RecordCount { get { return _RecordCount; } }
       public int RecordLength { get; private set; }
       private int HeaderLength { get; set; }
+
+      public void Clear()
+      {
+        CheckEditable();
+        _RecordCount = 0;
+        _Position = Const.EnumeratorDefault;
+        _MemoFile.Clear();
+      }
 
       public bool AppendRecord()
       {
          _Position = RecordCount;
          _RecordBuf = new string(Const.FieldFillChar, RecordLength);
-         RecordCount++;
+         _RecordCount++;
          IsDirty = true;
          return SaveRecord();
       }
