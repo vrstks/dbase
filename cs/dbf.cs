@@ -655,6 +655,10 @@ namespace DBase
                   }
                }
             }
+            else
+            {
+               stream.Close();
+            }
          }
          return ok;
       }
@@ -737,6 +741,15 @@ namespace DBase
          _RecordCount = 0;
          RecordLength = 0;
          _Position = Const.EnumeratorDefault;
+      }
+
+      public void Flush()
+      {
+         _Stream.Flush();
+         if (HasMemo)
+         {
+            _MemoFile._Stream.Flush();
+         }
       }
 
       private int StreamRead(FileStream stream, byte[] bytes)
