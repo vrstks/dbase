@@ -2,18 +2,18 @@
 // Copyright (c) 2007-2010 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
-inline wxDBase::wxDBase() : wxObject(), CDBase()
+inline wxDBase::wxDBase() : wxObject(), CDBase(), m_stream(NULL), m_stream_memo(NULL)
 {
 }
 
 inline wxDBase::~wxDBase()
 {
-}
-
-inline void wxDBase::Close()
-{
-   wxASSERT(IsOpen());
-   base::Close();
+   if (IsOpen())
+   {
+      Close();
+   }
+   wxASSERT(m_stream == NULL);
+   wxASSERT(m_stream_memo == NULL);
 }
 
 inline bool wxDBase::Open(const wxFileName& filename, bool editable, enum dbf_charconv charconv)
@@ -58,12 +58,6 @@ inline bool wxDBase::Attach(wxDBase* db)
 {
    wxASSERT(!IsOpen());
    return Attach(db->Detach());
-}
-
-inline DBF_HANDLE wxDBase::Detach(void)
-{
-   wxASSERT(IsOpen());
-   return base::Detach();
 }
 
 inline size_t wxDBase::Read(const DBF_FIELD* field, wxString* str, size_t buf_len)
@@ -279,7 +273,7 @@ inline void wxDBase::GetInfo(DBF_INFO* info, wxDateTime* dt) const
    base::GetInfo(info);
    if (dt)
    {
-      // avoid wxDateTime(time_t) ctor to enable compilation
+      // avoid wxDateTime(time_t) ctor to enable linking
       // against "old" wx compilation (MSVC6+7: time_t = 32bits, MSVC8: time_t=64 bits)
       const struct tm* ptm = localtime(&info->lastupdate);
       if (ptm)

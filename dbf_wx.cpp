@@ -17,6 +17,36 @@
 #include "dbf_wx.inl"
 #include "wx/src/wxstreamc.h"
 
+bool wxDBase::Attach(wxInputStream* stream, bool editable, enum dbf_charconv conv, wxInputStream* stream_memo)
+{
+   zlib_filefunc_def_s api;
+   fill_filefunc(&api, stream);
+   bool ok = base::Attach(stream, &api, editable, conv, stream_memo);
+   if (ok)
+   {
+      m_stream      = stream;
+      m_stream_memo = stream_memo;
+   }
+   return ok;
+}
+
+void wxDBase::Close()
+{
+   wxASSERT(IsOpen());
+   base::Close();
+   wxDELETE(m_stream);
+   wxDELETE(m_stream_memo);
+}
+
+DBF_HANDLE wxDBase::Detach(void)
+{
+   wxASSERT(IsOpen());
+   DBF_HANDLE handle = base::Detach();
+   wxDELETE(m_stream);
+   wxDELETE(m_stream_memo);
+   return handle;
+}
+
 wxString wxDBase::GetColType(size_t col)
 {
    switch (GetFieldType(GetFieldPtr(col)))
@@ -104,30 +134,11 @@ bool wxDBase::SetValue(const wxVariant& var, const wxRowCol& rowcol)
    {
       ok = Write(rowcol.col, var.MakeString());
    }
-   if (ok) ok = PutRecord(rowcol.row);
+   if (ok)
+   {
+      ok = PutRecord(rowcol.row);
+   }
    return ok;
 }
-
-/*
-void wxDBase::SetFilename(const wxString& WXUNUSED(filename))
-{
-   //m_filename = filename;
-}
-
-wxString wxDBase::GetFilename(void) const
-{
-   return wxEmptyString;//m_filename;
-}
-*/
-
-bool wxDBase::Attach(wxInputStream* stream, bool editable, enum dbf_charconv conv, wxInputStream* memo)
-{
-   zlib_filefunc_def_s api;
-   fill_filefunc(&api, stream);
-   bool ok = base::Attach(stream, &api, editable, conv, memo);
-   //if (ok) SetFilename(filename);
-   return ok;
-}
-
 
 /////////////////////////////////////////////////////////////////////////////

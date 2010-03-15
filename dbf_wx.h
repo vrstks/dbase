@@ -29,6 +29,11 @@ class wxDBase : public wxObject, public CDBase
 {
    typedef CDBase base;
 
+// Attributes
+public:
+   wxInputStream* m_stream;
+   wxInputStream* m_stream_memo;
+
 // Construction
 public:
 	wxDBase();           
@@ -96,6 +101,12 @@ public:
    bool       Attach(wxInputStream*, bool editable = true, enum dbf_charconv conv = ENUM_dbf_charconv_compatible, 
                      wxInputStream* memo = NULL);
    DBF_HANDLE Detach(void);
+   wxInputStream* DetachStream(void)
+   {
+      wxInputStream* stream = m_stream;
+      m_stream = NULL;
+      return stream;
+   }
 
 // Implementation
 public:
