@@ -224,6 +224,7 @@ private:
       GetColumn(col, &info);
       return info.type;
    }
+   virtual wxString GetDataModelName(void) const = 0;
 #endif
 };
 

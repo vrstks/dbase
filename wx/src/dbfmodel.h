@@ -47,6 +47,10 @@ public:
    virtual bool IsOpen(void) const;
    virtual bool IsEditable(void) const;
    virtual bool AddNew(void);
+   virtual wxString GetDataModelName(void) const
+   {
+      return wxT("dBASE");
+   }
 };
 
 #endif // __DBFMODEL_H__
