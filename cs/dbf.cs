@@ -8,10 +8,50 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 
+namespace FlatDatabase
+{
+  public class ColumnInfo
+  {
+    public string Name = string.Empty;
+    public Type DataType = null;
+    public int Length = 0;
+    public int DecCount = 0;
+  }
+  
+   public interface IOpenClose
+   {
+      bool IsOpen { get; }
+      void Close();
+   }
+
+   public interface Interface : IOpenClose
+   {
+      string Filename { get; }
+      string Fileext { get; }
+      bool Open(string filename, FileMode mode);
+      bool Create(string filename, ColumnInfo[] array);
+      long Position { get; set; }
+      void Clear();
+      bool AppendRecord();
+      bool SaveRecord();
+      void Flush();
+      long RecordCount { get; }
+      string GetString(ColumnInfo field);
+      List<ColumnInfo> Columns { get; }
+      bool WriteField(ColumnInfo field, string str);
+      bool WriteField(ColumnInfo field, char ch);
+      bool WriteField(ColumnInfo field, int n);
+      bool WriteField(ColumnInfo field, DateTimeOffset datetime);
+      bool WriteField(ColumnInfo field, bool b);
+      bool WriteField(ColumnInfo field, double n);
+   }
+
+ }
+
 /// <summary>
 /// Driverless dbf access
 /// </summary>
-namespace DBase
+namespace FlatDatabase.DBase
 {
 #region Definitions
    public static class Const
@@ -37,11 +77,11 @@ namespace DBase
       public const int MAGIC_DBASE_DEFAULT = MAGIC_DBASE3;
       public const int MAGIC_DBASE_DEFAULT_MEMO = MAGIC_DBASE3_MEMO;
       public const int EnumeratorDefault = -1;
-      public const string Fileext = "dbf";
-      public const string FileextMemo = "dbt";
+      public const string FileExt = "dbf";
+      public const string FileExtMemo = "dbt";
       public const int RECORD_POS_DELETED = 0;
       public const int RECORD_POS_DATA = 1;
-      public const string VersionString = "dbf library r179";
+      public const string VersionString = "dbf library svn r185";
 
       static Const()
       {
@@ -171,42 +211,6 @@ namespace DBase
       Any = -2
    }
 
-   public class ColumnInfo
-   {
-      public string Name = string.Empty;
-      public DataType DataType = DataType.Unknown;
-      public int Length = 0;
-      public int DecCount = 0;
-
-      public Type DotNetDataType
-      {
-         get
-         {
-            Type type;
-            switch (DataType)
-            {
-               case DataType.Date:
-                  type = typeof(DateTimeOffset);
-                  break;
-               case DataType.Float:
-                  type = typeof(double);
-                  break;
-               case DataType.Integer:
-                  type = typeof(int);
-                  break;
-               case DataType.Boolean:
-                  type = typeof(bool);
-                  break;
-               case DataType.Char:
-               case DataType.Memo:
-               default:
-                  type = typeof(string);
-                  break;
-            }
-            return type;
-         }
-      }
-   }
 #endregion Definitions
 
 #region Convert
@@ -229,6 +233,88 @@ namespace DBase
             return time.AddMilliseconds(ms);
          }
       }
+
+      public static Type Type(DataType datatype)
+      {
+        Type type;
+        switch (datatype)
+        {
+          case DataType.Date:
+            type = typeof(DateTimeOffset);
+            break;
+          case DataType.Float:
+            type = typeof(double);
+            break;
+          case DataType.Integer:
+            type = typeof(int);
+            break;
+          case DataType.Boolean:
+            type = typeof(bool);
+            break;
+          case DataType.Memo:
+            type = typeof(byte[]);
+            break;
+          case DataType.Char:
+          default:
+            type = typeof(string);
+            break;
+        }
+        return type;
+      }
+
+      public static DataType Type(Type type, int Length)
+      {
+        DataType DataType;
+        if (type == typeof(DateTimeOffset))
+        {
+          DataType = DataType.Date;
+        }
+        else if (type == typeof(bool))
+        {
+          DataType = DataType.Boolean;
+        }
+        else if ((type == typeof(float))
+                 || (type == typeof(double))
+                )
+        {
+          DataType = DataType.Float;
+        }
+        else if (   (type == typeof(byte))
+                 || (type == typeof(sbyte))
+                 || (type == typeof(Int16))
+                 || (type == typeof(Int32))
+                 || (type == typeof(Int64))
+                 || (type == typeof(UInt16))
+                 || (type == typeof(UInt32))
+                 || (type == typeof(UInt64))
+                )
+        {
+          DataType = DataType.Integer;
+        }
+        else if (type == typeof(byte[]))
+        {
+          DataType = DataType.Memo;
+        }
+        else if ((type == typeof(string))
+                 || (type == typeof(char))
+                )
+        {
+          if (Length <= 255)
+          {
+            DataType = DataType.Char;
+          }
+          else
+          {
+            Length = 10;
+            DataType = DataType.Memo;
+          }
+        }
+        else
+        {
+          throw new Exception("Unknown type");
+        }
+        return DataType;
+      }
    }
 #endregion Convert
 
@@ -239,12 +325,12 @@ namespace DBase
       {
          var columns = new ColumnInfo[]
          { 
-            new ColumnInfo() { Name="TITLE"  , DataType=DataType.Char   , Length= 5 },
-            new ColumnInfo() { Name="INTEGER", DataType=DataType.Integer, Length=10 },
-            new ColumnInfo() { Name="BOOLEAN", DataType=DataType.Boolean, Length= 1 },
-            new ColumnInfo() { Name="DATE"   , DataType=DataType.Date   , Length= 8 },
-            new ColumnInfo() { Name="FLOAT"  , DataType=DataType.Float  , Length=10, DecCount = 5 },
-            new ColumnInfo() { Name="MEMO"   , DataType=DataType.Memo   , Length=10 },
+            new ColumnInfo() { Name="TITLE"  , DataType=typeof(string), Length= 5 },
+            new ColumnInfo() { Name="INTEGER", DataType=typeof(int), Length=10 },
+            new ColumnInfo() { Name="BOOLEAN", DataType=typeof(bool), Length= 1 },
+            new ColumnInfo() { Name="DATE"   , DataType=typeof(DateTimeOffset)   , Length= 8 },
+            new ColumnInfo() { Name="FLOAT"  , DataType=typeof(float), Length=10, DecCount = 5 },
+            new ColumnInfo() { Name="MEMO"   , DataType=typeof(byte[]), Length=10 },
          };
          var file = new DBase.File();
          bool ok = file.Create(filename, columns);
@@ -276,11 +362,6 @@ namespace DBase
 #endregion Test
 
 #region Utility
-   public interface IOpenClose
-   {
-      bool IsOpen { get; }
-      void Close();
-   }
 
    public static class Utility
    {
@@ -307,7 +388,7 @@ namespace DBase
    /// <summary>
    /// dbf file class
    /// </summary>
-   public class File : IOpenClose
+   public class File : Interface
    {
 #region Memo
       private class MemoFile
@@ -319,7 +400,7 @@ namespace DBase
          private byte[] _Buf = new byte[Const.MemoBlockLen];
          public static string CreateFileName(string filename)
          {
-            return Path.ChangeExtension(filename, DBase.Const.FileextMemo);
+            return Path.ChangeExtension(filename, FlatDatabase.DBase.Const.FileExtMemo);
          }
 
          private byte[] m_buf_read = new byte[64 * 1024];
@@ -408,6 +489,7 @@ namespace DBase
       private FileStream _Stream = null;
 
       public string Filename { get; private set; }
+      public string Fileext { get { return Const.FileExt; } }
       public string TableName { get { return System.IO.Path.GetFileNameWithoutExtension(Filename); } }
       public bool IsOpen { get { return (_Stream != null); } }
       public bool HasMemo { get { return (_MemoFile._Stream != null); } }
@@ -536,7 +618,7 @@ namespace DBase
                            {
                               DBF_FILEFIELD_4 item = Utility.PtrToStructure<DBF_FILEFIELD_4>(bytes);
                               DataType type = (DataType)Const.DataTypes.IndexOf(item.type);
-                              field = new ColumnInfo() { Name = item.title, DataType = type, Length = item.length, DecCount = item.deccount };
+                              field = new ColumnInfo() { Name = item.title, DataType = Convert.Type(type), Length = item.length, DecCount = item.deccount };
                               break;
                            }
                            case Const.MAGIC_DBASE3:
@@ -546,7 +628,7 @@ namespace DBase
                            {
                               DBF_FILEFIELD_3 item = Utility.PtrToStructure<DBF_FILEFIELD_3>(bytes);
                               DataType type = (DataType)Const.DataTypes.IndexOf(item.type);
-                              field = new ColumnInfo() { Name = item.title, DataType = type, Length = item.length, DecCount = item.deccount };
+                              field = new ColumnInfo() { Name = item.title, DataType = Convert.Type(type), Length = item.length, DecCount = item.deccount };
                               break;
                            }
                         }
@@ -635,7 +717,7 @@ namespace DBase
                bool memo = false;
                foreach (ColumnInfo item in Columns)
                {
-                  memo = memo || (item.DataType == DataType.Memo);
+                  memo = memo || (Convert.Type(item.DataType, item.Length) == DataType.Memo);
                }
                if (memo)
                {
@@ -681,7 +763,7 @@ namespace DBase
          bool memo = false;
          foreach (ColumnInfo item in fields)
          {
-            memo = memo || (item.DataType == DataType.Memo);
+            memo = memo || (Convert.Type(item.DataType, item.Length) == DataType.Memo);
          }
          FileStream stream = new FileStream(filename, mode, access);
          FileStream stream_memo = null;
@@ -712,7 +794,7 @@ namespace DBase
                   DBF_FILEFIELD_3 field = new DBF_FILEFIELD_3();
                   if (item.Name.Length > Const.FieldNameLen) throw new Exception("Name too long");
                   field.title = item.Name;
-                  field.type = Const.DataTypes[(int)item.DataType];
+                  field.type = Const.DataTypes[(int)Convert.Type(item.DataType, item.Length)];
                   field.length = (byte)item.Length;
                   field.deccount = (byte)item.DecCount;
                   bytes = Utility.StructureToPtr<DBF_FILEFIELD_3>(field);
@@ -745,6 +827,7 @@ namespace DBase
 
       public void Flush()
       {
+         WriteHeader();
          _Stream.Flush();
          if (HasMemo)
          {
@@ -834,7 +917,7 @@ namespace DBase
 
       public bool WriteField(ColumnInfo field, string str)
       {
-         switch (field.DataType)
+         switch (Convert.Type(field.DataType, field.Length))
          {
             case DataType.Memo:
             {
@@ -916,7 +999,7 @@ namespace DBase
          int pos = GetRecordBufPos(field);
          string str = _RecordBuf.Substring(pos, field.Length);
          str = str.TrimEnd(_FieldDataTrim);
-         switch (field.DataType)
+         switch (Convert.Type(field.DataType, field.Length))
          {
             case DataType.Memo:
                if (_MemoFile._Stream != null)
@@ -936,7 +1019,7 @@ namespace DBase
       {
          object obj = null;
          string str = GetString(field);
-         switch (field.DataType)
+         switch (Convert.Type(field.DataType, field.Length))
          {
             case DataType.Char:
                obj = str;

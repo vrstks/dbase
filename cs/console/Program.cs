@@ -8,12 +8,12 @@ namespace Test
    static class Program
    {
       private static char sep = ';';
-      private static void ConsoleDump(DBase.File file)
+      private static void ConsoleDump(FlatDatabase.DBase.File file)
       {
          string str = string.Empty;
 
          int i = 0;
-         foreach (DBase.ColumnInfo col in file.Columns)
+         foreach (FlatDatabase.ColumnInfo col in file.Columns)
          {
             if (0 != i++) str += sep;
             str += col.Name;
@@ -24,7 +24,7 @@ namespace Test
          {
             str = string.Empty;
             i = 0;
-            foreach (DBase.ColumnInfo col in file.Columns)
+            foreach (FlatDatabase.ColumnInfo col in file.Columns)
             {
                if (0 != i++) str += sep;
                str += file.GetString(col);
@@ -35,23 +35,23 @@ namespace Test
          }
       }
 
-      private static void ConsoleDump(DBase.Recordset recordset)
+      private static void ConsoleDump(FlatDatabase.DBase.Recordset recordset)
       {
          string str = string.Empty;
 
          int i = 0;
-         foreach (DBase.ColumnInfo col in recordset.Columns)
+         foreach (FlatDatabase.ColumnInfo col in recordset.Columns)
          {
             if (0 != i++) str += sep;
             str += col.Name;
          }
          Console.WriteLine(str);
 
-         foreach (DBase.Record record in recordset)
+         foreach (FlatDatabase.DBase.Record record in recordset)
          {
             str = string.Empty;
             i = 0;
-            foreach (DBase.Column col in record)
+            foreach (FlatDatabase.DBase.Column col in record)
             {
                if (0 != i++) str += sep;
                str += col.Data;
@@ -64,11 +64,11 @@ namespace Test
 
       private static void CreateMemo(string filename)
       {
-         var columns = new DBase.ColumnInfo[]
+         var columns = new FlatDatabase.ColumnInfo[]
          { 
-            new DBase.ColumnInfo() { Name="MEMO", DataType=DBase.DataType.Memo, Length=10 }
+            new FlatDatabase.ColumnInfo() { Name="MEMO", DataType=typeof(string), Length=1024 }
          };
-         var file = new DBase.File();
+         var file = new FlatDatabase.DBase.File();
          if (file.Create(filename, columns))
          {
             file.AppendRecord();
@@ -84,7 +84,7 @@ namespace Test
 
       private static void Open(string filename)
       {
-         var file = new DBase.File();
+         var file = new FlatDatabase.DBase.File();
          if (file.Open(filename, System.IO.FileMode.Open))
          {
             ConsoleDump(file);
@@ -93,7 +93,7 @@ namespace Test
       }
       private static void OpenRecordset(string filename)
       {
-         var recordset = new DBase.Recordset();
+         var recordset = new FlatDatabase.DBase.Recordset();
          if (recordset.Open(filename, System.IO.FileMode.Open))
          {
             ConsoleDump(recordset);
@@ -104,12 +104,14 @@ namespace Test
       static void Main(string[] args)
       {
          //string filename = @"h:\cpcload.dbf";
-         string filename = @"sjov.dbf";
+         //string filename = @"E:\viewer\FOXUSER.DBF";
+         //string filename = @"E:\viewer\FakturaH.DBF";
+         string filename = @"memo.dbf";
 
-         DBase.Test.CreateDatabase(filename);
+         FlatDatabase.DBase.Test.CreateDatabase(filename);
          //CreateMemo(filename);
-         Open(filename);
-         OpenRecordset(filename);
+         //Open(filename);
+         //OpenRecordset(filename);
       }
    }
 }
