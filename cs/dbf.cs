@@ -44,8 +44,8 @@ namespace FlatDatabase
       bool WriteField(ColumnInfo field, DateTimeOffset datetime);
       bool WriteField(ColumnInfo field, bool b);
       bool WriteField(ColumnInfo field, double n);
+      System.Text.Encoding TextEncoding { get; set; }
    }
-
  }
 
 /// <summary>
@@ -81,7 +81,7 @@ namespace FlatDatabase.DBase
       public const string FileExtMemo = "dbt";
       public const int RECORD_POS_DELETED = 0;
       public const int RECORD_POS_DATA = 1;
-      public const string VersionString = "dbf library svn r185";
+      public const string VersionString = "dbf library svn r186";
 
       static Const()
       {
@@ -398,6 +398,12 @@ namespace FlatDatabase.DBase
          private const long FirstBlock = 1;
          private long Next = FirstBlock;
          private byte[] _Buf = new byte[Const.MemoBlockLen];
+         private File File;
+
+         public MemoFile(File file)
+         {
+           File = file;
+         }
          public static string CreateFileName(string filename)
          {
             return Path.ChangeExtension(filename, FlatDatabase.DBase.Const.FileExtMemo);
@@ -426,7 +432,7 @@ namespace FlatDatabase.DBase
                {
                   break;
                }
-               str+= TextEncoding.GetString(m_buf_read, 0, i);
+               str+= File.TextEncoding.GetString(m_buf_read, 0, i);
                if (read < m_buf_read.Length)
                {
                   break;
@@ -440,7 +446,7 @@ namespace FlatDatabase.DBase
             long pos = Next;
             _Stream.Seek(pos * Const.MemoBlockLen, SeekOrigin.Begin);
             str += new string(Const.CPM_TEXT_TERMINATOR, Const.MemoBlockTermLen); // term
-            byte[] bytes = TextEncoding.GetBytes(str);
+            byte[] bytes = File.TextEncoding.GetBytes(str);
             _Stream.Write(bytes, 0, bytes.GetLength(0));
             Next +=    (bytes.GetLength(0) / Const.MemoBlockLen)
                    + (((bytes.GetLength(0) % Const.MemoBlockLen) != 0) ? 1 : 0);
@@ -469,7 +475,7 @@ namespace FlatDatabase.DBase
             else while (title.Length < Const.FileTitleLen) title += Const.FieldFillChar;
             DBT_FILEHEADER header = new DBT_FILEHEADER();
             header.next = (uint)Next;
-            header.title = TextEncoding.GetBytes(title);
+            header.title = File.TextEncoding.GetBytes(title);
             header.flag = 0;
             header.blocksize = Const.MemoBlockLen;
             byte[] bytes = Utility.StructureToPtr<DBT_FILEHEADER>(header);
@@ -483,9 +489,9 @@ namespace FlatDatabase.DBase
       }
 #endregion Memo
 
-      public static System.Text.Encoding TextEncoding { get; set; }
+      public System.Text.Encoding TextEncoding { get; set; }
       
-      private MemoFile _MemoFile = new MemoFile();
+      private MemoFile _MemoFile;
       private FileStream _Stream = null;
 
       public string Filename { get; private set; }
@@ -502,13 +508,14 @@ namespace FlatDatabase.DBase
       static File()
       {
          Const.StructCheck();
-         TextEncoding = System.Text.Encoding.Default;
       }
 
       public File()
       {
          IsDirty = false;
          Columns = new List<ColumnInfo>();
+         TextEncoding = System.Text.Encoding.Default;
+         _MemoFile = new MemoFile(this);
       }
       ~File()
       {
@@ -899,6 +906,20 @@ namespace FlatDatabase.DBase
 
       public bool SaveRecord()
       {
+         if ((_Position + 1) < RecordCount) // if not appending
+         {
+            foreach (ColumnInfo item in Columns)
+            {
+               if (GetString(item).Length > (Const.MemoBlockLen - Const.MemoBlockTermLen))
+               {
+                  // if the memo string to be stored inside an existing record cannot fit inside one existing block:
+                  // bail out instead of appending to the dbt file, as this leaves dead blocks inside it.
+                  // -> Clear() and rewrite entire file instead.
+                  return false;
+               }
+            }
+         }
+
          StreamSeek(_Stream, HeaderLength + _Position * RecordLength);
          byte[] bytes = TextEncoding.GetBytes(_RecordBuf);
          StreamWrite(_Stream, bytes);
