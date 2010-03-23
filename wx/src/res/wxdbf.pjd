@@ -352,7 +352,7 @@
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
-              <string name="title">"&amp;Print Setup...: wxID_PRINT_SETUP"</string>
+              <string name="title">"Print S&amp;etup...: wxID_PRINT_SETUP"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menuitem"</string>
@@ -364,7 +364,7 @@
               <string name="proxy-type">"wbMenuItemProxy"</string>
               <string name="proxy-Id name">"wxID_PRINT_SETUP"</string>
               <long name="proxy-Id value">5011</long>
-              <string name="proxy-Label">"&amp;Print Setup..."</string>
+              <string name="proxy-Label">"Print S&amp;etup..."</string>
               <string name="proxy-Kind">"Normal"</string>
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>
@@ -876,7 +876,7 @@
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
-              <string name="title">"&amp;Print Setup...: wxID_PRINT_SETUP"</string>
+              <string name="title">"Print Previe&amp;w: wxID_PREVIEW"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menuitem"</string>
@@ -884,11 +884,10 @@
               <long name="owns-file">1</long>
               <long name="title-mode">0</long>
               <long name="locked">0</long>
-              <string name="created">"14/8/2006"</string>
               <string name="proxy-type">"wbMenuItemProxy"</string>
-              <string name="proxy-Id name">"wxID_PRINT_SETUP"</string>
-              <long name="proxy-Id value">5011</long>
-              <string name="proxy-Label">"&amp;Print Setup..."</string>
+              <string name="proxy-Id name">"wxID_PREVIEW"</string>
+              <long name="proxy-Id value">5012</long>
+              <string name="proxy-Label">"Print Previe&amp;w"</string>
               <string name="proxy-Kind">"Normal"</string>
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>
@@ -898,7 +897,7 @@
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             </document>
             <document>
-              <string name="title">"Print Pre&amp;view: wxID_PREVIEW"</string>
+              <string name="title">"Print S&amp;etup...: wxID_PRINT_SETUP"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menuitem"</string>
@@ -906,11 +905,10 @@
               <long name="owns-file">1</long>
               <long name="title-mode">0</long>
               <long name="locked">0</long>
-              <string name="created">"14/8/2006"</string>
               <string name="proxy-type">"wbMenuItemProxy"</string>
-              <string name="proxy-Id name">"wxID_PREVIEW"</string>
-              <long name="proxy-Id value">5012</long>
-              <string name="proxy-Label">"Print Pre&amp;view"</string>
+              <string name="proxy-Id name">"wxID_PRINT_SETUP"</string>
+              <long name="proxy-Id value">5011</long>
+              <string name="proxy-Label">"Print S&amp;etup..."</string>
               <string name="proxy-Kind">"Normal"</string>
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>
