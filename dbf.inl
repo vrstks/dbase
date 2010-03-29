@@ -16,9 +16,9 @@ inline bool CDBase::IsOpen(void) const
    return (m_handle != NULL);
 }
 
-inline bool CDBase::Attach(void* stream, struct zlib_filefunc_def_s* api, bool editable, enum dbf_charconv conv, void* memo)
+inline bool CDBase::Attach(void* stream, struct zlib_filefunc_def_s* api, bool editable, enum dbf_charconv conv, void* memo, const char* tablename)
 {
-   m_handle = ::dbf_attach(stream, api, editable, conv, memo);
+   m_handle = ::dbf_attach(stream, api, editable, conv, memo, tablename);
    return (m_handle != NULL);
 }
 
@@ -40,15 +40,15 @@ inline DBF_HANDLE CDBase::Detach(void)
    return handle;
 }
 
-inline bool CDBase::Open(const char* filename, struct zlib_filefunc_def_s* api, bool editable, enum dbf_charconv charconv)
+inline bool CDBase::Open(const char* filename, struct zlib_filefunc_def_s* api, bool editable, enum dbf_charconv charconv, const char* tablename)
 {
-   m_handle = ::dbf_open(filename, api, editable, charconv);
+   m_handle = ::dbf_open(filename, api, editable, charconv, tablename);
    return (m_handle != NULL);
 }
 
-inline bool CDBase::Open(const char* filename, bool editable, enum dbf_charconv charconv)
+inline bool CDBase::Open(const char* filename, bool editable, enum dbf_charconv charconv, const char* tablename)
 {
-   return Open(filename, NULL, editable, charconv);
+   return Open(filename, NULL, editable, charconv, tablename);
 }
 
 inline bool CDBase::Create(void* stream, struct zlib_filefunc_def_s* api, const DBF_FIELD_INFO* array, size_t array_count, enum dbf_charconv charconv, void* memo)
@@ -57,9 +57,9 @@ inline bool CDBase::Create(void* stream, struct zlib_filefunc_def_s* api, const 
    return (m_handle != NULL);
 }
 
-inline bool CDBase::Create(const char* filename, const DBF_FIELD_INFO* array, size_t array_count, enum dbf_charconv charconv)
+inline bool CDBase::Create(const char* filename, const DBF_FIELD_INFO* array, size_t array_count, enum dbf_charconv charconv, const char* tablename)
 {
-   m_handle = ::dbf_create(filename, array, array_count, charconv);
+   m_handle = ::dbf_create(filename, array, array_count, charconv, tablename);
    return (m_handle != NULL);
 }
 

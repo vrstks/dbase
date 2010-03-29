@@ -91,10 +91,10 @@ typedef struct _DBF_FIELD_INFO
 
 EXTERN_C DBF_HANDLE  dbf_alloc         (void);
 EXTERN_C DBF_HANDLE  dbf_create_attach (void* stream, struct zlib_filefunc_def_s*, const DBF_FIELD_INFO* array, size_t array_count, enum dbf_charconv charconv, void* memo);
-EXTERN_C DBF_HANDLE  dbf_attach        (void* stream, struct zlib_filefunc_def_s*, BOOL editable, enum dbf_charconv, void* memo);
+EXTERN_C DBF_HANDLE  dbf_attach        (void* stream, struct zlib_filefunc_def_s*, BOOL editable, enum dbf_charconv, void* memo, const char* tablename);
 EXTERN_C void*       dbf_detach        (DBF_HANDLE*);
-EXTERN_C DBF_HANDLE  dbf_open          (const char* file, struct zlib_filefunc_def_s*, BOOL editable, enum dbf_charconv);
-EXTERN_C DBF_HANDLE  dbf_create        (const char* file, const DBF_FIELD_INFO* array, size_t array_count, enum dbf_charconv charconv);
+EXTERN_C DBF_HANDLE  dbf_open          (const char* file, struct zlib_filefunc_def_s*, BOOL editable, enum dbf_charconv, const char* tablename);
+EXTERN_C DBF_HANDLE  dbf_create        (const char* file, const DBF_FIELD_INFO* array, size_t array_count, enum dbf_charconv charconv, const char* tablename);
 EXTERN_C void        dbf_getfileapi    (DBF_HANDLE, struct zlib_filefunc_def_s*);
 EXTERN_C void*       dbf_getmemofile   (DBF_HANDLE);
 EXTERN_C BOOL        dbf_iseditable    (DBF_HANDLE);
@@ -121,6 +121,7 @@ typedef struct _DBF_INFO
    BOOL memo;
    BOOL editable;
    BOOL modified;
+   char tablename[40];
 } DBF_INFO;
 
 EXTERN_C void        dbf_getinfo       (DBF_HANDLE, DBF_INFO*);

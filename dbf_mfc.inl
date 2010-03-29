@@ -14,7 +14,7 @@ inline CDbaseFile::~CDbaseFile()
 inline int CDbaseFile::Open(const TCHAR* filename, bool editable, enum dbf_charconv charconv)
 {
    USES_CONVERSION;
-   m_handle = dbf_open(T2CA(filename), NULL, editable, charconv);
+   m_handle = dbf_open(T2CA(filename), NULL, editable, charconv, NULL);
    if (m_handle) m_strFileName = filename;
    return m_handle ? DBASE_SUCCESS : DBASE_NO_FILE;
 }

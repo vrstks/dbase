@@ -51,6 +51,7 @@ public:
    {
       return wxT("dBASE");
    }
+   virtual wxString GetTableName(void) const;
 };
 
 #endif // __DBFMODEL_H__

@@ -19,14 +19,14 @@ inline wxDBase::~wxDBase()
 inline bool wxDBase::Open(const wxFileName& filename, bool editable, enum dbf_charconv charconv)
 {
    wxASSERT(!IsOpen());
-   bool ok = base::Open(filename.GetFullPath().mb_str(), editable, charconv);
+   bool ok = base::Open(filename.GetFullPath().mb_str(), editable, charconv, filename.GetName().mb_str());
    return ok;
 }
 
 inline bool wxDBase::Create(const wxFileName& filename, const DBF_FIELD_INFO* array, size_t array_count, enum dbf_charconv charconv)
 {
    wxASSERT(!IsOpen());
-   bool ok = base::Create(filename.GetFullPath().mb_str(), array, array_count, charconv);
+   bool ok = base::Create(filename.GetFullPath().mb_str(), array, array_count, charconv, filename.GetName().mb_str());
    return ok;
 }
 

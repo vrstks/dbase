@@ -243,3 +243,10 @@ bool wxDBFModel::AddNew(void)
    delete [] array;
    return ok;
 }
+
+wxString wxDBFModel::GetTableName(void) const
+{
+   DBF_INFO info;
+   m_database->GetInfo(&info);
+   return wxConvertMB2WX(info.tablename);
+}

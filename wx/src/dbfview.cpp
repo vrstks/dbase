@@ -150,8 +150,6 @@ void wxDBFView::OnProperties(wxCommandEvent&)
 
    temp.Printf(_("File:\t%s"), GetDocument()->GetFilename().wx_str());
    as.Insert(temp, 0);
-   temp.Printf(_("Table:\t%s"), GetDocument()->GetTablename().wx_str());
-   as.Insert(temp, 1);
 
    wxString str;
    for (size_t i = 0; i < as.GetCount(); i++)

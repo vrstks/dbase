@@ -99,7 +99,7 @@ public:
    bool       Attach(DBF_HANDLE/*, const wxString& filename*/);
    bool       Attach(wxDBase*);
    bool       Attach(wxInputStream*, bool editable = true, enum dbf_charconv conv = ENUM_dbf_charconv_compatible, 
-                     wxInputStream* memo = NULL);
+                     wxInputStream* memo = NULL, const wxString& tablename = wxEmptyString);
    DBF_HANDLE Detach(void);
    wxInputStream* DetachStream(void)
    {
