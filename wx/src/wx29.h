@@ -17,13 +17,22 @@ inline void wxAboutBox(const wxAboutDialogInfo& info, wxWindow* WXUNUSED(parent)
 
 class wxAppEx : public wxApp
 {
+   typedef wxApp base;
 #if (wxVERSION_NUMBER < 2900)
 protected:
    wxString m_appDisplayName;
 public:
    wxString GetAppDisplayName() const { return m_appDisplayName; }
 
-    void SetAppDisplayName(const wxString& name) { m_appDisplayName = name; }
+   void SetAppName(const wxString& name)
+   {
+      base::SetAppName(name);   
+      if (m_appDisplayName.IsEmpty())
+      {
+         SetAppDisplayName(name);
+      }
+   }
+   void SetAppDisplayName(const wxString& name) { m_appDisplayName = name; }
 #endif
 };
 
