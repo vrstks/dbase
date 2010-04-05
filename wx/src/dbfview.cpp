@@ -143,20 +143,12 @@ void wxDBFView::OnProperties(wxCommandEvent&)
    wxArrayString as;
    //::dbf_getproperties(GetDocument()->GetDatabase(), &as);
 
+   ::wxDocument_Info(GetDocument(), &as);
+
    wxDBFModel datamodel(GetDocument()->GetDatabase());
    datamodel.GetProperties(&as, true);
 
-   wxString temp;
-
-   temp.Printf(_("File:\t%s"), GetDocument()->GetFilename().wx_str());
-   as.Insert(temp, 0);
-
-   wxString str;
-   for (size_t i = 0; i < as.GetCount(); i++)
-   {
-      if (i) str+=wxT("\n");
-      str+=as.Item(i);
-   }
+   wxString str = wxJoin(as, wxT('\n'));
    ::wxMessageBox(str, wxMessageBoxCaption, wxOK | wxCENTRE, m_frame);
 }
 

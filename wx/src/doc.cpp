@@ -38,7 +38,6 @@ wxDocument* DocManager::CreateDocument(const wxString& path, long flags)
    if (doc && (wxDOC_NEW != flags))
    {
       AddFileToHistory(doc->GetFilename());
-      ::wxDocument_SetTitleFullPath(doc);
    }
    return doc;
 }

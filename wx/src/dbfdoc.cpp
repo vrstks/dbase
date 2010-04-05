@@ -117,7 +117,6 @@ bool wxDBFDoc::SaveAs()
    bool ok = base::SaveAs();
    if (ok)
    {
-       ::wxDocument_SetTitleFullPath(this);
    }
    return ok;
 }

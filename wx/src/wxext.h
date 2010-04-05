@@ -5,6 +5,9 @@
 #define WXK_HELP       WXK_F1
 #define WXK_FULLSCREEN WXK_F11
 
+class wxListCtrl;
+class wxListView;
+
 WX_DECLARE_OBJARRAY(wxAcceleratorEntry, AcceleratorArray);
 
 #ifdef _WX_ARTPROV_H_
@@ -46,7 +49,7 @@ protected:
 };
 #endif
 
-#ifndef __WXCODE_H__
+#if !defined(__WXCODE_H__) && defined(_WX_LISTCTRL_H_)
 
 inline void wxListCtrl_SelectAll(wxListCtrl* ctrl, bool on = true)
 {
@@ -55,6 +58,24 @@ inline void wxListCtrl_SelectAll(wxListCtrl* ctrl, bool on = true)
       ctrl->SetItemState(i, on ? wxLIST_STATE_SELECTED : 0, wxLIST_STATE_SELECTED);
    }
 }
+
+inline bool wxListView_SetCurSel(wxListCtrl* ctrl, long index, bool focus = true)
+{ 
+   bool ok = (index != -1) && (index < ctrl->GetItemCount());
+   if (ok)
+   {
+      bool on = true;
+      ctrl->SetItemState(index, on ? wxLIST_STATE_SELECTED : 0, wxLIST_STATE_SELECTED); //ctrl->Select(index);
+      if (focus)
+      {
+         ctrl->SetItemState(index, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
+         ctrl->EnsureVisible(index);
+         //ctrl->Focus(index);
+      }
+   }
+   return ok;
+}
+
 #endif
 
 extern wxString wxGetAccelText(int flags, int keyCode);
@@ -78,26 +99,7 @@ extern long wxListView_HitTest(const wxListView&, const wxPoint&, int* flags, lo
 extern wxString wxListView_GetItemText(const wxListCtrl&, int row, int col);
 extern bool wxListCtrl_EndEditLabel(wxListCtrl* ctrl, bool cancel);
 
-#ifndef __WXCODE_H__
-
-inline bool wxListView_SetCurSel(wxListCtrl* ctrl, long index, bool focus = true)
-{ 
-   bool ok = (index != -1) && (index < ctrl->GetItemCount());
-   if (ok)
-   {
-      bool on = true;
-      ctrl->SetItemState(index, on ? wxLIST_STATE_SELECTED : 0, wxLIST_STATE_SELECTED); //ctrl->Select(index);
-      if (focus)
-      {
-         ctrl->SetItemState(index, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
-         ctrl->EnsureVisible(index);
-         //ctrl->Focus(index);
-      }
-   }
-   return ok;
-}
-#endif
-
+#ifdef _WX_EVENT_H__
 inline void wxPostCommandEvent(wxEvtHandler* dest, wxEventType commandType, int id)
 {
    wxCommandEvent event(commandType, id);
@@ -109,6 +111,7 @@ inline void wxPostMenuCommand(wxEvtHandler* dest, int id)
 {
    wxPostCommandEvent(dest, wxEVT_COMMAND_MENU_SELECTED, id);
 }
+#endif
 
 extern bool wxInitXRC();
 
@@ -127,14 +130,6 @@ extern void wxSetAcceleratorTable(wxWindow*, const AcceleratorArray&);
 #endif
 #define wxSTOCK_PLAINTEXT wxSTOCK_WITHOUT_ELLIPSIS
 extern wxString wxGetStockLabelEx(wxWindowID, long flags = wxSTOCK_WITH_MNEMONIC);
-#endif
-
-#ifdef _WX_DOCH__
-inline void wxDocument_SetTitleFullPath(wxDocument* doc, bool notifyViews = true)
-{
-   doc->SetTitle(doc->GetFilename());
-   doc->SetFilename(doc->GetFilename(), notifyViews); // -> OnChangeFilename -> refresh caption
-}
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
@@ -164,3 +159,8 @@ public:
 
    bool GetFile(size_t, wxFileName*) const;
 };
+
+class wxDocument;
+extern void wxDocument_Info(const wxDocument*, wxArrayString*);
+extern wxString wxJoin(const wxArrayString&, wxChar sep);
+extern void     wxJoin(wxArrayString*, const wxArrayString&);

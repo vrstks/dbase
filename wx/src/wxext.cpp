@@ -485,4 +485,42 @@ bool wxRecentFileList::GetFile(size_t index, wxFileName* str) const
    return ok;
 }
 
+void wxDocument_Info(const wxDocument* doc, wxArrayString* as)
+{
+   const wxString fmt = wxT("%s:\t%s");
+   as->Add(wxString::Format(fmt, wxT("GetFilename"), doc->GetFilename().wx_str()));
+   as->Add(wxString::Format(fmt, wxT("GetTitle"), doc->GetTitle().wx_str()));
+   as->Add(wxString::Format(fmt, wxT("Doc class"), doc->GetClassInfo()->GetClassName()));
+   if (doc->GetFirstView())
+   {
+      as->Add(wxString::Format(fmt, wxT("View class"), doc->GetFirstView()->GetClassInfo()->GetClassName()));
+      if (doc->GetFirstView()->GetFrame())
+      {
+         as->Add(wxString::Format(fmt, wxT("Frame class"), doc->GetFirstView()->GetFrame()->GetClassInfo()->GetClassName()));
+      }
+   }
+   as->Add(wxString::Format(fmt, wxT("GetDocumentSaved"), doc->GetDocumentSaved() ? _("Yes") : _("No")));
+   as->Add(wxString::Format(fmt, wxT("GetDocumentName"), doc->GetDocumentName().wx_str()));
+}
+
+wxString wxJoin(const wxArrayString& as, wxChar sep)
+{
+   wxString str;
+   for (size_t i = 0; i < as.GetCount(); i++)
+   {
+      if (i) str+=sep;
+      str+=as.Item(i);
+   }
+   return str;
+}
+
+void wxJoin(wxArrayString* dst, const wxArrayString& src)
+{
+   wxString str;
+   for (size_t i = 0; i < src.GetCount(); i++)
+   {
+      dst->Add(src.Item(i));
+   }
+}
+
 /////////////////////////////////////////////////////////////////////////////

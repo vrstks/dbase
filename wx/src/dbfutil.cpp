@@ -2,14 +2,16 @@
 // Copyright (c) 2007-2010 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
-#include <wx/string.h>
-#include <wx/datetime.h>
-#include <wx/object.h>
-#include <wx/filefn.h>
-#include <wx/intl.h>
-#include <wx/filename.h>
+#include "wx/wx.h"
+#include "wx/string.h"
+#include "wx/datetime.h"
+#include "wx/object.h"
+#include "wx/filefn.h"
+#include "wx/intl.h"
+#include "wx/filename.h"
 
 #include "dbfutil.h"
+#include "wxext.h"
 
 #include "../../ioapi/zlib.h"
 #include "../../ioapi/ioapi.h"
@@ -132,7 +134,10 @@ size_t dbf_getproperties(wxDBase* db, wxArrayString* as_ptr, bool header)
          );
       as.Add(temp);
    }
-   if (as_ptr) *as_ptr = as;
+   if (as_ptr)
+   {
+      wxJoin(as_ptr, as);
+   }
    return as.GetCount();
 }
 
