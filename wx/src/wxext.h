@@ -99,7 +99,7 @@ extern long wxListView_HitTest(const wxListView&, const wxPoint&, int* flags, lo
 extern wxString wxListView_GetItemText(const wxListCtrl&, int row, int col);
 extern bool wxListCtrl_EndEditLabel(wxListCtrl* ctrl, bool cancel);
 
-#ifdef _WX_EVENT_H__
+#if defined(_WX_EVENT_H_) || defined(_WX_EVENT_H__)
 inline void wxPostCommandEvent(wxEvtHandler* dest, wxEventType commandType, int id)
 {
    wxCommandEvent event(commandType, id);
