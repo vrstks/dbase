@@ -48,4 +48,17 @@ protected:
    DECLARE_EVENT_TABLE()
 };
 
+#if (wxVERSION_NUMBER < 2900)
+inline wxString wxJoin(const wxArrayString& as, wxChar sep)
+{
+   wxString str;
+   for (size_t i = 0; i < as.GetCount(); i++)
+   {
+      if (i) str+=sep;
+      str+=as.Item(i);
+   }
+   return str;
+}
+#endif
+
 #endif // __WX29_H__

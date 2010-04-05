@@ -162,5 +162,12 @@ public:
 
 class wxDocument;
 extern void wxDocument_Info(const wxDocument*, wxArrayString*);
-extern wxString wxJoin(const wxArrayString&, wxChar sep);
-extern void     wxJoin(wxArrayString*, const wxArrayString&);
+
+inline void wxJoin(wxArrayString* dst, const wxArrayString& src)
+{
+   wxString str;
+   for (size_t i = 0; i < src.GetCount(); i++)
+   {
+      dst->Add(src.Item(i));
+   }
+}

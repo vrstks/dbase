@@ -503,24 +503,4 @@ void wxDocument_Info(const wxDocument* doc, wxArrayString* as)
    as->Add(wxString::Format(fmt, wxT("GetDocumentName"), doc->GetDocumentName().wx_str()));
 }
 
-wxString wxJoin(const wxArrayString& as, wxChar sep)
-{
-   wxString str;
-   for (size_t i = 0; i < as.GetCount(); i++)
-   {
-      if (i) str+=sep;
-      str+=as.Item(i);
-   }
-   return str;
-}
-
-void wxJoin(wxArrayString* dst, const wxArrayString& src)
-{
-   wxString str;
-   for (size_t i = 0; i < src.GetCount(); i++)
-   {
-      dst->Add(src.Item(i));
-   }
-}
-
 /////////////////////////////////////////////////////////////////////////////
