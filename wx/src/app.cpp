@@ -28,7 +28,6 @@ bool App::OnInit(void)
 
       SetVendorName(wxT("Troels K"));
       SetAppName(wxT("wxDBF"));
-      //wxConfigBase* pConfig = wxConfigBase::Get();
 
       wxFileSystem::AddHandler(new wxZipFSHandler);
       ok = ::wxInitXRC();
