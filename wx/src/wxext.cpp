@@ -235,25 +235,38 @@ wxString wxListView_GetItemText(const wxListCtrl& ctrl, int row, int col)
    return str;
 }
 
-#if defined(__WXMSW__)
-#include <commctrl.h>
-bool wxListCtrl_EndEditLabel(wxListCtrl* ctrl, bool cancel)
-{
-   HWND hwnd = ListView_GetEditControl((HWND)ctrl->GetHWND());
-   bool b = (hwnd != NULL);
-   if (b) ::PostMessage(hwnd, WM_CLOSE, 0, 0);
-   return b;
-}
-#else
-bool wxListCtrl_EndEditLabel(wxListCtrl* ctrl, bool cancel)
+bool wxListCtrl_EndEditLabel(wxListCtrl* wnd, bool cancel)
 {
 #ifdef __WXMSW__
-   return ctrl->EndEditLabel(cancel);
+   #if (wxVERSION_NUMBER >= 2901)
+      return wnd->EndEditLabel(cancel);
+   #else
+      HWND hwnd = ListView_GetEditControl((HWND)wnd->GetHWND());
+      bool ok = (hwnd != NULL);
+      if (ok)
+      {
+      #ifdef ListView_CancelEditLabel
+         if (cancel && (wxApp::GetComCtl32Version() >= 600))
+         {
+            ListView_CancelEditLabel((HWND)wnd->GetHWND());
+            return ok;
+         }
+      #endif
+         if (::IsWindowVisible(hwnd))
+         {
+            ::SendMessage(hwnd, WM_KEYDOWN, cancel ? VK_ESCAPE : VK_RETURN, 0);
+         }
+         else
+         {
+            ::SendMessage(hwnd, WM_CLOSE, 0, 0);
+         }
+      }
+      return ok;
+   #endif
 #else
    return false;
 #endif
 }
-#endif
 
 #if wxUSE_ACCEL
 
