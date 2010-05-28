@@ -428,36 +428,36 @@ wxString wxGetStockLabelEx(wxWindowID id, long flags)
 /////////////////////////////////////////////////////////////////////////////
 // wxRecentFileList
 
-wxRecentFileList::wxRecentFileList(wxDocManager* docManager) : m_docManager(docManager)
+wxRecentFileList::wxRecentFileList(wxFileHistory* fileHistory, int menuid) : m_fileHistory(fileHistory), m_menuid(menuid)
 {
 }
 
-static wxMenuItem* GetOpenRecentSubMenu(wxFrame* frame, wxMenu** submenu)
+static wxMenuItem* GetOpenRecentSubMenu(wxFrame* frame, wxMenu** submenu, int menuid)
 {
-   return frame->GetMenuBar()->FindItem(wxID_FILE1, submenu);
+   return frame->GetMenuBar()->FindItem(menuid, submenu);
 }
 
 void wxRecentFileList::MenuAdd(wxFrame* frame)
 {
    wxMenu* submenu;
-   wxMenuItem* item = ::GetOpenRecentSubMenu(frame, &submenu);
+   wxMenuItem* item = ::GetOpenRecentSubMenu(frame, &submenu, m_menuid);
    submenu->Delete(item);
-   m_docManager->FileHistoryUseMenu(submenu);
-   m_docManager->GetFileHistory()->AddFilesToMenu(submenu);
+   m_fileHistory->UseMenu(submenu);
+   m_fileHistory->AddFilesToMenu(submenu);
 }
 
 void wxRecentFileList::MenuRemove(wxFrame* frame)
 {
    wxMenu* submenu;
-   ::GetOpenRecentSubMenu(frame, &submenu);
-   m_docManager->FileHistoryRemoveMenu(submenu);
+   ::GetOpenRecentSubMenu(frame, &submenu, m_menuid);
+   m_fileHistory->RemoveMenu(submenu);
 }
 
 void wxRecentFileList::Load(wxConfigBase* config)
 {
    if (NULL == config) config = wxConfigBase::Get();
    config->SetPath(wxT("MRU"));
-   m_docManager->FileHistoryLoad(*config);
+   m_fileHistory->Load(*config);
    config->SetPath(wxT("/"));
 }
 
@@ -465,13 +465,13 @@ void wxRecentFileList::Save(wxConfigBase* config)
 {
    if (NULL == config) config = wxConfigBase::Get();
    config->SetPath(wxT("MRU"));
-   m_docManager->FileHistorySave(*config);
+   m_fileHistory->Save(*config);
    config->SetPath(wxT("/"));
 }
 
 wxFileHistory* wxRecentFileList::GetImplementation() const
 {
-   return m_docManager->GetFileHistory();
+   return m_fileHistory;
 }
 
 bool wxRecentFileList::GetFile(size_t index, wxFileName* str) const

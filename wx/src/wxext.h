@@ -144,10 +144,11 @@ class wxConfigBase;
 class wxRecentFileList
 {
 protected:
-   wxDocManager* m_docManager;
+   wxFileHistory* m_fileHistory;
+   int m_menuid;
 
 public:
-   wxRecentFileList(wxDocManager*);
+   wxRecentFileList(wxFileHistory*, int menuid = wxID_FILE1);
 
    void Load(wxConfigBase* config = NULL);
    void Save(wxConfigBase* config = NULL);

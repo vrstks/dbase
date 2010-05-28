@@ -45,7 +45,7 @@ wxDocument* DocManager::CreateDocument(const wxString& path, long flags)
 wxDocManager* App::CreateDocManager()
 {
    wxDocManager* docManager = new DocManager();
-   m_mru = new wxRecentFileList(docManager);
+   m_mru = new wxRecentFileList(docManager->GetFileHistory());
    new wxDocTemplate(docManager, wxT("dBASE III Files"), wxT("*.")wxT(FILEEXT_DBASE),
       wxT(""), wxT(FILEEXT_DBASE), wxT("dbf doc"), wxT("dbf view"),
           CLASSINFO(wxDBFDoc), CLASSINFO(wxDBFView));
