@@ -65,12 +65,12 @@ bool wxDBFDoc::IsModified(void) const
 
 void wxDBFDoc::Modify(bool mod)
 {
-   wxDocument::Modify(mod);
+   base::Modify(mod);
 }
 
 bool wxDBFDoc::OnCloseDocument()
 {
-   bool ok = wxDocument::OnCloseDocument();
+   bool ok = base::OnCloseDocument();
    if (m_database->IsOpen()) m_database->Close();
    return ok;
 }
@@ -88,7 +88,7 @@ bool wxDBFDoc::IsEditable(void) const
    bool ok = (!filename.IsOk()) || filename.FileExists();
    if (ok)
    {
-      doc = (wxDBFDoc*)docManager->wxDocManager::CreateDocument(filename.GetFullPath(), flags);
+      doc = wxStaticCast(docManager->wxDocManager::CreateDocument(filename.GetFullPath(), flags), wxDBFDoc);
       if (doc && (wxDOC_NEW == flags))
       {
          ok = doc->Save();

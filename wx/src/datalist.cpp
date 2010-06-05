@@ -115,18 +115,9 @@ void wxDataListCtrl::Fill()
    Refresh();
 }
 
-/*
-wxString wxDataListCtrl::Format(long col, const wxVariant& var) const
-{
-   wxDataListCtrl* pThis = (wxDataListCtrl*)this;
-   wxString str;
-   str = var.MakeString();
-   return str;
-}
-*/
 wxString wxDataListCtrl::OnGetItemText(long item, long col) const
 {
-   wxDataListCtrl* pThis = (wxDataListCtrl*)this;
+   wxDataListCtrl* pThis = wxStaticCast(this, wxDataListCtrl);
    wxDataModelBase* db = pThis->GetModel(); // unconst
    wxString str;
    wxRowCol rowcol;
@@ -143,10 +134,10 @@ wxString wxDataListCtrl::OnGetItemText(long item, long col) const
 
 wxListItemAttr* wxDataListCtrl::OnGetItemAttr(long item) const
 {
-   wxDataModelBase* db = ((wxDataListCtrl*)this)->GetModel(); // unconst
+   wxDataModelBase* db = wxStaticCast(this, wxDataListCtrl)->GetModel(); // unconst
    const bool bDeleted = db->IsRowDeleted(item);
    const enum attr attr = bDeleted ? ENUM_attr_deleted : ENUM_attr_none;
-   return (attr != ENUM_attr_none) ? (wxListItemAttr*)(m_attr + attr) : wxListCtrl::OnGetItemAttr(item);
+   return (attr != ENUM_attr_none) ? (wxListItemAttr*)(m_attr + attr) : base::OnGetItemAttr(item);
 }
 
 bool wxDataListCtrl::IsRecordOk(size_t index)
@@ -282,14 +273,14 @@ void wxDataListCtrl::OnEndLabelEdit(wxListEvent& event)
          rowcol.col = m_column_clicked;
          if (ok) ok = db->SetValue(var, rowcol);
       }
-      if (!ok) wxMessageBox(wxT("Failed"));
+      if (!ok) wxMessageBox(_("Failed"));
    }
    m_column_clicked = -1;
 }
 
 bool wxDataListCtrl::IsOpen() const
 {
-   const wxDataModelBase* db = ((wxDataListCtrl*)this)->GetModel(); // unconst
+   const wxDataModelBase* db = wxStaticCast(this, wxDataListCtrl)->GetModel(); // unconst
    return db && db->IsOpen();
 }
 

@@ -25,6 +25,7 @@ END_EVENT_TABLE()
 
 class wxFieldEdit : public wxTextCtrl
 {
+   typedef wxTextCtrl base;
    DECLARE_DYNAMIC_CLASS(wxFieldEdit)
 public:
    wxRect m_fixate;
@@ -59,7 +60,7 @@ bool wxDBFListCtrl::Edit(size_t row, int col)
    {
       EnsureVisible(row);
       m_column_clicked = col;
-      wxFieldEdit* edit = (wxFieldEdit*)EditLabel(row, CLASSINFO(wxFieldEdit));
+      wxFieldEdit* edit = wxStaticCast(EditLabel(row, CLASSINFO(wxFieldEdit)), wxFieldEdit);
       ok = (NULL != edit);
       if (ok)
       {

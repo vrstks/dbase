@@ -67,7 +67,7 @@ public:
 bool wxDBFView::OnCreate(wxDocument* doc, long WXUNUSED(flags) )
 {
    m_frame = wxGetApp().NewFrame(doc, this);
-   m_list = new MyDBFListCtrl(m_frame, (wxDBFDoc*)doc);
+   m_list = new MyDBFListCtrl(m_frame, wxStaticCast(doc, wxDBFDoc));
    m_frame->SetTitle(wxT("wxDBFView"));
    m_frame->Show(true);
    Activate(true);

@@ -11,6 +11,7 @@
 class wxDataModelBase;
 class wxDataListCtrl : public wxListView
 {
+   typedef wxListView base;
 //   DECLARE_CLASS(wxDataListCtrl)
 // Attributes
 public:
