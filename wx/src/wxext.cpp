@@ -441,19 +441,21 @@ wxString wxGetStockLabelEx(wxWindowID id, long flags)
 /////////////////////////////////////////////////////////////////////////////
 // wxRecentFileList
 
-wxRecentFileList::wxRecentFileList(wxFileHistory* fileHistory, int menuid) : m_fileHistory(fileHistory), m_menuid(menuid)
+wxRecentFileList::wxRecentFileList(wxFileHistory* fileHistory) : m_fileHistory(fileHistory)
 {
 }
 
-static wxMenuItem* GetOpenRecentSubMenu(wxFrame* frame, wxMenu** submenu, int menuid)
+wxMenuItem* wxRecentFileList::GetSubMenu(wxFrame* frame, wxMenu** submenu) const
 {
-   return frame->GetMenuBar()->FindItem(menuid, submenu);
+   wxMenuItem* item = frame->GetMenuBar()->FindItem(m_fileHistory->GetBaseId(), submenu);
+   wxASSERT(item);
+   return item;
 }
 
 void wxRecentFileList::MenuAdd(wxFrame* frame)
 {
    wxMenu* submenu;
-   wxMenuItem* item = ::GetOpenRecentSubMenu(frame, &submenu, m_menuid);
+   wxMenuItem* item = GetSubMenu(frame, &submenu);
    submenu->Delete(item);
    m_fileHistory->UseMenu(submenu);
    m_fileHistory->AddFilesToMenu(submenu);
@@ -462,7 +464,7 @@ void wxRecentFileList::MenuAdd(wxFrame* frame)
 void wxRecentFileList::MenuRemove(wxFrame* frame)
 {
    wxMenu* submenu;
-   ::GetOpenRecentSubMenu(frame, &submenu, m_menuid);
+   GetSubMenu(frame, &submenu);
    m_fileHistory->RemoveMenu(submenu);
 }
 
