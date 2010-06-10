@@ -37,8 +37,9 @@
 #define CPM_TEXT_TERMINATOR 0x1A
 #define MAGIC_DBASE3      0x03
 #define MAGIC_DBASE3_MEMO 0x83
+#define MAGIC_DBASE3_MEMO_2 0x8B
 #define MAGIC_DBASE4      0x04
-#define MAGIC_DBASE4_MEMO 0x8B
+#define MAGIC_DBASE4_MEMO 0x84
 #define MAGIC_FOXPRO      0x30
 #define MAGIC_DBASE_DEFAULT      MAGIC_DBASE3
 #define MAGIC_DBASE_DEFAULT_MEMO MAGIC_DBASE3_MEMO
@@ -318,6 +319,7 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
          break;
       case MAGIC_DBASE3:
       case MAGIC_DBASE3_MEMO:
+      case MAGIC_DBASE3_MEMO_2:
       case MAGIC_FOXPRO:
       default:
          len+=ZREAD(*api, stream, &header.v3.lastupdate, sizeof(header.v3) - sizeof(header.version));
@@ -329,6 +331,7 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
    {
       case MAGIC_DBASE3:
       case MAGIC_DBASE3_MEMO:
+      case MAGIC_DBASE3_MEMO_2:
       case MAGIC_DBASE4:
       case MAGIC_DBASE4_MEMO:
       case MAGIC_FOXPRO:
@@ -436,6 +439,7 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
             switch (header.version)
             {
                case MAGIC_DBASE3_MEMO:
+               case MAGIC_DBASE3_MEMO_2:
                case MAGIC_DBASE4_MEMO:
                   dbf_memo_attach(handle, memo);
                   break;
@@ -570,6 +574,7 @@ DBF_HANDLE dbf_open(const char* file, zlib_filefunc_def* api, BOOL editable, enu
          switch (handle->diskversion)
          {
             case MAGIC_DBASE3_MEMO:
+            case MAGIC_DBASE3_MEMO_2:
             case MAGIC_DBASE4_MEMO:
                break;
             default:
@@ -1825,5 +1830,5 @@ static char* strdup_host2dos(const char* src, size_t len, enum dbf_charconv mode
 
 const char* dbf_libversionstring()
 {
-   return "dbf library svn r192";
+   return "dbf library svn r202";
 }

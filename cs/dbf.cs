@@ -71,8 +71,9 @@ namespace FlatDatabase.DBase
       public const int FileTitleLen = 8;
       public const int MAGIC_DBASE3      = 0x03;
       public const int MAGIC_DBASE3_MEMO = 0x83;
-      public const int MAGIC_DBASE4      = 0x04;
-      public const int MAGIC_DBASE4_MEMO = 0x8B;
+      public const int MAGIC_DBASE3_MEMO_2 = 0x8B;
+      public const int MAGIC_DBASE4 = 0x04;
+      public const int MAGIC_DBASE4_MEMO = 0x84;
       public const int MAGIC_FOXPRO      = 0x30;
       public const int MAGIC_DBASE_DEFAULT = MAGIC_DBASE3;
       public const int MAGIC_DBASE_DEFAULT_MEMO = MAGIC_DBASE3_MEMO;
@@ -81,7 +82,7 @@ namespace FlatDatabase.DBase
       public const string FileExtMemo = "dbt";
       public const int RECORD_POS_DELETED = 0;
       public const int RECORD_POS_DATA = 1;
-      public const string VersionString = "dbf library svn r186";
+      public const string VersionString = "dbf library svn r202";
 
       static Const()
       {
@@ -560,6 +561,7 @@ namespace FlatDatabase.DBase
                      break;
                   case Const.MAGIC_DBASE3:
                   case Const.MAGIC_DBASE3_MEMO:
+                  case Const.MAGIC_DBASE3_MEMO_2:
                   case Const.MAGIC_FOXPRO:
                   default:
                      len_header = Marshal.SizeOf(typeof(DBF_FILEHEADER_3));
@@ -587,6 +589,7 @@ namespace FlatDatabase.DBase
                      }
                      case Const.MAGIC_DBASE3:
                      case Const.MAGIC_DBASE3_MEMO:
+                     case Const.MAGIC_DBASE3_MEMO_2:
                      case Const.MAGIC_FOXPRO:
                      default:
                      {
@@ -630,6 +633,7 @@ namespace FlatDatabase.DBase
                            }
                            case Const.MAGIC_DBASE3:
                            case Const.MAGIC_DBASE3_MEMO:
+                           case Const.MAGIC_DBASE3_MEMO_2:
                            case Const.MAGIC_FOXPRO:
                            default:
                            {
