@@ -35,7 +35,7 @@ MainFrame::MainFrame(wxDocManager* manager, wxFrame* frame, const wxString& titl
 #endif
    wxMenuBar* menu = wxXmlResource::Get()->LoadMenuBar(wxT("menu_mdi"));
    SetMenuBar(menu);
-   wxGetApp().GetRecentFileList()->MenuAdd(this);
+   wxGetApp().GetRecentFileList()->Attach(this);
 #ifndef __WXMAC__
    Show(true);
 #endif //ndef __WXMAC__

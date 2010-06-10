@@ -445,27 +445,34 @@ wxRecentFileList::wxRecentFileList(wxFileHistory* fileHistory) : m_fileHistory(f
 {
 }
 
-wxMenuItem* wxRecentFileList::GetSubMenu(wxFrame* frame, wxMenu** submenu) const
+wxMenuItem* wxRecentFileList::GetSubMenu(wxMenu** submenu) const
 {
-   wxMenuItem* item = frame->GetMenuBar()->FindItem(m_fileHistory->GetBaseId(), submenu);
+   wxMenuItem* item = m_menubar->FindItem(m_fileHistory->GetBaseId(), submenu);
    wxASSERT(item);
    return item;
 }
 
-void wxRecentFileList::MenuAdd(wxFrame* frame)
+void wxRecentFileList::Attach(wxMenuBar* menubar)
 {
+   m_menubar = menubar;
    wxMenu* submenu;
-   wxMenuItem* item = GetSubMenu(frame, &submenu);
+   wxMenuItem* item = GetSubMenu(&submenu);
    submenu->Delete(item);
    m_fileHistory->UseMenu(submenu);
    m_fileHistory->AddFilesToMenu(submenu);
 }
 
-void wxRecentFileList::MenuRemove(wxFrame* frame)
+void wxRecentFileList::Attach(wxFrame* frame)
+{
+   Attach(frame->GetMenuBar());
+}
+
+void wxRecentFileList::Detach()
 {
    wxMenu* submenu;
-   GetSubMenu(frame, &submenu);
+   GetSubMenu(&submenu);
    m_fileHistory->RemoveMenu(submenu);
+   m_menubar = NULL;
 }
 
 void wxRecentFileList::Load(wxConfigBase* config)

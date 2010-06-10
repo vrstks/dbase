@@ -20,7 +20,7 @@ wxDBFFrame::wxDBFFrame(wxDocument* doc, wxView* view, wxMDIParentFrame* parent)
    wxMenuBar* menu = wxXmlResource::Get()->LoadMenuBar(wxT("menu_dbf"));
    ::wxMenuBar_Fixup(menu, wxGetApp().GetAccelerator());
    SetMenuBar(menu);
-   wxGetApp().GetRecentFileList()->MenuAdd(this);
+   wxGetApp().GetRecentFileList()->Attach(this);
 }
 
 BEGIN_EVENT_TABLE(wxDBFFrame, wxDocMDIChildFrame)
@@ -28,7 +28,7 @@ END_EVENT_TABLE()
 
 wxDBFFrame::~wxDBFFrame()
 {
-   wxGetApp().GetRecentFileList()->MenuRemove(this);
+   wxGetApp().GetRecentFileList()->Detach();
 }
 
 #if (wxVERSION_NUMBER < 2900)
