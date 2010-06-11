@@ -445,21 +445,27 @@ wxRecentFileList::wxRecentFileList(wxFileHistory* fileHistory) : m_fileHistory(f
 {
 }
 
-wxMenuItem* wxRecentFileList::GetSubMenu(wxMenu** submenu) const
+wxMenuItem* wxRecentFileList::GetSubMenu(wxMenuBar* menubar, wxMenu** submenu) const
 {
-   wxMenuItem* item = m_menubar->FindItem(m_fileHistory->GetBaseId(), submenu);
+   wxMenuItem* item = menubar->FindItem(m_fileHistory->GetBaseId(), submenu);
    wxASSERT(item);
    return item;
 }
 
 void wxRecentFileList::Attach(wxMenuBar* menubar)
 {
-   m_menubar = menubar;
    wxMenu* submenu;
-   wxMenuItem* item = GetSubMenu(&submenu);
+   wxMenuItem* item = GetSubMenu(menubar, &submenu);
    submenu->Delete(item);
    m_fileHistory->UseMenu(submenu);
    m_fileHistory->AddFilesToMenu(submenu);
+}
+
+void wxRecentFileList::Detach(wxMenuBar* menubar)
+{
+   wxMenu* submenu;
+   GetSubMenu(menubar, &submenu);
+   m_fileHistory->RemoveMenu(submenu);
 }
 
 void wxRecentFileList::Attach(wxFrame* frame)
@@ -467,12 +473,9 @@ void wxRecentFileList::Attach(wxFrame* frame)
    Attach(frame->GetMenuBar());
 }
 
-void wxRecentFileList::Detach()
+void wxRecentFileList::Detach(wxFrame* frame)
 {
-   wxMenu* submenu;
-   GetSubMenu(&submenu);
-   m_fileHistory->RemoveMenu(submenu);
-   m_menubar = NULL;
+   Detach(frame->GetMenuBar());
 }
 
 void wxRecentFileList::Load(wxConfigBase* config)

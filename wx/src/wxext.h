@@ -145,7 +145,6 @@ class wxRecentFileList
 {
 protected:
    wxFileHistory* m_fileHistory;
-   wxMenuBar    * m_menubar;
 
 public:
    wxRecentFileList(wxFileHistory*);
@@ -153,15 +152,16 @@ public:
    void Load(wxConfigBase* config = NULL);
    void Save(wxConfigBase* config = NULL);
 
-   void Attach(wxFrame*);
    void Attach(wxMenuBar*);
-   void Detach();
+   void Attach(wxFrame*);
+   void Detach(wxMenuBar*);
+   void Detach(wxFrame*);
 
    wxFileHistory* GetImplementation() const;
 
    bool GetFile(size_t, wxFileName*) const;
 protected:
-   wxMenuItem* GetSubMenu(wxMenu**) const;
+   wxMenuItem* GetSubMenu(wxMenuBar*, wxMenu**) const;
 };
 
 class wxDocument;

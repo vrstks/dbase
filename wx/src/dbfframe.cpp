@@ -28,7 +28,7 @@ END_EVENT_TABLE()
 
 wxDBFFrame::~wxDBFFrame()
 {
-   wxGetApp().GetRecentFileList()->Detach();
+   wxGetApp().GetRecentFileList()->Detach(this);
 }
 
 #if (wxVERSION_NUMBER < 2900)
