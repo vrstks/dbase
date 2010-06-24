@@ -11,7 +11,7 @@
 
 #ifndef OPENCLOSECLASS_DEFINED
 #define OPENCLOSECLASS_DEFINED
-class COpenClose
+class OpenCloseClass
 {
 public:
    virtual void Close() = 0;
@@ -19,7 +19,7 @@ public:
 };
 #endif
 
-class CDBase : public COpenClose
+class CDBase : public OpenCloseClass
 {
 public:
    CDBase();
