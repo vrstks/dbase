@@ -34,7 +34,7 @@ BEGIN
             VALUE "InternalName", "wxDBF\0"
             VALUE "LegalCopyright", "Copyright © 2008-2010 Troels K\0"
             VALUE "LegalTrademarks", "\0"
-            VALUE "OriginalFilename", "wxDBF.exe\0"
+            VALUE "OriginalFilename", "wxdbf.exe\0"
             VALUE "PrivateBuild", "\0"
             VALUE "ProductName", "wxdbf\0"
             VALUE "ProductVersion", "1, 0, 0, 0\0"

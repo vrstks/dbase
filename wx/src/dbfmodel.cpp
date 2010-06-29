@@ -2,9 +2,9 @@
 // Copyright (c) 2007-2010 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
-#include <wx/dataview.h>
-#include <wx/txtstrm.h>
-#include <wx/filename.h>
+#include "wx/dataview.h"
+#include "wx/txtstrm.h"
+#include "wx/filename.h"
 #include "../../ioapi/zlib.h"
 #include "../../ioapi/ioapi.h"
 

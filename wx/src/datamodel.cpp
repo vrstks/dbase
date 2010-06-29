@@ -2,13 +2,10 @@
 // Copyright (c) 2007-2010 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
-#include <wx/wx.h>
-#include <wx/dataview.h>
+#include "wx/wx.h"
+#include "wx/dataview.h"
 #include "datamodel.h"
-#include "../../bool.h"
-//#include "../../../code/str.h"
-
-#include <wx/hash.h>
+#include "wx/hash.h"
 
 int wxCALLBACK wxDataViewListModelSortedDefaultCompare
       (unsigned int row1, unsigned int row2, unsigned int col, wxDataModelBase* model )
