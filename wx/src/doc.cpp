@@ -18,6 +18,7 @@ class DocManager : public wxDocManagerEx
 {
    typedef wxDocManagerEx base;
 public:
+   DocManager();
    virtual wxDocument * CreateDocument(const wxString& path, long flags);
    DECLARE_EVENT_TABLE()
 };
@@ -42,18 +43,35 @@ wxDocument* DocManager::CreateDocument(const wxString& path, long flags)
    return doc;
 }
 
+class DatabaseDocTemplate : public wxDocTemplate
+{
+private:
+   DatabaseDocTemplate(wxDocManager* docManager) : wxDocTemplate(docManager, _("dBASE Files"), wxT("*.")wxT(FILEEXT_DBASE),
+      wxT(""), wxT(FILEEXT_DBASE), wxT("dbf doc"), wxT("dbf view"),
+          CLASSINFO(wxDBFDoc), CLASSINFO(wxDBFView))
+   {
+   }
+public:
+   static DatabaseDocTemplate* Create(wxDocManager* docManager)
+   {
+      return new DatabaseDocTemplate(docManager);
+   }
+};
+
+DocManager::DocManager() : wxDocManagerEx()
+{
+   DatabaseDocTemplate::Create(this);
+}
+
 wxDocManager* App::CreateDocManager()
 {
-   wxDocManager* docManager = new DocManager();
+   DocManager* docManager = new DocManager();
    m_mru = new wxRecentFileList(docManager->GetFileHistory());
-   new wxDocTemplate(docManager, wxT("dBASE III Files"), wxT("*.")wxT(FILEEXT_DBASE),
-      wxT(""), wxT(FILEEXT_DBASE), wxT("dbf doc"), wxT("dbf view"),
-          CLASSINFO(wxDBFDoc), CLASSINFO(wxDBFView));
    return docManager;
 }
 
-wxMDIChildFrame* App::NewFrame(wxDocument* doc, wxView* view)
+wxMDIChildFrame* App::NewFrame(wxDocument* doc)
 {
-   wxDocMDIChildFrame* subframe = new wxDBFFrame(doc, view, GetMainFrame());   
+   wxDocMDIChildFrame* subframe = new wxDBFFrame(doc, GetMainFrame());   
    return subframe;
 }

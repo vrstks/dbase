@@ -17,12 +17,12 @@ class wxDBFView : public wxView
 
 // Attributes
 public:
-   wxMDIChildFrame* m_frame;
    wxDBFListCtrl* m_list;
   
    wxDBFView();
 
    wxDBFDoc* GetDocument() const;
+   //wxMDIChildFrame* GetFrame() const;
 
 // Implementation
 public:

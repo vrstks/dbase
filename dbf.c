@@ -1830,5 +1830,5 @@ static char* strdup_host2dos(const char* src, size_t len, enum dbf_charconv mode
 
 const char* dbf_libversionstring()
 {
-   return "dbf library svn r203";
+   return "dbf library svn r207";
 }

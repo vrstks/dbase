@@ -12,7 +12,7 @@ class wxDBFFrame : public wxDocMDIChildFrame
 {
    typedef wxDocMDIChildFrame base;
 public:
-   wxDBFFrame(wxDocument*, wxView*, wxMDIParentFrame*);
+   wxDBFFrame(wxDocument*, wxMDIParentFrame*);
 
    virtual ~wxDBFFrame();
 #if (wxVERSION_NUMBER < 2900)

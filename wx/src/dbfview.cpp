@@ -17,7 +17,7 @@
 
 IMPLEMENT_DYNAMIC_CLASS(wxDBFView, wxView)
 
-wxDBFView::wxDBFView() : wxView(), m_frame(NULL), m_list(NULL)
+wxDBFView::wxDBFView() : wxView(), m_list(NULL)
 {
 }
 
@@ -66,10 +66,12 @@ public:
 
 bool wxDBFView::OnCreate(wxDocument* doc, long WXUNUSED(flags) )
 {
-   m_frame = wxGetApp().NewFrame(doc, this);
-   m_list = new MyDBFListCtrl(m_frame, wxStaticCast(doc, wxDBFDoc));
-   m_frame->SetTitle(wxT("wxDBFView"));
-   m_frame->Show(true);
+   wxASSERT(doc->GetFirstView() == this);
+   wxMDIChildFrame* frame = wxGetApp().NewFrame(doc);
+   SetFrame(frame);
+   m_list = new MyDBFListCtrl(frame, wxStaticCast(doc, wxDBFDoc));
+   frame->SetTitle(wxT("wxDBFView"));
+   frame->Show(true);
    Activate(true);
    return true;
 }
@@ -107,7 +109,8 @@ bool wxDBFView::OnClose(bool deleteWindow)
       Activate(false);
       if (deleteWindow)
       {
-         wxDELETE(m_frame);
+         delete GetFrame();
+         SetFrame(NULL);
       }
    }
    return ok;
@@ -131,24 +134,26 @@ bool wxClipboard_Set(const wxString& str)
 
 void wxDBFView::OnStructClipboard(wxCommandEvent&)
 {
-   const wxString str = ::dbf_getstruct_c(GetDocument()->GetTablename(), GetDocument()->GetDatabase());
+   const wxDBFDoc* doc = GetDocument();
+   const wxString str = ::dbf_getstruct_c(doc->GetTablename(), doc->GetDatabase());
    bool ok = wxClipboard_Set(str);
    ::wxMessageBox(ok ? _("Struct is now on the Clipboard") : _("Failed to open clipboard"),
-      wxMessageBoxCaption, wxOK | wxCENTRE, m_frame);
+      wxMessageBoxCaption, wxOK | wxCENTRE, doc->GetDocumentWindow());
 }
 
 void wxDBFView::OnProperties(wxCommandEvent&)
 {
+   const wxDBFDoc* doc = GetDocument();
    wxArrayString as;
    //::dbf_getproperties(GetDocument()->GetDatabase(), &as);
 
-   ::wxDocument_Info(GetDocument(), &as);
+   ::wxDocument_Info(doc, &as);
 
-   wxDBFModel datamodel(GetDocument()->GetDatabase());
+   wxDBFModel datamodel(doc->GetDatabase());
    datamodel.GetProperties(&as, true);
 
    wxString str = wxJoin(as, wxT('\n'));
-   ::wxMessageBox(str, wxMessageBoxCaption, wxOK | wxCENTRE, m_frame);
+   ::wxMessageBox(str, wxMessageBoxCaption, wxOK | wxCENTRE, doc->GetDocumentWindow());
 }
 
 void wxDBFView::OnSelectAll(wxCommandEvent&)
@@ -186,7 +191,8 @@ void wxDBFView::OnUpdateNeedSel(wxUpdateUIEvent& event)
 
 void wxDBFView::OnDeleteAll(wxCommandEvent&)
 {
-   if (wxOK == wxMessageBox(_("Delete all?"), wxMessageBoxCaption, wxOK | wxCANCEL | wxICON_QUESTION, m_frame))
+   const wxDBFDoc* doc = GetDocument();
+   if (wxOK == wxMessageBox(_("Delete all?"), wxMessageBoxCaption, wxOK | wxCANCEL | wxICON_QUESTION, doc->GetDocumentWindow()))
    {
       m_list->DeleteAll(true);
    }
@@ -194,7 +200,8 @@ void wxDBFView::OnDeleteAll(wxCommandEvent&)
 
 void wxDBFView::OnDelete(wxCommandEvent&)
 {
-   if (wxOK == wxMessageBox(_("Delete selection?"), wxMessageBoxCaption, wxOK | wxCANCEL | wxICON_QUESTION, m_frame))
+   const wxDBFDoc* doc = GetDocument();
+   if (wxOK == wxMessageBox(_("Delete selection?"), wxMessageBoxCaption, wxOK | wxCANCEL | wxICON_QUESTION, doc->GetDocumentWindow()))
    {
       m_list->DeleteSelection(true);
    }
