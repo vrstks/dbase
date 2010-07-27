@@ -31,18 +31,24 @@ wxDBFFrame::~wxDBFFrame()
    wxGetApp().GetRecentFileList()->Detach(this);
 }
 
-#if (wxVERSION_NUMBER < 2900)
+#if (wxVERSION_NUMBER < 2900) // trac.wxwidgets.org/ticket/11442
 void wxDBFFrame::DoGiveHelp(const wxString& text, bool show)
 {
-#ifdef __WXMSW__
-   wxMDIParentFrame* frame = wxStaticCast(GetParent(), wxMDIParentFrame);
+   wxMDIParentFrame* frame = GetMDIParent();
    frame->DoGiveHelp(text, show);
-#elif __WXGTK__
-   wxMDIParentFrame* frame = wxStaticCast(m_parent->GetParent(), wxMDIParentFrame);
-   frame->DoGiveHelp(text, show); // this works, MSW+GTK
-#else
-   base::DoGiveHelp(text, show);
-#endif
+   //base::DoGiveHelp(text, show);
 }
 #endif
 
+#if (wxVERSION_NUMBER < 2900) // trac.wxwidgets.org/ticket/8988
+wxMDIParentFrame* wxDBFFrame::GetMDIParent() const
+{
+#ifdef __WXMSW__
+   return wxStaticCast(base::GetParent(), wxMDIParentFrame);
+#elif __WXGTK__
+   return wxStaticCast(m_parent->GetParent(), wxMDIParentFrame);
+#else
+   #error
+#endif
+}
+#endif

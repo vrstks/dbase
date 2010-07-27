@@ -14,6 +14,10 @@ class wxDBFFrame : public wxDocMDIChildFrame
 public:
    wxDBFFrame(wxDocument*, wxMDIParentFrame*);
 
+#if (wxVERSION_NUMBER < 2900)
+   wxMDIParentFrame* GetMDIParent() const;
+#endif
+
    virtual ~wxDBFFrame();
 #if (wxVERSION_NUMBER < 2900)
    // To get statusbar menu help
