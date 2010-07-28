@@ -49,10 +49,10 @@ END_EVENT_TABLE()
 
 class MyDBFListCtrl : public wxDBFListCtrl
 {
-public:
+protected:
    wxDBFDoc* m_doc;
    wxDBFModel m_datamodel;
-
+public:
    MyDBFListCtrl(wxWindow* parent, wxDBFDoc* doc) : 
       wxDBFListCtrl(parent, wxPoint(0, 0), parent->GetClientSize(), wxLC_REPORT | wxLC_VIRTUAL | wxLC_EDIT_LABELS),
          m_doc(doc), m_datamodel(doc->GetDatabase())
@@ -70,7 +70,6 @@ bool wxDBFView::OnCreate(wxDocument* doc, long WXUNUSED(flags) )
    wxMDIChildFrame* frame = wxGetApp().NewFrame(doc);
    SetFrame(frame);
    m_list = new MyDBFListCtrl(frame, wxStaticCast(doc, wxDBFDoc));
-   frame->SetTitle(wxT("wxDBFView"));
    frame->Show(true);
    Activate(true);
    return true;

@@ -20,10 +20,9 @@ App::App(void) : wxAppEx(), m_mru(NULL)
 
 bool App::OnInit(void)
 {
-   bool ok = wxApp::OnInit();
+   bool ok = base::OnInit();
    if (ok)
    {
-      //_tsetlocale(LC_ALL, wxT(""));
       m_locale.Init();
 
       SetVendorName(wxT("Troels K"));

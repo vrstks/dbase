@@ -22,7 +22,6 @@ public:
    wxDBFView();
 
    wxDBFDoc* GetDocument() const;
-   //wxMDIChildFrame* GetFrame() const;
 
 // Implementation
 public:
