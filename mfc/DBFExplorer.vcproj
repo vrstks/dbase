@@ -16,7 +16,7 @@
 	</ToolFiles>
 	<Configurations>
 		<Configuration
-			Name="Unicode Debug|Win32"
+			Name="DLL Unicode Debug|Win32"
 			OutputDirectory=".\..\..\vc9\debug\dbfexplorer\unicode"
 			IntermediateDirectory=".\..\..\vc9\debug\dbfexplorer\unicode"
 			ConfigurationType="1"
@@ -110,7 +110,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Debug|Win32"
+			Name="DLL Debug|Win32"
 			OutputDirectory=".\..\..\vc9\debug\dbfexplorer"
 			IntermediateDirectory=".\..\..\vc9\debug\dbfexplorer"
 			ConfigurationType="1"
@@ -403,7 +403,7 @@
 				RelativePath="src\AboutDlg.cpp"
 				>
 				<FileConfiguration
-					Name="Unicode Debug|Win32"
+					Name="DLL Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -412,7 +412,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug|Win32"
+					Name="DLL Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -443,7 +443,7 @@
 				RelativePath="src\AddFieldDlg.cpp"
 				>
 				<FileConfiguration
-					Name="Unicode Debug|Win32"
+					Name="DLL Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -452,7 +452,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug|Win32"
+					Name="DLL Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -483,7 +483,7 @@
 				RelativePath="src\ChildFrm.cpp"
 				>
 				<FileConfiguration
-					Name="Unicode Debug|Win32"
+					Name="DLL Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -492,7 +492,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug|Win32"
+					Name="DLL Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -523,7 +523,7 @@
 				RelativePath="src\DBFExplorer.cpp"
 				>
 				<FileConfiguration
-					Name="Unicode Debug|Win32"
+					Name="DLL Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -532,7 +532,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug|Win32"
+					Name="DLL Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -563,7 +563,7 @@
 				RelativePath="src\DBFExplorer.rc"
 				>
 				<FileConfiguration
-					Name="Unicode Debug|Win32"
+					Name="DLL Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCResourceCompilerTool"
@@ -572,7 +572,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug|Win32"
+					Name="DLL Debug|Win32"
 					>
 					<Tool
 						Name="VCResourceCompilerTool"
@@ -603,7 +603,7 @@
 				RelativePath="src\DBFExplorerDoc.cpp"
 				>
 				<FileConfiguration
-					Name="Unicode Debug|Win32"
+					Name="DLL Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -612,7 +612,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug|Win32"
+					Name="DLL Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -643,7 +643,7 @@
 				RelativePath="src\DBFExplorerView.cpp"
 				>
 				<FileConfiguration
-					Name="Unicode Debug|Win32"
+					Name="DLL Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -652,7 +652,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug|Win32"
+					Name="DLL Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -683,7 +683,7 @@
 				RelativePath="src\DialogResize.cpp"
 				>
 				<FileConfiguration
-					Name="Unicode Debug|Win32"
+					Name="DLL Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -692,7 +692,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug|Win32"
+					Name="DLL Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -723,7 +723,7 @@
 				RelativePath="src\ExportFileDialog.cpp"
 				>
 				<FileConfiguration
-					Name="Unicode Debug|Win32"
+					Name="DLL Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -732,7 +732,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug|Win32"
+					Name="DLL Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -763,7 +763,7 @@
 				RelativePath="src\FieldEdit.cpp"
 				>
 				<FileConfiguration
-					Name="Unicode Debug|Win32"
+					Name="DLL Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -772,7 +772,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug|Win32"
+					Name="DLL Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -803,7 +803,7 @@
 				RelativePath="src\MainFrm.cpp"
 				>
 				<FileConfiguration
-					Name="Unicode Debug|Win32"
+					Name="DLL Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -812,7 +812,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug|Win32"
+					Name="DLL Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -843,7 +843,7 @@
 				RelativePath="src\MemoEditorDlg.cpp"
 				>
 				<FileConfiguration
-					Name="Unicode Debug|Win32"
+					Name="DLL Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -852,7 +852,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug|Win32"
+					Name="DLL Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -891,7 +891,7 @@
 				RelativePath="src\RecordListBox.cpp"
 				>
 				<FileConfiguration
-					Name="Unicode Debug|Win32"
+					Name="DLL Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -900,7 +900,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug|Win32"
+					Name="DLL Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -931,7 +931,7 @@
 				RelativePath="src\StaticLink.cpp"
 				>
 				<FileConfiguration
-					Name="Unicode Debug|Win32"
+					Name="DLL Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -940,7 +940,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug|Win32"
+					Name="DLL Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -971,7 +971,7 @@
 				RelativePath="src\StdAfx.cpp"
 				>
 				<FileConfiguration
-					Name="Unicode Debug|Win32"
+					Name="DLL Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -981,7 +981,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug|Win32"
+					Name="DLL Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1015,7 +1015,7 @@
 				RelativePath="src\StructureDlg.cpp"
 				>
 				<FileConfiguration
-					Name="Unicode Debug|Win32"
+					Name="DLL Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1024,7 +1024,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug|Win32"
+					Name="DLL Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1205,7 +1205,7 @@
 				RelativePath="..\ioapi\ioapi.c"
 				>
 				<FileConfiguration
-					Name="Unicode Debug|Win32"
+					Name="DLL Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1218,7 +1218,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug|Win32"
+					Name="DLL Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1263,7 +1263,7 @@
 				RelativePath="..\dbf.c"
 				>
 				<FileConfiguration
-					Name="Unicode Debug|Win32"
+					Name="DLL Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1271,7 +1271,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug|Win32"
+					Name="DLL Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1299,7 +1299,7 @@
 				RelativePath="..\dbf_mfc.cpp"
 				>
 				<FileConfiguration
-					Name="Unicode Debug|Win32"
+					Name="DLL Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1307,7 +1307,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug|Win32"
+					Name="DLL Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
