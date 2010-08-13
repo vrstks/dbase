@@ -4,18 +4,18 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DBFExplorer", "DBFExplorer.
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Win32 = Debug|Win32
+		DLL Debug|Win32 = DLL Debug|Win32
+		DLL Unicode Debug|Win32 = DLL Unicode Debug|Win32
 		Release|Win32 = Release|Win32
-		Unicode Debug|Win32 = Unicode Debug|Win32
 		Unicode Release|Win32 = Unicode Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{6255BB15-97D2-46FF-9BFD-8B5F59D96D26}.Debug|Win32.ActiveCfg = Debug|Win32
-		{6255BB15-97D2-46FF-9BFD-8B5F59D96D26}.Debug|Win32.Build.0 = Debug|Win32
+		{6255BB15-97D2-46FF-9BFD-8B5F59D96D26}.DLL Debug|Win32.ActiveCfg = DLL Debug|Win32
+		{6255BB15-97D2-46FF-9BFD-8B5F59D96D26}.DLL Debug|Win32.Build.0 = DLL Debug|Win32
+		{6255BB15-97D2-46FF-9BFD-8B5F59D96D26}.DLL Unicode Debug|Win32.ActiveCfg = DLL Unicode Debug|Win32
+		{6255BB15-97D2-46FF-9BFD-8B5F59D96D26}.DLL Unicode Debug|Win32.Build.0 = DLL Unicode Debug|Win32
 		{6255BB15-97D2-46FF-9BFD-8B5F59D96D26}.Release|Win32.ActiveCfg = Release|Win32
 		{6255BB15-97D2-46FF-9BFD-8B5F59D96D26}.Release|Win32.Build.0 = Release|Win32
-		{6255BB15-97D2-46FF-9BFD-8B5F59D96D26}.Unicode Debug|Win32.ActiveCfg = Unicode Debug|Win32
-		{6255BB15-97D2-46FF-9BFD-8B5F59D96D26}.Unicode Debug|Win32.Build.0 = Unicode Debug|Win32
 		{6255BB15-97D2-46FF-9BFD-8B5F59D96D26}.Unicode Release|Win32.ActiveCfg = Unicode Release|Win32
 		{6255BB15-97D2-46FF-9BFD-8B5F59D96D26}.Unicode Release|Win32.Build.0 = Unicode Release|Win32
 	EndGlobalSection
