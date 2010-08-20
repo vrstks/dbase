@@ -13,6 +13,7 @@
 #include "wxext.h"
 #include "../../bool.h"
 #include "../../dbf.h"
+#include "doc.h"
 
 class DocManager : public wxDocManagerEx
 {
@@ -20,6 +21,7 @@ class DocManager : public wxDocManagerEx
 public:
    DocManager();
    virtual wxDocument * CreateDocument(const wxString& path, long flags);
+protected:
    DECLARE_EVENT_TABLE()
 };
 
@@ -34,29 +36,9 @@ END_EVENT_TABLE()
 
 wxDocument* DocManager::CreateDocument(const wxString& path, long flags)
 {
-   //wxDocument* doc = base::CreateDocument(path, flags);
-   wxDocument* doc = wxDBFDoc::CreateDocument(this, wxFileName(path), flags);
-   if (doc && (wxDOC_NEW != flags))
-   {
-      AddFileToHistory(doc->GetFilename());
-   }
+   wxDocument* doc = base::CreateDocument(path, flags);
    return doc;
 }
-
-class DatabaseDocTemplate : public wxDocTemplate
-{
-private:
-   DatabaseDocTemplate(wxDocManager* docManager) : wxDocTemplate(docManager, _("dBASE Files"), wxT("*.")wxT(FILEEXT_DBASE),
-      wxT(""), wxT(FILEEXT_DBASE), wxT("dbf doc"), wxT("dbf view"),
-          CLASSINFO(wxDBFDoc), CLASSINFO(wxDBFView))
-   {
-   }
-public:
-   static DatabaseDocTemplate* Create(wxDocManager* docManager)
-   {
-      return new DatabaseDocTemplate(docManager);
-   }
-};
 
 DocManager::DocManager() : wxDocManagerEx()
 {
@@ -70,8 +52,26 @@ wxDocManager* App::CreateDocManager()
    return docManager;
 }
 
-wxMDIChildFrame* App::NewFrame(wxDocument* doc)
+/////////////////////////////////////////////////////////////////////////////
+// DatabaseDocTemplate
+
+IMPLEMENT_CLASS(DatabaseDocTemplate, wxDocTemplate)
+
+DatabaseDocTemplate::DatabaseDocTemplate(wxDocManager* docManager) : wxDocTemplate(docManager, _("dBASE Files"), wxT("*.")wxT(FILEEXT_DBASE),
+      wxT(""), wxT(FILEEXT_DBASE), wxT("dbf doc"), wxT("dbf view"),
+          CLASSINFO(wxDBFDoc), CLASSINFO(wxDBFView))
 {
-   wxDocMDIChildFrame* subframe = new wxDBFFrame(doc, GetMainFrame());   
-   return subframe;
 }
+
+/*static*/ DatabaseDocTemplate* DatabaseDocTemplate::Create(wxDocManager* docManager)
+{
+   return new DatabaseDocTemplate(docManager);
+}
+
+wxFrame* DatabaseDocTemplate::GetViewFrame(wxView* view)
+{
+   wxDocMDIChildFrame* frame = new wxDBFFrame(view->GetDocument(), wxStaticCast(wxTheApp->GetTopWindow(), wxMDIParentFrame));
+   return frame;
+}
+
+/////////////////////////////////////////////////////////////////////////////

@@ -15,7 +15,7 @@ class MainFrame : public wxDocMDIParentFrame
 public:
    MainFrame(wxDocManager*, wxFrame*, const wxString& title, 
       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, 
-      long type = wxDEFAULT_FRAME_STYLE);
+      long style = wxDEFAULT_FRAME_STYLE);
 
    wxToolBar* CreateToolBar();
 

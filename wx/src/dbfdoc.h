@@ -26,8 +26,6 @@ public:
       ENUM_hint_initialupdate = 123 // must be non-null
    };
 
-   static wxDocument* CreateDocument(wxDocManager*, const wxFileName&, long flags);
-
    wxDBase* GetDatabase(void) const { return m_database; }
    wxString GetTablename(void) const { return m_tablename; }
    bool IsEditable(void) const;
@@ -35,6 +33,7 @@ public:
 // Implementation
 public:
    virtual ~wxDBFDoc(void);
+   virtual bool OnNewDocument();
    virtual bool SaveAs();
    virtual bool DoSaveDocument(const wxString& filename);
    virtual bool DoOpenDocument(const wxString& filename);

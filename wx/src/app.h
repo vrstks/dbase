@@ -28,7 +28,6 @@ public:
    virtual bool OnInit(void);
    virtual int OnExit(void);
 
-   wxMDIChildFrame* NewFrame(wxDocument*);
    static const AcceleratorArray& GetAccelerator();
 
    wxRecentFileList* GetRecentFileList() const { return m_mru; }

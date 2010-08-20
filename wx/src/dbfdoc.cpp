@@ -80,36 +80,22 @@ bool wxDBFDoc::IsEditable(void) const
    return m_database->IsOpen() && m_database->IsEditable();
 }
 
-/*static*/ wxDocument* wxDBFDoc::CreateDocument(wxDocManager* docManager, const wxFileName& filename, long flags)
+bool wxDBFDoc::OnNewDocument()
 {
-   wxDBFDoc* doc = NULL;
-   wxDBase database;
-   wxBusyCursor wc;
-   bool ok = (!filename.IsOk()) || filename.FileExists();
+   bool ok = base::OnNewDocument();
    if (ok)
    {
-      doc = wxStaticCast(docManager->wxDocManager::CreateDocument(filename.GetFullPath(), flags), wxDBFDoc);
-      if (doc && (wxDOC_NEW == flags))
+      wxDBase database;
+
+      ok = Save();
+      if (ok) ok = ::DoModal_Structure(wxTheApp->GetTopWindow(), &database, _("New database structure"), GetFilename());
+      if (ok && database.IsOpen())
       {
-         ok = doc->Save();
-         if (ok) ok = ::DoModal_Structure(wxTheApp->GetTopWindow(), &database, _("New database structure"), doc->GetFilename());
-         if (!ok)
-         {
-            doc->DeleteAllViews();
-            doc = NULL;
-         }
-      }
-      if (doc && database.IsOpen())
-      {
-         doc->m_database->Attach(&database);
-         if (wxDOC_NEW == flags) doc->UpdateAllViews(NULL, (wxObject*)(long)ENUM_hint_initialupdate);
+         m_database->Attach(&database);
+         UpdateAllViews(NULL, (wxObject*)(long)ENUM_hint_initialupdate);
       }
    }
-   else
-   {
-      wxMessageBox(_("File not found"));
-   }
-   return doc;
+   return ok;
 }
 
 bool wxDBFDoc::SaveAs()
@@ -121,3 +107,4 @@ bool wxDBFDoc::SaveAs()
    return ok;
 }
 
+/////////////////////////////////////////////////////////////////////////////

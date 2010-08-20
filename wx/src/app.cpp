@@ -34,8 +34,7 @@ bool App::OnInit(void)
       {
          wxDocManager* docManager = CreateDocManager();
 
-         MainFrame* frame = new MainFrame(docManager, NULL, GetAppName(), wxDefaultPosition, wxSize(700,610),
-                            wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE);
+         MainFrame* frame = new MainFrame(docManager, NULL, GetAppName(), wxDefaultPosition, wxSize(700,610));
 
          m_mru->Load();
 

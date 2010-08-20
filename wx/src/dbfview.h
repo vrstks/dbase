@@ -16,8 +16,9 @@ class wxDBFView : public wxView
    DECLARE_DYNAMIC_CLASS(wxDBFView)
 
 // Attributes
+protected:
+   wxDBFListCtrl* m_wnd;
 public:
-   wxDBFListCtrl* m_list;
   
    wxDBFView();
 

@@ -14,10 +14,11 @@
 #include "wx29.h"
 #include "wxext.h"
 #include "dbfmodel.h"
+#include "doc.h"
 
 IMPLEMENT_DYNAMIC_CLASS(wxDBFView, wxView)
 
-wxDBFView::wxDBFView() : wxView(), m_list(NULL)
+wxDBFView::wxDBFView() : wxView(), m_wnd(NULL)
 {
 }
 
@@ -54,8 +55,11 @@ protected:
    wxDBFModel m_datamodel;
 public:
    MyDBFListCtrl(wxWindow* parent, wxDBFDoc* doc) : 
-      wxDBFListCtrl(parent, wxPoint(0, 0), parent->GetClientSize(), wxLC_REPORT | wxLC_VIRTUAL | wxLC_EDIT_LABELS),
+      wxDBFListCtrl(parent, wxPoint(0,0), parent->GetClientSize(), wxLC_REPORT | wxLC_VIRTUAL | wxLC_EDIT_LABELS),
          m_doc(doc), m_datamodel(doc->GetDatabase())
+   {
+   }
+   virtual ~MyDBFListCtrl()
    {
    }
    virtual wxDataModelBase* GetModel(void)
@@ -64,15 +68,17 @@ public:
    }
 };
 
-bool wxDBFView::OnCreate(wxDocument* doc, long WXUNUSED(flags) )
+bool wxDBFView::OnCreate(wxDocument* doc, long flags)
 {
-   wxASSERT(doc->GetFirstView() == this);
-   wxMDIChildFrame* frame = wxGetApp().NewFrame(doc);
-   SetFrame(frame);
-   m_list = new MyDBFListCtrl(frame, wxStaticCast(doc, wxDBFDoc));
-   frame->Show(true);
-   Activate(true);
-   return true;
+   bool ok = base::OnCreate(doc, flags);
+   if (ok)
+   {
+      wxFrame* frame = wxStaticCast(doc->GetDocumentTemplate(), DatabaseDocTemplate)->GetViewFrame(this);
+      wxASSERT(frame == GetFrame());
+      m_wnd = new MyDBFListCtrl(frame, GetDocument());
+      frame->Show();
+   }
+   return ok;
 }
 
 void wxDBFView::OnStruct(wxCommandEvent&)
@@ -94,8 +100,8 @@ void wxDBFView::OnUpdate(wxView *WXUNUSED(sender), wxObject* hint)
    switch ((long)hint)
    {
       case wxDBFDoc::ENUM_hint_initialupdate:
-         m_list->Init();
-         ::wxListView_SetCurSel(m_list, 0);
+         m_wnd->Init();
+         ::wxListView_SetCurSel(m_wnd, 0);
          break;
    }
 }
@@ -157,34 +163,34 @@ void wxDBFView::OnProperties(wxCommandEvent&)
 
 void wxDBFView::OnSelectAll(wxCommandEvent&)
 {
-   ::wxListCtrl_SelectAll(m_list);
+   ::wxListCtrl_SelectAll(m_wnd);
 }
 
 void wxDBFView::OnUndelete(wxCommandEvent&)
 {
-   m_list->DeleteSelection(false);
+   m_wnd->DeleteSelection(false);
 }
 
 void wxDBFView::OnUpdateSelectAll(wxUpdateUIEvent& event)
 {
-   m_list->OnUpdateSelectAll(event);
+   m_wnd->OnUpdateSelectAll(event);
 }
 
 void wxDBFView::OnUpdateNeedSel_Deleted(wxUpdateUIEvent& event)
 {
-   m_list->OnUpdateNeedSel_Deleted(event);
+   m_wnd->OnUpdateNeedSel_Deleted(event);
    if (!GetDocument()->IsEditable()) event.Enable(false);
 }
 
 void wxDBFView::OnUpdateNeedSel_NotDeleted(wxUpdateUIEvent& event)
 {
-   m_list->OnUpdateNeedSel_NotDeleted(event);
+   m_wnd->OnUpdateNeedSel_NotDeleted(event);
    if (!GetDocument()->IsEditable()) event.Enable(false);
 }
 
 void wxDBFView::OnUpdateNeedSel(wxUpdateUIEvent& event)
 {
-   m_list->OnUpdateNeedSel(event);
+   m_wnd->OnUpdateNeedSel(event);
    if (!GetDocument()->IsEditable()) event.Enable(false);
 }
 
@@ -193,7 +199,7 @@ void wxDBFView::OnDeleteAll(wxCommandEvent&)
    const wxDBFDoc* doc = GetDocument();
    if (wxOK == wxMessageBox(_("Delete all?"), wxMessageBoxCaption, wxOK | wxCANCEL | wxICON_QUESTION, doc->GetDocumentWindow()))
    {
-      m_list->DeleteAll(true);
+      m_wnd->DeleteAll(true);
    }
 }
 
@@ -202,17 +208,17 @@ void wxDBFView::OnDelete(wxCommandEvent&)
    const wxDBFDoc* doc = GetDocument();
    if (wxOK == wxMessageBox(_("Delete selection?"), wxMessageBoxCaption, wxOK | wxCANCEL | wxICON_QUESTION, doc->GetDocumentWindow()))
    {
-      m_list->DeleteSelection(true);
+      m_wnd->DeleteSelection(true);
    }
 }
 
 void wxDBFView::OnAdd(wxCommandEvent&)
 {
-	m_list->AddNew();
+	m_wnd->AddNew();
 }
 
 void wxDBFView::OnEdit(wxCommandEvent&)
 {
-   m_list->Edit();
+   m_wnd->Edit();
 }
 

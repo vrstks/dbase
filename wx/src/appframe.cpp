@@ -24,8 +24,8 @@ BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
 END_EVENT_TABLE()
 
 MainFrame::MainFrame(wxDocManager* manager, wxFrame* frame, const wxString& title,
-    const wxPoint& pos, const wxSize& size, long type)
-   : wxDocMDIParentFrame(manager, frame, wxID_ANY, title, pos, size, type, wxT("myFrame"))
+    const wxPoint& pos, const wxSize& size, long style)
+   : wxDocMDIParentFrame(manager, frame, wxID_ANY, title, pos, size, style)
 {
    CreateStatusBar();
    GetStatusBar()->PushStatusText(_("Ready"));
@@ -36,9 +36,7 @@ MainFrame::MainFrame(wxDocManager* manager, wxFrame* frame, const wxString& titl
    wxMenuBar* menu = wxXmlResource::Get()->LoadMenuBar(wxT("menu_mdi"));
    SetMenuBar(menu);
    wxGetApp().GetRecentFileList()->Attach(this);
-#ifndef __WXMAC__
-   Show(true);
-#endif //ndef __WXMAC__
+   Show();
 }
 
 wxToolBar* MainFrame::CreateToolBar()
