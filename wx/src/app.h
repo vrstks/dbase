@@ -23,8 +23,6 @@ protected:
 public:
    App(void);
 
-   MainFrame* GetMainFrame(void);
-
    virtual bool OnInit(void);
    virtual int OnExit(void);
 

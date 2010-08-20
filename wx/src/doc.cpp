@@ -6,14 +6,11 @@
 
 #include "app.h"
 #include "dbfdoc.h"
-#include "dbfview.h"
-#include "dbfframe.h"
 #include "appframe.h"
 #include "wx29.h"
 #include "wxext.h"
 #include "../../bool.h"
 #include "../../dbf.h"
-#include "doc.h"
 
 class DocManager : public wxDocManagerEx
 {
@@ -50,28 +47,6 @@ wxDocManager* App::CreateDocManager()
    DocManager* docManager = new DocManager();
    m_mru = new wxRecentFileList(docManager->GetFileHistory());
    return docManager;
-}
-
-/////////////////////////////////////////////////////////////////////////////
-// DatabaseDocTemplate
-
-IMPLEMENT_CLASS(DatabaseDocTemplate, wxDocTemplate)
-
-DatabaseDocTemplate::DatabaseDocTemplate(wxDocManager* docManager) : wxDocTemplate(docManager, _("dBASE Files"), wxT("*.")wxT(FILEEXT_DBASE),
-      wxT(""), wxT(FILEEXT_DBASE), wxT("dbf doc"), wxT("dbf view"),
-          CLASSINFO(wxDBFDoc), CLASSINFO(wxDBFView))
-{
-}
-
-/*static*/ DatabaseDocTemplate* DatabaseDocTemplate::Create(wxDocManager* docManager)
-{
-   return new DatabaseDocTemplate(docManager);
-}
-
-wxFrame* DatabaseDocTemplate::GetViewFrame(wxView* view)
-{
-   wxDocMDIChildFrame* frame = new wxDBFFrame(view->GetDocument(), wxStaticCast(wxTheApp->GetTopWindow(), wxMDIParentFrame));
-   return frame;
 }
 
 /////////////////////////////////////////////////////////////////////////////

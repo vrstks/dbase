@@ -108,3 +108,28 @@ bool wxDBFDoc::SaveAs()
 }
 
 /////////////////////////////////////////////////////////////////////////////
+// DatabaseDocTemplate
+
+#include "dbfview.h"
+#include "dbfframe.h"
+
+IMPLEMENT_CLASS(DatabaseDocTemplate, wxDocTemplate)
+
+DatabaseDocTemplate::DatabaseDocTemplate(wxDocManager* docManager) : wxDocTemplate(docManager, _("dBASE Files"), wxT("*.")wxT(FILEEXT_DBASE),
+      wxT(""), wxT(FILEEXT_DBASE), wxT("dbf doc"), wxT("dbf view"),
+          CLASSINFO(wxDBFDoc), CLASSINFO(wxDBFView))
+{
+}
+
+/*static*/ DatabaseDocTemplate* DatabaseDocTemplate::Create(wxDocManager* docManager)
+{
+   return new DatabaseDocTemplate(docManager);
+}
+
+wxFrame* DatabaseDocTemplate::CreateViewFrame(wxView* view)
+{
+   wxDocMDIChildFrame* frame = new wxDBFFrame(view->GetDocument(), wxStaticCast(wxTheApp->GetTopWindow(), wxMDIParentFrame));
+   return frame;
+}
+
+/////////////////////////////////////////////////////////////////////////////

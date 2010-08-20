@@ -42,4 +42,18 @@ public:
    virtual bool OnCloseDocument();
 };
 
+/////////////////////////////////////////////////////////////////////////////
+// DatabaseDocTemplate
+
+class DatabaseDocTemplate : public wxDocTemplate
+{
+   DECLARE_CLASS(DatabaseDocTemplate)
+private:
+   DatabaseDocTemplate(wxDocManager*);
+public:
+   wxFrame* CreateViewFrame(wxView*);
+
+   static DatabaseDocTemplate* Create(wxDocManager*);
+};
+
 #endif // __DBFDOC_H__

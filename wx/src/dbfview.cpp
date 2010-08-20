@@ -14,7 +14,6 @@
 #include "wx29.h"
 #include "wxext.h"
 #include "dbfmodel.h"
-#include "doc.h"
 
 IMPLEMENT_DYNAMIC_CLASS(wxDBFView, wxView)
 
@@ -73,7 +72,7 @@ bool wxDBFView::OnCreate(wxDocument* doc, long flags)
    bool ok = base::OnCreate(doc, flags);
    if (ok)
    {
-      wxFrame* frame = wxStaticCast(doc->GetDocumentTemplate(), DatabaseDocTemplate)->GetViewFrame(this);
+      wxFrame* frame = wxStaticCast(doc->GetDocumentTemplate(), DatabaseDocTemplate)->CreateViewFrame(this);
       wxASSERT(frame == GetFrame());
       m_wnd = new MyDBFListCtrl(frame, GetDocument());
       frame->Show();

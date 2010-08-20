@@ -64,11 +64,6 @@ int App::OnExit(void)
    return base::OnExit();
 }
 
-MainFrame* App::GetMainFrame(void)
-{
-   return wxStaticCast(GetTopWindow(), MainFrame);
-}
-
 /*static*/ const AcceleratorArray& App::GetAccelerator()
 {
    static AcceleratorArray array;
