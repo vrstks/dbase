@@ -6,19 +6,19 @@
 #define __DBFFRAME_H__
 
 /////////////////////////////////////////////////////////////////////////////
-// wxDBFFrame
+// DBFFrame
 
-class wxDBFFrame : public wxDocMDIChildFrame
+class DBFFrame : public wxDocMDIChildFrame
 {
    typedef wxDocMDIChildFrame base;
 public:
-   wxDBFFrame(wxDocument*, wxMDIParentFrame*);
+   DBFFrame(wxDocument*, wxMDIParentFrame*);
 
 #if (wxVERSION_NUMBER < 2900)
    wxMDIParentFrame* GetMDIParent() const;
 #endif
 
-   virtual ~wxDBFFrame();
+   virtual ~DBFFrame();
 #if (wxVERSION_NUMBER < 2900)
    // To get statusbar menu help
    virtual void DoGiveHelp(const wxString& text, bool show);

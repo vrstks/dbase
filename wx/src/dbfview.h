@@ -6,27 +6,27 @@
 #define __DBFVIEW_H__
 
 /////////////////////////////////////////////////////////////////////////////
-// wxDBFView
+// DBFView
 
-class wxDBFDoc;
+class DBFDocument;
 class wxDBFListCtrl;
-class wxDBFView : public wxView
+class DBFView : public wxView
 {
    typedef wxView base;
-   DECLARE_DYNAMIC_CLASS(wxDBFView)
+   DECLARE_DYNAMIC_CLASS(DBFView)
 
 // Attributes
 protected:
    wxDBFListCtrl* m_wnd;
 public:
   
-   wxDBFView();
+   DBFView();
 
-   wxDBFDoc* GetDocument() const;
+   DBFDocument* GetDocument() const;
 
 // Implementation
 public:
-   virtual ~wxDBFView();
+   virtual ~DBFView();
    virtual bool OnClose(bool deleteWindow = true);
    virtual bool OnCreate(wxDocument*, long flags);
    virtual void OnDraw(wxDC*);

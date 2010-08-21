@@ -17,23 +17,23 @@
 #include "dbfdoc.h"
 #include "wxext.h"
 
-IMPLEMENT_DYNAMIC_CLASS(wxDBFDoc, wxDocument)
+IMPLEMENT_DYNAMIC_CLASS(DBFDocument, wxDocument)
 
-wxDBFDoc::wxDBFDoc(void) : wxDocument(), m_database(new wxDBase)
+DBFDocument::DBFDocument(void) : wxDocument(), m_database(new wxDBase)
 {
 }
 
-wxDBFDoc::~wxDBFDoc(void)
+DBFDocument::~DBFDocument(void)
 {
    wxDELETE(m_database);
 }
 
 // Since text windows have their own method for saving to/loading from files,
 // we override OnSave/OpenDocument instead of Save/LoadObject
-bool wxDBFDoc::DoSaveDocument(const wxString& WXUNUSED(filename))
+bool DBFDocument::DoSaveDocument(const wxString& WXUNUSED(filename))
 {
     /*
-    wxDBFView* view = (wxDBFView*)GetFirstView();
+    DBFView* view = (DBFView*)GetFirstView();
     if (!view->textsw->SaveFile(filename))
         return false;
         */
@@ -41,7 +41,7 @@ bool wxDBFDoc::DoSaveDocument(const wxString& WXUNUSED(filename))
     return true;
 }
 
-bool wxDBFDoc::DoOpenDocument(const wxString& path)
+bool DBFDocument::DoOpenDocument(const wxString& path)
 {
    wxFileName filename(path);
    bool ok = m_database->Open(filename, true, ENUM_dbf_charconv_compatible);
@@ -58,29 +58,29 @@ bool wxDBFDoc::DoOpenDocument(const wxString& path)
    return ok;
 }
 
-bool wxDBFDoc::IsModified(void) const
+bool DBFDocument::IsModified(void) const
 {
    return false && m_database->IsOpen() && m_database->IsModified();
 }
 
-void wxDBFDoc::Modify(bool mod)
+void DBFDocument::Modify(bool mod)
 {
    base::Modify(mod);
 }
 
-bool wxDBFDoc::OnCloseDocument()
+bool DBFDocument::OnCloseDocument()
 {
    bool ok = base::OnCloseDocument();
    if (m_database->IsOpen()) m_database->Close();
    return ok;
 }
 
-bool wxDBFDoc::IsEditable(void) const
+bool DBFDocument::IsEditable(void) const
 {
    return m_database->IsOpen() && m_database->IsEditable();
 }
 
-bool wxDBFDoc::OnNewDocument()
+bool DBFDocument::OnNewDocument()
 {
    bool ok = base::OnNewDocument();
    if (ok)
@@ -98,7 +98,7 @@ bool wxDBFDoc::OnNewDocument()
    return ok;
 }
 
-bool wxDBFDoc::SaveAs()
+bool DBFDocument::SaveAs()
 {
    bool ok = base::SaveAs();
    if (ok)
@@ -115,7 +115,7 @@ bool wxDBFDoc::SaveAs()
 
 DatabaseDocTemplate::DatabaseDocTemplate(wxDocManager* docManager) : wxDocTemplate(docManager, _("dBASE Files"), wxT("*.")wxT(FILEEXT_DBASE),
       wxT(""), wxT(FILEEXT_DBASE), wxT("dbf doc"), wxT("dbf view"),
-          CLASSINFO(wxDBFDoc), CLASSINFO(wxDBFView))
+          CLASSINFO(DBFDocument), CLASSINFO(DBFView))
 {
 }
 
@@ -126,7 +126,7 @@ DatabaseDocTemplate::DatabaseDocTemplate(wxDocManager* docManager) : wxDocTempla
 
 wxFrame* DatabaseDocTemplate::CreateViewFrame(wxView* view)
 {
-   wxDocMDIChildFrame* frame = new wxDBFFrame(view->GetDocument(), wxStaticCast(wxTheApp->GetTopWindow(), wxMDIParentFrame));
+   wxDocMDIChildFrame* frame = new DBFFrame(view->GetDocument(), wxStaticCast(wxTheApp->GetTopWindow(), wxMDIParentFrame));
    return frame;
 }
 

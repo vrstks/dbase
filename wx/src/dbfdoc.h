@@ -6,20 +6,20 @@
 #define __DBFDOC_H__
 
 /////////////////////////////////////////////////////////////////////////////
-// wxDBFDoc
+// DBFDocument
 
 class wxDBase;
-class wxDBFDoc : public wxDocument
+class DBFDocument : public wxDocument
 {
    typedef wxDocument base;
-   DECLARE_DYNAMIC_CLASS(wxDBFDoc)
+   DECLARE_DYNAMIC_CLASS(DBFDocument)
 
 // Attributes
 protected:
    wxDBase* m_database;
    wxString m_tablename;
 public:
-   wxDBFDoc(void);
+   DBFDocument(void);
 
    enum
    {
@@ -32,7 +32,7 @@ public:
 
 // Implementation
 public:
-   virtual ~wxDBFDoc(void);
+   virtual ~DBFDocument(void);
    virtual bool OnNewDocument();
    virtual bool SaveAs();
    virtual bool DoSaveDocument(const wxString& filename);

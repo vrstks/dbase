@@ -8,7 +8,7 @@
 #include "app.h"
 #include "wxext.h"
 
-wxDBFFrame::wxDBFFrame(wxDocument* doc, wxMDIParentFrame* parent)
+DBFFrame::DBFFrame(wxDocument* doc, wxMDIParentFrame* parent)
    : wxDocMDIChildFrame(doc, doc->GetFirstView(), parent, wxID_ANY, wxEmptyString,
                              wxDefaultPosition, wxDefaultSize,
                              wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE | wxMAXIMIZE)
@@ -23,16 +23,16 @@ wxDBFFrame::wxDBFFrame(wxDocument* doc, wxMDIParentFrame* parent)
    wxGetApp().GetRecentFileList()->Attach(this);
 }
 
-BEGIN_EVENT_TABLE(wxDBFFrame, wxDocMDIChildFrame)
+BEGIN_EVENT_TABLE(DBFFrame, wxDocMDIChildFrame)
 END_EVENT_TABLE()
 
-wxDBFFrame::~wxDBFFrame()
+DBFFrame::~DBFFrame()
 {
    wxGetApp().GetRecentFileList()->Detach(this);
 }
 
 #if (wxVERSION_NUMBER < 2900) // trac.wxwidgets.org/ticket/11442
-void wxDBFFrame::DoGiveHelp(const wxString& text, bool show)
+void DBFFrame::DoGiveHelp(const wxString& text, bool show)
 {
    wxMDIParentFrame* frame = GetMDIParent();
    frame->DoGiveHelp(text, show);
@@ -41,7 +41,7 @@ void wxDBFFrame::DoGiveHelp(const wxString& text, bool show)
 #endif
 
 #if (wxVERSION_NUMBER < 2900) // trac.wxwidgets.org/ticket/8988
-wxMDIParentFrame* wxDBFFrame::GetMDIParent() const
+wxMDIParentFrame* DBFFrame::GetMDIParent() const
 {
 #ifdef __WXMSW__
    return wxStaticCast(base::GetParent(), wxMDIParentFrame);
