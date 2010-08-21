@@ -50,12 +50,11 @@ END_EVENT_TABLE()
 class MyDBFListCtrl : public wxDBFListCtrl
 {
 protected:
-   wxDBFDoc* m_doc;
    wxDBFModel m_datamodel;
 public:
    MyDBFListCtrl(wxWindow* parent, wxDBFDoc* doc) : 
       wxDBFListCtrl(parent, wxPoint(0,0), parent->GetClientSize(), wxLC_REPORT | wxLC_VIRTUAL | wxLC_EDIT_LABELS),
-         m_doc(doc), m_datamodel(doc->GetDatabase())
+         m_datamodel(doc->GetDatabase())
    {
    }
    virtual ~MyDBFListCtrl()
