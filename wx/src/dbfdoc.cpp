@@ -113,8 +113,6 @@ bool wxDBFDoc::SaveAs()
 #include "dbfview.h"
 #include "dbfframe.h"
 
-IMPLEMENT_CLASS(DatabaseDocTemplate, wxDocTemplate)
-
 DatabaseDocTemplate::DatabaseDocTemplate(wxDocManager* docManager) : wxDocTemplate(docManager, _("dBASE Files"), wxT("*.")wxT(FILEEXT_DBASE),
       wxT(""), wxT(FILEEXT_DBASE), wxT("dbf doc"), wxT("dbf view"),
           CLASSINFO(wxDBFDoc), CLASSINFO(wxDBFView))

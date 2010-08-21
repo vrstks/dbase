@@ -47,8 +47,6 @@ public:
 
 class DatabaseDocTemplate : public wxDocTemplate
 {
-   DECLARE_CLASS(DatabaseDocTemplate)
-private:
    DatabaseDocTemplate(wxDocManager*);
 public:
    wxFrame* CreateViewFrame(wxView*);
