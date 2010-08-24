@@ -15,6 +15,33 @@
 #include "wxext.h"
 #include "dbfmodel.h"
 
+/////////////////////////////////////////////////////////////////////////////
+// DBFWindow
+
+class DBFWindow : public wxDBFListCtrl
+{
+protected:
+   wxDBFModel m_datamodel;
+   DBFView* m_view;
+public:
+   DBFWindow(DBFView* view) : 
+      wxDBFListCtrl(view->GetFrame(), wxPoint(0,0), view->GetFrame()->GetClientSize(), wxLC_REPORT | wxLC_VIRTUAL | wxLC_EDIT_LABELS),
+         m_datamodel(view->GetDocument()->GetDatabase()), m_view(view)
+   {
+   }
+   virtual ~DBFWindow()
+   {
+      m_view->m_wnd = NULL;
+   }
+   virtual wxDataModelBase* GetModel(void)
+   {
+      return &m_datamodel;
+   }
+};
+
+/////////////////////////////////////////////////////////////////////////////
+// DBFView
+
 IMPLEMENT_DYNAMIC_CLASS(DBFView, wxView)
 
 DBFView::DBFView() : wxView(), m_wnd(NULL)
@@ -23,6 +50,10 @@ DBFView::DBFView() : wxView(), m_wnd(NULL)
 
 DBFView::~DBFView()
 {
+   if (m_wnd)
+   {
+      m_wnd->Destroy();
+   }
 }
 
 BEGIN_EVENT_TABLE(DBFView, wxView)
@@ -47,25 +78,6 @@ BEGIN_EVENT_TABLE(DBFView, wxView)
 
 END_EVENT_TABLE()
 
-class MyDBFListCtrl : public wxDBFListCtrl
-{
-protected:
-   wxDBFModel m_datamodel;
-public:
-   MyDBFListCtrl(wxWindow* parent, DBFDocument* doc) : 
-      wxDBFListCtrl(parent, wxPoint(0,0), parent->GetClientSize(), wxLC_REPORT | wxLC_VIRTUAL | wxLC_EDIT_LABELS),
-         m_datamodel(doc->GetDatabase())
-   {
-   }
-   virtual ~MyDBFListCtrl()
-   {
-   }
-   virtual wxDataModelBase* GetModel(void)
-   {
-      return &m_datamodel;
-   }
-};
-
 bool DBFView::OnCreate(wxDocument* doc, long flags)
 {
    bool ok = base::OnCreate(doc, flags);
@@ -73,7 +85,7 @@ bool DBFView::OnCreate(wxDocument* doc, long flags)
    {
       wxFrame* frame = wxStaticCast(doc->GetDocumentTemplate(), DatabaseDocTemplate)->CreateViewFrame(this);
       wxASSERT(frame == GetFrame());
-      m_wnd = new MyDBFListCtrl(frame, GetDocument());
+      m_wnd = new DBFWindow(this);
       frame->Show();
    }
    return ok;
@@ -93,13 +105,16 @@ void DBFView::OnDraw(wxDC *WXUNUSED(dc) )
 {
 }
 
-void DBFView::OnUpdate(wxView *WXUNUSED(sender), wxObject* hint)
+void DBFView::OnUpdate(wxView* sender, wxObject* hint)
 {
    switch ((long)hint)
    {
       case DBFDocument::ENUM_hint_initialupdate:
          m_wnd->Init();
          ::wxListView_SetCurSel(m_wnd, 0);
+         break;
+      default:
+         base::OnUpdate(sender, hint);
          break;
    }
 }
@@ -112,7 +127,7 @@ bool DBFView::OnClose(bool deleteWindow)
       Activate(false);
       if (deleteWindow)
       {
-         delete GetFrame();
+         GetFrame()->Destroy();
          SetFrame(NULL);
       }
    }

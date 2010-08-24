@@ -9,7 +9,7 @@
 // DBFView
 
 class DBFDocument;
-class wxDBFListCtrl;
+class DBFWindow;
 class DBFView : public wxView
 {
    typedef wxView base;
@@ -17,7 +17,7 @@ class DBFView : public wxView
 
 // Attributes
 protected:
-   wxDBFListCtrl* m_wnd;
+   DBFWindow* m_wnd;
 public:
   
    DBFView();
@@ -48,6 +48,8 @@ protected:
    void OnUpdateNeedSel_NotDeleted(wxUpdateUIEvent&);
    void OnDeleteAll     (wxCommandEvent&);
    DECLARE_EVENT_TABLE()
+
+   friend class DBFWindow;
 };
 
 #endif // __DBFVIEW_H__
