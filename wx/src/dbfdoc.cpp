@@ -44,16 +44,24 @@ bool DBFDocument::DoSaveDocument(const wxString& WXUNUSED(filename))
 bool DBFDocument::DoOpenDocument(const wxString& path)
 {
    wxFileName filename(path);
-   bool ok = m_database->Open(filename, true, ENUM_dbf_charconv_compatible);
-   if (!ok) ok = m_database->Open(filename, false, ENUM_dbf_charconv_compatible);
+   bool ok = filename.FileExists();
    if (ok)
    {
-      UpdateAllViews(NULL, (wxObject*)(long)ENUM_hint_initialupdate);
-      m_tablename = filename.GetName();
+      ok = m_database->Open(filename, true, ENUM_dbf_charconv_compatible);
+      if (!ok) ok = m_database->Open(filename, false, ENUM_dbf_charconv_compatible);
+      if (ok)
+      {
+         UpdateAllViews(NULL, (wxObject*)(long)ENUM_hint_initialupdate);
+         m_tablename = filename.GetName();
+      }
+      else
+      {
+         wxMessageBox(_("Bad file format"));
+      }
    }
    else
    {
-      wxMessageBox(_("Bad file format"));
+      wxMessageBox(_("File not found"));
    }
    return ok;
 }
