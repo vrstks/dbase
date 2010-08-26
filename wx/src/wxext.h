@@ -118,7 +118,7 @@ extern bool wxInitXRC();
 extern wxAcceleratorEntry wxGetStockAcceleratorEx(wxWindowID);
 
 class WXDLLIMPEXP_FWD_CORE wxMenuBar;
-extern void wxMenuBar_Fixup(wxMenuBar*, const AcceleratorArray&);
+extern void wxMenu_SetAccelText(wxMenuBar*, const AcceleratorArray&);
 extern void wxSetAcceleratorTable(wxWindow*, const AcceleratorArray&);
 
 #define wxMessageBoxCaption      wxGetApp().GetAppDisplayName()

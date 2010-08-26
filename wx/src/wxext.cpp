@@ -371,7 +371,7 @@ wxString wxGetAccelText(const wxAcceleratorEntry& accel)
    return wxGetAccelText(accel.GetFlags(), (enum wxKeyCode)accel.GetKeyCode());
 }
 
-void wxMenuBar_Fixup(wxMenuBar* menu, const AcceleratorArray& array)
+void wxMenu_SetAccelText(wxMenuBar* menu, const AcceleratorArray& array)
 {
    const size_t count = array.GetCount();
    for (size_t i = 0; i < count; i++)

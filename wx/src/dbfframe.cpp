@@ -18,7 +18,7 @@ DBFFrame::DBFFrame(wxDocument* doc, wxMDIParentFrame* parent)
    SetIcon(wxIcon(wxT("dbf")));
 #endif
    wxMenuBar* menu = wxXmlResource::Get()->LoadMenuBar(wxT("menu_dbf"));
-   ::wxMenuBar_Fixup(menu, wxGetApp().GetAccelerator());
+   ::wxMenu_SetAccelText(menu, wxGetApp().GetAccelerator());
    SetMenuBar(menu);
    wxGetApp().GetRecentFileList()->Attach(this);
 }

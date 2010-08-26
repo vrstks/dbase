@@ -40,7 +40,7 @@ bool App::OnInit(void)
 
          SetTopWindow(frame);
          ::wxSetAcceleratorTable(frame, GetAccelerator());
-         ::wxMenuBar_Fixup(frame->GetMenuBar(), GetAccelerator());
+         ::wxMenu_SetAccelText(frame->GetMenuBar(), GetAccelerator());
 
          wxFileName filename;
          if (m_mru->GetFile(0, &filename) && filename.FileExists())
