@@ -125,7 +125,7 @@ bool DBFView::OnClose(bool deleteWindow)
    if (ok)
    {
       Activate(false);
-      if (deleteWindow)
+      if (deleteWindow && GetFrame())
       {
          GetFrame()->Destroy();
          SetFrame(NULL);
