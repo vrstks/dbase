@@ -82,11 +82,6 @@ BOOL CDBFExplorerApp::InitInstance()
 	//  of your final executable, you should remove from the following
 	//  the specific initialization routines you do not need.
 
-#ifdef _AFXDLL
-	Enable3dControls();			// Call this when using MFC in a shared DLL
-#else
-	Enable3dControlsStatic();	// Call this when linking to MFC statically
-#endif
 	InitCommonControls();
    AfxDaoInit();
 
@@ -174,7 +169,9 @@ public:
       CStringArray newfile;
       CString tablename;
    #ifdef x_DEBUG
-      tablename = _T("tur_tur");
+      tablename = _T("årstal");
+      //tablename = _T("tur_tur");
+      //tablename = _T("Adresser");
    #endif
       bool ok = ::mdb2dbf(parent, lpszPathName, &newfile, tablename);
       if (ok)
