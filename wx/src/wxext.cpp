@@ -170,7 +170,11 @@ wxString wxGetAccelText(int flags, int keyCode)
          {
             str+=wxString::Format(wxT("F%d"), keyCode - WXK_F1 + 1);
          }
-         else str+=(wxChar)keyCode;
+         else
+         {
+            wxASSERT(keyCode > ' ');
+            str+=(wxChar)keyCode;
+         }
          break;
    }
    return str;
