@@ -172,7 +172,7 @@ wxString wxGetAccelText(int flags, int keyCode)
          }
          else
          {
-            wxASSERT(keyCode > ' ');
+            wxASSERT(keyCode >= ' ');
             str+=(wxChar)keyCode;
          }
          break;
@@ -314,7 +314,13 @@ wxAcceleratorEntry wxGetStockAcceleratorEx(wxWindowID id)
 
     #undef STOCKITEM
 
-    wxASSERT(ret.IsOk()); // trac.wxwidgets.org/ticket/12444 trac.wxwidgets.org/ticket/12445
+
+#if (wxVERSION_NUMBER >= 2902)
+    wxASSERT(ret.IsOk());
+#else
+    // trac.wxwidgets.org/ticket/12444
+    // trac.wxwidgets.org/ticket/12445
+#endif
     return ret;
 }
 
