@@ -17,11 +17,6 @@
             </object>
             <object class="separator">
             </object>
-            <object class="wxMenuItem" name="wxID_PRINT_SETUP">
-                <label>Print Set&amp;up...</label>
-            </object>
-            <object class="separator">
-            </object>
             <object class="wxMenuItem" name="wxID_EXIT">
                 <label>E&amp;xit</label>
             </object>
@@ -96,10 +91,7 @@
                 <label>&amp;Print...</label>
             </object>
             <object class="wxMenuItem" name="wxID_PREVIEW">
-                <label>Print Previe&amp;w</label>
-            </object>
-            <object class="wxMenuItem" name="wxID_PRINT_SETUP">
-                <label>Print Set&amp;up...</label>
+                <label>Print Pre&amp;view</label>
             </object>
             <object class="separator">
             </object>
