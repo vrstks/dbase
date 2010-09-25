@@ -176,6 +176,13 @@ public:
    }
 
    size_t GetRow(unsigned int row, wxArrayString*, bool header = true) const;
+
+#if (wxVERSION_NUMBER >= 2900)
+   virtual unsigned int GetCount() const
+   {
+      return GetRowCount();
+   }
+#endif
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -207,6 +214,10 @@ private:
       ColumnInfo info;
       GetColumn(col, &info);
       return info.type;
+   }
+   virtual unsigned int GetCount() const
+   {
+      return GetRowCount();
    }
 #else
    virtual void GetValue(wxVariant&, unsigned int col, unsigned int row );
@@ -292,6 +303,10 @@ public:
       ColumnInfo info;
       GetColumn(col, &info);
       return info.type;
+   }
+   virtual unsigned int GetCount() const
+   {
+      return GetRowCount();
    }
 #else
    bool IsSortOrderAscending() /*const*/
