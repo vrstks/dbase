@@ -28,19 +28,17 @@ bool App::OnInit(void)
       SetVendorName(wxT("Troels K"));
       SetAppName(wxT("wxDBF"));
 
-      wxFileSystem::AddHandler(new wxZipFSHandler);
+      wxFileSystem::AddHandler(new wxZipFSHandler());
       ok = ::wxInitXRC();
       if (ok)
       {
          wxDocManager* docManager = CreateDocManager();
 
-         MainFrame* frame = new MainFrame(docManager, NULL, GetAppName(), wxDefaultPosition, wxSize(700,610));
+         MainFrame* frame = new MainFrame(docManager, GetAppName(), wxDefaultPosition, wxSize(800,800));
 
          m_mru->Load();
 
          SetTopWindow(frame);
-         ::wxSetAcceleratorTable(frame, GetAccelerator());
-         ::wxMenu_SetAccelText(frame->GetMenuBar(), GetAccelerator());
 
          wxFileName filename;
          if (m_mru->GetFile(0, &filename) && filename.FileExists())
@@ -101,4 +99,3 @@ int App::OnExit(void)
    }
    return array;
 }
-

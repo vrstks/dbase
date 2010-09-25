@@ -3,12 +3,12 @@
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
-#include "appframe.h"
 #include "wxext.h"
-#include <wx/aboutdlg.h>
+#include "appframe.h"
+#include "wx/aboutdlg.h"
 #include "app.h"
-#include "..\..\bool.h"
-#include "..\..\dbf.h"
+#include "../../bool.h"
+#include "../../dbf.h"
 
 IMPLEMENT_CLASS(MainFrame, wxDocMDIParentFrame)
 
@@ -17,15 +17,15 @@ BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
    EVT_MENU(XRCID("toolbar")        , MainFrame::OnToolBar)
    EVT_MENU(wxID_ABOUT              , MainFrame::OnAbout)
    EVT_MENU(XRCID("view_fullscreen"), MainFrame::OnFullscreen)
-	EVT_UPDATE_UI(XRCID("view_fullscreen"), MainFrame::OnUpdateFullscreen)
-	EVT_UPDATE_UI(XRCID("toolbar")   , MainFrame::OnUpdateToolBar)
+   EVT_UPDATE_UI(XRCID("view_fullscreen"), MainFrame::OnUpdateFullscreen)
+   EVT_UPDATE_UI(XRCID("toolbar")   , MainFrame::OnUpdateToolBar)
    EVT_UPDATE_UI(XRCID("statusbar") , MainFrame::OnUpdateStatusBar)
 // EVT_UPDATE_UI(wxID_HELP          , MainFrame::OnUpdateDisable)
 END_EVENT_TABLE()
 
-MainFrame::MainFrame(wxDocManager* manager, wxFrame* frame, const wxString& title,
-    const wxPoint& pos, const wxSize& size, long style)
-   : wxDocMDIParentFrame(manager, frame, wxID_ANY, title, pos, size, style)
+MainFrame::MainFrame(wxDocManager* manager, const wxString& title,
+    const wxPoint& pos, const wxSize& size)
+   : wxDocMDIParentFrame(manager, NULL, wxID_ANY, title, pos, size)
 {
    CreateStatusBar();
    GetStatusBar()->PushStatusText(_("Ready"));
@@ -36,6 +36,8 @@ MainFrame::MainFrame(wxDocManager* manager, wxFrame* frame, const wxString& titl
    wxMenuBar* menu = wxXmlResource::Get()->LoadMenuBar(wxT("menu_mdi"));
    SetMenuBar(menu);
    wxGetApp().GetRecentFileList()->Attach(this);
+   ::wxSetAcceleratorTable(this, wxGetApp().GetAccelerator());
+   ::wxMenu_SetAccelText(GetMenuBar(), wxGetApp().GetAccelerator());
    Show();
 }
 
@@ -45,26 +47,27 @@ wxToolBar* MainFrame::CreateToolBar()
 
    static const wxTOOLBARITEM aID[] =
    {
-      { wxID_NEW           , NULL               , NULL         , NULL      , wxACCEL_CMD, 'N' },
-      { wxID_OPEN          , NULL               , NULL         , NULL      , wxACCEL_CMD, 'O' },
-      { wxID_SAVE          , NULL               , NULL         , NULL      , wxACCEL_CMD, 'S' },
-      { wxID_SEPARATOR     , NULL               , NULL         , NULL      , 0, 0                  },
-      { wxID_ADD           , NULL               , NULL         , NULL      , wxACCEL_NORMAL, WXK_NUMPAD_ADD },
-      { XRCID("edit")      , wxART_HELP_SETTINGS, _("Edit")  , _("Edit"), wxACCEL_NORMAL, WXK_F2 },
-      { wxID_DELETE        , NULL               , NULL         , NULL      , wxACCEL_NORMAL, WXK_DELETE },
-      { wxID_SEPARATOR     , NULL               , NULL         , NULL      , 0, 0                  },
-      { wxID_PRINT         , NULL               , NULL         , NULL      , wxACCEL_CMD, 'P' },
-      { wxID_PREVIEW       , NULL               , _("Preview"), NULL     , wxACCEL_CMD | wxACCEL_SHIFT, 'P' },
-      { wxID_SEPARATOR     , NULL               , NULL         , NULL      , 0, 0                  },
-      { XRCID("struct")    , wxART_HELP_SIDE_PANEL, _("Structure"), _("Modify Structure"), wxACCEL_CMD, 'M' },
-      { XRCID("pack")      , wxART_DEL_BOOKMARK , _("Pack")  , _("Pack Database"), wxACCEL_CMD, 'D' },
-      { wxID_SEPARATOR     , NULL               , NULL         , NULL      , 0, 0                  },
-      { wxID_FIND          , NULL               , NULL         , NULL      , wxACCEL_CMD, 'F'},
-      { wxID_SEPARATOR     , NULL               , NULL         , NULL      , 0, 0                  },
-      { wxID_ABOUT /*wxID_HELP*/, NULL          , _("Help")    , NULL      , wxACCEL_NORMAL, WXK_HELP },
-      { wxID_EXIT          , NULL               , NULL         , NULL      , wxACCEL_CMD, 'Q' },
-      { wxID_SEPARATOR     , NULL               , NULL         , NULL      , 0, 0                  },
+      { wxID_NEW           , NULL               , NULL         , NULL      },
+      { wxID_OPEN          , NULL               , NULL         , NULL      },
+      { wxID_SAVE          , NULL               , NULL         , NULL      },
+      { wxID_SEPARATOR     , NULL               , NULL         , NULL      },
+      { wxID_ADD           , NULL               , NULL         , NULL      },
+      { XRCID("edit")      , wxART_HELP_SETTINGS, _("Edit")    , _("Edit") },
+      { wxID_DELETE        , NULL               , NULL         , NULL      },
+      { wxID_SEPARATOR     , NULL               , NULL         , NULL      },
+      { wxID_PRINT         , NULL               , NULL         , NULL      },
+      { wxID_PREVIEW       , NULL               , _("Preview") , NULL      },
+      { wxID_SEPARATOR     , NULL               , NULL         , NULL      },
+      { XRCID("struct")    , wxART_HELP_SIDE_PANEL, _("Structure"), _("Modify Structure") },
+      { XRCID("pack")      , wxART_DEL_BOOKMARK , _("Pack")  , _("Pack Database") },
+      { wxID_SEPARATOR     , NULL               , NULL         , NULL      },
+      { wxID_FIND          , NULL               , NULL         , NULL      },
+      { wxID_SEPARATOR     , NULL               , NULL         , NULL      },
+      { wxID_ABOUT /*wxID_HELP*/, NULL          , _("Help")    , NULL      },
+      { wxID_EXIT          , NULL               , NULL         , NULL      },
+      { wxID_SEPARATOR     , NULL               , NULL         , NULL      },
    };
+   const AcceleratorArray& accel = wxGetApp().GetAccelerator();
    for (size_t i = 0; i < WXSIZEOF(aID); i++)
    {
       const wxTOOLBARITEM& element = aID[i];
@@ -88,7 +91,13 @@ wxToolBar* MainFrame::CreateToolBar()
             if (tool)
             {
                str = element.help ? element.help : wxGetStockLabelEx(element.id, wxSTOCK_PLAINTEXT).wx_str();
-               if (element.keyCode) str+=wxString::Format(wxT(" (%s)"), wxGetAccelText(element.flags, element.keyCode).wx_str());
+
+               //if (element.keyCode) str+=wxString::Format(wxT(" (%s)"), wxGetAccelText(element.flags, element.keyCode).wx_str());
+               int index = wxAcceleratorEntry_Find(accel, element.id);
+               if (index != wxNOT_FOUND)
+               {
+                  str+=wxString::Format(wxT(" (%s)"), wxGetAccelText(accel.Item(index)).wx_str());
+               }
                tool->SetShortHelp(str);
             }
             break;

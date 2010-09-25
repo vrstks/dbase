@@ -61,7 +61,7 @@ inline void wxListCtrl_SelectAll(wxListCtrl* ctrl, bool on = true)
 
 inline bool wxListView_SetCurSel(wxListCtrl* ctrl, long index, bool focus = true)
 { 
-   bool ok = (index != -1) && (index < ctrl->GetItemCount());
+   bool ok = (index != wxNOT_FOUND) && (index < ctrl->GetItemCount());
    if (ok)
    {
       bool on = true;
@@ -78,7 +78,7 @@ inline bool wxListView_SetCurSel(wxListCtrl* ctrl, long index, bool focus = true
 
 #endif
 
-extern wxString wxGetAccelText(int flags, int keyCode);
+extern wxString wxGetAccelText(const wxAcceleratorEntry&);
 
 #ifndef __WXCODE_H__
 
@@ -88,8 +88,6 @@ typedef struct _wxTOOLBARITEM
    const wxChar* id_art;
    const wxChar* text;
    const wxChar* help;
-   int           flags;
-   int           keyCode;
 } wxTOOLBARITEM;
 
 #endif
@@ -120,6 +118,7 @@ extern wxAcceleratorEntry wxGetStockAcceleratorEx(wxWindowID);
 class WXDLLIMPEXP_FWD_CORE wxMenuBar;
 extern void wxMenu_SetAccelText(wxMenuBar*, const AcceleratorArray&);
 extern void wxSetAcceleratorTable(wxWindow*, const AcceleratorArray&);
+extern int wxAcceleratorEntry_Find(const AcceleratorArray&, int id);
 
 #define wxMessageBoxCaption      wxGetApp().GetAppDisplayName()
 

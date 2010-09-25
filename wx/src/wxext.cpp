@@ -5,7 +5,7 @@
 #include "precomp.h"
 #include "wxext.h"
 
-#include <wx/arrimpl.cpp>
+#include "wx/arrimpl.cpp"
 WX_DEFINE_OBJARRAY(AcceleratorArray)
 
 void wxFrame_ToggleFullScreen(wxFrame* wnd, long style)
@@ -540,6 +540,18 @@ void wxDocument_Info(const wxDocument* doc, wxArrayString* as)
    }
    as->Add(wxString::Format(fmt, wxT("GetDocumentSaved"), doc->GetDocumentSaved() ? _("Yes") : _("No")));
    as->Add(wxString::Format(fmt, wxT("GetDocumentName"), doc->GetDocumentName().wx_str()));
+}
+
+int wxAcceleratorEntry_Find(const AcceleratorArray& array, int id)
+{
+   for (size_t i = 0; i < array.GetCount(); i++)
+   {
+      if (array.Item(i).GetCommand() == id)
+      {
+         return (int)i;
+      }
+   }
+   return wxNOT_FOUND;
 }
 
 /////////////////////////////////////////////////////////////////////////////

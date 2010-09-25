@@ -13,10 +13,10 @@ class MainFrame : public wxDocMDIParentFrame
    typedef wxDocMDIParentFrame base;
    DECLARE_CLASS(MainFrame)
 public:
-   MainFrame(wxDocManager*, wxFrame*, const wxString& title, 
-      const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, 
-      long style = wxDEFAULT_FRAME_STYLE);
+   MainFrame(wxDocManager*, const wxString& title, 
+      const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize);
 
+protected:
    wxToolBar* CreateToolBar();
 
 protected:
