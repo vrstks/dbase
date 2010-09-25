@@ -339,6 +339,18 @@ void wxSetAcceleratorTable(wxWindow* wnd, const AcceleratorArray& array)
    wxDELETEA(temp);
 }
 
+int wxAcceleratorEntry_Find(const AcceleratorArray& array, int id)
+{
+   for (size_t i = 0; i < array.GetCount(); i++)
+   {
+      if (array.Item(i).GetCommand() == id)
+      {
+         return (int)i;
+      }
+   }
+   return wxNOT_FOUND;
+}
+
 wxString wxMenuItem_GetText(const wxMenuItem* item)
 {
    wxString str = item->GetItemLabel();
@@ -540,18 +552,6 @@ void wxDocument_Info(const wxDocument* doc, wxArrayString* as)
    }
    as->Add(wxString::Format(fmt, wxT("GetDocumentSaved"), doc->GetDocumentSaved() ? _("Yes") : _("No")));
    as->Add(wxString::Format(fmt, wxT("GetDocumentName"), doc->GetDocumentName().wx_str()));
-}
-
-int wxAcceleratorEntry_Find(const AcceleratorArray& array, int id)
-{
-   for (size_t i = 0; i < array.GetCount(); i++)
-   {
-      if (array.Item(i).GetCommand() == id)
-      {
-         return (int)i;
-      }
-   }
-   return wxNOT_FOUND;
 }
 
 /////////////////////////////////////////////////////////////////////////////

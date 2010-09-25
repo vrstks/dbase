@@ -43,9 +43,11 @@ MainFrame::MainFrame(wxDocManager* manager, const wxString& title,
 
 wxToolBar* MainFrame::CreateToolBar()
 {
+   const AcceleratorArray& accel = wxGetApp().GetAccelerator();
+   
    wxToolBar* tb = base::CreateToolBar(wxTB_TEXT | wxBORDER_NONE | wxTB_HORIZONTAL | wxTB_FLAT);
 
-   static const wxTOOLBARITEM aID[] =
+   const wxTOOLBARITEM aID[] =
    {
       { wxID_NEW           , NULL               , NULL         , NULL      },
       { wxID_OPEN          , NULL               , NULL         , NULL      },
@@ -67,7 +69,7 @@ wxToolBar* MainFrame::CreateToolBar()
       { wxID_EXIT          , NULL               , NULL         , NULL      },
       { wxID_SEPARATOR     , NULL               , NULL         , NULL      },
    };
-   const AcceleratorArray& accel = wxGetApp().GetAccelerator();
+
    for (size_t i = 0; i < WXSIZEOF(aID); i++)
    {
       const wxTOOLBARITEM& element = aID[i];
@@ -91,8 +93,6 @@ wxToolBar* MainFrame::CreateToolBar()
             if (tool)
             {
                str = element.help ? element.help : wxGetStockLabelEx(element.id, wxSTOCK_PLAINTEXT).wx_str();
-
-               //if (element.keyCode) str+=wxString::Format(wxT(" (%s)"), wxGetAccelText(element.flags, element.keyCode).wx_str());
                int index = wxAcceleratorEntry_Find(accel, element.id);
                if (index != wxNOT_FOUND)
                {

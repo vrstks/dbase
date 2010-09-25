@@ -78,8 +78,6 @@ inline bool wxListView_SetCurSel(wxListCtrl* ctrl, long index, bool focus = true
 
 #endif
 
-extern wxString wxGetAccelText(const wxAcceleratorEntry&);
-
 #ifndef __WXCODE_H__
 
 typedef struct _wxTOOLBARITEM
@@ -119,6 +117,7 @@ class WXDLLIMPEXP_FWD_CORE wxMenuBar;
 extern void wxMenu_SetAccelText(wxMenuBar*, const AcceleratorArray&);
 extern void wxSetAcceleratorTable(wxWindow*, const AcceleratorArray&);
 extern int wxAcceleratorEntry_Find(const AcceleratorArray&, int id);
+extern wxString wxGetAccelText(const wxAcceleratorEntry&);
 
 #define wxMessageBoxCaption      wxGetApp().GetAppDisplayName()
 
