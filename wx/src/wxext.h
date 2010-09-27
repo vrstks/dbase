@@ -24,20 +24,15 @@ extern wxArtID wxID2ArtID(int wx_id);
 extern void wxFrame_ToggleFullScreen(wxFrame*, long style);
 extern void wxFrame_OnUpdateFullScreen(wxFrame*, wxUpdateUIEvent&);
 
-inline bool wxWindow_Toggle(wxWindow* wnd, bool layout)
+#ifdef _WX_FRAME_H_BASE_
+inline bool wxWindow_Toggle(wxFrame* parent, wxWindow* wnd)
 {
    const bool show = !wnd->IsShown();
    wnd->Show(show);
-   if (layout)
-   {
-   /*
-      wxWindow* parent = wnd->GetParent();
-      parent->Layout();
-      parent->Refresh();
-   */
-   }
+   parent->SendSizeEvent();
    return show;
 }
+#endif
 
 #ifdef _WX_ARTPROV_H_
 class wxArtProviderEx : public wxArtProvider
