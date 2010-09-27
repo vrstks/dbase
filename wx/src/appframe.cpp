@@ -41,11 +41,20 @@ MainFrame::MainFrame(wxDocManager* manager, const wxString& title,
    Show();
 }
 
+typedef struct _wxTOOLBARITEM
+{
+   int id;
+   const wxChar* id_art;
+   const wxChar* text;
+   const wxChar* help;
+} wxTOOLBARITEM;
+
 wxToolBar* MainFrame::CreateToolBar()
 {
    const AcceleratorArray& accel = wxGetApp().GetAccelerator();
    
    wxToolBar* tb = base::CreateToolBar(wxTB_TEXT | wxBORDER_NONE | wxTB_HORIZONTAL | wxTB_FLAT);
+   const wxSize size = tb->GetToolBitmapSize();
 
    const wxTOOLBARITEM aID[] =
    {
@@ -81,11 +90,6 @@ wxToolBar* MainFrame::CreateToolBar()
             break;
          default:
          {
-         #ifdef __WXMSW__
-            const wxSize size = wxToolBar().GetToolBitmapSize();
-         #else
-            const wxSize size = tb->GetToolBitmapSize();
-         #endif
             const wxArtID art_id = element.id_art ? element.id_art : wxID2ArtID(element.id).wx_str();
             wxBitmap icon = wxArtProviderEx::GetBitmap(art_id, wxART_OTHER, size);
             wxString str = element.text ? element.text : wxGetStockLabelEx(element.id, wxSTOCK_PLAINTEXT).wx_str();

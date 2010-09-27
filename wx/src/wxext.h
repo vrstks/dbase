@@ -78,18 +78,6 @@ inline bool wxListView_SetCurSel(wxListCtrl* ctrl, long index, bool focus = true
 
 #endif
 
-#ifndef __WXCODE_H__
-
-typedef struct _wxTOOLBARITEM
-{
-   int id;
-   const wxChar* id_art;
-   const wxChar* text;
-   const wxChar* help;
-} wxTOOLBARITEM;
-
-#endif
-
 extern bool wxListCtrl_GetItemRect(const wxListView&, long row, long col, wxRect*);
 extern long wxListView_HitTest(const wxListView&, const wxPoint&, int* flags, long* col);
 extern wxString wxListView_GetItemText(const wxListCtrl&, int row, int col);
