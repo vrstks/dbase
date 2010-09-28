@@ -128,7 +128,7 @@ void MainFrame::OnAbout(wxCommandEvent& WXUNUSED(event) )
 
 void MainFrame::OnStatusBar(wxCommandEvent&)
 {
-   ::wxWindow_Toggle(this, GetStatusBar());
+   ::wxWindow_Toggle(GetStatusBar());
 }
 
 void MainFrame::OnUpdateStatusBar(wxUpdateUIEvent& event)
@@ -138,7 +138,7 @@ void MainFrame::OnUpdateStatusBar(wxUpdateUIEvent& event)
 
 void MainFrame::OnToolBar(wxCommandEvent&)
 {
-   ::wxWindow_Toggle(this, GetToolBar());
+   ::wxWindow_Toggle(GetToolBar());
 }
 
 void MainFrame::OnUpdateToolBar(wxUpdateUIEvent& event)

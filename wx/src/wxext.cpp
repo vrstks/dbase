@@ -8,6 +8,22 @@
 #include "wx/arrimpl.cpp"
 WX_DEFINE_OBJARRAY(AcceleratorArray)
 
+bool wxWindow_Toggle(wxWindow* wnd)
+{
+   const bool show = !wnd->IsShown();
+   wnd->Show(show);
+   wxWindow* parent = wnd->GetParent();
+   if (wxIS_KIND_OF(parent, wxFrame))
+   {
+      wxStaticCast(parent, wxFrame)->SendSizeEvent(); // needed when mdi
+   }
+   else
+   {
+      parent->Layout(); // needed when non-mdi
+   }
+   return show;
+}
+
 void wxFrame_ToggleFullScreen(wxFrame* wnd, long style)
 {
    wnd->ShowFullScreen(!wnd->IsFullScreen(), style);
