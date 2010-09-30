@@ -25,16 +25,6 @@ extern void wxFrame_ToggleFullScreen(wxFrame*, long style);
 extern void wxFrame_OnUpdateFullScreen(wxFrame*, wxUpdateUIEvent&);
 extern bool wxWindow_Toggle(wxWindow*);
 
-#ifdef _WX_ARTPROV_H_
-class wxArtProviderEx : public wxArtProvider
-{
-public:
-   static wxBitmap GetBitmap(const wxArtID&, const wxArtClient& client = wxART_OTHER, const wxSize& size = wxDefaultSize);
-protected:
-   virtual wxBitmap CreateBitmap(const wxArtID&, const wxArtClient&, const wxSize&);
-};
-#endif
-
 #if !defined(__WXCODE_H__) && defined(_WX_LISTCTRL_H_)
 
 inline void wxListCtrl_SelectAll(wxListCtrl* ctrl, bool on = true)

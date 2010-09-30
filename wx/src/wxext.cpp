@@ -129,26 +129,6 @@ wxArtID wxID2ArtID(int wx_id)
    return str;
 }
 
-/*static*/ wxBitmap wxArtProviderEx::GetBitmap(const wxArtID& id, const wxArtClient& client, const wxSize& size)
-{
-   return wxArtProviderEx().CreateBitmap(id, client, size);
-}
-
-#include "res/help.xpm"
-#include "res/plus.xpm"
-#include "res/preview.xpm"
-
-#define ART(artid, xpmRc) \
-    if (id == (artid)) return wxBitmap(xpmRc##_xpm);
-
-wxBitmap wxArtProviderEx::CreateBitmap(const wxArtID& id, const wxArtClient& client, const wxSize& size)
-{
-    ART(wxART_HELP      , help)
-    ART(wxART_ADD       , plus)
-    ART(wxART_PREVIEW   , preview)
-    return wxArtProvider::GetBitmap(id, client, size);
-}
-
 wxString wxGetAccelText(int flags, int keyCode)
 {
    // wxAcceleratorEntry.ToString() produces silly text

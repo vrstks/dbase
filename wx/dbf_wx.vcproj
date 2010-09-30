@@ -501,6 +501,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\src\art.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\datalist.cpp"
 				>
 				<FileConfiguration

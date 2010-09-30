@@ -164,6 +164,7 @@
 		<Unit filename="../ioapi/ioapi.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="src/art.cpp" />
 		<Unit filename="src/app.cpp" />
 		<Unit filename="src/app.h" />
 		<Unit filename="src/appframe.cpp" />

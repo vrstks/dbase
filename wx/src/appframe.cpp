@@ -91,7 +91,7 @@ wxToolBar* MainFrame::CreateToolBar()
          default:
          {
             const wxArtID art_id = element.id_art ? element.id_art : wxID2ArtID(element.id).wx_str();
-            wxBitmap icon = wxArtProviderEx::GetBitmap(art_id, wxART_OTHER, size);
+            wxBitmap icon = wxArtProvider::GetBitmap(art_id, wxART_OTHER, size);
             wxString str = element.text ? element.text : wxGetStockLabelEx(element.id, wxSTOCK_PLAINTEXT).wx_str();
             tool = tb->AddTool(element.id, str, icon);
             if (tool)
