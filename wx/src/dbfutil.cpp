@@ -127,10 +127,9 @@ size_t dbf_getproperties(wxDBase* db, wxArrayString* as_ptr, bool header)
          (int)i,
          name.wx_str(),
          asz[info.type],
-         wxString::Format(info.decimals ? wxT("%d:%d") : wxT("%d"),
-            info.length,
-            info.decimals).wx_str()
-
+         info.decimals 
+            ? wxString::Format(wxT("%d:%d"), info.length, info.decimals).wx_str()
+            : wxString::Format(wxT("%d"), info.length).wx_str()
          );
       as.Add(temp);
    }
