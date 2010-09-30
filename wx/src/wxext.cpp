@@ -133,7 +133,12 @@ wxString wxGetAccelText(int flags, int keyCode)
 {
    // wxAcceleratorEntry.ToString() produces silly text
    wxString str;
-   const wxChar sep = '-'; // the wx default
+#if (wxVERSION_NUMBER >= 2901)
+   const wxChar sep = '+'; // the new wx default
+#else
+   const wxChar sep = '-'; // the old annoying wx default
+#endif
+
    if (flags & wxACCEL_CTRL)
    {
       if (str.Length()) str+=sep;
