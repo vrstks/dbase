@@ -4,6 +4,7 @@
 
 #include "precomp.h"
 #include "wxext.h"
+#include "wx/stdpaths.h"
 
 #include "wx/arrimpl.cpp"
 WX_DEFINE_OBJARRAY(AcceleratorArray)
@@ -36,7 +37,7 @@ void wxFrame_OnUpdateFullScreen(wxFrame* wnd, wxUpdateUIEvent& event)
 
 bool wxGetExeFolder(wxFileName* filename)
 {
-   filename->Assign(wxTheApp->argv[0]);
+   filename->Assign(wxStandardPaths::Get().GetExecutablePath());
    filename->SetFullName(wxEmptyString);
    return filename->IsOk();
 }
@@ -539,9 +540,6 @@ bool wxRecentFileList::GetFile(size_t index, wxFileName* str) const
 void wxDocument_Info(const wxDocument* doc, wxArrayString* as)
 {
    const wxString fmt = wxT("%s:\t%s");
-   as->Add(wxString::Format(fmt, wxT("GetFilename"), doc->GetFilename().wx_str()));
-   as->Add(wxString::Format(fmt, wxT("GetTitle"), doc->GetTitle().wx_str()));
-   as->Add(wxString::Format(fmt, wxT("IsModified"), doc->IsModified() ? _("Yes") : _("No")));
    as->Add(wxString::Format(fmt, wxT("Doc class"), doc->GetClassInfo()->GetClassName()));
    if (doc->GetFirstView())
    {
@@ -551,6 +549,9 @@ void wxDocument_Info(const wxDocument* doc, wxArrayString* as)
          as->Add(wxString::Format(fmt, wxT("Frame class"), doc->GetFirstView()->GetFrame()->GetClassInfo()->GetClassName()));
       }
    }
+   as->Add(wxString::Format(fmt, wxT("GetFilename"), doc->GetFilename().wx_str()));
+   as->Add(wxString::Format(fmt, wxT("GetTitle"), doc->GetTitle().wx_str()));
+   as->Add(wxString::Format(fmt, wxT("IsModified"), doc->IsModified() ? _("Yes") : _("No")));
    as->Add(wxString::Format(fmt, wxT("GetDocumentSaved"), doc->GetDocumentSaved() ? _("Yes") : _("No")));
    as->Add(wxString::Format(fmt, wxT("GetDocumentName"), doc->GetDocumentName().wx_str()));
 }
