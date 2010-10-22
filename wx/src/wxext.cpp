@@ -556,4 +556,21 @@ void wxDocument_Info(const wxDocument* doc, wxArrayString* as)
    as->Add(wxString::Format(fmt, wxT("GetDocumentName"), doc->GetDocumentName().wx_str()));
 }
 
+void wxFrame_SetInitialPosition(wxFrame* wnd, const wxPoint& pos, const wxSize& size, int margin_pct)
+{
+   if (size == wxDefaultSize)
+   {
+      wxRect rect = wxGetClientDisplayRect();
+      wxSize size(
+         (rect.width  * (100 - margin_pct*2))/100, 
+         (rect.height * (100 - margin_pct*2))/100);
+         
+      wnd->SetSize(size);
+   }
+   if (pos == wxDefaultPosition)
+   {
+      wnd->Center();
+   }
+}
+
 /////////////////////////////////////////////////////////////////////////////

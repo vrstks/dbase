@@ -128,6 +128,9 @@ protected:
 
 class wxDocument;
 extern void wxDocument_Info(const wxDocument*, wxArrayString*);
+extern void wxFrame_SetInitialPosition(wxFrame*,
+                    const wxPoint& pos = wxDefaultPosition,
+                    const wxSize& size = wxDefaultSize, int margin_pct = 5);
 
 inline void wxJoin(wxArrayString* dst, const wxArrayString& src)
 {

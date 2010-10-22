@@ -38,6 +38,7 @@ MainFrame::MainFrame(wxDocManager* manager, const wxString& title,
    wxGetApp().GetRecentFileList()->Attach(this);
    ::wxSetAcceleratorTable(this, wxGetApp().GetAccelerator());
    ::wxMenu_SetAccelText(GetMenuBar(), wxGetApp().GetAccelerator());
+   ::wxFrame_SetInitialPosition(this, pos, size, 10);
    Show();
 }
 
