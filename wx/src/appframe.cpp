@@ -27,8 +27,7 @@ MainFrame::MainFrame(wxDocManager* manager, const wxString& title,
     const wxPoint& pos, const wxSize& size)
    : wxDocMDIParentFrame(manager, NULL, wxID_ANY, title, pos, size)
 {
-   CreateStatusBar();
-   GetStatusBar()->PushStatusText(_("Ready"));
+   CreateStatusBar()->PushStatusText(_("Ready"));
    SetToolBar(CreateToolBar());
 #ifdef __WXMSW__
    SetIcon(wxIcon(wxT("app")));
