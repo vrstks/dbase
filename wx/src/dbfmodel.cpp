@@ -172,7 +172,7 @@ bool wxDBFModel::AddNew(void)
       strncpy(item->name, wxConvertWX2MB(info.name), WXSIZEOF(item->name));
       item->name[WXSIZEOF(item->name) - 1] = 0;
       item->decimals = 0;
-      item->length = wxMin(info.len, 255);
+      item->length = wxMin(info.len, 255UL);
 
       if (wxT("datetime") == info.type)
       {
