@@ -540,17 +540,22 @@ bool wxRecentFileList::GetFile(size_t index, wxFileName* str) const
 void wxDocument_Info(const wxDocument* doc, wxArrayString* as)
 {
    const wxString fmt = wxT("%s:\t%s");
+   wxView*   view  = doc->GetFirstView();
+   wxWindow* frame = view ? view->GetFrame() : NULL;
+
    as->Add(wxString::Format(fmt, wxT("Doc class"), doc->GetClassInfo()->GetClassName()));
-   if (doc->GetFirstView())
+   if (view)
    {
-      as->Add(wxString::Format(fmt, wxT("View class"), doc->GetFirstView()->GetClassInfo()->GetClassName()));
-      if (doc->GetFirstView()->GetFrame())
-      {
-         as->Add(wxString::Format(fmt, wxT("Frame class"), doc->GetFirstView()->GetFrame()->GetClassInfo()->GetClassName()));
-      }
+      as->Add(wxString::Format(fmt, wxT("View class"), view->GetClassInfo()->GetClassName()));
+   }
+   if (frame)
+   {
+      as->Add(wxString::Format(fmt, wxT("Frame class"), frame->GetClassInfo()->GetClassName()));
+      as->Add(wxString::Format(fmt, wxT("Frame label"), frame->GetLabel().wx_str()));
    }
    as->Add(wxString::Format(fmt, wxT("GetFilename"), doc->GetFilename().wx_str()));
    as->Add(wxString::Format(fmt, wxT("GetTitle"), doc->GetTitle().wx_str()));
+   as->Add(wxString::Format(fmt, wxT("GetUserReadableName"), doc->GetUserReadableName().wx_str()));
    as->Add(wxString::Format(fmt, wxT("IsModified"), doc->IsModified() ? _("Yes") : _("No")));
    as->Add(wxString::Format(fmt, wxT("GetDocumentSaved"), doc->GetDocumentSaved() ? _("Yes") : _("No")));
    as->Add(wxString::Format(fmt, wxT("GetDocumentName"), doc->GetDocumentName().wx_str()));
