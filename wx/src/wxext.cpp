@@ -130,7 +130,7 @@ wxArtID wxID2ArtID(int wx_id)
    return str;
 }
 
-wxString wxGetAccelText(int flags, int keyCode)
+static wxString wxGetAccelText(int flags, int keyCode)
 {
    // wxAcceleratorEntry.ToString() produces silly text
    wxString str;
@@ -341,7 +341,7 @@ void wxSetAcceleratorTable(wxWindow* wnd, const AcceleratorArray& array)
    wxDELETEA(temp);
 }
 
-int wxAcceleratorEntry_Find(const AcceleratorArray& array, int id)
+static int wxAcceleratorEntry_Find(const AcceleratorArray& array, int id)
 {
    for (size_t i = 0; i < array.GetCount(); i++)
    {
@@ -388,7 +388,7 @@ bool wxMenuItem_SetAccelText(wxMenuItem* item, const wxString& accel, bool appen
    return true;
 }
 
-wxString wxGetAccelText(const wxAcceleratorEntry& accel)
+static wxString wxGetAccelText(const wxAcceleratorEntry& accel)
 {
    return wxGetAccelText(accel.GetFlags(), (enum wxKeyCode)accel.GetKeyCode());
 }
@@ -405,6 +405,17 @@ void wxMenu_SetAccelText(wxMenuBar* menu, const AcceleratorArray& array)
          wxMenuItem_SetAccelText(item, wxGetAccelText(entry), true);
       }
    }
+}
+
+wxString wxToolBar_GetToolTipText(const wxString& label, const AcceleratorArray& accel, int id)
+{
+    wxString str = label;
+    int index = wxAcceleratorEntry_Find(accel, id);
+    if (index != wxNOT_FOUND)
+    {
+       str+=wxString::Format(wxT(" (%s)"), wxGetAccelText(accel.Item(index)).wx_str());
+    }
+    return str;
 }
 
 wxString wxGetStockLabelEx(wxWindowID id, long flags)

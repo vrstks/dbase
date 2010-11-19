@@ -97,11 +97,7 @@ wxToolBar* MainFrame::CreateToolBar()
             if (tool)
             {
                str = element.help ? element.help : wxGetStockLabelEx(element.id, wxSTOCK_PLAINTEXT).wx_str();
-               int index = wxAcceleratorEntry_Find(accel, element.id);
-               if (index != wxNOT_FOUND)
-               {
-                  str+=wxString::Format(wxT(" (%s)"), wxGetAccelText(accel.Item(index)).wx_str());
-               }
+               str = wxToolBar_GetToolTipText(str, accel, element.id);
                tool->SetShortHelp(str);
             }
             break;
