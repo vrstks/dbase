@@ -499,11 +499,15 @@ void wxRecentFileList::Attach(wxMenuBar* menubar)
    m_fileHistory->AddFilesToMenu(submenu);
 }
 
-void wxRecentFileList::Detach(wxMenuBar* menubar)
+bool wxRecentFileList::Detach(wxMenuBar* menubar)
 {
    wxMenu* submenu;
-   GetSubMenu(menubar, &submenu);
-   m_fileHistory->RemoveMenu(submenu);
+   bool ok = (NULL != GetSubMenu(menubar, &submenu));
+   if (ok)
+   {
+      m_fileHistory->RemoveMenu(submenu);
+   }
+   return ok;
 }
 
 void wxRecentFileList::Attach(wxFrame* frame)
@@ -511,9 +515,9 @@ void wxRecentFileList::Attach(wxFrame* frame)
    Attach(frame->GetMenuBar());
 }
 
-void wxRecentFileList::Detach(wxFrame* frame)
+bool wxRecentFileList::Detach(wxFrame* frame)
 {
-   Detach(frame->GetMenuBar());
+   return Detach(frame->GetMenuBar());
 }
 
 void wxRecentFileList::Load(wxConfigBase* config)

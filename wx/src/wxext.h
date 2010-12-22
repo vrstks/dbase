@@ -115,8 +115,8 @@ public:
 
    void Attach(wxMenuBar*);
    void Attach(wxFrame*);
-   void Detach(wxMenuBar*);
-   void Detach(wxFrame*);
+   bool Detach(wxMenuBar*);
+   bool Detach(wxFrame*);
 
    wxFileHistory* GetImplementation() const;
 
