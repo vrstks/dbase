@@ -341,18 +341,6 @@ void wxSetAcceleratorTable(wxWindow* wnd, const AcceleratorArray& array)
    wxDELETEA(temp);
 }
 
-static int wxAcceleratorEntry_Find(const AcceleratorArray& array, int id)
-{
-   for (size_t i = 0; i < array.GetCount(); i++)
-   {
-      if (array.Item(i).GetCommand() == id)
-      {
-         return (int)i;
-      }
-   }
-   return wxNOT_FOUND;
-}
-
 wxString wxMenuItem_GetText(const wxMenuItem* item)
 {
    wxString str = item->GetItemLabel();
@@ -407,15 +395,28 @@ void wxMenu_SetAccelText(wxMenuBar* menu, const AcceleratorArray& array)
    }
 }
 
-wxString wxToolBar_GetToolTipText(const wxString& label, const AcceleratorArray& accel, int id)
+wxString wxToolBarTool_MakeShortHelp(const wxString& rstr, const AcceleratorArray& accel, int id)
 {
-    wxString str = label;
-    int index = wxAcceleratorEntry_Find(accel, id);
-    if (index != wxNOT_FOUND)
-    {
-       str+=wxString::Format(wxT(" (%s)"), wxGetAccelText(accel.Item(index)).wx_str());
-    }
-    return str;
+   wxString str = rstr;
+   if (accel.GetCount() && str.Length())
+   {
+      wxString strAccel;
+
+      for (size_t i = 0; i < accel.GetCount(); i++)
+      {
+         const wxAcceleratorEntry& element = accel.Item(i);
+         if (element.GetCommand() == id)
+         {
+            if (strAccel.Length()) strAccel+=wxT(ACCELSTR_SEP);
+            strAccel+=wxGetAccelText(element);
+         }
+      }
+      if (strAccel.Length())
+      {
+         str+=wxString::Format(wxT(" (%s)"), strAccel);
+      }
+   }
+   return str;
 }
 
 wxString wxGetStockLabelEx(wxWindowID id, long flags)
