@@ -413,7 +413,7 @@ wxString wxToolBarTool_MakeShortHelp(const wxString& rstr, const AcceleratorArra
       }
       if (strAccel.Length())
       {
-         str+=wxString::Format(wxT(" (%s)"), strAccel);
+         str+=wxString::Format(wxT(" (%s)"), strAccel.wx_str());
       }
    }
    return str;
