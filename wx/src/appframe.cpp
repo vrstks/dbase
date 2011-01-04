@@ -1,5 +1,5 @@
 // appframe.cpp
-// Copyright (c) 2007-2010 by Troels K. All rights reserved.
+// Copyright (c) 2007-2011 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -44,7 +44,11 @@ MainFrame::MainFrame(wxDocManager* manager, const wxString& title,
 typedef struct _wxTOOLBARITEM
 {
    int id;
+#if (wxVERSION_NUMBER >= 2902)
+   const char* id_art;
+#else
    const wxChar* id_art;
+#endif
    const wxChar* text;
    const wxChar* help;
 } wxTOOLBARITEM;
@@ -90,7 +94,7 @@ wxToolBar* MainFrame::CreateToolBar()
             break;
          default:
          {
-            const wxArtID art_id = element.id_art ? element.id_art : wxID2ArtID(element.id).wx_str();
+            const wxArtID art_id = element.id_art ? wxString(element.id_art) : wxID2ArtID(element.id);
             wxBitmap icon = wxArtProvider::GetBitmap(art_id, wxART_OTHER, size);
             wxString str = element.text ? element.text : wxGetStockLabelEx(element.id, wxSTOCK_PLAINTEXT).wx_str();
             tool = tb->AddTool(element.id, str, icon);

@@ -1,5 +1,5 @@
 // wxext.cpp
-// Copyright (c) 2007-2010 by Troels K. All rights reserved.
+// Copyright (c) 2007-2011 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -81,7 +81,11 @@ wxArtID wxID2ArtID(int wx_id)
    static const struct _MAP
    {
       int id;
+#if (wxVERSION_NUMBER >= 2902)
+      const char* id_art;
+#else
       const wxChar* id_art;
+#endif
    } aMap[] =
    {
       { wxID_UP            , wxART_GO_UP           },
