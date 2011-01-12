@@ -1,5 +1,5 @@
 // app.cpp
-// Copyright (c) 2007-2010 by Troels K. All rights reserved.
+// Copyright (c) 2007-2011 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -81,8 +81,7 @@ int App::OnExit(void)
       array.Add(wxGetStockAcceleratorEx(wxID_SELECTALL));
       array.Add(wxGetStockAcceleratorEx(wxID_PROPERTIES));
       array.Add(wxGetStockAcceleratorEx(wxID_FIND));
-
-      array.Add(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_HELP, wxID_ABOUT));
+      array.Add(wxGetStockAcceleratorEx(wxID_ABOUT));
 
       array.Add(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_FULLSCREEN, XRCID("view_fullscreen")));
 
