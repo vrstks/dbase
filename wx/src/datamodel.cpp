@@ -115,7 +115,7 @@ void wxDataModelSorted::Resort()
     SetSortArray(temp);
 }
 
-size_t wxDataModelBase::GetRow(size_t row, wxArrayString* as_ptr, bool header) const
+size_t wxDataModelBase::GetRow(unsigned int row, wxArrayString* as_ptr, bool header) const
 {
    wxArrayString as;
    for (size_t col = 0; col < GetColumnCount(); col++)
