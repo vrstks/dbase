@@ -12,6 +12,14 @@
 
 IMPLEMENT_CLASS(MainFrame, wxDocMDIParentFrame)
 
+MainFrame::MainFrame() : wxDocMDIParentFrame()
+{
+}
+
+MainFrame::~MainFrame()
+{
+}
+
 BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
    EVT_MENU(XRCID("statusbar")      , MainFrame::OnStatusBar)
    EVT_MENU(XRCID("toolbar")        , MainFrame::OnToolBar)
@@ -23,22 +31,31 @@ BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
 // EVT_UPDATE_UI(wxID_HELP          , MainFrame::OnUpdateDisable)
 END_EVENT_TABLE()
 
-MainFrame::MainFrame(wxDocManager* manager, const wxString& title,
+bool MainFrame::Create(wxDocManager* manager, const wxString& title,
     const wxPoint& pos, const wxSize& size)
-   : wxDocMDIParentFrame(manager, NULL, wxID_ANY, title, pos, size)
 {
-   CreateStatusBar()->PushStatusText(_("Ready"));
-   SetToolBar(CreateToolBar());
-#ifdef __WXMSW__
-   SetIcon(wxIcon(wxT("app")));
-#endif
-   wxMenuBar* menu = wxXmlResource::Get()->LoadMenuBar(wxT("menu_mdi"));
-   SetMenuBar(menu);
-   wxGetApp().GetRecentFileList()->Attach(this);
-   ::wxSetAcceleratorTable(this, wxGetApp().GetAccelerator());
-   ::wxMenu_SetAccelText(GetMenuBar(), wxGetApp().GetAccelerator());
-   ::wxFrame_SetInitialPosition(this, pos, size, 10);
-   Show();
+   bool ok = base::Create(manager, NULL, wxID_ANY, title, pos, size);
+   if (ok)
+   {
+       CreateStatusBar()->PushStatusText(_("Ready"));
+       SetToolBar(CreateToolBar());
+    #ifdef __WXMSW__
+       SetIcon(wxIcon(wxT("app")));
+    #endif
+       wxMenuBar* menubar = wxXmlResource::Get()->LoadMenuBar(wxT("menu_mdi"));
+       SetMenuBar(menubar);
+       ::wxSetAcceleratorTable(this, wxGetApp().GetAccelerator());
+       ::wxMenu_SetAccelText(GetMenuBar(), wxGetApp().GetAccelerator());
+       ::wxFrame_SetInitialPosition(this, pos, size, 10);
+       Show();
+   }
+   return ok;
+}
+
+void MainFrame::SetMenuBar(wxMenuBar* menubar)
+{
+    base::SetMenuBar(menubar);
+    wxGetApp().GetRecentFileList()->Attach(menubar);
 }
 
 typedef struct _wxTOOLBARITEM

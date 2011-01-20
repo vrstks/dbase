@@ -21,7 +21,6 @@ BEGIN_EVENT_TABLE(DBFFrame, wxDocMDIChildFrame)
 END_EVENT_TABLE()
 
 bool DBFFrame::Create(wxDocument* doc, wxMDIParentFrame* parent)
-
 {
    bool ok = base::Create(doc, doc->GetFirstView(), parent, wxID_ANY, wxEmptyString,
                              wxDefaultPosition, wxDefaultSize,
@@ -31,9 +30,9 @@ bool DBFFrame::Create(wxDocument* doc, wxMDIParentFrame* parent)
     #ifdef __WXMSW__
        SetIcon(wxIcon(wxT("dbf")));
     #endif
-       wxMenuBar* menu = wxXmlResource::Get()->LoadMenuBar(wxT("menu_dbf"));
-       ::wxMenu_SetAccelText(menu, wxGetApp().GetAccelerator());
-       SetMenuBar(menu);
+       wxMenuBar* menubar = wxXmlResource::Get()->LoadMenuBar(wxT("menu_dbf"));
+       ::wxMenu_SetAccelText(menubar, wxGetApp().GetAccelerator());
+       SetMenuBar(menubar);
    }
    return ok;
 }
