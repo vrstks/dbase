@@ -1,5 +1,5 @@
 // dbfdoc.cpp
-// Copyright (c) 2007-2010 by Troels K. All rights reserved.
+// Copyright (c) 2007-2011 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -25,7 +25,7 @@ DBFDocument::DBFDocument(void) : wxDocument(), m_database(new wxDBase)
 
 DBFDocument::~DBFDocument(void)
 {
-   wxDELETE(m_database);
+   delete m_database;
 }
 
 // Since text windows have their own method for saving to/loading from files,
@@ -134,7 +134,8 @@ DatabaseDocTemplate::DatabaseDocTemplate(wxDocManager* docManager) : wxDocTempla
 
 wxFrame* DatabaseDocTemplate::CreateViewFrame(wxView* view)
 {
-   wxDocMDIChildFrame* frame = new DBFFrame(view->GetDocument(), wxStaticCast(wxTheApp->GetTopWindow(), wxMDIParentFrame));
+   DBFFrame* frame = new DBFFrame();
+   frame->Create(view->GetDocument(), wxStaticCast(wxTheApp->GetTopWindow(), wxMDIParentFrame));
    return frame;
 }
 

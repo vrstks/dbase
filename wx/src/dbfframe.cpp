@@ -1,5 +1,5 @@
 // dbfframe.cpp
-// Copyright (c) 2007-2010 by Troels K. All rights reserved.
+// Copyright (c) 2007-2011 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -8,27 +8,40 @@
 #include "app.h"
 #include "wxext.h"
 
-DBFFrame::DBFFrame(wxDocument* doc, wxMDIParentFrame* parent)
-   : wxDocMDIChildFrame(doc, doc->GetFirstView(), parent, wxID_ANY, wxEmptyString,
-                             wxDefaultPosition, wxDefaultSize,
-                             wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE | wxMAXIMIZE)
-
+DBFFrame::DBFFrame() : wxDocMDIChildFrame()
 {
-#ifdef __WXMSW__
-   SetIcon(wxIcon(wxT("dbf")));
-#endif
-   wxMenuBar* menu = wxXmlResource::Get()->LoadMenuBar(wxT("menu_dbf"));
-   ::wxMenu_SetAccelText(menu, wxGetApp().GetAccelerator());
-   SetMenuBar(menu);
-   wxGetApp().GetRecentFileList()->Attach(this);
+}
+
+DBFFrame::~DBFFrame()
+{
+   wxGetApp().GetRecentFileList()->Detach(this);
 }
 
 BEGIN_EVENT_TABLE(DBFFrame, wxDocMDIChildFrame)
 END_EVENT_TABLE()
 
-DBFFrame::~DBFFrame()
+bool DBFFrame::Create(wxDocument* doc, wxMDIParentFrame* parent)
+
 {
-   wxGetApp().GetRecentFileList()->Detach(this);
+   bool ok = base::Create(doc, doc->GetFirstView(), parent, wxID_ANY, wxEmptyString,
+                             wxDefaultPosition, wxDefaultSize,
+                             wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE | wxMAXIMIZE);
+   if (ok)
+   {
+    #ifdef __WXMSW__
+       SetIcon(wxIcon(wxT("dbf")));
+    #endif
+       wxMenuBar* menu = wxXmlResource::Get()->LoadMenuBar(wxT("menu_dbf"));
+       ::wxMenu_SetAccelText(menu, wxGetApp().GetAccelerator());
+       SetMenuBar(menu);
+   }
+   return ok;
+}
+
+void DBFFrame::SetMenuBar(wxMenuBar* menubar)
+{
+    base::SetMenuBar(menubar);
+    wxGetApp().GetRecentFileList()->Attach(menubar);
 }
 
 #if (wxVERSION_NUMBER < 2900) // trac.wxwidgets.org/ticket/11442
