@@ -1,5 +1,5 @@
 // dbfdlgs.cpp
-// Copyright (c) 2007-2010 by Troels K. All rights reserved.
+// Copyright (c) 2007-2011 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -140,10 +140,15 @@ wxString wxStructListView::OnGetItemText(long item, long col) const
 
 class wxDBFStructDialog : public wxDialog
 {
-public:
+protected:
    wxDBase* m_database;
+public:
    wxStructListView* m_list;
-   wxDBFStructDialog(wxWindow* parent, wxDBase* db);
+   
+public:
+   wxDBFStructDialog(wxDBase*);
+
+   bool Create(wxWindow* parent);
 
 // Implementation
 public:
@@ -171,16 +176,20 @@ BEGIN_EVENT_TABLE(wxDBFStructDialog, wxDialog)
 
 END_EVENT_TABLE()
 
-wxDBFStructDialog::wxDBFStructDialog(wxWindow* parent, wxDBase* db) : wxDialog()
+wxDBFStructDialog::wxDBFStructDialog(wxDBase* db) : wxDialog(), m_database(db)
 {
-   m_database = db;
+}
+
+bool wxDBFStructDialog::Create(wxWindow* parent)
+{
    bool ok = wxXmlResource::Get()->LoadDialog(this, parent, wxT("struct"));
    if (ok)
    {
       m_list = XRCCTRL(*this, "list", wxStructListView);
-      m_list->Init(db);
+      m_list->Init(m_database);
       //Center();
    }
+   return ok;
 }
 
 wxDBFStructDialog::~wxDBFStructDialog()
@@ -238,7 +247,8 @@ void wxDBFStructDialog::OnUpdateNeedSel(wxUpdateUIEvent& event)
 
 bool DoModal_Structure(wxWindow* parent, wxDBase* db, const wxString& caption, const wxString& filename)
 {
-   wxDBFStructDialog dlg(parent, db);
+   wxDBFStructDialog dlg(db);
+   dlg.Create(parent);
    if (caption.Length()) dlg.SetTitle(caption);
    bool ok = (wxID_OK == dlg.ShowModal());
    if (ok && filename.Length() && !db->IsOpen())
@@ -258,11 +268,16 @@ public:
    int m_type;
    int m_length;
    int m_decimals;
+protected:
    wxTextCtrl* m_edit0;
    wxComboBox* m_edit1;
    wxTextCtrl* m_edit2;
    wxTextCtrl* m_edit3;
-   wxDBFFieldDialog(wxWindow* parent);
+   
+public:
+   wxDBFFieldDialog();
+
+   bool Create(wxWindow* parent);
 
    virtual bool TransferDataFromWindow();
 
@@ -304,23 +319,31 @@ void wxDBFFieldDialog::OnUpdateNeedData(wxUpdateUIEvent& event)
    event.Enable(enable);
 }
 
-wxDBFFieldDialog::wxDBFFieldDialog(wxWindow* parent) : wxDialog()
+wxDBFFieldDialog::wxDBFFieldDialog() : wxDialog()
 {
-   wxXmlResource::Get()->LoadDialog(this, parent, wxT("field_edit"));
-   m_edit0 = XRCCTRL(*this, "edit0", wxTextCtrl);
-   m_edit1 = XRCCTRL(*this, "edit1", wxComboBox);
-   m_edit2 = XRCCTRL(*this, "edit2", wxTextCtrl);
-   m_edit3 = XRCCTRL(*this, "edit3", wxTextCtrl);
+}
 
-   for (size_t i = 0; i < WXSIZEOF(MOD_aszType); i++)
+bool wxDBFFieldDialog::Create(wxWindow* parent)
+{
+   bool ok = wxXmlResource::Get()->LoadDialog(this, parent, wxT("field_edit"));
+   if (ok)
    {
-      m_edit1->Append(MOD_aszType[i], (void*)i);
-      //m_combo->GetClientData()
+       m_edit0 = XRCCTRL(*this, "edit0", wxTextCtrl);
+       m_edit1 = XRCCTRL(*this, "edit1", wxComboBox);
+       m_edit2 = XRCCTRL(*this, "edit2", wxTextCtrl);
+       m_edit3 = XRCCTRL(*this, "edit3", wxTextCtrl);
+
+       for (size_t i = 0; i < WXSIZEOF(MOD_aszType); i++)
+       {
+          m_edit1->Append(MOD_aszType[i], (void*)i);
+          //m_combo->GetClientData()
+       }
+       m_edit0->SetValidator(wxGenericValidator(&m_name    ));
+       m_edit1->SetValidator(wxGenericValidator(&m_type));
+       m_edit2->SetValidator(wxGenericValidator(&m_length  ));
+       m_edit3->SetValidator(wxGenericValidator(&m_decimals));
    }
-   m_edit0->SetValidator(wxGenericValidator(&m_name    ));
-   m_edit1->SetValidator(wxGenericValidator(&m_type));
-   m_edit2->SetValidator(wxGenericValidator(&m_length  ));
-   m_edit3->SetValidator(wxGenericValidator(&m_decimals));
+   return ok;
 }
 
 bool wxDBFFieldDialog::TransferDataFromWindow()
@@ -332,7 +355,8 @@ bool wxDBFFieldDialog::TransferDataFromWindow()
 
 bool DoModal_FieldEdit(wxWindow* parent, DBF_FIELD_INFO* info, const wxString& caption)
 {
-   wxDBFFieldDialog dlg(parent);
+   wxDBFFieldDialog dlg;
+   dlg.Create(parent);
    dlg.Center();
    dlg.m_name = wxConvertMB2WX(info->name);
    dlg.m_type = info->type;
