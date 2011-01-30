@@ -1,5 +1,5 @@
 /* dbf.h */
-/* Copyright (c) 2007-2010 by Troels K. All rights reserved. */
+/* Copyright (c) 2007-2011 by Troels K. All rights reserved. */
 /* License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt */
 /*  Partially based on Turbo C source code by Mark Sadler.      */
 /*  Partially based on MFC source code by www.pablosoftwaresolutions.com 2002   */
@@ -25,8 +25,15 @@ struct _DBF_DATA;
 typedef struct _DBF_DATA* DBF_HANDLE;
 struct tm;
 
-#define FILEEXT_DBASE      "dbf"
-#define FILEEXT_DBASE_MEMO "dbt"
+#define DBF_MAJOR_VERSION      1
+#define DBF_MINOR_VERSION      0
+#define DBF_SVN_VERSION        255
+#define DBF_WEBSITE            "http://sf.net/projects/dbase"
+#define DBF_NAME               "dbflib"
+#define DBF_AUTHOR             "Troels K"
+
+#define DBF_FILEEXT           "dbf"
+#define DBF_FILEEXT_MEMO      "dbt"
 
 enum dbf_charconv
 {
@@ -170,6 +177,5 @@ EXTERN_C void        dbf_getmemofilename(const char* file_dbf, char* buf, size_t
 EXTERN_C const char* dbf_gettypetext  (enum dbf_data_type);
 EXTERN_C enum        dbf_data_type dbf_gettype_int2ext(char type);
 EXTERN_C char        dbf_gettype_ext2int(enum dbf_data_type);
-EXTERN_C const char* dbf_libversionstring();
 
 #endif /* __DBF_H__ */

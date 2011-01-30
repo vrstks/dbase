@@ -18,7 +18,7 @@
 #include "dbfutil.h"
 #include "wxstreamc.h"
 
-/*static*/ const wxChar* wxDBFModel::m_fileext = wxT(FILEEXT_DBASE);
+/*static*/ const wxChar* wxDBFModel::m_fileext = wxT(DBF_FILEEXT);
 
 wxDBFModel::wxDBFModel(wxDBase* database) : wxDataModel(), m_database(database), m_delete_on_exit(false)
 {

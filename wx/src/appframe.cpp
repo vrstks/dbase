@@ -3,12 +3,17 @@
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
+#include "wx/stdpaths.h"
+
+#include "wx29.h"
 #include "wxext.h"
 #include "appframe.h"
 #include "wx/aboutdlg.h"
 #include "app.h"
 #include "../../bool.h"
 #include "../../dbf.h"
+#include "../../dbf.hpp"
+#include "../../dbf_wx.h"
 
 IMPLEMENT_CLASS(MainFrame, wxDocMDIParentFrame)
 
@@ -23,7 +28,6 @@ MainFrame::~MainFrame()
 BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
    EVT_MENU(XRCID("statusbar")      , MainFrame::OnStatusBar)
    EVT_MENU(XRCID("toolbar")        , MainFrame::OnToolBar)
-   EVT_MENU(wxID_ABOUT              , MainFrame::OnAbout)
    EVT_MENU(XRCID("view_fullscreen"), MainFrame::OnFullscreen)
    EVT_UPDATE_UI(XRCID("view_fullscreen"), MainFrame::OnUpdateFullscreen)
    EVT_UPDATE_UI(XRCID("toolbar")   , MainFrame::OnUpdateToolBar)
@@ -129,18 +133,19 @@ wxToolBar* MainFrame::CreateToolBar()
    return tb;
 }
 
-void MainFrame::OnAbout(wxCommandEvent& WXUNUSED(event) )
+/*static*/ void MainFrame::GetVersionInfo(wxAboutDialogInfo* info)
 {
-   wxAboutDialogInfo info;
-   info.SetDescription(wxString::Format(wxT("\nThis demo program demonstrates the usage of wxDBase\n\nUsing:\n%s\n%s\n"),
-                       wxString(wxConvertMB2WX(::dbf_libversionstring())).wx_str(),
-                       wxVERSION_STRING
-                       ));
-   info.SetCopyright(wxT("Copyright (c) 2007-2010 Troels K"));
-   info.AddDeveloper(wxT("Troels K"));
-   info.SetWebSite(wxT("http://sf.net/projects/dbase"));
-   info.SetLicense(wxT("wxWindows"));
-   ::wxAboutBox(info, this);
+   wxVersionInfo vi = wxDBase::GetVersionInfo();
+   info->SetName(vi.GetName());
+   //info->SetDescription(vi.GetDescription() + wxT("\n\n") + wxStandardPaths::Get().GetExecutablePath());
+   info->SetDescription(wxT("\nThis demo program demonstrates the usage of wxDBase\n\n")
+       + wxStandardPaths::Get().GetExecutablePath());
+
+   info->SetCopyright(vi.GetCopyright());
+   info->SetVersion(wxString::Format(wxT("%d.%d svn r%d"), vi.GetMajor(), vi.GetMinor(), vi.GetMicro()));
+   info->AddDeveloper(wxT(DBF_AUTHOR));
+   info->SetLicense(wxT("wxWindows"));
+   info->SetWebSite(wxT(DBF_WEBSITE));
 }
 
 void MainFrame::OnStatusBar(wxCommandEvent&)

@@ -3,6 +3,7 @@
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
+#include "wx/aboutdlg.h"
 
 #include "app.h"
 #include "appframe.h"
@@ -12,6 +13,7 @@
 IMPLEMENT_APP(App)
 
 BEGIN_EVENT_TABLE(App, wxAppEx)
+   EVT_MENU(wxID_ABOUT, App::OnMenuAbout)
 END_EVENT_TABLE()
 
 App::App(void) : wxAppEx(), m_mru(NULL)
@@ -98,4 +100,11 @@ int App::OnExit(void)
       array.Add(wxAcceleratorEntry(wxACCEL_CMD | wxACCEL_SHIFT, 'S', wxID_SAVEAS));
    }
    return array;
+}
+
+void App::OnMenuAbout(wxCommandEvent& WXUNUSED(event))
+{
+   wxAboutDialogInfo info;
+   MainFrame::GetVersionInfo(&info);
+   ::wxAboutBox(info, GetTopWindow());
 }

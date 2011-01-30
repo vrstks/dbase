@@ -1,12 +1,12 @@
 // dbf_wx.h
-// Copyright (c) 2007-2010 by Troels K. All rights reserved.
+// Copyright (c) 2007-2011 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __DBF_WX_H__
 #define __DBF_WX_H__
 
 #ifndef __DBF_HPP__
-#include <dbf.h>
+#include <dbf.hpp>
 #endif
 
 #ifndef WXROWCOL_DEFINED
@@ -42,7 +42,7 @@ public:
 public:	
    bool Open  (const wxFileName&, bool editable = true, enum dbf_charconv charconv = ENUM_dbf_charconv_compatible);
    bool Open  (wxInputStream*, enum dbf_charconv charconv = ENUM_dbf_charconv_compatible);
-	bool Create(const wxFileName&, const DBF_FIELD_INFO* array, size_t array_count, enum dbf_charconv charconv = ENUM_dbf_charconv_compatible);
+   bool Create(const wxFileName&, const DBF_FIELD_INFO* array, size_t array_count, enum dbf_charconv charconv = ENUM_dbf_charconv_compatible);
    bool Create(/*const wxString& filename, */void* stream, struct zlib_filefunc_def_s*, 
       const DBF_FIELD_INFO* array, size_t array_count, 
       enum dbf_charconv charconv = ENUM_dbf_charconv_compatible, void* memo = NULL);
@@ -108,10 +108,14 @@ public:
       return stream;
    }
 
+#ifdef __WX29_H__
+   static wxVersionInfo GetVersionInfo();
+#endif
+
 // Implementation
 public:
-	virtual ~wxDBase();
-	virtual void Close();
+   virtual ~wxDBase();
+   virtual void Close();
    virtual bool SetPosition(size_t index);
    //virtual void SetFilename(const wxString&);
    //virtual wxString GetFilename(void) const;

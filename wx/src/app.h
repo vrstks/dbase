@@ -34,6 +34,7 @@ protected:
    wxDocManager* CreateDocManager();
    
 protected:
+   void OnMenuAbout(wxCommandEvent&);
    DECLARE_EVENT_TABLE()
 };
 

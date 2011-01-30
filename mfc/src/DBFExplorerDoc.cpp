@@ -100,7 +100,7 @@ BOOL CDBFExplorerDoc::OnNewDocument()
 	{
 		TCHAR szPath[MAX_PATH];
 		GetTempPath(_countof(szPath), szPath);
-      _tmakepath(m_szTempFileName, NULL, szPath, GetTitle(), _T(FILEEXT_DBASE));
+      _tmakepath(m_szTempFileName, NULL, szPath, GetTitle(), _T(DBF_FILEEXT));
 		if (m_dBaseFile->Create(m_szTempFileName, dlg.m_strFieldArray) == DBASE_SUCCESS)
 		{
 			if (OnOpenDocument(m_szTempFileName))

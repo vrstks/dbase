@@ -121,8 +121,8 @@ bool DBFDocument::SaveAs()
 #include "dbfview.h"
 #include "dbfframe.h"
 
-DatabaseDocTemplate::DatabaseDocTemplate(wxDocManager* docManager) : wxDocTemplate(docManager, _("dBASE Files"), wxT("*.")wxT(FILEEXT_DBASE),
-      wxT(""), wxT(FILEEXT_DBASE), wxT("dbf doc"), wxT("dbf view"),
+DatabaseDocTemplate::DatabaseDocTemplate(wxDocManager* docManager) : wxDocTemplate(docManager, _("dBASE Files"), wxT("*.")wxT(DBF_FILEEXT),
+      wxT(""), wxT(DBF_FILEEXT), wxT("dbf doc"), wxT("dbf view"),
           CLASSINFO(DBFDocument), CLASSINFO(DBFView))
 {
 }

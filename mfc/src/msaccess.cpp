@@ -1,5 +1,5 @@
 // msaccess.cpp
-// Copyright (c) 2007-2009 by Troels K. All rights reserved.
+// Copyright (c) 2007-2011 by Troels K. All rights reserved.
 
 /* 
    This program is free software; you can redistribute it and/or modify
@@ -369,13 +369,13 @@ static bool OpenFileSaveDialog(CWnd* parent, const TCHAR* src, const TCHAR* tabl
 
    _tsplitpath(src, drive, dir, NULL, NULL);
    _tmakepath(dst, drive, dir, tablename, NULL);
-	CFileDialog dlg(FALSE, _T(FILEEXT_DBASE), dst, OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters, parent);
+	CFileDialog dlg(FALSE, _T(DBF_FILEEXT), dst, OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters, parent);
 	dlg.m_ofn.lpstrTitle = _T("Save As");
 
 	bool ok = (dlg.DoModal() == IDOK);
    if (ok)
 	{
-      if (dbf) *dbf = (0 == _tcsicmp(dlg.GetFileExt(), _T(FILEEXT_DBASE)));
+      if (dbf) *dbf = (0 == _tcsicmp(dlg.GetFileExt(), _T(DBF_FILEEXT)));
       str_ptr->operator=(dlg.GetPathName());
    }
    return ok;

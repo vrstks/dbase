@@ -1,11 +1,13 @@
 // dbf_wx.h
-// Copyright (c) 2007-2010 by Troels K. All rights reserved.
+// Copyright (c) 2007-2011 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include <wx/wx.h>
 #include <wx/variant.h>
 #include <wx/docview.h>
 #include <wx/filename.h>
+
+#include "wx29.h"
 
 #include "ioapi/zlib.h"
 #include "ioapi/ioapi.h"
@@ -140,6 +142,14 @@ bool wxDBase::SetValue(const wxVariant& var, const wxRowCol& rowcol)
       ok = PutRecord(rowcol.row);
    }
    return ok;
+}
+
+/*static*/ wxVersionInfo wxDBase::GetVersionInfo()
+{
+   return wxVersionInfo(wxT(DBF_NAME), DBF_MAJOR_VERSION, DBF_MINOR_VERSION, DBF_SVN_VERSION, 
+       wxT("dbase interface library"),
+       wxT("Copyright (c) 2007-2011 by Troels K")
+       );
 }
 
 /////////////////////////////////////////////////////////////////////////////

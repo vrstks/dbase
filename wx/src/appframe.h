@@ -8,6 +8,8 @@
 /////////////////////////////////////////////////////////////////////////////
 // MainFrame
 
+class WXDLLIMPEXP_FWD_ADV wxAboutDialogInfo;
+
 class MainFrame : public wxDocMDIParentFrame
 {
    typedef wxDocMDIParentFrame base;
@@ -21,13 +23,13 @@ public:
    virtual void SetMenuBar(wxMenuBar*);
    virtual ~MainFrame();
 
+   static void GetVersionInfo(wxAboutDialogInfo*);
 protected:
    wxToolBar* CreateToolBar();
 
 protected:
    void OnStatusBar  (wxCommandEvent&);
    void OnToolBar    (wxCommandEvent&);
-   void OnAbout      (wxCommandEvent&);
    void OnFullscreen (wxCommandEvent&);
    
    void OnUpdateFullscreen (wxUpdateUIEvent&);

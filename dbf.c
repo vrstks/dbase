@@ -1,5 +1,5 @@
 /* dbf.c */
-/* Copyright (c) 2007-2010 by Troels K. All rights reserved. */
+/* Copyright (c) 2007-2011 by Troels K. All rights reserved. */
 /* License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt */
 /* Partially based on MFC source code by www.pablosoftwaresolutions.com 2002   */
 /* Partially based on Turbo C source code by Mark Sadler.      */
@@ -1826,9 +1826,4 @@ static char* strdup_host2dos(const char* src, size_t len, enum dbf_charconv mode
    if (len) strcpy_host2dos(dup, src, len + 1, mode);
    else *dup = 0;
    return dup;
-}
-
-const char* dbf_libversionstring()
-{
-   return "dbf library svn r207";
 }
