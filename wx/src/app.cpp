@@ -3,7 +3,7 @@
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
-#include "wx/aboutdlg.h"
+#include <wx/aboutdlg.h>
 
 #include "app.h"
 #include "appframe.h"

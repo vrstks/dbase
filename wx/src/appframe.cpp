@@ -3,12 +3,12 @@
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
-#include "wx/stdpaths.h"
+#include <wx/stdpaths.h>
+#include <wx/aboutdlg.h>
 
 #include "wx29.h"
 #include "wxext.h"
 #include "appframe.h"
-#include "wx/aboutdlg.h"
 #include "app.h"
 #include "../../bool.h"
 #include "../../dbf.h"

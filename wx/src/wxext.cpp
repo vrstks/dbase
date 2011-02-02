@@ -3,10 +3,11 @@
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
-#include "wxext.h"
-#include "wx/stdpaths.h"
+#include <wx/stdpaths.h>
 
-#include "wx/arrimpl.cpp"
+#include "wxext.h"
+
+#include <wx/arrimpl.cpp>
 WX_DEFINE_OBJARRAY(AcceleratorArray)
 
 bool wxWindow_Toggle(wxWindow* wnd)
