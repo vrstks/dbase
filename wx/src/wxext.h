@@ -98,9 +98,9 @@ extern wxString wxGetStockLabelEx(wxWindowID, long flags = wxSTOCK_WITH_MNEMONIC
 // wxFileHistory is confusing and difficult to use, esp in MDI:
 // wrap up the eccentricities
 
-class wxFileHistory;
-class wxDocManager;
-class wxConfigBase;
+class WXDLLIMPEXP_FWD_CORE wxFileHistory;
+class WXDLLIMPEXP_FWD_CORE wxDocManager;
+class WXDLLIMPEXP_FWD_CORE wxConfigBase;
 
 class wxRecentFileList
 {
