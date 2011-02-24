@@ -43,9 +43,7 @@ bool MainFrame::Create(wxDocManager* manager, const wxString& title,
    {
        CreateStatusBar()->PushStatusText(_("Ready"));
        SetToolBar(CreateToolBar());
-    #ifdef __WXMSW__
-       SetIcon(wxIcon(wxT("app")));
-    #endif
+       SetIcon(wxICON(app));
        wxMenuBar* menubar = wxXmlResource::Get()->LoadMenuBar(wxT("menu_mdi"));
        SetMenuBar(menubar);
        ::wxSetAcceleratorTable(this, wxGetApp().GetAccelerator());

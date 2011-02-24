@@ -27,9 +27,7 @@ bool DBFFrame::Create(wxDocument* doc, wxMDIParentFrame* parent)
                              wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE | wxMAXIMIZE);
    if (ok)
    {
-    #ifdef __WXMSW__
-       SetIcon(wxIcon(wxT("dbf")));
-    #endif
+       SetIcon(wxICON(dbf));
        wxMenuBar* menubar = wxXmlResource::Get()->LoadMenuBar(wxT("menu_dbf"));
        ::wxMenu_SetAccelText(menubar, wxGetApp().GetAccelerator());
        SetMenuBar(menubar);
