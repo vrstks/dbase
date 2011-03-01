@@ -1,5 +1,5 @@
 // dbfview.cpp
-// Copyright (c) 2007-2010 by Troels K. All rights reserved.
+// Copyright (c) 2007-2011 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -31,7 +31,6 @@ public:
    }
    virtual ~DBFWindow()
    {
-      m_view->m_wnd = NULL;
    }
    virtual wxDataModelBase* GetModel(void)
    {
@@ -44,21 +43,17 @@ public:
 
 IMPLEMENT_DYNAMIC_CLASS(DBFView, wxView)
 
-DBFView::DBFView() : wxView(), m_wnd(NULL)
+DBFView::DBFView() : wxView(), m_window(NULL)
 {
 }
 
 DBFView::~DBFView()
 {
-   if (m_wnd)
-   {
-      m_wnd->Destroy();
-   }
 }
 
 BEGIN_EVENT_TABLE(DBFView, wxView)
    EVT_MENU(XRCID("struct"), DBFView::OnStruct)
-	EVT_UPDATE_UI(XRCID("struct"), DBFView::OnUpdateNeedEditable)
+   EVT_UPDATE_UI(XRCID("struct"), DBFView::OnUpdateNeedEditable)
    EVT_MENU(XRCID("tool_struct"), DBFView::OnStructClipboard)
    EVT_MENU(wxID_PROPERTIES, DBFView::OnProperties)
 
@@ -85,7 +80,7 @@ bool DBFView::OnCreate(wxDocument* doc, long flags)
    {
       wxFrame* frame = wxStaticCast(doc->GetDocumentTemplate(), DatabaseDocTemplate)->CreateViewFrame(this);
       wxASSERT(frame == GetFrame());
-      m_wnd = new DBFWindow(this);
+      m_window = new DBFWindow(this);
       frame->Show();
    }
    return ok;
@@ -110,8 +105,8 @@ void DBFView::OnUpdate(wxView* sender, wxObject* hint)
    switch ((long)hint)
    {
       case DBFDocument::ENUM_hint_initialupdate:
-         m_wnd->Init();
-         ::wxListView_SetCurSel(m_wnd, 0);
+         m_window->Init();
+         ::wxListView_SetCurSel(m_window, 0);
          break;
       default:
          base::OnUpdate(sender, hint);
@@ -163,47 +158,45 @@ void DBFView::OnProperties(wxCommandEvent&)
 {
    const DBFDocument* doc = GetDocument();
    wxArrayString as;
-   //::dbf_getproperties(GetDocument()->GetDatabase(), &as);
 
    ::wxDocument_Info(doc, &as);
 
    wxDBFModel datamodel(doc->GetDatabase());
    datamodel.GetProperties(&as, true);
 
-   wxString str = wxJoin(as, wxT('\n'));
-   ::wxMessageBox(str, wxMessageBoxCaption, wxOK | wxCENTRE, doc->GetDocumentWindow());
+   ::wxMessageBox(::wxJoin(as, wxT('\n')), wxMessageBoxCaption, wxOK | wxCENTRE, doc->GetDocumentWindow());
 }
 
 void DBFView::OnSelectAll(wxCommandEvent&)
 {
-   ::wxListCtrl_SelectAll(m_wnd);
+   ::wxListCtrl_SelectAll(m_window);
 }
 
 void DBFView::OnUndelete(wxCommandEvent&)
 {
-   m_wnd->DeleteSelection(false);
+   m_window->DeleteSelection(false);
 }
 
 void DBFView::OnUpdateSelectAll(wxUpdateUIEvent& event)
 {
-   m_wnd->OnUpdateSelectAll(event);
+   m_window->OnUpdateSelectAll(event);
 }
 
 void DBFView::OnUpdateNeedSel_Deleted(wxUpdateUIEvent& event)
 {
-   m_wnd->OnUpdateNeedSel_Deleted(event);
+   m_window->OnUpdateNeedSel_Deleted(event);
    if (!GetDocument()->IsEditable()) event.Enable(false);
 }
 
 void DBFView::OnUpdateNeedSel_NotDeleted(wxUpdateUIEvent& event)
 {
-   m_wnd->OnUpdateNeedSel_NotDeleted(event);
+   m_window->OnUpdateNeedSel_NotDeleted(event);
    if (!GetDocument()->IsEditable()) event.Enable(false);
 }
 
 void DBFView::OnUpdateNeedSel(wxUpdateUIEvent& event)
 {
-   m_wnd->OnUpdateNeedSel(event);
+   m_window->OnUpdateNeedSel(event);
    if (!GetDocument()->IsEditable()) event.Enable(false);
 }
 
@@ -212,7 +205,7 @@ void DBFView::OnDeleteAll(wxCommandEvent&)
    const DBFDocument* doc = GetDocument();
    if (wxOK == wxMessageBox(_("Delete all?"), wxMessageBoxCaption, wxOK | wxCANCEL | wxICON_QUESTION, doc->GetDocumentWindow()))
    {
-      m_wnd->DeleteAll(true);
+      m_window->DeleteAll(true);
    }
 }
 
@@ -221,17 +214,17 @@ void DBFView::OnDelete(wxCommandEvent&)
    const DBFDocument* doc = GetDocument();
    if (wxOK == wxMessageBox(_("Delete selection?"), wxMessageBoxCaption, wxOK | wxCANCEL | wxICON_QUESTION, doc->GetDocumentWindow()))
    {
-      m_wnd->DeleteSelection(true);
+      m_window->DeleteSelection(true);
    }
 }
 
 void DBFView::OnAdd(wxCommandEvent&)
 {
-	m_wnd->AddNew();
+   m_window->AddNew();
 }
 
 void DBFView::OnEdit(wxCommandEvent&)
 {
-   m_wnd->Edit();
+   m_window->Edit();
 }
 

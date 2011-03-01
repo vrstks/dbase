@@ -1,5 +1,5 @@
 // dbfview.h
-// Copyright (c) 2007-2010 by Troels K. All rights reserved.
+// Copyright (c) 2007-2011 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __DBFVIEW_H__
@@ -17,7 +17,7 @@ class DBFView : public wxView
 
 // Attributes
 protected:
-   DBFWindow* m_wnd;
+   DBFWindow* m_window;
 public:
   
    DBFView();
