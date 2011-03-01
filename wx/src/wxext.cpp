@@ -570,9 +570,9 @@ void wxDocument_Info(const wxDocument* doc, wxArrayString* as)
    {
       as->Add(wxString::Format(fmt, wxT("View class"), view->GetClassInfo()->GetClassName()));
    }
+   as->Add(wxString::Format(fmt, wxT("Frame class"), frame ? frame->GetClassInfo()->GetClassName() : wxEmptyString));
    if (frame)
    {
-      as->Add(wxString::Format(fmt, wxT("Frame class"), frame->GetClassInfo()->GetClassName()));
       as->Add(wxString::Format(fmt, wxT("Frame label"), frame->GetLabel().wx_str()));
    }
    as->Add(wxString::Format(fmt, wxT("GetFilename"), doc->GetFilename().wx_str()));
