@@ -164,7 +164,7 @@ void DBFView::OnProperties(wxCommandEvent&)
    wxDBFModel datamodel(doc->GetDatabase());
    datamodel.GetProperties(&as, true);
 
-   ::wxMessageBox(::wxJoin(as, wxT('\n')), wxMessageBoxCaption, wxOK | wxCENTRE, doc->GetDocumentWindow());
+   ::wxMessageBox(::wxJoin(as, wxT('\n')), wxMessageBoxCaption, wxOK | wxCENTRE, GetFrame());
 }
 
 void DBFView::OnSelectAll(wxCommandEvent&)
