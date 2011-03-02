@@ -138,7 +138,7 @@ void CDBFExplorerView::OnInitialUpdate()
 // CDBFExplorerView diagnostics
 
 #ifdef _DEBUG
-CDBFExplorerDoc* CDBFExplorerView::GetDocument() // non-debug version is inline
+CDBFExplorerDoc* CDBFExplorerView::GetDocument() const // non-debug version is inline
 {
 	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CDBFExplorerDoc)));
 	return (CDBFExplorerDoc*)m_pDocument;

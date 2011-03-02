@@ -31,7 +31,7 @@ protected: // create from serialization only
 
 // Attributes
 public:
-	CDBFExplorerDoc* GetDocument();
+	CDBFExplorerDoc* GetDocument() const;
 	void ShowRecords(bool bShowDeletedRecords = FALSE);
 	
 // Operations
@@ -103,7 +103,7 @@ protected:
 };
 
 #ifndef _DEBUG  // debug version in DBFExplorerView.cpp
-inline CDBFExplorerDoc* CDBFExplorerView::GetDocument()
+inline CDBFExplorerDoc* CDBFExplorerView::GetDocument() const
    { return (CDBFExplorerDoc*)m_pDocument; }
 #endif
 
