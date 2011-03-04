@@ -32,6 +32,9 @@ public:
        SetTitle(label);
     }
 #endif
+
+protected:
+   wxMenuBar* CreateMenuBar() const;
 protected:
    DECLARE_EVENT_TABLE()
 };

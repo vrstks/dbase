@@ -25,7 +25,8 @@ public:
 
    static void GetVersionInfo(wxAboutDialogInfo*);
 protected:
-   wxToolBar* CreateToolBar();
+    wxMenuBar* CreateMenuBar() const;
+    wxToolBar* CreateToolBar();
 
 protected:
    void OnStatusBar  (wxCommandEvent&);

@@ -28,11 +28,16 @@ bool DBFFrame::Create(wxDocument* doc, wxMDIParentFrame* parent)
    if (ok)
    {
        SetIcon(wxICON(dbf));
-       wxMenuBar* menubar = wxXmlResource::Get()->LoadMenuBar(wxT("menu_dbf"));
-       ::wxMenu_SetAccelText(menubar, wxGetApp().GetAccelerator());
-       SetMenuBar(menubar);
+       SetMenuBar(CreateMenuBar());
    }
    return ok;
+}
+
+wxMenuBar* DBFFrame::CreateMenuBar() const
+{
+   wxMenuBar* menubar = wxXmlResource::Get()->LoadMenuBar(wxT("menu_dbf"));
+   ::wxMenu_SetAccelText(menubar, wxGetApp().GetAccelerator());
+   return menubar;
 }
 
 void DBFFrame::SetMenuBar(wxMenuBar* menubar)
