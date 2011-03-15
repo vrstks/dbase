@@ -70,15 +70,15 @@ unsigned int wxDBFModel::GetColumnCount() const
    return m_database->GetFieldCount();
 }
 
-bool wxDBFModel::GetValue(wxString* str, const wxRowCol& rowcol) const
+bool wxDBFModel::GetValueByRow(wxString* str, unsigned int row, unsigned int col) const
 {
-   bool ok = m_database->SetPosition(rowcol.row);
-   if (ok) switch (m_database->GetFieldType(rowcol.col))
+   bool ok = m_database->SetPosition(row);
+   if (ok) switch (m_database->GetFieldType(col))
    {
       case DBF_DATA_TYPE_BOOLEAN:
       {
          bool n;
-         if (m_database->Read(rowcol.col, &n))
+         if (m_database->Read(col, &n))
          {
             str->operator=(n ? _("True") : _("False"));
          }
@@ -87,7 +87,7 @@ bool wxDBFModel::GetValue(wxString* str, const wxRowCol& rowcol) const
       case DBF_DATA_TYPE_FLOAT:
       {
          double n;
-         if (m_database->Read(rowcol.col, &n))
+         if (m_database->Read(col, &n))
          {
             str->Printf(wxT("%g"), n); // date only, not time of day
          }
@@ -96,36 +96,36 @@ bool wxDBFModel::GetValue(wxString* str, const wxRowCol& rowcol) const
       case DBF_DATA_TYPE_DATE:
       {
          wxDateTime n;
-         if (m_database->Read(rowcol.col, &n))
+         if (m_database->Read(col, &n))
          {
             str->operator=(n.Format(wxT("%x"))); // date only, not time of day
          }
          break;
       }
       default:
-         m_database->Read(rowcol.col, str); // skip wxVariant
+         m_database->Read(col, str); // skip wxVariant
          break;
    }
    return ok;
 }
 
-bool wxDBFModel::GetValue(wxVariant* var, const wxRowCol& rowcol) const
+void wxDBFModel::GetValueByRow(wxVariant& var, unsigned int row, unsigned int col) const
 {
-   return m_database->GetValue(var, rowcol);
+   m_database->GetValueByRow(&var, row, col);
 }
 
-bool wxDBFModel::SetValue(const wxString& value, const wxRowCol& rowcol)
+bool wxDBFModel::SetValueByRow(const wxString& value, unsigned int row, unsigned int col)
 {
    bool ok = true;
-   if (ok) ok = m_database->SetPosition(rowcol.row);
-   if (ok) ok = m_database->Write(rowcol.col, value);
-   if (ok) ok = m_database->PutRecord(rowcol.row);
+   if (ok) ok = m_database->SetPosition(row);
+   if (ok) ok = m_database->Write(col, value);
+   if (ok) ok = m_database->PutRecord(row);
    return ok;
 }
 
-bool wxDBFModel::SetValue(const wxVariant& var, const wxRowCol& rowcol)
+bool wxDBFModel::SetValueByRow(const wxVariant& var, unsigned int row, unsigned int col)
 {
-   return m_database->SetValue(var, rowcol);
+   return m_database->SetValueByRow(var, row, col);
 }
 
 bool wxDBFModel::IsRowDeleted( unsigned int row )
@@ -208,10 +208,9 @@ bool wxDBFModel::AddNew(void)
       for (col = 0; col < col_count; col++)
       {
          wxVariant var;
-         wxRowCol rowcol;
-         rowcol.row = row;
-         rowcol.col = col;
-         if (model->GetValue(&var, rowcol))
+         model->GetValueByRow(var, row, col);
+         ok = true;
+         if (ok)
          {
             switch (array[col].type)
             {

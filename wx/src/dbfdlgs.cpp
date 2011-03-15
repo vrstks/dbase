@@ -124,7 +124,14 @@ wxString wxStructListView::OnGetItemText(long item, long col) const
          str = MOD_aszType[info->type];
          break;
       case ENUM_col_length:
-         str.Printf(info->decimals ? wxT("%d:%d") : wxT("%d"), info->length, info->decimals);
+         if (info->decimals)
+         {
+            str.Printf(wxT("%d:%d"), info->length, info->decimals);
+         }
+         else
+         {
+            str.Printf(wxT("%d"), info->length);
+         }
          break;
          /*
       case ENUM_col_decimals:

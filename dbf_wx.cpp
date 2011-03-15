@@ -71,37 +71,37 @@ wxString wxDBase::GetColType(size_t col)
 }
 
 // get value into a wxVariant
-bool wxDBase::GetValue(wxVariant* var, const wxRowCol& rowcol)
+bool wxDBase::GetValueByRow(wxVariant* var, unsigned int row, unsigned int col)
 {
-   bool ok = SetPosition(rowcol.row); // unconst
+   bool ok = SetPosition(row); // unconst
    
-   if (ok) switch (GetFieldType(GetFieldPtr(rowcol.col)))
+   if (ok) switch (GetFieldType(GetFieldPtr(col)))
    {
       case DBF_DATA_TYPE_INTEGER:
       {
          long n;
-         ok = Read(rowcol.col, &n);
+         ok = Read(col, &n);
          if (ok) var->operator=(n);
          break;
       }
       case DBF_DATA_TYPE_FLOAT  :
       {
          double n;
-         ok = Read(rowcol.col, &n);
+         ok = Read(col, &n);
          if (ok) var->operator=(n);
          break;
       }
       case DBF_DATA_TYPE_DATE   :
       {
          wxDateTime n;
-         ok = Read(rowcol.col, &n);
+         ok = Read(col, &n);
          if (ok) var->operator=(n);
          break;
       }
       case DBF_DATA_TYPE_BOOLEAN:
       {
          bool n;
-         ok = Read(rowcol.col, &n);
+         ok = Read(col, &n);
          if (ok) var->operator=(n);
          break;
       }
@@ -109,7 +109,7 @@ bool wxDBase::GetValue(wxVariant* var, const wxRowCol& rowcol)
       case DBF_DATA_TYPE_CHAR   :
       {
          wxString str;
-         /*ok = */Read(rowcol.col, &str);
+         /*ok = */Read(col, &str);
          if (ok)
          {
             var->operator=(str);
@@ -125,25 +125,26 @@ bool wxDBase::GetValue(wxVariant* var, const wxRowCol& rowcol)
 }
 
 // set value, call ValueChanged() afterwards!
-bool wxDBase::SetValue(const wxVariant& var, const wxRowCol& rowcol)
+bool wxDBase::SetValueByRow(const wxVariant& var, unsigned int row, unsigned int col)
 {
    bool ok = true;
-   if (ok) ok = SetPosition(rowcol.row);
+   if (ok) ok = SetPosition(row);
    if (var.IsType(wxT("datetime")))
    {
-      ok = Write(rowcol.col, var.GetDateTime());
+      ok = Write(col, var.GetDateTime());
    }
    else
    {
-      ok = Write(rowcol.col, var.MakeString());
+      ok = Write(col, var.MakeString());
    }
    if (ok)
    {
-      ok = PutRecord(rowcol.row);
+      ok = PutRecord(row);
    }
    return ok;
 }
 
+#ifdef __WX29_H__
 /*static*/ wxVersionInfo wxDBase::GetVersionInfo()
 {
    return wxVersionInfo(wxT(DBF_NAME), DBF_MAJOR_VERSION, DBF_MINOR_VERSION, DBF_SVN_VERSION, 
@@ -151,5 +152,6 @@ bool wxDBase::SetValue(const wxVariant& var, const wxRowCol& rowcol)
        wxT("Copyright (c) 2007-2011 by Troels K")
        );
 }
+#endif
 
 /////////////////////////////////////////////////////////////////////////////

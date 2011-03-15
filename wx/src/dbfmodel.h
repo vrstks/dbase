@@ -38,11 +38,11 @@ public:
 
 // wxDataModel implementation
 public:
-   virtual bool GetValue(      wxVariant*, const wxRowCol&) const;
-   virtual bool SetValue(const wxVariant&, const wxRowCol&);
+   virtual void GetValueByRow(      wxVariant&, unsigned int row, unsigned int col) const;
+   virtual bool SetValueByRow(const wxVariant&, unsigned int row, unsigned int col);
    virtual bool DeleteRow(unsigned int row, bool bDelete = true);
-   virtual bool GetValue(      wxString*, const wxRowCol&) const;
-   virtual bool SetValue(const wxString&, const wxRowCol&);
+   virtual bool GetValueByRow(      wxString*, unsigned int row, unsigned int col) const;
+   virtual bool SetValueByRow(const wxString&, unsigned int row, unsigned int col);
    virtual size_t GetProperties(wxArrayString*, bool header) const;
    virtual bool IsOpen(void) const;
    virtual bool IsEditable(void) const;

@@ -120,16 +120,8 @@ wxString wxDataListCtrl::OnGetItemText(long item, long col) const
    wxDataListCtrl* pThis = wxStaticCast(this, wxDataListCtrl);
    wxDataModelBase* db = pThis->GetModel(); // unconst
    wxString str;
-   wxRowCol rowcol;
-   rowcol.row = item;
-   rowcol.col = col;
-   db->GetValue(&str, rowcol);
+   db->GetValueByRow(&str, item, col);
    return str;
-   /*
-   wxVariant var;
-   db->GetValue(&var, col, item);
-   return Format(col, var);
-   */
 }
 
 wxListItemAttr* wxDataListCtrl::OnGetItemAttr(long item) const
@@ -268,10 +260,7 @@ void wxDataListCtrl::OnEndLabelEdit(wxListEvent& event)
          {
             var = str;
          }
-         wxRowCol rowcol;
-         rowcol.row = pos;
-         rowcol.col = m_column_clicked;
-         if (ok) ok = db->SetValue(var, rowcol);
+         if (ok) ok = db->SetValueByRow(var, pos, m_column_clicked);
       }
       if (!ok) wxMessageBox(_("Failed"));
    }

@@ -1,18 +1,10 @@
 // datamodel.h
-// Copyright (c) 2007-2010 by Troels K. All rights reserved.
+// Copyright (c) 2007-2011 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __DATAMODEL_H__
 #define __DATAMODEL_H__
 
-#ifndef WXROWCOL_DEFINED
-#define WXROWCOL_DEFINED
-typedef struct _wxDataViewRowCol
-{
-   unsigned int row;
-   unsigned int col;
-} wxRowCol;
-#endif
 /*
 
 In wx2.8, the wxDataViewListModel class may be used as a universal data model, to represent
@@ -36,27 +28,6 @@ public:
    }
    virtual unsigned int GetRowCount() const = 0;
    
-   virtual bool GetValue(wxVariant*, const wxRowCol& rowcol) const = 0;
-   virtual bool SetValue(const wxVariant&, const wxRowCol&) = 0;
-
-   virtual void GetValueByRow( wxVariant &variant,
-                        unsigned int row, unsigned int col ) const
-   {
-      wxRowCol rowcol;
-      rowcol.row = row;
-      rowcol.col = col;
-      GetValue(&variant, rowcol);
-   }
-
-   virtual bool SetValueByRow( const wxVariant &variant,
-                        unsigned int row, unsigned int col )
-   {
-      wxRowCol rowcol;
-      rowcol.row = row;
-      rowcol.col = col;
-      return SetValue(variant, rowcol);
-   }
-
 private:
    virtual unsigned int GetChildren(const wxDataViewItem&, wxDataViewItemArray&) const
    {
@@ -99,20 +70,14 @@ public:
        return m_child->GetColumnCount();
    }
 
-   virtual void GetValue( wxVariant &variant, const wxRowCol& rowcol) const
+   virtual void GetValueByRow(wxVariant& variant, unsigned int row, unsigned int col) const
    {
-       wxRowCol child;
-       child.row = m_array[rowcol.row];
-       child.col = rowcol.col;
-       m_child->GetValue(&variant, child);
+       m_child->GetValueByRow(variant, m_array[row], col);
    }
 
-   virtual bool SetValue( const wxVariant &variant, const wxRowCol& rowcol)
+   virtual bool SetValueByRow(const wxVariant &variant, unsigned int row, unsigned int col)
    {
-       wxRowCol child;
-       child.row = m_array[rowcol.row];
-       child.col = rowcol.col;
-       bool ret = m_child->SetValue(variant, child);
+       bool ret = m_child->SetValueByRow(variant, m_array[row], col);
 
        // Do nothing here as the change in the
        // child model will be reported back.
@@ -143,7 +108,6 @@ public:
    virtual ~wxDataModelBase() {}
    virtual int FindColumn(const wxString& colname) const;
 
-   //virtual wxString GetFilename(void) const;
    virtual size_t GetProperties(wxArrayString*, bool header) const;
 
    virtual bool DeleteRow(unsigned int row, bool bDelete = true );
@@ -164,10 +128,10 @@ public:
    };
 
    virtual void GetColumn(unsigned int col, ColumnInfo*) const = 0;
-   virtual bool GetValue(      wxString* , const wxRowCol&) const;
-   virtual bool SetValue(const wxString& , const wxRowCol&);
-   virtual bool GetValue(      wxVariant*, const wxRowCol&) const = 0;
-   virtual bool SetValue(const wxVariant&, const wxRowCol&) = 0;
+   virtual bool GetValueByRow(      wxString* , unsigned int row, unsigned int col) const;
+   virtual bool SetValueByRow(const wxString& , unsigned int row, unsigned int col);
+   virtual void GetValueByRow(      wxVariant&, unsigned int row, unsigned int col) const = 0;
+   virtual bool SetValueByRow(const wxVariant&, unsigned int row, unsigned int col) = 0;
    virtual unsigned int GetRowCount() const = 0;
    virtual unsigned int GetColumnCount() const = 0;
    virtual wxString GetTableName(void) const
@@ -196,13 +160,14 @@ class wxDataModel : public wxDataViewListModelEx, public wxDataModelBase
 public:
    wxDataModel();
 
-   virtual bool GetValue(      wxString* , const wxRowCol&) const;
-   virtual bool SetValue(const wxString& , const wxRowCol&);
-   virtual bool GetValue(      wxVariant*, const wxRowCol&) const = 0;
-   virtual bool SetValue(const wxVariant&, const wxRowCol&) = 0;
+   virtual bool GetValueByRow(      wxString* , unsigned int row, unsigned int col) const;
+   virtual bool SetValueByRow(const wxString& , unsigned int row, unsigned int col);
+   virtual void GetValueByRow(      wxVariant&, unsigned int row, unsigned int col) const = 0;
+   virtual bool SetValueByRow(const wxVariant&, unsigned int row, unsigned int col) = 0;
 #if (wxVERSION_NUMBER >= 2900)
    virtual unsigned int GetRowCount() const = 0;
    virtual unsigned int GetColumnCount() const = 0;
+#else
 #endif
    virtual wxString GetDataModelName(void) const = 0;
 
@@ -220,8 +185,8 @@ private:
       return GetRowCount();
    }
 #else
-   virtual void GetValue(wxVariant&, unsigned int col, unsigned int row );
-   virtual bool SetValue(wxVariant&, unsigned int col, unsigned int row );
+   virtual void GetValue(wxVariant&, unsigned int col, unsigned int row);
+   virtual bool SetValue(wxVariant&, unsigned int col, unsigned int row);
    virtual unsigned int GetNumberOfCols()
    {
       return GetColumnCount();
@@ -261,10 +226,10 @@ public:
    virtual bool IsEditable(void) const;
    virtual bool AddNew(void);
 
-   virtual bool GetValue(      wxString* , const wxRowCol&) const;
-   virtual bool SetValue(const wxString& , const wxRowCol&);
-   virtual bool GetValue(      wxVariant*, const wxRowCol&) const;
-   virtual bool SetValue(const wxVariant&, const wxRowCol&);
+   virtual bool GetValueByRow(      wxString* , unsigned int row, unsigned int col) const;
+   virtual bool SetValueByRow(const wxString& , unsigned int row, unsigned int col);
+   virtual void GetValueByRow(      wxVariant&, unsigned int row, unsigned int col) const;
+   virtual bool SetValueByRow(const wxVariant&, unsigned int row, unsigned int col);
 
    virtual void GetColumn(unsigned int col, ColumnInfo*) const;
 
@@ -297,7 +262,6 @@ public:
       m_sort_column = sort_column;
    }
 #if (wxVERSION_NUMBER >= 2900)
-   virtual void GetValue(wxVariant&, unsigned int col, unsigned int row ) const;
    virtual wxString GetColumnType(unsigned int col) const
    {
       ColumnInfo info;
@@ -351,25 +315,18 @@ inline bool wxDataModelBase::IsOpen(void) const
    return true;
 }
 
-/*
-inline wxString wxDataModelBase::GetFilename(void) const
-{
-   return wxEmptyString;
-}
-*/
-
-inline bool wxDataModelBase::GetValue(wxString* str, const wxRowCol& rowcol) const
+inline bool wxDataModelBase::GetValueByRow(wxString* str, unsigned int row, unsigned int col) const
 {
    wxVariant var;
-   bool ok = GetValue(&var, rowcol);
-   if (ok && str) str->operator=(var.GetString());
-   return ok;
+   GetValueByRow(var, row, col);
+   str->operator=(var.GetString());
+   return true;
 }
 
-inline bool wxDataModelBase::SetValue(const wxString& str, const wxRowCol& rowcol)
+inline bool wxDataModelBase::SetValueByRow(const wxString& str, unsigned int row, unsigned int col)
 {
    const wxVariant var(str);
-   return SetValue(var, rowcol);
+   return SetValueByRow(var, row, col);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -379,14 +336,14 @@ inline wxDataModel::wxDataModel() : wxDataViewListModelEx(), wxDataModelBase(thi
 {
 }
 
-inline bool wxDataModel::GetValue(wxString* str, const wxRowCol& rowcol) const
+inline bool wxDataModel::GetValueByRow(wxString* str, unsigned int row, unsigned int col) const
 {
-   return wxDataModelBase::GetValue(str, rowcol);
+   return wxDataModelBase::GetValueByRow(str, row, col);
 }
 
-inline bool wxDataModel::SetValue(const wxString& str, const wxRowCol& rowcol)
+inline bool wxDataModel::SetValueByRow(const wxString& str, unsigned int row, unsigned int col)
 {
-   return wxDataModelBase::SetValue(str, rowcol);
+   return wxDataModelBase::SetValueByRow(str, row, col);
 }
 
 inline void
@@ -396,20 +353,13 @@ wxDataModel::GetValue(wxVariant& var, unsigned int row, unsigned int col) const
 wxDataModel::GetValue(wxVariant& var, unsigned int col, unsigned int row )
 #endif
 {
-   wxRowCol rowcol;
-   rowcol.row = row;
-   rowcol.col = col;
-   wxVariant* var_ptr = &var;
-   GetValue(var_ptr, rowcol);
+   GetValueByRow(var, row, col);
 }
 
 #if (wxVERSION_NUMBER < 2900)
 inline bool wxDataModel::SetValue(wxVariant& var, unsigned int col, unsigned int row )
 {
-   wxRowCol rowcol;
-   rowcol.row = row;
-   rowcol.col = col;
-   return SetValue((const wxVariant&)var, rowcol);
+   return SetValueByRow(var, row, col);
 }
 #endif
 
@@ -423,16 +373,6 @@ inline wxDataModelSorted::wxDataModelSorted(wxDataModel*child) : wxDataViewSorte
    //Resort();
 #endif
 }
-
-#if (wxVERSION_NUMBER >= 2900)
-inline void wxDataModelSorted::GetValue(wxVariant& var, unsigned int col, unsigned int row ) const
-{
-   wxRowCol rowcol;
-   rowcol.row = row;
-   rowcol.col = col;
-   GetValue(&var, rowcol);
-}
-#endif
 
 inline void wxDataModelSorted::GetColumn(unsigned int col, ColumnInfo* info) const
 {
@@ -448,20 +388,14 @@ inline void wxDataModelSorted::GetColumn(unsigned int col, ColumnInfo* info) con
    m_child->GetColumn(col, info);
 }
 
-inline bool wxDataModelSorted::GetValue(wxString* str, const wxRowCol& rowcol) const
+inline bool wxDataModelSorted::GetValueByRow(wxString* str, unsigned int row, unsigned int col) const
 {
-    wxRowCol child;
-    child.row = GetArrayValue(rowcol.row);
-    child.col = rowcol.col;
-    return m_child->GetValue( str, child);
+    return m_child->GetValueByRow( str, GetArrayValue(row), col);
 }
 
-inline bool wxDataModelSorted::SetValue(const wxString& str, const wxRowCol& rowcol)
+inline bool wxDataModelSorted::SetValueByRow(const wxString& str, unsigned int row, unsigned int col)
 {
-    wxRowCol child;
-    child.row = GetArrayValue(rowcol.row);
-    child.col = rowcol.col;
-    bool ret = m_child->SetValue(str, child);
+    bool ret = m_child->SetValueByRow(str, GetArrayValue(row), col);
 
     // Do nothing here as the change in the
     // child model will be reported back.
@@ -469,33 +403,15 @@ inline bool wxDataModelSorted::SetValue(const wxString& str, const wxRowCol& row
     return ret;
 }
 
-inline bool wxDataModelSorted::GetValue(wxVariant* var, const wxRowCol& rowcol) const
+inline void wxDataModelSorted::GetValueByRow(wxVariant& var, unsigned int row, unsigned int col) const
 {
-   wxDataModelSorted* pThis = (wxDataModelSorted*)this; // unconst
-
-#if (wxVERSION_NUMBER >= 2900)
-   pThis->base::GetValue(*var, rowcol);
-#else // vice versa
-   pThis->base::GetValue(*var, rowcol.col, rowcol.row);
-#endif
-   return true;
+   base::GetValueByRow(var, row, col);
 }
 
-inline bool wxDataModelSorted::SetValue(const wxVariant& var, const wxRowCol& rowcol)
+inline bool wxDataModelSorted::SetValueByRow(const wxVariant& var, unsigned int row, unsigned int col)
 {
-#if (wxVERSION_NUMBER >= 2900)
-   return base::SetValue(var, rowcol);
-#else
-   return base::SetValue((wxVariant&)var, rowcol.row, rowcol.col);
-#endif
+   return base::SetValueByRow(var, row, col);
 }
-
-/*
-inline wxString wxDataModelSorted::GetFilename(void) const
-{
-   return m_child->GetFilename();
-}
-*/
 
 inline size_t wxDataModelSorted::GetProperties(wxArrayString* as, bool header) const
 {

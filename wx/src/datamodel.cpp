@@ -28,17 +28,10 @@ int wxCALLBACK wxDataViewListModelSortedDefaultCompare
         || (hash == hash_datetime)
        )
     {
-        wxRowCol rowcol;
-
         wxVariant value1,value2;
 
-        rowcol.row = row1;
-        rowcol.col = col;
-        model->GetValue(&value1, rowcol);
-
-        rowcol.row = row2;
-        rowcol.col = col;
-        model->GetValue(&value2, rowcol);
+        model->GetValueByRow(value1, row1, col);
+        model->GetValueByRow(value2, row2, col);
 
         if (hash == hash_long) // long
         {
@@ -64,16 +57,10 @@ int wxCALLBACK wxDataViewListModelSortedDefaultCompare
     }
     else // string or unknown
     {
-        wxRowCol rowcol;
         wxString str[2];
 
-        rowcol.row = row1;
-        rowcol.col = col;
-        model->GetValue( str + 0, rowcol);
-
-        rowcol.row = row2;
-        rowcol.col = col;
-        model->GetValue( str + 1, rowcol);
+        model->GetValueByRow( str + 0, row1, col);
+        model->GetValueByRow( str + 1, row2, col);
       #ifdef atoi_tcscmpx
         result = atoi_tcscmpx(str[0], str[1], FALSE);
       #else
@@ -122,10 +109,7 @@ size_t wxDataModelBase::GetRow(unsigned int row, wxArrayString* as_ptr, bool hea
    for (size_t col = 0; col < GetColumnCount(); col++)
    {
       wxString str;
-      wxRowCol rowcol;
-      rowcol.row = row;
-      rowcol.col = col;
-      GetValue(&str, rowcol);
+      GetValueByRow(&str, row, col);
       if (header)
       {
          ColumnInfo info;

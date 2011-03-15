@@ -9,15 +9,6 @@
 #include <dbf.hpp>
 #endif
 
-#ifndef WXROWCOL_DEFINED
-#define WXROWCOL_DEFINED
-typedef struct _wxDataViewRowCol
-{
-   unsigned int row;
-   unsigned int col;
-} wxRowCol;
-#endif
-
 /////////////////////////////////////////////////////////////////////////////
 // wxDBase
 
@@ -122,8 +113,8 @@ public:
 
 // wxDataViewListModel "compatibility"
    wxString GetColType(size_t col);
-   bool GetValue(wxVariant*, const wxRowCol&);
-   bool SetValue(const wxVariant&, const wxRowCol&);
+   bool GetValueByRow(wxVariant*, unsigned int row, unsigned int col);
+   bool SetValueByRow(const wxVariant&, unsigned int row, unsigned int col);
 protected:
    virtual void DoDataExchange(bool bSaveAndValidate);
    
