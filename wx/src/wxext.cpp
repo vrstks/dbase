@@ -10,6 +10,8 @@
 #include <wx/arrimpl.cpp>
 WX_DEFINE_OBJARRAY(AcceleratorArray)
 
+IMPLEMENT_CLASS(wxViewEx, wxView)
+
 bool wxWindow_Toggle(wxWindow* wnd)
 {
    const bool show = !wnd->IsShown();

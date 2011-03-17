@@ -1,5 +1,5 @@
 // datalist.h
-// Copyright (c) 2007-2009 by Troels K. All rights reserved.
+// Copyright (c) 2007-2011 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __DATALIST_H__
@@ -23,14 +23,13 @@ public:
    };
    wxListItemAttr m_attr[ENUM_attr_enumcount];
    
-   wxDataListCtrl(wxWindow*, const wxPoint& pos, const wxSize& size, long style = wxLC_REPORT | wxLC_VIRTUAL);
-   wxDataListCtrl(void);
    int m_column_clicked;
    
    int m_id_edit;
    int m_id_selchange;
    int m_id_delete;
 
+   wxDataListCtrl();
    void Init();
 
    bool IsAnyUnselected(void);
@@ -41,7 +40,6 @@ public:
    bool IsOpen() const;
 
 protected:
-   void Construct(void);
    bool CanEditLabel(void);
 
 // Implementation

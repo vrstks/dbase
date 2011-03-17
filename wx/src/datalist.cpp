@@ -30,17 +30,6 @@ END_EVENT_TABLE()
 
 wxDataListCtrl::wxDataListCtrl(): wxListView()
 {
-   Construct();
-}
-
-wxDataListCtrl::wxDataListCtrl(wxWindow* frame, const wxPoint& pos, const wxSize& size, long style):
-   wxListView(frame, wxID_ANY, pos, size, style)
-{
-   Construct();
-}
-
-void wxDataListCtrl::Construct(void)
-{
    const wxColour gray = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
    m_attr[ENUM_attr_deleted].SetTextColour(gray);
    m_column_clicked = -1;

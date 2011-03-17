@@ -10,19 +10,15 @@
 
 class DBFDocument;
 class DBFWindow;
-class DBFView : public wxView
+class DBFView : public wxViewEx
 {
-   typedef wxView base;
+   typedef wxViewEx base;
    DECLARE_DYNAMIC_CLASS(DBFView)
-
-// Attributes
-protected:
-   DBFWindow* m_window;
 public:
-  
    DBFView();
 
    DBFDocument* GetDocument() const;
+   DBFWindow* GetWindow() const;
 
 // Implementation
 public:

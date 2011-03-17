@@ -139,3 +139,24 @@ inline void wxJoin(wxArrayString* dst, const wxArrayString& src)
       dst->Add(src.Item(i));
    }
 }
+
+#ifdef _WX_DOCH__
+class wxViewEx : public wxView
+{
+    typedef wxView base;
+    DECLARE_CLASS(wxViewEx)
+public:
+    wxViewEx() : wxView(), m_viewWindow(NULL)
+    {
+    }
+
+    void SetWindow(wxWindow* window) { m_viewWindow = window; }
+    wxWindow* GetWindow() const { return m_viewWindow; }
+
+    virtual void OnDraw(wxDC*)
+    {
+    }
+private:
+    wxWindow* m_viewWindow;
+};
+#endif

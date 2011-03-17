@@ -4,6 +4,7 @@
 
 #include "precomp.h"
 
+#include "wxext.h"
 #include "app.h"
 #include "dbfview.h"
 #include "dbfdoc.h"
@@ -12,7 +13,6 @@
 #include "dbflist.h"
 #include "dbfutil.h"
 #include "wx29.h"
-#include "wxext.h"
 #include "dbfmodel.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -20,15 +20,21 @@
 
 class DBFWindow : public wxDBFListCtrl
 {
+   typedef wxDBFListCtrl base;
+   DECLARE_CLASS(DBFWindow)
 protected:
    wxDBFModel m_datamodel;
    DBFView* m_view;
 public:
-   DBFWindow(DBFView* view) : 
-      wxDBFListCtrl(view->GetFrame(), wxPoint(0,0), view->GetFrame()->GetClientSize(), wxLC_REPORT | wxLC_VIRTUAL | wxLC_EDIT_LABELS),
-         m_datamodel(view->GetDocument()->GetDatabase()), m_view(view)
+   DBFWindow(DBFView* view) : wxDBFListCtrl(), m_datamodel(view->GetDocument()->GetDatabase()), m_view(view)
    {
    }
+
+   bool Create(wxWindow* parent)
+   {
+       return base::Create(parent, wxID_ANY, wxPoint(0,0), parent->GetClientSize(), wxLC_REPORT | wxLC_VIRTUAL | wxLC_EDIT_LABELS);
+   }
+
    virtual ~DBFWindow()
    {
    }
@@ -38,12 +44,14 @@ public:
    }
 };
 
+IMPLEMENT_CLASS(DBFWindow, wxDBFListCtrl)
+
 /////////////////////////////////////////////////////////////////////////////
 // DBFView
 
-IMPLEMENT_DYNAMIC_CLASS(DBFView, wxView)
+IMPLEMENT_DYNAMIC_CLASS(DBFView, wxViewEx)
 
-DBFView::DBFView() : wxView(), m_window(NULL)
+DBFView::DBFView() : wxViewEx()
 {
 }
 
@@ -51,7 +59,7 @@ DBFView::~DBFView()
 {
 }
 
-BEGIN_EVENT_TABLE(DBFView, wxView)
+BEGIN_EVENT_TABLE(DBFView, wxViewEx)
    EVT_MENU(XRCID("struct"), DBFView::OnStruct)
    EVT_UPDATE_UI(XRCID("struct"), DBFView::OnUpdateNeedEditable)
    EVT_MENU(XRCID("tool_struct"), DBFView::OnStructClipboard)
@@ -80,10 +88,17 @@ bool DBFView::OnCreate(wxDocument* doc, long flags)
    {
       wxFrame* frame = wxStaticCast(doc->GetDocumentTemplate(), DatabaseDocTemplate)->CreateViewFrame(this);
       wxASSERT(frame == GetFrame());
-      m_window = new DBFWindow(this);
+      DBFWindow* wnd = new DBFWindow(this);
+      wnd->Create(frame);
+      SetWindow(wnd);
       frame->Show();
    }
    return ok;
+}
+
+DBFWindow* DBFView::GetWindow() const
+{
+    return wxStaticCast(base::GetWindow(), DBFWindow);
 }
 
 void DBFView::OnStruct(wxCommandEvent&)
@@ -105,8 +120,8 @@ void DBFView::OnUpdate(wxView* sender, wxObject* hint)
    switch ((long)hint)
    {
       case DBFDocument::ENUM_hint_initialupdate:
-         m_window->Init();
-         ::wxListView_SetCurSel(m_window, 0);
+         GetWindow()->Init();
+         ::wxListView_SetCurSel(GetWindow(), 0);
          break;
       default:
          base::OnUpdate(sender, hint);
@@ -169,34 +184,34 @@ void DBFView::OnProperties(wxCommandEvent&)
 
 void DBFView::OnSelectAll(wxCommandEvent&)
 {
-   ::wxListCtrl_SelectAll(m_window);
+   ::wxListCtrl_SelectAll(GetWindow());
 }
 
 void DBFView::OnUndelete(wxCommandEvent&)
 {
-   m_window->DeleteSelection(false);
+   GetWindow()->DeleteSelection(false);
 }
 
 void DBFView::OnUpdateSelectAll(wxUpdateUIEvent& event)
 {
-   m_window->OnUpdateSelectAll(event);
+   GetWindow()->OnUpdateSelectAll(event);
 }
 
 void DBFView::OnUpdateNeedSel_Deleted(wxUpdateUIEvent& event)
 {
-   m_window->OnUpdateNeedSel_Deleted(event);
+   GetWindow()->OnUpdateNeedSel_Deleted(event);
    if (!GetDocument()->IsEditable()) event.Enable(false);
 }
 
 void DBFView::OnUpdateNeedSel_NotDeleted(wxUpdateUIEvent& event)
 {
-   m_window->OnUpdateNeedSel_NotDeleted(event);
+   GetWindow()->OnUpdateNeedSel_NotDeleted(event);
    if (!GetDocument()->IsEditable()) event.Enable(false);
 }
 
 void DBFView::OnUpdateNeedSel(wxUpdateUIEvent& event)
 {
-   m_window->OnUpdateNeedSel(event);
+   GetWindow()->OnUpdateNeedSel(event);
    if (!GetDocument()->IsEditable()) event.Enable(false);
 }
 
@@ -205,7 +220,7 @@ void DBFView::OnDeleteAll(wxCommandEvent&)
    const DBFDocument* doc = GetDocument();
    if (wxOK == wxMessageBox(_("Delete all?"), wxMessageBoxCaption, wxOK | wxCANCEL | wxICON_QUESTION, doc->GetDocumentWindow()))
    {
-      m_window->DeleteAll(true);
+      GetWindow()->DeleteAll(true);
    }
 }
 
@@ -214,17 +229,17 @@ void DBFView::OnDelete(wxCommandEvent&)
    const DBFDocument* doc = GetDocument();
    if (wxOK == wxMessageBox(_("Delete selection?"), wxMessageBoxCaption, wxOK | wxCANCEL | wxICON_QUESTION, doc->GetDocumentWindow()))
    {
-      m_window->DeleteSelection(true);
+      GetWindow()->DeleteSelection(true);
    }
 }
 
 void DBFView::OnAdd(wxCommandEvent&)
 {
-   m_window->AddNew();
+   GetWindow()->AddNew();
 }
 
 void DBFView::OnEdit(wxCommandEvent&)
 {
-   m_window->Edit();
+   GetWindow()->Edit();
 }
 
