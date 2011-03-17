@@ -25,7 +25,6 @@ public:
    virtual ~DBFView();
    virtual bool OnClose(bool deleteWindow = true);
    virtual bool OnCreate(wxDocument*, long flags);
-   virtual void OnDraw(wxDC*);
    virtual void OnUpdate(wxView* sender, wxObject* hint = NULL);
 protected:
    void OnStructClipboard(wxCommandEvent&);

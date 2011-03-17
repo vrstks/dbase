@@ -111,10 +111,6 @@ void DBFView::OnUpdateNeedEditable(wxUpdateUIEvent& event)
    event.Enable(GetDocument()->IsEditable());
 }
 
-void DBFView::OnDraw(wxDC *WXUNUSED(dc) )
-{
-}
-
 void DBFView::OnUpdate(wxView* sender, wxObject* hint)
 {
    switch ((long)hint)
