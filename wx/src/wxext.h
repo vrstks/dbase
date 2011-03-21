@@ -150,7 +150,7 @@ public:
     {
     }
 
-    void SetWindow(wxWindow* window) { m_viewWindow = window; }
+    void SetWindow(wxWindow* window) { m_viewWindow = window; } // trac.wxwidgets.org/ticket/13040
     wxWindow* GetWindow() const { return m_viewWindow; }
 
     virtual void OnDraw(wxDC*)
