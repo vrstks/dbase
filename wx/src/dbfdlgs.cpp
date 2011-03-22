@@ -77,19 +77,20 @@ void wxStructListView::Init(wxDBase* db)
       wxT("Length"),
       //wxT("Decimals")
    };
-   long i;
    C_ASSERT_(1, ENUM_col_enumcount == WXSIZEOF(aszType));
+   size_t i;
+
    for (i = 0; i < WXSIZEOF(aszType); i++)
    {
-      InsertColumn(i, aszType[i], (i == ENUM_col_length) ? wxLIST_FORMAT_RIGHT : wxLIST_FORMAT_LEFT, 80);
+      InsertColumn((long)i, aszType[i], (i == ENUM_col_length) ? wxLIST_FORMAT_RIGHT : wxLIST_FORMAT_LEFT, 80);
    }
 
    m_array_count = (db && db->IsOpen()) ? db->GetFieldCount() : 0;
    m_array = (DBF_FIELD_INFO*)realloc(m_array, sizeof(*m_array) * m_array_count);
 
-   for (i = 0; i < (long)m_array_count; i++)
+   for (i = 0; i < m_array_count; i++)
    {
-      db->GetFieldInfo(i, m_array + i);
+      db->GetFieldInfo((dbf_uint)i, m_array + i);
    }
    Fill();
    ::wxListView_SetCurSel(this, 0);
@@ -151,7 +152,7 @@ protected:
    wxDBase* m_database;
 public:
    wxStructListView* m_list;
-   
+
 public:
    wxDBFStructDialog(wxDBase*);
 
@@ -280,7 +281,7 @@ protected:
    wxComboBox* m_edit1;
    wxTextCtrl* m_edit2;
    wxTextCtrl* m_edit3;
-   
+
 public:
    wxDBFFieldDialog();
 
@@ -319,9 +320,9 @@ void wxDBFFieldDialog::OnUpdateDecimals(wxUpdateUIEvent& event)
 
 void wxDBFFieldDialog::OnUpdateNeedData(wxUpdateUIEvent& event)
 {
-   bool enable = !(   m_edit0->GetValue().IsEmpty() 
-                   || (m_edit1->GetSelection() == wxNOT_FOUND) 
-                   || m_edit2->GetValue().IsEmpty() 
+   bool enable = !(   m_edit0->GetValue().IsEmpty()
+                   || (m_edit1->GetSelection() == wxNOT_FOUND)
+                   || m_edit2->GetValue().IsEmpty()
                    || m_edit3->GetValue().IsEmpty());
    event.Enable(enable);
 }
