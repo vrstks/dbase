@@ -45,14 +45,14 @@ BEGIN_EVENT_TABLE(wxFieldEdit, wxTextCtrl)
    EVT_MOVE(wxFieldEdit::OnMove)
 END_EVENT_TABLE()
 
-void wxFieldEdit::OnMove( wxMoveEvent& event )
+void wxFieldEdit::OnMove(wxMoveEvent& event)
 {
-   // Windows wants us to move to the first column, readjust
+   // Windows wants us to move to the first column, adjust pos
    event.Skip();
    Fixate(m_fixate);
 }
 
-bool wxDBFListCtrl::Edit(size_t row, int col)
+bool wxDBFListCtrl::Edit(long row, long col)
 {
    wxRect rect;
    bool ok = ::wxListCtrl_GetItemRect(*this, row, col, &rect);

@@ -13,7 +13,7 @@ public:
    {
    }
 
-   bool Edit(size_t row, int col);
+   bool Edit(long row, long col);
    bool Edit();
    bool AddNew();
 

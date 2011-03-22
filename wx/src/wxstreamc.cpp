@@ -1,5 +1,5 @@
 // streamc.cpp
-// Copyright (c) 2007-2010 by Troels K. All rights reserved.
+// Copyright (c) 2007-2011 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include <wx/wx.h>
@@ -25,7 +25,7 @@ static uLong fwrite_impl(
    uLong size)
 {
    wxOutputStream* out = (wxOutputStream*)stream;
-   return out->Write(buf, size).LastWrite();
+   return (uLong)out->Write(buf, size).LastWrite();
 }
 
 static int fclose_impl(
@@ -70,7 +70,7 @@ static uLong fread_impl(
    uLong size)
 {
    wxInputStream* in = (wxInputStream*)stream;
-   return in->Read(buf, size).LastRead();
+   return (uLong)in->Read(buf, size).LastRead();
 }
 
 static ZPOS_T in_tell(voidpf WXUNUSED(opaque), voidpf stream)

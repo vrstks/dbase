@@ -36,7 +36,7 @@ class wxStructListView : public wxListView
    DECLARE_DYNAMIC_CLASS(wxStructListView)
 public:
    DBF_FIELD_INFO* m_array;
-   size_t m_array_count;
+   unsigned int m_array_count;
    enum
    {
       ENUM_col_name,
@@ -77,7 +77,7 @@ void wxStructListView::Init(wxDBase* db)
       wxT("Length"),
       //wxT("Decimals")
    };
-   size_t i;
+   long i;
    C_ASSERT_(1, ENUM_col_enumcount == WXSIZEOF(aszType));
    for (i = 0; i < WXSIZEOF(aszType); i++)
    {
@@ -87,7 +87,7 @@ void wxStructListView::Init(wxDBase* db)
    m_array_count = (db && db->IsOpen()) ? db->GetFieldCount() : 0;
    m_array = (DBF_FIELD_INFO*)realloc(m_array, sizeof(*m_array) * m_array_count);
 
-   for (i = 0; i < m_array_count; i++)
+   for (i = 0; i < (long)m_array_count; i++)
    {
       db->GetFieldInfo(i, m_array + i);
    }
@@ -367,7 +367,7 @@ bool DoModal_FieldEdit(wxWindow* parent, DBF_FIELD_INFO* info, const wxString& c
    dlg.Center();
    dlg.m_name = wxConvertMB2WX(info->name);
    dlg.m_type = info->type;
-   dlg.m_length = info->length;
+   dlg.m_length = (int)info->length;
    dlg.m_decimals = info->decimals;
    if (caption.Length()) dlg.SetTitle(caption);
    bool ok = (wxID_OK == dlg.ShowModal());

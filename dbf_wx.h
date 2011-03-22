@@ -43,7 +43,7 @@ public:
 
    size_t Read(const DBF_FIELD* , wxString*, size_t buf_len = 1024);
    size_t Read(const char* field, wxString*, size_t buf_len = 1024);
-   size_t Read(size_t field     , wxString*, size_t buf_len = 1024);
+   size_t Read(dbf_uint field   , wxString*, size_t buf_len = 1024);
    
    bool Read(const DBF_FIELD* , wxDateTime*);
    bool Read(const char* field, wxDateTime*);

@@ -286,7 +286,7 @@ inline size_t CDBase::Read(const DBF_FIELD* field, char* buf, size_t buf_len, en
    return ::dbf_getfield(m_handle, field, buf, buf_len, type);
 }
 
-inline size_t CDBase::Read(size_t field, char* buf, size_t buf_len, enum dbf_data_type type) const
+inline size_t CDBase::Read(dbf_uint field, char* buf, size_t buf_len, enum dbf_data_type type) const
 {
    return Read(GetFieldPtr(field), buf, buf_len, type);
 }

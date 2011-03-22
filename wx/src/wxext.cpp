@@ -338,13 +338,14 @@ wxAcceleratorEntry wxGetStockAcceleratorEx(wxWindowID id)
 
 void wxSetAcceleratorTable(wxWindow* wnd, const AcceleratorArray& array)
 {
-   const size_t count = array.GetCount();
+   size_t count = array.GetCount();
    wxAcceleratorEntry* temp = new wxAcceleratorEntry[count];
+
    for (size_t i = 0; i < count; i++)
    {
       temp[i] = array.Item(i);
    }
-   wxAcceleratorTable accel(count, temp);
+   wxAcceleratorTable accel((int)count, temp);
    wnd->SetAcceleratorTable(accel);
    wxDELETEA(temp);
 }

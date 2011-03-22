@@ -379,7 +379,7 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
          if ((handle->recordcount == 0) && handle->recordlength)
          {
             ZSEEK(handle->api, stream, 0, ZLIB_FILEFUNC_SEEK_END);
-            handle->recordcount = (dbf_uint)(ZTELL(handle->api, stream) - handle->headerlength) / handle->recordlength;
+            handle->recordcount = (dbf_uint)((ZTELL(handle->api, stream) - handle->headerlength) / handle->recordlength);
          }
 
          handle->lastupdate = mktime(&tm);
@@ -388,7 +388,7 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
          if (handle->recorddataptr)
          {
             dbf_uint i;
-            dbf_uint fielddata_pos = RECORD_POS_DATA;
+            size_t fielddata_pos = RECORD_POS_DATA;
 
             ZSEEK(handle->api, stream, header_len, ZLIB_FILEFUNC_SEEK_SET);
 
@@ -779,6 +779,7 @@ BOOL dbf_deleterecord(DBF_HANDLE handle, BOOL do_delete)
 BOOL dbf_addrecord(DBF_HANDLE handle)
 {
    BOOL ok;
+
    memset(handle->recorddataptr, FIELD_FILL_CHAR, handle->recordlength);
    ZSEEK(handle->api, handle->stream, handle->headerlength + handle->recordcount * handle->recordlength, ZLIB_FILEFUNC_SEEK_SET);
    ok = (handle->recordlength == ZWRITE(handle->api, handle->stream, handle->recorddataptr, handle->recordlength));
@@ -978,7 +979,8 @@ BOOL dbf_putfield(DBF_HANDLE handle, const DBF_FIELD* field, const char* buf)
             case DBF_DATA_TYPE_MEMO:
             {
                const int n = atoi(field->ptr);
-               dbf_uint block = (dbf_uint)n;
+               size_t block = n;
+
                ok = (NULL != handle->memo.stream);
                if (ok) switch (n)
                {
@@ -995,7 +997,7 @@ BOOL dbf_putfield(DBF_HANDLE handle, const DBF_FIELD* field, const char* buf)
                         block =  (filelen / handle->memo.header.blocksize)
                               + ((filelen % handle->memo.header.blocksize) ? 1 : 0);
                      }
-                     handle->memo.header.next = block + 1;
+                     handle->memo.header.next = (uint32_t)(block + 1);
                      dbf_write_header_memo(handle);
                      // fall through
                   default:
@@ -1004,7 +1006,7 @@ BOOL dbf_putfield(DBF_HANDLE handle, const DBF_FIELD* field, const char* buf)
                      char* text = temp->normal.text;
 
                      ZSEEK(handle->api, handle->memo.stream, block * handle->memo.header.blocksize, ZLIB_FILEFUNC_SEEK_SET);
-                     temp->normal.len = min(handle->memo.header.blocksize - offsetof(DBF_MEMO_BLOCK, normal.text), buf_len);
+                     temp->normal.len = (uint32_t)min(handle->memo.header.blocksize - offsetof(DBF_MEMO_BLOCK, normal.text), buf_len);
                      temp->normal.reserved = MAGIC_MEMO_BLOCK;
                      memset(text, FIELD_FILL_CHAR, temp->normal.len);
                      strncpy(text, dup, temp->normal.len);
@@ -1268,7 +1270,7 @@ BOOL dbf_putfield_tm(DBF_HANDLE handle, const DBF_FIELD* field, const struct tm*
 BOOL dbf_getfield_float(DBF_HANDLE handle, const DBF_FIELD* field, double* d)
 {
    char buf[21];
-   BOOL ok = dbf_getfield(handle, field, buf, sizeof(buf), DBF_DATA_TYPE_FLOAT);
+   BOOL ok = (0 != dbf_getfield(handle, field, buf, sizeof(buf), DBF_DATA_TYPE_FLOAT));
 
    if (ok)
    {
@@ -1286,7 +1288,7 @@ BOOL dbf_getfield_float(DBF_HANDLE handle, const DBF_FIELD* field, double* d)
 BOOL dbf_getfield_bool(DBF_HANDLE handle, const DBF_FIELD* field, BOOL* b)
 {
    char buf;
-   BOOL ok = dbf_getfield(handle, field, &buf, sizeof(buf), DBF_DATA_TYPE_BOOLEAN);
+   BOOL ok = (0 != dbf_getfield(handle, field, &buf, sizeof(buf), DBF_DATA_TYPE_BOOLEAN));
 
    if (ok)
    {
@@ -1770,7 +1772,7 @@ BOOL dbf_getfield_numeric(DBF_HANDLE handle, const DBF_FIELD* field, long* n)
    }
    else
    {
-      ok = dbf_getfield(handle, field, buf, sizeof(buf), DBF_DATA_TYPE_MEMO); // get field data, check for MEMO type
+      ok = (0 != dbf_getfield(handle, field, buf, sizeof(buf), DBF_DATA_TYPE_MEMO)); // get field data, check for MEMO type
       if (ok)
       {
          *n = atol(buf);
@@ -1794,7 +1796,7 @@ static void strcpy_dos2host(char* buf, const char* src, size_t buf_len, enum dbf
    {
       case ENUM_dbf_charconv_oem_host:
       #ifdef _WIN32
-         OemToCharBuffA(src, buf, buf_len);
+         OemToCharBuffA(src, buf, (DWORD)buf_len);
          break;
       #endif
       case ENUM_dbf_charconv_off:
@@ -1810,7 +1812,7 @@ static void strcpy_host2dos(char* buf, const char* src, size_t buf_len, enum dbf
    {
       case ENUM_dbf_charconv_oem_host:
       #ifdef _WIN32
-         CharToOemBuffA(src, buf, buf_len);
+         CharToOemBuffA(src, buf, (DWORD)buf_len);
          break;
       #endif
       case ENUM_dbf_charconv_off:

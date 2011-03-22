@@ -1,5 +1,5 @@
 // dbf_wx.inl
-// Copyright (c) 2007-2010 by Troels K. All rights reserved.
+// Copyright (c) 2007-2011 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 inline wxDBase::wxDBase() : wxObject(), CDBase(), m_stream(NULL), m_stream_memo(NULL)
@@ -23,7 +23,7 @@ inline bool wxDBase::Open(const wxFileName& filename, bool editable, enum dbf_ch
    return ok;
 }
 
-inline bool wxDBase::Create(const wxFileName& filename, const DBF_FIELD_INFO* array, size_t array_count, enum dbf_charconv charconv)
+inline bool wxDBase::Create(const wxFileName& filename, const DBF_FIELD_INFO* array, dbf_uint array_count, enum dbf_charconv charconv)
 {
    wxASSERT(!IsOpen());
    bool ok = base::Create(filename.GetFullPath().mb_str(), array, array_count, charconv, filename.GetName().mb_str());
@@ -31,7 +31,7 @@ inline bool wxDBase::Create(const wxFileName& filename, const DBF_FIELD_INFO* ar
 }
 
 inline bool wxDBase::Create(void* stream, struct zlib_filefunc_def_s* api, 
-   const DBF_FIELD_INFO* array, size_t array_count, 
+   const DBF_FIELD_INFO* array, dbf_uint array_count, 
    enum dbf_charconv charconv, void* memo)
 {
    wxASSERT(!IsOpen());
@@ -68,7 +68,7 @@ inline size_t wxDBase::Read(const DBF_FIELD* field, wxString* str, size_t buf_le
    return ret;
 }
 
-inline size_t wxDBase::Read(size_t field, wxString* str, size_t buf_len)
+inline size_t wxDBase::Read(dbf_uint field, wxString* str, size_t buf_len)
 {
    return Read(GetFieldPtr(field), str, buf_len);
 }
@@ -83,7 +83,7 @@ inline bool wxDBase::Write(const DBF_FIELD* field, const wxString& str)
    return base::Write(field, str.mb_str());
 }
 
-inline bool wxDBase::Write(size_t field, const wxString& str)
+inline bool wxDBase::Write(dbf_uint field, const wxString& str)
 {
    return Write(GetFieldPtr(field), str);
 }
@@ -108,7 +108,7 @@ inline bool wxDBase::Read(const DBF_FIELD* field, wxDateTime* dt)
    return ok;
 }
 
-inline bool wxDBase::Read(size_t field, wxDateTime* dt)
+inline bool wxDBase::Read(dbf_uint field, wxDateTime* dt)
 {
    return Read(GetFieldPtr(field), dt);
 }
@@ -118,7 +118,7 @@ inline bool wxDBase::Read(const char* field, wxDateTime* dt)
    return Read(GetFieldPtr(field), dt);
 }
 
-inline bool wxDBase::Write(size_t field, const wxDateTime& dt, enum dbf_data_type type)
+inline bool wxDBase::Write(dbf_uint field, const wxDateTime& dt, enum dbf_data_type type)
 {
    return Write(GetFieldPtr(field), dt, type);
 }
@@ -155,7 +155,7 @@ inline void wxDBase::DoDataExchange(bool WXUNUSED(bSaveAndValidate))
 {
 }
 
-inline bool wxDBase::SetPosition(size_t index)
+inline bool wxDBase::SetPosition(dbf_uint index)
 {
    bool ok = base::SetPosition(index);
    if (ok) Fixups();
@@ -178,7 +178,7 @@ inline bool wxDBase::Read(const DBF_FIELD* field, bool* b)
    return base::Read(field, b);
 }
 
-inline bool wxDBase::Read(size_t field, bool* b)
+inline bool wxDBase::Read(dbf_uint field, bool* b)
 {
    return base::Read(field, b);
 }
@@ -193,7 +193,7 @@ inline bool wxDBase::Write(const DBF_FIELD* field, const bool& b)
    return base::Write(field, b);
 }
 
-inline bool wxDBase::Write(size_t field, const bool& b)
+inline bool wxDBase::Write(dbf_uint field, const bool& b)
 {
    return base::Write(field, b);
 }
@@ -218,7 +218,7 @@ inline bool wxDBase::Read(const char* field, long* value)
    return base::Read(field, value);
 }
 
-inline bool wxDBase::Read(size_t field     , long* value)
+inline bool wxDBase::Read(dbf_uint field     , long* value)
 {
    return base::Read(field, value);
 }
@@ -233,7 +233,7 @@ inline bool wxDBase::Read(const char* field, double* value)
    return base::Read(field, value);
 }
 
-inline bool wxDBase::Read(size_t field     , double* value)
+inline bool wxDBase::Read(dbf_uint field     , double* value)
 {
    return base::Read(field, value);
 }
@@ -248,7 +248,7 @@ inline bool wxDBase::Write(const char* field, long value)
    return base::Write(field, value);
 }
 
-inline bool wxDBase::Write(size_t field, long value)
+inline bool wxDBase::Write(dbf_uint field, long value)
 {
    return base::Write(field, value);
 }
@@ -263,7 +263,7 @@ inline bool wxDBase::Write(const char* field, double value)
    return base::Write(field, value);
 }
 
-inline bool wxDBase::Write(size_t field, double value)
+inline bool wxDBase::Write(dbf_uint field, double value)
 {
    return base::Write(field, value);
 }

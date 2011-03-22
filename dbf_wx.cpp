@@ -50,7 +50,7 @@ DBF_HANDLE wxDBase::Detach(void)
    return handle;
 }
 
-wxString wxDBase::GetColType(size_t col)
+wxString wxDBase::GetColType(unsigned int col)
 {
    switch (GetFieldType(GetFieldPtr(col)))
    {

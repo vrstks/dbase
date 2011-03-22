@@ -68,7 +68,7 @@ public:
    int FindField(const char* fieldname) const;
    
    size_t Read(const DBF_FIELD* , char* buf, size_t buf_len, enum dbf_data_type type = DBF_DATA_TYPE_ANY) const;
-   size_t Read(size_t field     , char* buf, size_t buf_len, enum dbf_data_type type = DBF_DATA_TYPE_ANY) const;
+   size_t Read(dbf_uint field   , char* buf, size_t buf_len, enum dbf_data_type type = DBF_DATA_TYPE_ANY) const;
    size_t Read(const char* field, char* buf, size_t buf_len, enum dbf_data_type type = DBF_DATA_TYPE_ANY) const;
    
    int GetField_Date(dbf_uint field , char*);
