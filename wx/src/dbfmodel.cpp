@@ -157,18 +157,18 @@ bool wxDBFModel::AddNew(void)
 
 /*static*/ bool wxDBFModel::SaveAs(wxDataModel* model, wxOutputStream* stream)
 {
-   const size_t row_count = model->GetRowCount();
-   const size_t col_count = model->GetColumnCount();
+   const unsigned int row_count = model->GetRowCount();
+   const unsigned int col_count = model->GetColumnCount();
    DBF_FIELD_INFO* array = new DBF_FIELD_INFO[col_count];
 
-   size_t col;
-   size_t row;
-	for (col = 0; col < col_count; col++)
+   unsigned int col;
+   unsigned int row;
+   for (col = 0; col < col_count; col++)
    {
       ColumnInfo info;
-	   model->GetColumn(col, &info);
-      
       DBF_FIELD_INFO* item = array + col;
+
+      model->GetColumn(col, &info);      
       strncpy(item->name, wxConvertWX2MB(info.name), WXSIZEOF(item->name));
       item->name[WXSIZEOF(item->name) - 1] = 0;
       item->decimals = 0;

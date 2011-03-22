@@ -75,7 +75,7 @@ void wxDataListCtrl::OnKeyDown(wxKeyEvent& event)
 
 void wxDataListCtrl::Init()
 {
-   for (size_t i = 0, count = GetModel()->GetColumnCount(); i < count; i++)
+   for (unsigned int i = 0, count = GetModel()->GetColumnCount(); i < count; i++)
    {
       int format = wxLIST_FORMAT_LEFT;
       wxDataModel::ColumnInfo info;
@@ -121,17 +121,17 @@ wxListItemAttr* wxDataListCtrl::OnGetItemAttr(long item) const
    return (attr != ENUM_attr_none) ? (wxListItemAttr*)(m_attr + attr) : base::OnGetItemAttr(item);
 }
 
-bool wxDataListCtrl::IsRecordOk(size_t index)
+bool wxDataListCtrl::IsRecordOk(unsigned int index)
 { 
    return index < GetModel()->GetRowCount();
 }
 
-bool wxDataListCtrl::IsRecordDeleted(size_t index)
+bool wxDataListCtrl::IsRecordDeleted(unsigned int index)
 {
    return GetModel()->IsRowDeleted(index);
 }
 
-bool wxDataListCtrl::DeleteRecord(size_t index, bool bDelete)
+bool wxDataListCtrl::DeleteRecord(unsigned int index, bool bDelete)
 {
    return GetModel()->DeleteRow(index, bDelete);
 }
@@ -159,7 +159,7 @@ bool wxDataListCtrl::IsDeletedInSelection(void)
 bool wxDataListCtrl::IsAnyUnselected(void)
 {
    bool ok = false;
-   for (size_t index = 0; (!ok) && (index < (size_t)GetItemCount()); index++)
+   for (unsigned int index = 0; (!ok) && (index < (unsigned int)GetItemCount()); index++)
    {
       ok = ok || !IsSelected(index);
    }
@@ -177,7 +177,7 @@ void wxDataListCtrl::DeleteSelection(bool bDelete)
 
 void wxDataListCtrl::DeleteAll(bool bDelete)
 {
-   for (size_t index = 0; index < (size_t)GetItemCount(); index++)
+   for (unsigned int index = 0; index < (unsigned int)GetItemCount(); index++)
    {
       DeleteRecord(index, bDelete);
    }

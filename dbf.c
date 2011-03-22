@@ -168,7 +168,7 @@ C_ASSERT_(6, sizeof(DBF_FILEFIELD_4) == 48);
 typedef struct _DBF_MEMO_DATA
 {
    void* stream;
-   size_t nextfreeblock;
+   dbf_uint nextfreeblock;
    DBF_MEMO_BLOCK block;
    DBT_FILEHEADER header;
 } DBF_MEMO_DATA;
@@ -177,7 +177,7 @@ typedef struct _DBF_DATA
 {
    char tablename[40];
 
-   size_t currentrecord;         // current record in memory
+   dbf_uint currentrecord;         // current record in memory
    enum dbf_charconv charconv;
    BOOL editable;
 
@@ -185,14 +185,14 @@ typedef struct _DBF_DATA
    zlib_filefunc_def api;
 
    uint8_t diskversion;
-   size_t recordcount;
+   dbf_uint recordcount;
    size_t recordlength;
    size_t headerlength;
    time_t lastupdate;
 
    BOOL modified;            // has database contents changed?
    struct _DBF_FIELD_DATA* fieldarray;         // linked list with field structure
-   size_t fieldcount;         // number of fields
+   dbf_uint fieldcount;         // number of fields
    char* recorddataptr;         // pointer to current record struct
 
    DBF_MEMO_DATA memo;
@@ -208,7 +208,7 @@ typedef struct _DBF_FIELD_DATA
    char    m_Name[12];
    enum dbf_data_type type;
    size_t m_Length;
-   size_t m_DecCount;
+   dbf_uint m_DecCount;
    char*   ptr;
    uint32_t namehash;
 } DBF_FIELD_DATA;
@@ -379,7 +379,7 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
          if ((handle->recordcount == 0) && handle->recordlength)
          {
             ZSEEK(handle->api, stream, 0, ZLIB_FILEFUNC_SEEK_END);
-            handle->recordcount = (size_t)(ZTELL(handle->api, stream) - handle->headerlength) / handle->recordlength;
+            handle->recordcount = (dbf_uint)(ZTELL(handle->api, stream) - handle->headerlength) / handle->recordlength;
          }
 
          handle->lastupdate = mktime(&tm);
@@ -387,8 +387,8 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
          handle->recorddataptr = (char*)malloc(handle->recordlength + 1); // + zeroterm.
          if (handle->recorddataptr)
          {
-            size_t i;
-            size_t fielddata_pos = RECORD_POS_DATA;
+            dbf_uint i;
+            dbf_uint fielddata_pos = RECORD_POS_DATA;
 
             ZSEEK(handle->api, stream, header_len, ZLIB_FILEFUNC_SEEK_SET);
 
@@ -596,17 +596,17 @@ DBF_HANDLE dbf_open(const char* file, zlib_filefunc_def* api, BOOL editable, enu
    return handle;
 }
 
-size_t dbf_getposition(DBF_HANDLE handle)
+dbf_uint dbf_getposition(DBF_HANDLE handle)
 {
    return handle->currentrecord;
 }
 
-size_t dbf_getrecordcount(DBF_HANDLE handle)
+dbf_uint dbf_getrecordcount(DBF_HANDLE handle)
 {
    return handle->recordcount;
 }
 
-size_t dbf_getfieldcount(DBF_HANDLE handle)
+dbf_uint dbf_getfieldcount(DBF_HANDLE handle)
 {
    return handle->fieldcount;
 }
@@ -705,7 +705,7 @@ BOOL dbf_isvaliddate(const char *buf, enum dbf_data_type type)
    return dbf_parsedate(buf, NULL, NULL, type);
 }
 
-BOOL dbf_setposition(DBF_HANDLE handle, size_t record)
+BOOL dbf_setposition(DBF_HANDLE handle, dbf_uint record)
 {
    BOOL ok = (record < handle->recordcount);
 
@@ -733,7 +733,7 @@ BOOL dbf_setposition(DBF_HANDLE handle, size_t record)
    return ok;
 }
 
-BOOL dbf_putrecord(DBF_HANDLE handle, size_t record)
+BOOL dbf_putrecord(DBF_HANDLE handle, dbf_uint record)
 {
    BOOL ok = (record < handle->recordcount);
 
@@ -796,14 +796,14 @@ BOOL dbf_addrecord(DBF_HANDLE handle)
    return ok;
 }
 
-BOOL dbf_insertrecord(DBF_HANDLE handle, size_t index)
+BOOL dbf_insertrecord(DBF_HANDLE handle, dbf_uint index)
 {
    char buf[255];
 
    BOOL ok = (index <= handle->recordcount);
    if (ok)
    {
-      size_t i, j, total = handle->recordcount+1;
+      dbf_uint i, j, total = handle->recordcount+1;
 
       /* add new record at the end of file */
       dbf_addrecord(handle);
@@ -833,7 +833,7 @@ BOOL dbf_insertrecord(DBF_HANDLE handle, size_t index)
    return ok;
 }
 
-const DBF_FIELD* dbf_getfieldptr(DBF_HANDLE handle, size_t index)
+const DBF_FIELD* dbf_getfieldptr(DBF_HANDLE handle, dbf_uint index)
 {
    const DBF_FIELD* field = NULL;
 
@@ -851,7 +851,7 @@ const DBF_FIELD* dbf_getfieldptr(DBF_HANDLE handle, size_t index)
 
 int dbf_findfield(DBF_HANDLE handle, const char* fieldname_host)
 {
-   size_t i;
+   dbf_uint i;
    uint32_t namehash;
    char fieldname[20];
 
@@ -978,7 +978,7 @@ BOOL dbf_putfield(DBF_HANDLE handle, const DBF_FIELD* field, const char* buf)
             case DBF_DATA_TYPE_MEMO:
             {
                const int n = atoi(field->ptr);
-               size_t block = (size_t)n;
+               dbf_uint block = (dbf_uint)n;
                ok = (NULL != handle->memo.stream);
                if (ok) switch (n)
                {
@@ -1022,7 +1022,7 @@ BOOL dbf_putfield(DBF_HANDLE handle, const DBF_FIELD* field, const char* buf)
             case DBF_DATA_TYPE_FLOAT:
             {
                int sep;
-               size_t i;
+               dbf_uint i;
 
                dotnormalize(dup, 0, buf_len);
                i = snprintf(field->ptr, field->m_Length, "%f", atof(dup));
@@ -1356,7 +1356,7 @@ enum dbf_data_type dbf_getfield_type(DBF_HANDLE handle, const DBF_FIELD* field)
    return field ? field->type : DBF_DATA_TYPE_UNKNOWN;
 }
 
-BOOL dbf_getfield_info(DBF_HANDLE handle, size_t index, DBF_FIELD_INFO* info)
+BOOL dbf_getfield_info(DBF_HANDLE handle, dbf_uint index, DBF_FIELD_INFO* info)
 {
    BOOL ok = (index < handle->fieldcount);
 
@@ -1396,7 +1396,7 @@ BOOL dbf_memo_create(DBF_HANDLE handle, void* stream)
 
    if (ok)
    {
-      size_t i;
+      dbf_uint i;
       ZSEEK(handle->api, handle->memo.stream, 0, ZLIB_FILEFUNC_SEEK_SET);
 
       handle->memo.nextfreeblock = 1;
@@ -1461,9 +1461,9 @@ BOOL dbf_memo_open(DBF_HANDLE handle, void* stream)
    return ok;
 }
 
-static int find_memo(const DBF_FIELD_INFO* array, size_t array_count)
+static int find_memo(const DBF_FIELD_INFO* array, dbf_uint array_count)
 {
-   size_t i;
+   dbf_uint i;
 
    for (i = 0; i < array_count; i++)
    {
@@ -1475,7 +1475,7 @@ static int find_memo(const DBF_FIELD_INFO* array, size_t array_count)
    return -1;
 }
 
-DBF_HANDLE dbf_create(const char* filename, const DBF_FIELD_INFO* array, size_t array_count, enum dbf_charconv charconv, const char* tablename)
+DBF_HANDLE dbf_create(const char* filename, const DBF_FIELD_INFO* array, dbf_uint array_count, enum dbf_charconv charconv, const char* tablename)
 {
    DBF_HANDLE handle = NULL;
    void* stream;
@@ -1513,13 +1513,13 @@ DBF_HANDLE dbf_create(const char* filename, const DBF_FIELD_INFO* array, size_t 
 }
 
 DBF_HANDLE dbf_create_attach(void* stream, zlib_filefunc_def* api,
-                             const DBF_FIELD_INFO* array, size_t array_count,
+                             const DBF_FIELD_INFO* array, dbf_uint array_count,
                              enum dbf_charconv charconv, void* memo)
 {
    DBF_HANDLE handle = NULL;
    const time_t now = time(NULL);
    const struct tm* ptm = localtime(&now);
-   size_t i;
+   dbf_uint i;
    DBF_FILEHEADER_3 header;
    DBF_FIELD* fieldarray;
    char* recorddataptr;
@@ -1658,7 +1658,7 @@ size_t dbf_getfield(DBF_HANDLE handle, const DBF_FIELD* field, char* buf, size_t
                //sscanf(field->ptr, "%10d", &n);
                if (handle->memo.stream && (n >= 1))
                {
-                  const size_t block = (size_t)n;
+                  const dbf_uint block = (dbf_uint)n;
                   size_t read;
                   DBF_MEMO_BLOCK* temp = &handle->memo.block;
 
@@ -1747,7 +1747,7 @@ size_t dbf_getfield(DBF_HANDLE handle, const DBF_FIELD* field, char* buf, size_t
    }
    if (buf && (len < buf_len) && buf_len)
    {
-      size_t i;
+      dbf_uint i;
 
       buf[len] = 0;
       for (i = 0; len && (FIELD_FILL_CHAR == *buf); i++, len--)

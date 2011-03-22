@@ -1906,6 +1906,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\datalist.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\datamodel.h"
 				>
 			</File>

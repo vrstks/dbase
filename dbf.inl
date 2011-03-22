@@ -1,5 +1,5 @@
 // dbf.inl
-// Copyright (c) 2007-2010 by Troels K. All rights reserved.
+// Copyright (c) 2007-2011 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 inline CDBase::CDBase() : m_handle(NULL)
@@ -51,13 +51,13 @@ inline bool CDBase::Open(const char* filename, bool editable, enum dbf_charconv 
    return Open(filename, NULL, editable, charconv, tablename);
 }
 
-inline bool CDBase::Create(void* stream, struct zlib_filefunc_def_s* api, const DBF_FIELD_INFO* array, size_t array_count, enum dbf_charconv charconv, void* memo)
+inline bool CDBase::Create(void* stream, struct zlib_filefunc_def_s* api, const DBF_FIELD_INFO* array, dbf_uint array_count, enum dbf_charconv charconv, void* memo)
 {
    m_handle = ::dbf_create_attach(stream, api, array, array_count, charconv, memo);
    return (m_handle != NULL);
 }
 
-inline bool CDBase::Create(const char* filename, const DBF_FIELD_INFO* array, size_t array_count, enum dbf_charconv charconv, const char* tablename)
+inline bool CDBase::Create(const char* filename, const DBF_FIELD_INFO* array, dbf_uint array_count, enum dbf_charconv charconv, const char* tablename)
 {
    m_handle = ::dbf_create(filename, array, array_count, charconv, tablename);
    return (m_handle != NULL);
@@ -73,27 +73,27 @@ inline void CDBase::CloseMemoFile()
    ::dbf_close_memo(m_handle);
 }
 
-inline size_t CDBase::GetPosition() const
+inline dbf_uint CDBase::GetPosition() const
 { 
    return ::dbf_getposition(m_handle); 
 }
 
-inline size_t CDBase::GetRecordCount() const
+inline dbf_uint CDBase::GetRecordCount() const
 { 
    return ::dbf_getrecordcount(m_handle); 
 }
 
-inline size_t CDBase::GetFieldCount() const 
+inline dbf_uint CDBase::GetFieldCount() const 
 { 
    return ::dbf_getfieldcount(m_handle);
 }
 
-inline bool CDBase::SetPosition(size_t index)
+inline bool CDBase::SetPosition(dbf_uint index)
 {
    return ::dbf_setposition(m_handle, index) ? true : false;
 }
 
-inline bool CDBase::PutRecord(size_t index)
+inline bool CDBase::PutRecord(dbf_uint index)
 {
    return ::dbf_putrecord(m_handle, index) ? true : false;
 }
@@ -151,7 +151,7 @@ inline bool CDBase::Read(const char* field, struct tm* tm, int* ms)
    return Read(GetFieldPtr(field), tm, ms);
 }
 
-inline bool CDBase::Read(size_t field, struct tm* tm, int* ms)
+inline bool CDBase::Read(dbf_uint field, struct tm* tm, int* ms)
 {
    return Read(GetFieldPtr(field), tm, ms);
 }
@@ -166,7 +166,7 @@ inline bool CDBase::ReadDateTime(const char* field, time_t* utc, int* ms)
    return ReadDateTime(GetFieldPtr(field), utc, ms);
 }
 
-inline bool CDBase::ReadDateTime(size_t field, time_t* utc, int* ms)
+inline bool CDBase::ReadDateTime(dbf_uint field, time_t* utc, int* ms)
 {
    return ReadDateTime(GetFieldPtr(field), utc, ms);
 }
@@ -198,7 +198,7 @@ inline bool CDBase::Write(const char* field, const struct tm& tm, int ms, enum d
    return Write(GetFieldPtr(field), tm, ms, type);
 }
 
-inline bool CDBase::Write(size_t field, const struct tm& tm, int ms, enum dbf_data_type type)
+inline bool CDBase::Write(dbf_uint field, const struct tm& tm, int ms, enum dbf_data_type type)
 {
    return Write(GetFieldPtr(field), tm, ms, type);
 }
@@ -213,7 +213,7 @@ inline bool CDBase::WriteTime(const char* field, time_t utc, int ms, enum dbf_da
    return WriteTime(GetFieldPtr(field), utc, ms, type);
 }
 
-inline bool CDBase::WriteTime(size_t field, time_t utc, int ms, enum dbf_data_type type)
+inline bool CDBase::WriteTime(dbf_uint field, time_t utc, int ms, enum dbf_data_type type)
 {
    return WriteTime(GetFieldPtr(field), utc, ms, type);
 }
@@ -226,7 +226,7 @@ inline bool CDBase::Read(const DBF_FIELD* field, bool* b)
    return ok;
 }
 
-inline bool CDBase::Read(size_t field, bool* b)
+inline bool CDBase::Read(dbf_uint field, bool* b)
 {
    return Read(GetFieldPtr(field), b);
 }
@@ -246,7 +246,7 @@ inline bool CDBase::Write(const char* field, const bool& b)
    return Write(GetFieldPtr(field), b);
 }
 
-inline bool CDBase::Write(size_t field, const bool& b)
+inline bool CDBase::Write(dbf_uint field, const bool& b)
 {
    return Write(GetFieldPtr(field), b);
 }
@@ -261,7 +261,7 @@ inline bool CDBase::Write(const char* field, const char* str)
    return Write(GetFieldPtr(field), str);
 }
 
-inline bool CDBase::Write(size_t field, const char* str)
+inline bool CDBase::Write(dbf_uint field, const char* str)
 {
    return Write(GetFieldPtr(field), str);
 }
@@ -271,7 +271,7 @@ inline bool CDBase::AddNew(void)
    return ::dbf_addrecord(m_handle) ? true : false;
 }
 
-inline const DBF_FIELD* CDBase::GetFieldPtr(size_t field) const
+inline const DBF_FIELD* CDBase::GetFieldPtr(dbf_uint field) const
 {
    return ::dbf_getfieldptr(m_handle, field);
 }
@@ -331,7 +331,7 @@ inline void CDBase::GetInfo(DBF_INFO* info) const
    ::dbf_getinfo(m_handle, info);
 }
 
-inline bool CDBase::GetFieldInfo(size_t index, DBF_FIELD_INFO* info) const
+inline bool CDBase::GetFieldInfo(dbf_uint index, DBF_FIELD_INFO* info) const
 {
    return ::dbf_getfield_info(m_handle, index, info) ? true : false;
 }
@@ -341,7 +341,7 @@ inline enum dbf_data_type CDBase::GetFieldType(const DBF_FIELD* field) const
    return ::dbf_getfield_type(m_handle, field);
 }
 
-inline enum dbf_data_type CDBase::GetFieldType(size_t field) const
+inline enum dbf_data_type CDBase::GetFieldType(dbf_uint field) const
 {
    return ::dbf_getfield_type(m_handle, GetFieldPtr(field));
 }
@@ -392,7 +392,7 @@ inline bool CDBase::Read(const char* field, long* n)
    return ::dbf_getfield_numeric(m_handle, GetFieldPtr(field), n) ? true : false;
 }
 
-inline bool CDBase::Read(size_t field, long* n)
+inline bool CDBase::Read(dbf_uint field, long* n)
 {
    return ::dbf_getfield_numeric(m_handle, GetFieldPtr(field), n) ? true : false;
 }
@@ -407,7 +407,7 @@ inline bool CDBase::Read(const char* field, double* n)
    return ::dbf_getfield_float(m_handle, GetFieldPtr(field), n) ? true : false;
 }
 
-inline bool CDBase::Read(size_t field, double* n)
+inline bool CDBase::Read(dbf_uint field, double* n)
 {
    return ::dbf_getfield_float(m_handle, GetFieldPtr(field), n) ? true : false;
 }
@@ -422,7 +422,7 @@ inline bool CDBase::Write(const DBF_FIELD* field, long n)
    return ::dbf_putfield_numeric(m_handle, field, n) ? true : false;
 }
 
-inline bool CDBase::Write(size_t field, long n)
+inline bool CDBase::Write(dbf_uint field, long n)
 {
    return ::dbf_putfield_numeric(m_handle, GetFieldPtr(field), n) ? true : false;
 }
@@ -437,7 +437,7 @@ inline bool CDBase::Write(const DBF_FIELD* field, double n)
    return ::dbf_putfield_float(m_handle, field, n) ? true : false;
 }
 
-inline bool CDBase::Write(size_t field, double n)
+inline bool CDBase::Write(dbf_uint field, double n)
 {
    return ::dbf_putfield_float(m_handle, GetFieldPtr(field), n) ? true : false;
 }

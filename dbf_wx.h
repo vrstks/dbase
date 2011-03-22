@@ -33,12 +33,12 @@ public:
 public:	
    bool Open  (const wxFileName&, bool editable = true, enum dbf_charconv charconv = ENUM_dbf_charconv_compatible);
    bool Open  (wxInputStream*, enum dbf_charconv charconv = ENUM_dbf_charconv_compatible);
-   bool Create(const wxFileName&, const DBF_FIELD_INFO* array, size_t array_count, enum dbf_charconv charconv = ENUM_dbf_charconv_compatible);
+   bool Create(const wxFileName&, const DBF_FIELD_INFO* array, dbf_uint array_count, enum dbf_charconv charconv = ENUM_dbf_charconv_compatible);
    bool Create(/*const wxString& filename, */void* stream, struct zlib_filefunc_def_s*, 
-      const DBF_FIELD_INFO* array, size_t array_count, 
+      const DBF_FIELD_INFO* array, dbf_uint array_count, 
       enum dbf_charconv charconv = ENUM_dbf_charconv_compatible, void* memo = NULL);
    bool Create(wxOutputStream*, 
-      const DBF_FIELD_INFO* array, size_t array_count, 
+      const DBF_FIELD_INFO* array, dbf_uint array_count, 
       enum dbf_charconv charconv = ENUM_dbf_charconv_compatible, void* memo = NULL);
 
    size_t Read(const DBF_FIELD* , wxString*, size_t buf_len = 1024);
@@ -47,39 +47,39 @@ public:
    
    bool Read(const DBF_FIELD* , wxDateTime*);
    bool Read(const char* field, wxDateTime*);
-   bool Read(size_t field     , wxDateTime*);
+   bool Read(dbf_uint field , wxDateTime*);
    
    bool Read(const DBF_FIELD* , bool*);   
    bool Read(const char* field, bool*);   
-   bool Read(size_t field     , bool*);   
+   bool Read(dbf_uint field , bool*);   
    
    bool Read(const DBF_FIELD* , long*);   
    bool Read(const char* field, long*);   
-   bool Read(size_t field     , long*);   
+   bool Read(dbf_uint field , long*);   
 
    bool Read(const DBF_FIELD* , double*);   
    bool Read(const char* field, double*);   
-   bool Read(size_t field     , double*);   
+   bool Read(dbf_uint field , double*);   
 
    bool Write(const DBF_FIELD* , const wxDateTime&, enum dbf_data_type type = DBF_DATA_TYPE_ANY);
    bool Write(const char* field, const wxDateTime&, enum dbf_data_type type = DBF_DATA_TYPE_ANY);
-   bool Write(size_t field     , const wxDateTime&, enum dbf_data_type type = DBF_DATA_TYPE_ANY);
+   bool Write(dbf_uint field , const wxDateTime&, enum dbf_data_type type = DBF_DATA_TYPE_ANY);
 
    bool Write(const DBF_FIELD* , const bool&);
    bool Write(const char* field, const bool&);
-   bool Write(size_t field     , const bool&);
+   bool Write(dbf_uint field , const bool&);
 
    bool Write(const DBF_FIELD* , const wxString&);
    bool Write(const char* field, const wxString&);
-   bool Write(size_t field     , const wxString&);
+   bool Write(dbf_uint field , const wxString&);
 
    bool Write(const DBF_FIELD* , long);
    bool Write(const char* field, long);
-   bool Write(size_t field     , long);
+   bool Write(dbf_uint field , long);
    
    bool Write(const DBF_FIELD* , double);
    bool Write(const char* field, double);
-   bool Write(size_t field     , double);
+   bool Write(dbf_uint field , double);
 
    bool Write(const char* field, const char*);
 
@@ -107,12 +107,12 @@ public:
 public:
    virtual ~wxDBase();
    virtual void Close();
-   virtual bool SetPosition(size_t index);
+   virtual bool SetPosition(dbf_uint index);
    //virtual void SetFilename(const wxString&);
    //virtual wxString GetFilename(void) const;
 
 // wxDataViewListModel "compatibility"
-   wxString GetColType(size_t col);
+   wxString GetColType(unsigned int col);
    bool GetValueByRow(wxVariant*, unsigned int row, unsigned int col);
    bool SetValueByRow(const wxVariant&, unsigned int row, unsigned int col);
 protected:

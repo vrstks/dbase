@@ -27,7 +27,7 @@ struct tm;
 
 #define DBF_MAJOR_VERSION      1
 #define DBF_MINOR_VERSION      0
-#define DBF_SVN_VERSION        255
+#define DBF_SVN_VERSION        269
 #define DBF_WEBSITE            "http://sf.net/projects/dbase"
 #define DBF_NAME               "dbflib"
 #define DBF_AUTHOR             "Troels K"
@@ -88,20 +88,22 @@ enum dbf_data_type
    DBF_DATA_TYPE_ANY = -2
 };
 
+typedef unsigned int dbf_uint;
+
 typedef struct _DBF_FIELD_INFO
 {
    char   name[11]; // 10 chars + zero terminator
    enum dbf_data_type type;
    size_t length;
-   size_t decimals;
+   dbf_uint decimals;
 } DBF_FIELD_INFO;
 
 EXTERN_C DBF_HANDLE  dbf_alloc         (void);
-EXTERN_C DBF_HANDLE  dbf_create_attach (void* stream, struct zlib_filefunc_def_s*, const DBF_FIELD_INFO* array, size_t array_count, enum dbf_charconv charconv, void* memo);
+EXTERN_C DBF_HANDLE  dbf_create_attach (void* stream, struct zlib_filefunc_def_s*, const DBF_FIELD_INFO* array, dbf_uint array_count, enum dbf_charconv charconv, void* memo);
 EXTERN_C DBF_HANDLE  dbf_attach        (void* stream, struct zlib_filefunc_def_s*, BOOL editable, enum dbf_charconv, void* memo, const char* tablename);
 EXTERN_C void*       dbf_detach        (DBF_HANDLE*);
 EXTERN_C DBF_HANDLE  dbf_open          (const char* file, struct zlib_filefunc_def_s*, BOOL editable, enum dbf_charconv, const char* tablename);
-EXTERN_C DBF_HANDLE  dbf_create        (const char* file, const DBF_FIELD_INFO* array, size_t array_count, enum dbf_charconv charconv, const char* tablename);
+EXTERN_C DBF_HANDLE  dbf_create        (const char* file, const DBF_FIELD_INFO* array, dbf_uint array_count, enum dbf_charconv charconv, const char* tablename);
 EXTERN_C void        dbf_getfileapi    (DBF_HANDLE, struct zlib_filefunc_def_s*);
 EXTERN_C void*       dbf_getmemofile   (DBF_HANDLE);
 EXTERN_C BOOL        dbf_iseditable    (DBF_HANDLE);
@@ -115,15 +117,15 @@ EXTERN_C void        dbf_close         (DBF_HANDLE*);
 EXTERN_C void        dbf_close_memo    (DBF_HANDLE);
 EXTERN_C void        dbf_write_header  (DBF_HANDLE);
 EXTERN_C void        dbf_write_header_memo(DBF_HANDLE);
-EXTERN_C size_t      dbf_getposition   (DBF_HANDLE);
-EXTERN_C size_t      dbf_getrecordcount(DBF_HANDLE);
-EXTERN_C size_t      dbf_getfieldcount (DBF_HANDLE);
+EXTERN_C dbf_uint  dbf_getposition   (DBF_HANDLE);
+EXTERN_C dbf_uint  dbf_getrecordcount(DBF_HANDLE);
+EXTERN_C dbf_uint  dbf_getfieldcount (DBF_HANDLE);
 
 typedef struct _DBF_INFO
 {
    int    version;
-   size_t fieldcount;
-   size_t recordcount;
+   dbf_uint fieldcount;
+   dbf_uint recordcount;
    time_t lastupdate;
    BOOL memo;
    BOOL editable;
@@ -134,17 +136,17 @@ typedef struct _DBF_INFO
 EXTERN_C void        dbf_getinfo       (DBF_HANDLE, DBF_INFO*);
 EXTERN_C BOOL        dbf_isvaliddate   (const char *buf, enum dbf_data_type);
 EXTERN_C BOOL        dbf_parsedate(const char*, struct tm*, int* ms, enum dbf_data_type);
-EXTERN_C BOOL        dbf_setposition   (DBF_HANDLE, size_t index);
-EXTERN_C BOOL        dbf_putrecord     (DBF_HANDLE, size_t index);
+EXTERN_C BOOL        dbf_setposition   (DBF_HANDLE, dbf_uint index);
+EXTERN_C BOOL        dbf_putrecord     (DBF_HANDLE, dbf_uint index);
 EXTERN_C BOOL        dbf_addrecord     (DBF_HANDLE);
-EXTERN_C BOOL        dbf_insertrecord  (DBF_HANDLE, size_t index);
+EXTERN_C BOOL        dbf_insertrecord  (DBF_HANDLE, dbf_uint index);
 EXTERN_C BOOL        dbf_isrecorddeleted(DBF_HANDLE);
 EXTERN_C BOOL        dbf_deleterecord  (DBF_HANDLE, BOOL do_delete);
 EXTERN_C size_t      dbf_getfield      (DBF_HANDLE, const DBF_FIELD*, char* buf, size_t buf_len, enum dbf_data_type);
 EXTERN_C BOOL        dbf_putfield      (DBF_HANDLE, const DBF_FIELD*, const char* buf);
 EXTERN_C int         dbf_findfield     (DBF_HANDLE, const char* fieldname);
 EXTERN_C BOOL        dbf_isnull        (DBF_HANDLE, const DBF_FIELD*);
-EXTERN_C const DBF_FIELD* dbf_getfieldptr     (DBF_HANDLE, size_t field);
+EXTERN_C const DBF_FIELD* dbf_getfieldptr     (DBF_HANDLE, dbf_uint field);
 EXTERN_C const DBF_FIELD* dbf_getfieldptr_name(DBF_HANDLE, const char* field);
 EXTERN_C BOOL        dbf_move_prepare  (DBF_HANDLE);
 EXTERN_C BOOL        dbf_getfield_numeric(DBF_HANDLE, const DBF_FIELD*, long*);
@@ -161,7 +163,7 @@ EXTERN_C BOOL        dbf_putfield_tm   (DBF_HANDLE, const DBF_FIELD*, const stru
 
 EXTERN_C BOOL        dbf_putfield_numeric(DBF_HANDLE, const DBF_FIELD*, long);
 
-EXTERN_C BOOL        dbf_getfield_info (DBF_HANDLE, size_t index, DBF_FIELD_INFO*);
+EXTERN_C BOOL        dbf_getfield_info (DBF_HANDLE, dbf_uint index, DBF_FIELD_INFO*);
 EXTERN_C enum dbf_data_type dbf_getfield_type(DBF_HANDLE, const DBF_FIELD*);
 
 EXTERN_C BOOL        dbf_copy(DBF_HANDLE handle, 

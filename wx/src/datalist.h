@@ -46,9 +46,9 @@ protected:
 public:
    virtual wxString OnGetItemText(long item, long col) const;
    virtual wxListItemAttr* OnGetItemAttr(long item) const;
-   virtual bool DeleteRecord(size_t index, bool bDelete);
-   virtual bool IsRecordDeleted(size_t index);
-   virtual bool IsRecordOk(size_t index);
+   virtual bool DeleteRecord(unsigned int index, bool bDelete);
+   virtual bool IsRecordDeleted(unsigned int index);
+   virtual bool IsRecordOk(unsigned int index);
    virtual void Fill();
    virtual wxDataModelBase* GetModel(void) = 0;
    //virtual wxString Format(long col, const wxVariant&) const;

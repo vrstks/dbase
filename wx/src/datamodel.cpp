@@ -106,13 +106,15 @@ void wxDataModelSorted::Resort()
 size_t wxDataModelBase::GetRow(unsigned int row, wxArrayString* as_ptr, bool header) const
 {
    wxArrayString as;
-   for (size_t col = 0; col < GetColumnCount(); col++)
+   for (unsigned int col = 0; col < GetColumnCount(); col++)
    {
       wxString str;
+
       GetValueByRow(&str, row, col);
       if (header)
       {
          ColumnInfo info;
+
          GetColumn(col, &info);
          str = info.name + wxT(":\t") + str;
       }
@@ -140,11 +142,11 @@ size_t wxDataModelBase::GetProperties(wxArrayString* as_ptr, bool header) const
       as.Add(_("Fields:"));
       //as.Add(wxEmptyString);
    }
-   for (size_t i = 0; i < GetColumnCount(); i++)
+   for (unsigned int i = 0; i < GetColumnCount(); i++)
    {
       ColumnInfo info;
-      GetColumn(i, &info);
 
+      GetColumn(i, &info);
       temp.Printf(wxT("%d\t%s:\t%s\t%d"),
          (int)i,
          info.name.wx_str(),

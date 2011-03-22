@@ -39,7 +39,7 @@ wxString dbf_getstruct_c(const wxString& tablename, wxDBase* db)
    strStruct.Printf(wxT("const DBF_FIELD_INFO %s[] =\n{\n"), fieldname.wx_str());
    strEnum  .Printf(wxT("enum dbf_%s\n{\n"), title.wx_str());
 
-   for (size_t i = 0; ; i++)
+   for (dbf_uint i = 0; ; i++)
    {
       static const wxChar* const asz[] =
       {
@@ -55,8 +55,13 @@ wxString dbf_getstruct_c(const wxString& tablename, wxDBase* db)
       C_ASSERT_(1,WXSIZEOF(asz) == DBF_DATA_TYPE_ENUMCOUNT);
 
       DBF_FIELD_INFO info;
-      if (!db->GetFieldInfo(i, &info)) break;
       wxString temp;
+      
+      if (!db->GetFieldInfo(i, &info))
+      {
+          break;
+      }
+
       wxString name = wxConvertMB2WX(info.name);
       temp.Printf(wxT("   { %s, %-21s,%3d,%3d },\n"),
          //-(int)(WXSIZEOF(info.name)+1),
@@ -104,7 +109,7 @@ size_t dbf_getproperties(wxDBase* db, wxArrayString* as_ptr, bool header)
       }
       temp.Printf(_("Field count:\t%d"), info.fieldcount); as.Add(temp);
    }
-   for (size_t i = 0; ; i++)
+   for (dbf_uint i = 0; ; i++)
    {
       static const wxChar* const asz[] =
       {
@@ -120,7 +125,11 @@ size_t dbf_getproperties(wxDBase* db, wxArrayString* as_ptr, bool header)
       C_ASSERT_(1,WXSIZEOF(asz) == DBF_DATA_TYPE_ENUMCOUNT);
 
       DBF_FIELD_INFO info;
-      if (!db->GetFieldInfo(i, &info)) break;
+
+      if (!db->GetFieldInfo(i, &info))
+      {
+          break;
+      }
 
       wxString name = wxConvertMB2WX(info.name);
       temp.Printf(wxT("%d\t%s:\t%s\t%s"),
