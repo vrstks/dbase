@@ -210,11 +210,13 @@ private:
 class wxDataModelSorted : public wxDataViewSortedListModel, public wxDataModelBase
 {
    typedef wxDataViewSortedListModel base;
-public:
+protected:
    int m_sort_column;
-
    wxDataModel* m_child;
+public:
    wxDataModelSorted(wxDataModel* child);
+
+   int GetSortColumn() const { return m_sort_column; }
 
    virtual ~wxDataModelSorted() {}
    virtual void Resort();
@@ -232,6 +234,10 @@ public:
    virtual bool SetValueByRow(const wxVariant&, unsigned int row, unsigned int col);
 
    virtual void GetColumn(unsigned int col, ColumnInfo*) const;
+   virtual bool IsRowDeleted(unsigned int row)
+   {
+       return m_child->IsRowDeleted(GetArrayValue(row));
+   }
 
    //virtual unsigned int GetRowCount() { return m_child->wxDataViewListModelEx::GetNumberOfRows(); }
    virtual unsigned int GetRowCount() const
