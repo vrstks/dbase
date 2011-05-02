@@ -77,30 +77,39 @@ int wxCALLBACK wxDataViewListModelSortedDefaultCompare
 static wxDataModelBase             *s_CmpModel = NULL;
 static unsigned int                 s_CmpCol = 0;
 
-static int LINKAGEMODE wxDataViewIntermediateCmpAscend( unsigned int row1, unsigned int row2 )
+static int wxDataViewIntermediateCmpAscend( unsigned int row1, unsigned int row2 )
 {
     return wxDataViewListModelSortedDefaultCompare( row1, row2, s_CmpCol, s_CmpModel );
 }
 
-static int LINKAGEMODE wxDataViewIntermediateCmpDescend( unsigned int row1, unsigned int row2 )
+static int wxDataViewIntermediateCmpDescend( unsigned int row1, unsigned int row2 )
 {
     return wxDataViewListModelSortedDefaultCompare( row2, row1, s_CmpCol, s_CmpModel );
 }
 
-void wxDataModelSorted::Resort()
+void wxDataModelSorted::Resort(const wxArrayInt* row_array)
 {
     s_CmpModel = m_child;
     s_CmpCol = m_sort_column;
 
-    wxDataViewSortedIndexArray temp(IsSortOrderAscending() ? wxDataViewIntermediateCmpAscend : wxDataViewIntermediateCmpDescend);
-#if (wxVERSION_NUMBER >= 2900)
-    const unsigned int n = base::GetChild()->GetRowCount();
-#else
-    const unsigned int n = base::GetChild()->GetNumberOfRows();
-#endif
-    for (unsigned int i = 0; i < n; i++)
-        temp.Add( i);
-    SetSortArray(temp);
+    wxDataViewSortedIndexArray sorted_array(IsSortOrderAscending() ? wxDataViewIntermediateCmpAscend : wxDataViewIntermediateCmpDescend);
+
+    if (row_array)
+    {
+        for (unsigned int row = 0; row < row_array->GetCount(); row++)
+        {
+            sorted_array.Add(row_array->Item(row));
+        }
+    }
+    else
+    {
+        const unsigned int n = m_child->GetRowCount();
+        for (unsigned int row = 0; row < n; row++)
+        {
+            sorted_array.Add(row);
+        }
+    }
+    SetSortArray(sorted_array);
 }
 
 size_t wxDataModelBase::GetRow(unsigned int row, wxArrayString* as_ptr, bool header) const
@@ -116,7 +125,9 @@ size_t wxDataModelBase::GetRow(unsigned int row, wxArrayString* as_ptr, bool hea
          ColumnInfo info;
 
          GetColumn(col, &info);
-         str = info.name + wxT(":\t") + str;
+         str.Printf(wxT("%s:\t%s"),
+             info.name.wx_str(),
+             str.wx_str());
       }
       as.Add(str);
    }
@@ -127,17 +138,18 @@ size_t wxDataModelBase::GetRow(unsigned int row, wxArrayString* as_ptr, bool hea
 size_t wxDataModelBase::GetProperties(wxArrayString* as_ptr, bool header) const
 {
    wxArrayString as;
-   wxString temp;
 
    if (header)
    {
+      wxString str;
+
       if (GetTableName().Length())
       {
-         temp.Printf(_("Table:\t%s\t\t"), GetTableName().wx_str());
-         as.Add(temp);
+         str.Printf(_("Table:\t%s\t\t"), GetTableName().wx_str());
+         as.Add(str);
       }
-      temp.Printf(_("Records:\t%d\t\t"), GetRowCount());
-      as.Add(temp);
+      str.Printf(_("Records:\t%d\t\t"), GetRowCount());
+      as.Add(str);
       as.Add(wxEmptyString);
       as.Add(_("Fields:"));
       //as.Add(wxEmptyString);
@@ -145,15 +157,18 @@ size_t wxDataModelBase::GetProperties(wxArrayString* as_ptr, bool header) const
    for (unsigned int i = 0; i < GetColumnCount(); i++)
    {
       ColumnInfo info;
+      wxString str;
 
-      GetColumn(i, &info);
-      temp.Printf(wxT("%d\t%s:\t%s\t%d"),
-         (int)i,
-         info.name.wx_str(),
-         info.type.wx_str(),
-         info.len
-         );
-      as.Add(temp);
+      if (GetColumn(i, &info))
+      {
+          str.Printf(wxT("%d\t%s:\t%s\t%d"),
+             (int)i,
+             info.name.wx_str(),
+             info.type.wx_str(),
+             info.len
+             );
+      }
+      as.Add(str);
    }
    if (as_ptr) *as_ptr = as;
    return as.GetCount();

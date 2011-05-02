@@ -47,17 +47,18 @@ size_t wxDBFModel::GetProperties(wxArrayString* as, bool header) const
    return ::dbf_getproperties(m_database, as, header);
 }
 
-void wxDBFModel::GetColumn( unsigned int col, ColumnInfo* info) const
+bool wxDBFModel::GetColumn( unsigned int col, ColumnInfo* info) const
 {
-   info->type = m_database->GetColType(col);
-   info->len = 255;
-   wxString str;
    DBF_FIELD_INFO dbf_info;
-   if (m_database->GetFieldInfo(col, &dbf_info))
+   bool ok = m_database->GetFieldInfo(col, &dbf_info);
+
+   if (ok)
    {
       info->name = wxConvertMB2WX(dbf_info.name);
       info->len = dbf_info.length;
+      info->type = m_database->GetColType(col);
    }
+   return ok;
 }
 
 unsigned int wxDBFModel::GetRowCount() const

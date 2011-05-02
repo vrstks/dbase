@@ -27,7 +27,7 @@ public:
    {
    }
    virtual unsigned int GetRowCount() const = 0;
-   
+
 private:
    virtual unsigned int GetChildren(const wxDataViewItem&, wxDataViewItemArray&) const
    {
@@ -127,7 +127,7 @@ public:
       size_t len;
    };
 
-   virtual void GetColumn(unsigned int col, ColumnInfo*) const = 0;
+   virtual bool GetColumn(unsigned int col, ColumnInfo*) const = 0;
    virtual bool GetValueByRow(      wxString* , unsigned int row, unsigned int col) const;
    virtual bool SetValueByRow(const wxString& , unsigned int row, unsigned int col);
    virtual void GetValueByRow(      wxVariant&, unsigned int row, unsigned int col) const = 0;
@@ -217,11 +217,16 @@ public:
    wxDataModelSorted(wxDataModel* child);
 
    int GetSortColumn() const { return m_sort_column; }
+   wxDataModel* GetChild() { return m_child; }
+   void Resort(const wxArrayInt* row_array);
 
    virtual ~wxDataModelSorted() {}
-   virtual void Resort();
 
    virtual size_t GetProperties(wxArrayString*, bool header) const;
+   virtual void Resort()
+   {
+       Resort(NULL);
+   }
 
    virtual bool DeleteRow(unsigned int row, bool bDelete = true );
    virtual bool IsOpen(void) const;
@@ -233,7 +238,7 @@ public:
    virtual void GetValueByRow(      wxVariant&, unsigned int row, unsigned int col) const;
    virtual bool SetValueByRow(const wxVariant&, unsigned int row, unsigned int col);
 
-   virtual void GetColumn(unsigned int col, ColumnInfo*) const;
+   virtual bool GetColumn(unsigned int col, ColumnInfo*) const;
    virtual bool IsRowDeleted(unsigned int row)
    {
        return m_child->IsRowDeleted(GetArrayValue(row));
@@ -289,11 +294,12 @@ public:
 /////////////////////////////////////////////////////////////////////////////
 // wxDataModelBase
 
-inline void wxDataModelBase::GetColumn(unsigned int WXUNUSED(col), ColumnInfo* info) const
+inline bool wxDataModelBase::GetColumn(unsigned int WXUNUSED(col), ColumnInfo* info) const
 {
    info->type = wxT("string");
    //info->name;
    info->len = 255;
+   return true;
 }
 
 inline int wxDataModelBase::FindColumn(const wxString& WXUNUSED(colname)) const
@@ -380,18 +386,9 @@ inline wxDataModelSorted::wxDataModelSorted(wxDataModel*child) : wxDataViewSorte
 #endif
 }
 
-inline void wxDataModelSorted::GetColumn(unsigned int col, ColumnInfo* info) const
+inline bool wxDataModelSorted::GetColumn(unsigned int col, ColumnInfo* info) const
 {
-/*
-#if (wxVERSION_NUMBER >= 2900)
-   info->type = base::GetColumnType(col);
-   info->name = m_child->GetColumnName(col);
-   info->len = 255;
-#else
-   m_child->GetColumn(col, info);
-#endif
-*/
-   m_child->GetColumn(col, info);
+   return m_child->GetColumn(col, info);
 }
 
 inline bool wxDataModelSorted::GetValueByRow(wxString* str, unsigned int row, unsigned int col) const

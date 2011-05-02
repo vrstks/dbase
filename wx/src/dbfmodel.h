@@ -32,7 +32,7 @@ public:
 public:
    virtual unsigned int GetRowCount(void) const;
    virtual unsigned int GetColumnCount(void) const;
-   virtual void GetColumn( unsigned int col, ColumnInfo*) const;
+   virtual bool GetColumn( unsigned int col, ColumnInfo*) const;
    virtual bool IsRowDeleted( unsigned int row );
    virtual int FindColumn(const wxString& colname) const;
 
