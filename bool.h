@@ -17,5 +17,12 @@
 #ifndef TRUE
    #define TRUE  1
 #endif
+#ifndef B2b
+   #ifdef __cplusplus
+      #define B2b(b) ((b) ? true : false)
+   #else
+      #define B2b(b) ((b) ? TRUE : FALSE)
+   #endif
+#endif
 
 #endif /* __BOOL_H__ */
