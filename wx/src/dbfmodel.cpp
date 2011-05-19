@@ -209,14 +209,21 @@ bool wxDBFModel::AddNew(void)
       for (col = 0; col < col_count; col++)
       {
          wxVariant var;
+         
          model->GetValueByRow(var, row, col);
-         ok = true;
-         if (ok)
+         if (!var.IsNull())
          {
             switch (array[col].type)
             {
                case DBF_DATA_TYPE_DATE:
-                  dbf.Write(col, var.GetDateTime());
+                  if (var.GetType() == wxT("long"))
+                  {
+                     dbf.Write(col, wxDateTime((time_t)var.GetLong()));
+                  }
+                  else
+                  {
+                     dbf.Write(col, var.GetDateTime());
+                  }
                   break;
                case DBF_DATA_TYPE_FLOAT:
                   dbf.Write(col, var.GetDouble());
