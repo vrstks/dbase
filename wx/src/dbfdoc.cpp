@@ -127,7 +127,7 @@ DatabaseDocTemplate::DatabaseDocTemplate(wxDocManager* docManager) : wxDocTempla
 {
 }
 
-/*static*/ DatabaseDocTemplate* DatabaseDocTemplate::Create(wxDocManager* docManager)
+/*static*/ wxDocTemplate* DatabaseDocTemplate::Create(wxDocManager* docManager)
 {
    return new DatabaseDocTemplate(docManager);
 }
