@@ -94,12 +94,13 @@ size_t dbf_getproperties(wxDBase* db, wxArrayString* as_ptr, bool header)
    {
       DBF_INFO info;
       wxDateTime dt;
+      
       db->GetInfo(&info, &dt);
-
       wxString name = wxConvertMB2WX(info.tablename);
+      wxString format = wxConvertMB2WX(info.format);
 
-      temp.Printf(_("Table:\t%s"), name.wx_str());  as.Add(temp);
-      temp.Printf(_("Version:\t%X"), info.version); as.Add(temp);
+      temp.Printf(_("Table name:\t%s"), name.wx_str());  as.Add(temp);
+      temp.Printf(_("Format:\t%s"), format.wx_str()); as.Add(temp);
       temp.Printf(_("Memo file:\t%s"), info.memo ? _("Yes") : _("No")); as.Add(temp);
       temp.Printf(_("Record count:\t%d"), info.recordcount); as.Add(temp);
       temp.Printf(_("Modified:\t%s"), info.modified ? _("Yes") : _("No")); as.Add(temp);

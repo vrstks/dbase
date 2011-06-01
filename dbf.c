@@ -35,14 +35,16 @@
 #endif
 
 #define CPM_TEXT_TERMINATOR 0x1A
-#define MAGIC_DBASE3      0x03
-#define MAGIC_DBASE3_MEMO 0x83
-#define MAGIC_DBASE3_MEMO_2 0x8B
-#define MAGIC_DBASE4      0x04
-#define MAGIC_DBASE4_MEMO 0x84
-#define MAGIC_DBASE7      0x0C
-#define MAGIC_DBASE7_MEMO 0x8C
-#define MAGIC_FOXPRO      0x30
+
+/* M        */
+#define MAGIC_DBASE3      0x03   /* 00000011 */
+#define MAGIC_DBASE3_MEMO 0x83   /* 10000011 */
+#define MAGIC_DBASE3_MEMO_2 0x8B /* 10001011 */
+#define MAGIC_DBASE4      0x04   /* 00000100 */
+#define MAGIC_DBASE4_MEMO 0x84   /* 10000100 */
+#define MAGIC_DBASE7      0x0C   /* 00001100 */
+#define MAGIC_DBASE7_MEMO 0x8C   /* 10001100 */
+#define MAGIC_FOXPRO      0x30   /* 00110000 */
 #define MAGIC_DBASE_DEFAULT      MAGIC_DBASE3
 #define MAGIC_DBASE_DEFAULT_MEMO MAGIC_DBASE3_MEMO
 
@@ -70,7 +72,7 @@ typedef struct _DBF_FILEHEADER_TIME
 
 typedef struct _DBF_FILEHEADER_3
 {
-   uint8_t  version;
+   uint8_t  flags;
    DBF_FILEHEADER_TIME lastupdate;
    uint32_t recordcount;
    uint16_t headerlength;
@@ -85,7 +87,7 @@ typedef struct _DBF_FILEHEADER_3
 
 typedef struct _DBF_FILEHEADER_4
 {
-   uint8_t  version;
+   uint8_t  flags;
    DBF_FILEHEADER_TIME lastupdate;
    uint32_t recordcount;
    uint16_t headerlength;
@@ -101,7 +103,7 @@ typedef struct _DBF_FILEHEADER_4
 
 typedef union _DBF_FILEHEADER
 {
-   uint8_t  version;
+   uint8_t flags;
    DBF_FILEHEADER_3 v3;
    DBF_FILEHEADER_4 v4;
 } DBF_FILEHEADER;
@@ -313,15 +315,15 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
    BOOL ok;
 
    ZSEEK(*api, stream, 0, ZLIB_FILEFUNC_SEEK_SET);
-   len+=ZREAD(*api, stream, &header.version, sizeof(header.version));
+   len+=ZREAD(*api, stream, &header.flags, sizeof(header.flags));
 
-   switch (header.version)
+   switch (header.flags)
    {
       case MAGIC_DBASE4:
       case MAGIC_DBASE4_MEMO:
       case MAGIC_DBASE7:
       case MAGIC_DBASE7_MEMO:
-         len+=ZREAD(*api, stream, &header.v4.lastupdate, sizeof(header.v4) - sizeof(header.version));
+         len+=ZREAD(*api, stream, &header.v4.lastupdate, sizeof(header.v4) - sizeof(header.flags));
          ok = sanity_check_4(&header.v4) && (len == sizeof(header.v4));
          break;
       case MAGIC_DBASE3:
@@ -329,12 +331,12 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
       case MAGIC_DBASE3_MEMO_2:
       case MAGIC_FOXPRO:
       default:
-         len+=ZREAD(*api, stream, &header.v3.lastupdate, sizeof(header.v3) - sizeof(header.version));
+         len+=ZREAD(*api, stream, &header.v3.lastupdate, sizeof(header.v3) - sizeof(header.flags));
          ok = sanity_check_3(&header.v3) && (len == sizeof(header.v3));
          break;
    }
 
-   if (ok) switch (header.version)
+   if (ok) switch (header.flags)
    {
       case MAGIC_DBASE3:
       case MAGIC_DBASE3_MEMO:
@@ -358,7 +360,7 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
          tm.tm_wday  = 0;
          tm.tm_yday  = 0;
          tm.tm_isdst = 0;
-         switch (header.version)
+         switch (header.flags)
          {
             case MAGIC_DBASE4:
             case MAGIC_DBASE4_MEMO:
@@ -366,7 +368,7 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
             case MAGIC_DBASE7_MEMO:
                header_len = sizeof(DBF_FILEHEADER_4);
                field_len  = sizeof(DBF_FILEFIELD_4);
-               handle->diskversion  = header.v4.version;
+               handle->diskversion  = header.v4.flags;
                handle->recordcount  = header.v4.recordcount;
                handle->recordlength = header.v4.recordlength;
                handle->headerlength = header.v4.headerlength;
@@ -377,7 +379,7 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
             default:
                header_len = sizeof(DBF_FILEHEADER_3);
                field_len  = sizeof(DBF_FILEFIELD_3);
-               handle->diskversion  = header.v3.version;
+               handle->diskversion  = header.v3.flags;
                handle->recordcount  = header.v3.recordcount;
                handle->recordlength = header.v3.recordlength;
                handle->headerlength = header.v3.headerlength;
@@ -419,7 +421,7 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
                strncpy(field->m_Name, temp.name, _countof(field->m_Name)-1);
                field->m_Name[_countof(field->m_Name)-1] = 0;
 
-               switch (header.version)
+               switch (header.flags)
                {
                   case MAGIC_DBASE4:
                   case MAGIC_DBASE4_MEMO:
@@ -449,7 +451,7 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
                strncpy(handle->tablename, tablename, _countof(handle->tablename));
             }
 
-            switch (header.version)
+            switch (header.flags)
             {
                case MAGIC_DBASE3_MEMO:
                case MAGIC_DBASE3_MEMO_2:
@@ -489,7 +491,7 @@ void dbf_write_header(DBF_HANDLE handle)
 
    DBF_FILEHEADER_3 header;
    memset(&header, 0, sizeof(header));
-   header.version = handle->memo.stream ? MAGIC_DBASE_DEFAULT_MEMO : MAGIC_DBASE_DEFAULT;
+   header.flags = handle->memo.stream ? MAGIC_DBASE_DEFAULT_MEMO : MAGIC_DBASE_DEFAULT;
    header.lastupdate.dd = (uint8_t) ptm->tm_mday;
    header.lastupdate.mm = (uint8_t)(ptm->tm_mon+1);
    header.lastupdate.yy = (uint8_t) ptm->tm_year;
@@ -648,7 +650,27 @@ static char* Trim(char *str, char trimchar)
 
 void dbf_getinfo(DBF_HANDLE handle, DBF_INFO* info)
 {
-   info->version     = handle->diskversion;
+   switch (handle->diskversion & 0xF)
+   {
+        case 3:
+            info->version = 3;
+            strncpy(info->format, DBF_FORMAT_NAME " 3", _countof(info->format));
+            break;
+        case 4:
+            info->version = 4;
+            strncpy(info->format, DBF_FORMAT_NAME " 4", _countof(info->format));
+            break;
+        case 12:
+            info->version = 7;
+            strncpy(info->format, DBF_FORMAT_NAME " 7", _countof(info->format));
+            break;
+        case 0:
+        default:
+            info->version = 0;
+            strncpy(info->format, "Foxpro", _countof(info->format));
+            break;
+   }
+   info->flags       = handle->diskversion;
    info->fieldcount  = handle->fieldcount;
    info->recordcount = handle->recordcount;
    info->lastupdate  = handle->lastupdate;
@@ -1559,7 +1581,7 @@ DBF_HANDLE dbf_create_attach(void* stream, zlib_filefunc_def* api,
    char ch;
 
    memset(&header, 0, sizeof(header));
-   header.version = (uint8_t)(memo ? MAGIC_DBASE3_MEMO : MAGIC_DBASE3);
+   header.flags = (uint8_t)(memo ? MAGIC_DBASE3_MEMO : MAGIC_DBASE3);
    header.lastupdate.dd = (uint8_t)(ptm->tm_mday );
    header.lastupdate.mm = (uint8_t)(ptm->tm_mon+1);
    header.lastupdate.yy = (uint8_t)(ptm->tm_year );
@@ -1624,7 +1646,7 @@ DBF_HANDLE dbf_create_attach(void* stream, zlib_filefunc_def* api,
    handle = dbf_alloc();
    handle->api          = *api;
    handle->stream       = stream;
-   handle->diskversion  = header.version;
+   handle->diskversion  = header.flags;
    handle->charconv     = charconv;
    handle->editable     = TRUE;
    handle->fieldarray   = fieldarray;

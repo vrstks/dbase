@@ -104,13 +104,14 @@ namespace Test
       static void Main(string[] args)
       {
          //string filename = @"h:\cpcload.dbf";
-         //string filename = @"E:\viewer\FOXUSER.DBF";
-         //string filename = @"E:\viewer\FakturaH.DBF";
-         string filename = @"memo.dbf";
+        //string filename = @"E:\nctest\viewer\db\FOXUSER.DBF";
+        string filename = @"E:\nctest\viewer\db\FakturaH.DBF";
+         //string filename = @"memo.dbf";
+        //string filename = @"E:\nctest\viewer\db\i_mon_ch.dbf";
 
-         FlatDatabase.DBase.Test.CreateDatabase(filename);
+         //FlatDatabase.DBase.Test.CreateDatabase(filename);
          //CreateMemo(filename);
-         //Open(filename);
+         Open(filename);
          //OpenRecordset(filename);
       }
    }

@@ -27,9 +27,10 @@ struct tm;
 
 #define DBF_MAJOR_VERSION      1
 #define DBF_MINOR_VERSION      2
-#define DBF_SVN_VERSION        283
+#define DBF_SVN_VERSION        284
 #define DBF_WEBSITE            "http://sf.net/projects/dbase"
-#define DBF_NAME               "dbflib"
+#define DBF_FORMAT_NAME        "dBASE"
+#define DBF_LIB_NAME           "dbflib"
 #define DBF_AUTHOR             "Troels K"
 
 #define DBF_FILEEXT           "dbf"
@@ -126,14 +127,16 @@ EXTERN_C dbf_uint  dbf_getfieldcount (DBF_HANDLE);
 
 typedef struct _DBF_INFO
 {
-   int    version;
+   int version;
+   int flags;
    dbf_uint fieldcount;
    dbf_uint recordcount;
    time_t lastupdate;
    BOOL memo;
    BOOL editable;
    BOOL modified;
-   char tablename[40];
+   char tablename[DBF_DBASE4_FIELDNAMELENGTH+1];
+   char format[40];
 } DBF_INFO;
 
 EXTERN_C void        dbf_getinfo       (DBF_HANDLE, DBF_INFO*);

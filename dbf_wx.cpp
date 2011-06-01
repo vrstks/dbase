@@ -147,7 +147,7 @@ bool wxDBase::SetValueByRow(const wxVariant& var, unsigned int row, unsigned int
 #ifdef __WX29_H__
 /*static*/ wxVersionInfo wxDBase::GetVersionInfo()
 {
-   return wxVersionInfo(wxT(DBF_NAME), DBF_MAJOR_VERSION, DBF_MINOR_VERSION, DBF_SVN_VERSION, 
+   return wxVersionInfo(wxT(DBF_LIB_NAME), DBF_MAJOR_VERSION, DBF_MINOR_VERSION, DBF_SVN_VERSION, 
        wxT("dbase interface library"),
        wxT("Copyright (c) 2007-2011 by Troels K")
        );

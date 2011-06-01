@@ -1,5 +1,5 @@
 // dbfmodel.h
-// Copyright (c) 2007-2010 by Troels K. All rights reserved.
+// Copyright (c) 2007-2011 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __DBFMODEL_H__
@@ -15,8 +15,9 @@ class wxDBFModel : public wxDataModel
 {
    typedef wxDataModel base;
 // Attributes
-public:
+protected:
    wxDBase* m_database;
+public:
    bool m_delete_on_exit;
    static const wxChar* m_fileext;
 
@@ -47,10 +48,7 @@ public:
    virtual bool IsOpen(void) const;
    virtual bool IsEditable(void) const;
    virtual bool AddNew(void);
-   virtual wxString GetDataModelName(void) const
-   {
-      return wxT("dBASE");
-   }
+   virtual wxString GetDataModelName(void) const;
    virtual wxString GetTableName(void) const;
 };
 
