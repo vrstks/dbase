@@ -253,10 +253,7 @@ bool wxDBFModel::AddNew(void)
 
 wxString wxDBFModel::GetDataModelName(void) const
 {
-   DBF_INFO info;
-
-   m_database->GetInfo(&info);
-   return wxConvertMB2WX(info.format);
+   return wxT(DBF_FORMAT_NAME);
 }
 
 wxString wxDBFModel::GetTableName(void) const
