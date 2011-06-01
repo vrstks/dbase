@@ -14,6 +14,7 @@ class wxOutputStream;
 class wxDBFModel : public wxDataModel
 {
    typedef wxDataModel base;
+
 // Attributes
 protected:
    wxDBase* m_database;
@@ -22,6 +23,11 @@ public:
    static const wxChar* m_fileext;
 
    wxDBFModel(wxDBase*);
+
+// Operations
+public:
+   void     SetDatabase(wxDBase* database) { m_database = database; }
+   wxDBase* GetDatabase() const { return m_database; }
 
    static bool SaveAs(wxDataModel*, wxOutputStream*);
 
