@@ -40,6 +40,8 @@
 #define MAGIC_DBASE3_MEMO_2 0x8B
 #define MAGIC_DBASE4      0x04
 #define MAGIC_DBASE4_MEMO 0x84
+#define MAGIC_DBASE7      0x0C
+#define MAGIC_DBASE7_MEMO 0x8C
 #define MAGIC_FOXPRO      0x30
 #define MAGIC_DBASE_DEFAULT      MAGIC_DBASE3
 #define MAGIC_DBASE_DEFAULT_MEMO MAGIC_DBASE3_MEMO
@@ -51,6 +53,7 @@
 #define RECORD_POS_DELETED 0
 #define RECORD_POS_DATA    1
 #define RECORD_DELETED_MARKER '*'
+#define RECORD_INCREMENT_BIT 0x80
 #define FIELD_FILL_CHAR ' '
 
 static void  strcpy_dos2host(char* buf, const char* src, size_t buf_len, enum dbf_charconv);
@@ -117,7 +120,7 @@ typedef struct _DBT_FILEHEADER
 
 typedef struct _DBF_FILEFIELD_3
 {
-   char      name[11];   // field name in ASCII zero-filled
+   char      name[DBF_DBASE3_FIELDNAMELENGTH];   // field name in ASCII zero-filled
    char      type;        // field type in ASCII
    uint8_t   unused_0[4];
    uint8_t   length;     // field length in binary
@@ -127,12 +130,16 @@ typedef struct _DBF_FILEFIELD_3
 
 typedef struct _DBF_FILEFIELD_4
 {
-   char      name[11];   // field name in ASCII zero-filled
-   uint8_t   unused_0[21];
+   char      name[DBF_DBASE4_FIELDNAMELENGTH];   // field name in ASCII zero-filled
    char      type;        // field type in ASCII
    uint8_t   length;     // field length in binary
    uint8_t   deccount;   // field decimal count in binary
-   uint8_t   unused_1[13];
+
+   uint8_t   unused_0[2];
+   uint8_t   mdx;
+   uint8_t   unused_1[2];
+   uint32_t  autoincrement;
+   uint8_t   unused_2[4];
 } DBF_FILEFIELD_4;
 
 typedef union _DBF_FILEFIELD
@@ -205,7 +212,7 @@ typedef struct _DBF_DATA
 
 typedef struct _DBF_FIELD_DATA
 {
-   char    m_Name[12];
+   char    m_Name[DBF_DBASE4_FIELDNAMELENGTH+1];
    enum dbf_data_type type;
    size_t m_Length;
    dbf_uint m_DecCount;
@@ -245,7 +252,6 @@ static BOOL dbf_memo_attach(DBF_HANDLE handle, void* stream)
       ZSEEK(handle->api, stream, 0, ZLIB_FILEFUNC_SEEK_SET);
       ZREAD(handle->api, stream, &handle->memo.header, sizeof(handle->memo.header));
       if (0 == handle->memo.header.blocksize) handle->memo.header.blocksize = MEMO_BLOCK_SIZE; /* OpenOffice2 */
-      //handle->memo.dataptr = (char*)realloc(handle->memo.dataptr, handle->memo.blocksize);
    }
    return ok;
 }
@@ -258,7 +264,6 @@ EXTERN_C DBF_HANDLE dbf_alloc(void)
    handle->fieldcount      = 0;
    handle->memo.nextfreeblock = 1;
    handle->memo.stream     = NULL;
-   //handle->memo.dataptr    = NULL;
 
    memset(&handle->memo.header, 0, sizeof(handle->memo.header));
    handle->memo.header.blocksize  = MEMO_BLOCK_SIZE;
@@ -314,6 +319,8 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
    {
       case MAGIC_DBASE4:
       case MAGIC_DBASE4_MEMO:
+      case MAGIC_DBASE7:
+      case MAGIC_DBASE7_MEMO:
          len+=ZREAD(*api, stream, &header.v4.lastupdate, sizeof(header.v4) - sizeof(header.version));
          ok = sanity_check_4(&header.v4) && (len == sizeof(header.v4));
          break;
@@ -335,6 +342,8 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
       case MAGIC_DBASE4:
       case MAGIC_DBASE4_MEMO:
       case MAGIC_FOXPRO:
+      case MAGIC_DBASE7:
+      case MAGIC_DBASE7_MEMO:
       {
          struct tm tm;
          size_t field_len;
@@ -353,6 +362,8 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
          {
             case MAGIC_DBASE4:
             case MAGIC_DBASE4_MEMO:
+            case MAGIC_DBASE7:
+            case MAGIC_DBASE7_MEMO:
                header_len = sizeof(DBF_FILEHEADER_4);
                field_len  = sizeof(DBF_FILEFIELD_4);
                handle->diskversion  = header.v4.version;
@@ -412,6 +423,8 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
                {
                   case MAGIC_DBASE4:
                   case MAGIC_DBASE4_MEMO:
+                  case MAGIC_DBASE7:
+                  case MAGIC_DBASE7_MEMO:
                      field->type       = temp.v4.deccount ? DBF_DATA_TYPE_FLOAT : dbf_gettype_int2ext(temp.v4.type);
                      field->m_Length   = temp.v4.length  ;
                      field->m_DecCount = temp.v4.deccount;
@@ -426,7 +439,7 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
                field->ptr        = handle->recorddataptr + fielddata_pos;
                field->namehash   = strhash(field->m_Name, FALSE);
 
-               fielddata_pos += field->m_Length;// + (v4 ? 1 : 0) + ((v4 && (temp.type == 'C')) ? 1 : 0);
+               fielddata_pos += field->m_Length;
             }
             handle->modified = FALSE;
             handle->editable = editable;
@@ -441,6 +454,7 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
                case MAGIC_DBASE3_MEMO:
                case MAGIC_DBASE3_MEMO_2:
                case MAGIC_DBASE4_MEMO:
+               case MAGIC_DBASE7_MEMO:
                   dbf_memo_attach(handle, memo);
                   break;
                default:
@@ -456,7 +470,6 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
          }
          break;
       }
-      //case DBASE4_MEMO:
       default:
          break;
    }
@@ -467,8 +480,6 @@ void dbf_close_memo(DBF_HANDLE handle)
 {
    ZCLOSE(handle->api, handle->memo.stream);
    handle->memo.stream = NULL;
-   //free(handle->memo.dataptr);
-   //handle->memo.dataptr = NULL;
 }
 
 void dbf_write_header(DBF_HANDLE handle)
@@ -576,21 +587,28 @@ DBF_HANDLE dbf_open(const char* file, zlib_filefunc_def* api, BOOL editable, enu
             case MAGIC_DBASE3_MEMO:
             case MAGIC_DBASE3_MEMO_2:
             case MAGIC_DBASE4_MEMO:
+            case MAGIC_DBASE7_MEMO:
                break;
             default:
-               if (memostream) ZCLOSE(*api, memostream);
+               if (memostream)
+               {
+                   ZCLOSE(*api, memostream);
+               }
                break;
          }
       }
       else
       {
          ZCLOSE(*api, stream);
-         if (memostream) ZCLOSE(*api, memostream);
+         if (memostream)
+         {
+             ZCLOSE(*api, memostream);
+         }
       }
    }
    else
    {
-       //strncpy(handle->lasterrormsg, "Unable to open file", _countof(handle->lasterrormsg));
+      //strncpy(handle->lasterrormsg, "Unable to open file", _countof(handle->lasterrormsg));
       //handle->lasterror = DBASE_NO_FILE;
    }
    return handle;
@@ -720,7 +738,6 @@ BOOL dbf_setposition(DBF_HANDLE handle, dbf_uint record)
       }
       else
       {
-         //DWORD dw = GetLastError();
          strncpy(handle->lasterrormsg, "Invalid record", _countof(handle->lasterrormsg));
          handle->lasterror = DBASE_INVALID_RECORD;
       }
@@ -920,6 +937,7 @@ BOOL dbf_putfield(DBF_HANDLE handle, const DBF_FIELD* field, const char* buf)
    {
       const size_t buf_len = strlen(buf);
       char* dup = handle->dup = strdup_host2dos(buf, buf_len, handle->charconv, handle->dup);
+      
       // check for correct type
       switch (field->type)
       {
@@ -928,6 +946,7 @@ BOOL dbf_putfield(DBF_HANDLE handle, const DBF_FIELD* field, const char* buf)
          //case DBF_DATA_TYPE_MEMO:
          {
             char* ptr = dup;
+            
             Trim(ptr, FIELD_FILL_CHAR);
             while (*ptr)
             {
@@ -1047,6 +1066,7 @@ BOOL dbf_putfield(DBF_HANDLE handle, const DBF_FIELD* field, const char* buf)
             default:
             {
                size_t nLength = min(buf_len, field->m_Length);
+
                memset(field->ptr, FIELD_FILL_CHAR, field->m_Length);
                strncpy(field->ptr, dup, nLength);
                break;
@@ -1090,6 +1110,7 @@ BOOL dbf_getfield_time(DBF_HANDLE handle, const DBF_FIELD* field, time_t* utc_pt
          {
             struct tm tm;
             int ms;
+
             ok = dbf_getfield_tm(handle, field, &tm, &ms);
             if (ok)
             {
@@ -1107,6 +1128,7 @@ BOOL dbf_getfield_time(DBF_HANDLE handle, const DBF_FIELD* field, time_t* utc_pt
          case DBF_DATA_TYPE_MEMO:
          {
             long temp;
+
             ok = dbf_getfield_numeric(handle, field, &temp);
             if (ok)
             {
@@ -1118,6 +1140,7 @@ BOOL dbf_getfield_time(DBF_HANDLE handle, const DBF_FIELD* field, time_t* utc_pt
          case DBF_DATA_TYPE_FLOAT:
          {
             double temp;
+
             ok = dbf_getfield_float(handle, field, &temp);
             if (ok)
             {
@@ -1139,7 +1162,6 @@ BOOL dbf_putfield_time(DBF_HANDLE handle, const DBF_FIELD* field, time_t utc, in
    BOOL ok = (field != NULL);
 
    if (type < 0) type = field->type;
-
    if (ok) switch (type)
    {
       case DBF_DATA_TYPE_DATE:
@@ -1147,6 +1169,7 @@ BOOL dbf_putfield_time(DBF_HANDLE handle, const DBF_FIELD* field, time_t utc, in
       case DBF_DATA_TYPE_DATETIME:
       {
          struct tm* tm = localtime(&utc);
+
          ok = (tm != NULL);
          if (ok) ok = dbf_putfield_tm(handle, field, tm, ms, type);
          break;
@@ -1178,6 +1201,7 @@ BOOL dbf_getfield_tm(DBF_HANDLE handle, const DBF_FIELD* field, struct tm* tm, i
          case DBF_DATA_TYPE_DATETIME:
          {
             char temp[80];
+
             ok = 0 != dbf_getfield(handle, field, temp, _countof(temp), DBF_DATA_TYPE_ANY);
             if (ok) ok = dbf_parsedate(temp, tm, ms, field->type);
             break;
@@ -1187,6 +1211,7 @@ BOOL dbf_getfield_tm(DBF_HANDLE handle, const DBF_FIELD* field, struct tm* tm, i
          case DBF_DATA_TYPE_FLOAT:
          {
             time_t utc;
+
             ok = dbf_getfield_time(handle, field, &utc, ms);
             if (ok)
             {
@@ -1348,9 +1373,16 @@ char dbf_gettype_ext2int(enum dbf_data_type type)
 
 enum dbf_data_type dbf_gettype_int2ext(char type)
 {
-   const char* p = strchr(mod_type_int, type);
-
-   return p ? (enum dbf_data_type)(p - mod_type_int) : DBF_DATA_TYPE_UNKNOWN;
+    switch (type)
+    {
+        case 'I':
+            return DBF_DATA_TYPE_INTEGER;
+        default:
+        {
+            const char* p = strchr(mod_type_int, type);
+            return p ? (enum dbf_data_type)(p - mod_type_int) : DBF_DATA_TYPE_UNKNOWN;
+        }
+    }
 }
 
 enum dbf_data_type dbf_getfield_type(DBF_HANDLE handle, const DBF_FIELD* field)
@@ -1445,13 +1477,11 @@ BOOL dbf_memo_open(DBF_HANDLE handle, void* stream)
    {
       ZSEEK(handle->api, handle->memo.stream, 0, ZLIB_FILEFUNC_SEEK_SET);
       ZREAD(handle->api, handle->memo.stream, &handle->memo.nextfreeblock, sizeof(handle->memo.nextfreeblock));
-      //handle->memo.dataptr = (char *)malloc(handle->memo.blocksize);
-      //ok = (handle->memo.dataptr != NULL);
       if (!ok)
       {
          ZCLOSE(handle->api, handle->memo.stream);
          handle->memo.stream = NULL;
-           strncpy(handle->lasterrormsg, "Out of memory", _countof(handle->lasterrormsg));
+         strncpy(handle->lasterrormsg, "Out of memory", _countof(handle->lasterrormsg));
          handle->lasterror = DBASE_OUT_OF_MEM;
       }
    }
@@ -1490,6 +1520,7 @@ DBF_HANDLE dbf_create(const char* filename, const DBF_FIELD_INFO* array, dbf_uin
    if (stream && (-1 != find_memo(array, array_count)))
    {
       char temp[PATH_MAX];
+
       dbf_getmemofilename(filename, temp, _countof(temp));
       memo = (*api.zopen_file)(api.opaque, temp, ZLIB_FILEFUNC_MODE_CREATE | ZLIB_FILEFUNC_MODE_WRITE);
       if (NULL == memo)
@@ -1570,8 +1601,6 @@ DBF_HANDLE dbf_create_attach(void* stream, zlib_filefunc_def* api,
       memset(&temp, 0, sizeof(temp));
 
       strcpy_host2dos(temp.name, field->m_Name, sizeof(temp.name), charconv);
-
-      //strncpy(temp.name, field->m_Name, sizeof(temp.name));
 
       temp.type     = dbf_gettype_ext2int(field->type);
       temp.length   = (uint8_t)field->m_Length;
@@ -1657,15 +1686,12 @@ size_t dbf_getfield(DBF_HANDLE handle, const DBF_FIELD* field, char* buf, size_t
                field->ptr[field->m_Length] = 0;
                n = atoi(field->ptr);
                field->ptr[field->m_Length] = term;
-               //sscanf(field->ptr, "%10d", &n);
                if (handle->memo.stream && (n >= 1))
                {
                   const dbf_uint block = (dbf_uint)n;
                   size_t read;
                   DBF_MEMO_BLOCK* temp = &handle->memo.block;
 
-                  //if (block > 42900000)
-                  //   _asm int 3
                   ZSEEK(handle->api, handle->memo.stream, block * handle->memo.header.blocksize, ZLIB_FILEFUNC_SEEK_SET);
                   read = ZREAD(handle->api, handle->memo.stream, temp, sizeof(*temp));
                   if (read)
@@ -1676,7 +1702,6 @@ size_t dbf_getfield(DBF_HANDLE handle, const DBF_FIELD* field, char* buf, size_t
                      switch (temp->normal.reserved)
                      {
                         case MAGIC_MEMO_BLOCK:
-                        //case MAGIC_MEMO_BLOCK:
                            text = temp->normal.text;
                            len = read - offsetof(DBF_MEMO_BLOCK, normal.text);
                            len = min(len, handle->memo.block.normal.len);
@@ -1705,13 +1730,12 @@ size_t dbf_getfield(DBF_HANDLE handle, const DBF_FIELD* field, char* buf, size_t
                   }
                   else
                   {
-                      strncpy(handle->lasterrormsg, "An error occured while reading from memo file", _countof(handle->lasterrormsg));
+                     strncpy(handle->lasterrormsg, "An error occured while reading from memo file", _countof(handle->lasterrormsg));
                      handle->lasterror = DBASE_READ_ERROR;
                   }
                }
                else
                {
-                  //len+=snprintf(buf, buf_len, "%d", n);
                   strncpy(handle->lasterrormsg, "No memo data available", _countof(handle->lasterrormsg));
                   handle->lasterror = DBASE_NO_MEMO_DATA;
                }
@@ -1723,14 +1747,33 @@ size_t dbf_getfield(DBF_HANDLE handle, const DBF_FIELD* field, char* buf, size_t
                }
                if (buf)
                {
-                  if (field->type == DBF_DATA_TYPE_FLOAT)
+                  switch (field->type)
                   {
-                     strncpy(buf, field->ptr, len);
-                     dotnormalize(buf, 0, len);
-                  }
-                  else
-                  {
-                     strcpy_dos2host(buf, field->ptr, len, handle->charconv);
+                     case DBF_DATA_TYPE_FLOAT:
+                         strncpy(buf, field->ptr, len);
+                         dotnormalize(buf, 0, len);
+                         break;
+                     case DBF_DATA_TYPE_INTEGER: /* DBASE7 */
+                         if (*field->ptr & RECORD_INCREMENT_BIT)
+                         {
+                             int val = 0;
+                             int pos = 0;
+                             
+                             val += (uint8_t)(field->ptr[pos++] & ~RECORD_INCREMENT_BIT);
+                             val <<= 8;
+                             val += (uint8_t)(field->ptr[pos++]);
+                             val <<= 8;
+                             val += (uint8_t)(field->ptr[pos++]);
+                             val <<= 8;
+                             val += (uint8_t)(field->ptr[pos++]);
+                             
+                             snprintf(buf, len, "%d", val);
+                             break;
+                         }
+                         /* else fall through */
+                     default:
+                         strcpy_dos2host(buf, field->ptr, len, handle->charconv);
+                         break;
                   }
                }
                break;
@@ -1766,6 +1809,7 @@ BOOL dbf_getfield_numeric(DBF_HANDLE handle, const DBF_FIELD* field, long* n)
    BOOL ok =
       (   dbf_getfield(handle, field, buf, sizeof(buf), DBF_DATA_TYPE_INTEGER)
        || dbf_getfield(handle, field, buf, sizeof(buf), DBF_DATA_TYPE_DATE   ));
+
    if (ok)
    {
       *n = atol(buf);

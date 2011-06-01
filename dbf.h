@@ -26,14 +26,17 @@ typedef struct _DBF_DATA* DBF_HANDLE;
 struct tm;
 
 #define DBF_MAJOR_VERSION      1
-#define DBF_MINOR_VERSION      1
-#define DBF_SVN_VERSION        270
+#define DBF_MINOR_VERSION      2
+#define DBF_SVN_VERSION        283
 #define DBF_WEBSITE            "http://sf.net/projects/dbase"
 #define DBF_NAME               "dbflib"
 #define DBF_AUTHOR             "Troels K"
 
 #define DBF_FILEEXT           "dbf"
 #define DBF_FILEEXT_MEMO      "dbt"
+
+#define DBF_DBASE3_FIELDNAMELENGTH 11
+#define DBF_DBASE4_FIELDNAMELENGTH 32
 
 enum dbf_charconv
 {
@@ -92,7 +95,7 @@ typedef unsigned int dbf_uint;
 
 typedef struct _DBF_FIELD_INFO
 {
-   char   name[11]; // 10 chars + zero terminator
+   char   name[DBF_DBASE4_FIELDNAMELENGTH]; // 10 chars + zero terminator
    enum dbf_data_type type;
    size_t length;
    dbf_uint decimals;
