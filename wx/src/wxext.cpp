@@ -9,6 +9,7 @@
 
 #include <wx/arrimpl.cpp>
 WX_DEFINE_OBJARRAY(AcceleratorArray)
+WX_DEFINE_OBJARRAY(FileNameArray)
 
 IMPLEMENT_CLASS(wxViewEx, wxView)
 

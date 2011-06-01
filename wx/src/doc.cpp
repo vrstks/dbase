@@ -1,14 +1,14 @@
 // doc.cpp
-// Copyright (c) 2007-2010 by Troels K. All rights reserved.
+// Copyright (c) 2007-2011 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
 
+#include "wxext.h"
 #include "app.h"
 #include "dbfdoc.h"
 #include "appframe.h"
 #include "wx29.h"
-#include "wxext.h"
 #include "../../bool.h"
 #include "../../dbf.h"
 

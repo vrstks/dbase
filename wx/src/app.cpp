@@ -4,10 +4,11 @@
 
 #include "precomp.h"
 #include <wx/aboutdlg.h>
+#include <wx/cmdline.h>
 
+#include "wxext.h"
 #include "app.h"
 #include "appframe.h"
-#include "wxext.h"
 #include "wx29.h"
 
 IMPLEMENT_APP(App)
@@ -34,20 +35,39 @@ bool App::OnInit(void)
       ok = ::wxInitXRC();
       if (ok)
       {
-         wxDocManager* docManager = CreateDocManager();
-
          MainFrame* frame = new MainFrame();
+         wxDocManager* docManager = CreateDocManager();
+         wxDocument* doc;
+
          frame->Create(docManager, GetAppName());
 
          m_mru->Load();
 
          SetTopWindow(frame);
 
-         wxFileName filename;
-         if (m_mru->GetFile(0, &filename) && filename.FileExists())
-         {
-            docManager->CreateDocument(filename.GetFullPath(), wxDOC_SILENT);
-         }
+          if (m_cmdline.m_fileNames.GetCount())
+          {
+             // get filenames from the commandline
+             for (size_t i = 0; i < m_cmdline.m_fileNames.GetCount(); i++)
+             {
+                const wxFileName& filename = m_cmdline.m_fileNames.Item(i);
+                
+                doc = docManager->CreateDocument(filename.GetFullPath(), wxDOC_SILENT);
+                if (doc == NULL)
+                {
+                    docManager->OnOpenFileFailure();
+                    wxMessageBox(wxString::Format(_("Failed to open %s"), filename.GetFullPath().wx_str()), wxMessageBoxCaption);
+                }
+             }
+          }
+          else
+          {
+             wxFileName filename;
+             if (m_mru->GetFile(0, &filename) && filename.FileExists())
+             {
+                docManager->CreateDocument(filename.GetFullPath(), wxDOC_SILENT);
+             }
+          }
       }
    }
    return ok;
@@ -107,4 +127,29 @@ void App::OnMenuAbout(wxCommandEvent& WXUNUSED(event))
    wxAboutDialogInfo info;
    MainFrame::GetVersionInfo(&info);
    ::wxAboutBox(info, GetTopWindow());
+}
+
+CommandLine::CommandLine()
+{
+}
+
+static const wxCmdLineEntryDesc cmdLineDesc[] =
+{
+    { wxCMD_LINE_PARAM,  wxT_2(""),  wxT_2(""), _("input filename(s)"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL|wxCMD_LINE_PARAM_MULTIPLE },
+    { wxCMD_LINE_NONE, NULL, NULL, NULL, wxCMD_LINE_VAL_NONE, 0 },
+};
+
+void App::OnInitCmdLine(wxCmdLineParser& parser)
+{
+   parser.SetDesc(cmdLineDesc);
+   base::OnInitCmdLine(parser);
+}
+
+bool App::OnCmdLineParsed(wxCmdLineParser& parser)
+{
+   for (size_t i = 0; i < parser.GetParamCount(); i++)
+   {
+      m_cmdline.m_fileNames.Add(wxFileName(parser.GetParam(i)));
+   }
+   return base::OnCmdLineParsed(parser);
 }

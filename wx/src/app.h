@@ -7,6 +7,17 @@
 
 #include "wx29.h" // wxAppEx
 
+class CommandLine
+{
+// Attributes
+public:
+   FileNameArray m_fileNames;
+
+// Construction
+public:
+   CommandLine();
+};
+
 /////////////////////////////////////////////////////////////////////////////
 // App
 
@@ -18,6 +29,7 @@ class App : public wxAppEx
 {
    typedef wxAppEx base;
 protected:
+   CommandLine m_cmdline;
    wxRecentFileList* m_mru;
    wxLocale m_locale;
 public:
@@ -25,6 +37,8 @@ public:
 
    virtual bool OnInit(void);
    virtual int OnExit(void);
+   virtual void OnInitCmdLine(wxCmdLineParser&);
+   virtual bool OnCmdLineParsed(wxCmdLineParser&);
 
    static const AcceleratorArray& GetAccelerator();
 

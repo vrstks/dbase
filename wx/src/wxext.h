@@ -9,6 +9,7 @@ class wxListCtrl;
 class wxListView;
 
 WX_DECLARE_OBJARRAY(wxAcceleratorEntry, AcceleratorArray);
+WX_DECLARE_OBJARRAY(wxFileName, FileNameArray);
 
 #ifdef _WX_ARTPROV_H_
 #define wxART_PREVIEW      wxART_MAKE_ART_ID(wxART_PREVIEW)

@@ -5,8 +5,8 @@
 #include "precomp.h"
 
 #include "dbfframe.h"
-#include "app.h"
 #include "wxext.h"
+#include "app.h"
 
 DBFFrame::DBFFrame() : wxDocMDIChildFrame()
 {
