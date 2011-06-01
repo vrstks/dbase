@@ -269,7 +269,7 @@ EXTERN_C DBF_HANDLE dbf_alloc(void)
 
    memset(&handle->memo.header, 0, sizeof(handle->memo.header));
    handle->memo.header.blocksize  = MEMO_BLOCK_SIZE;
-   handle->memo.header.flag = 0x03;
+   handle->memo.header.flag = MAGIC_DBASE3;
    handle->memo.header.next = 1;
 
    handle->fieldarray     = NULL;
@@ -652,19 +652,19 @@ void dbf_getinfo(DBF_HANDLE handle, DBF_INFO* info)
 {
    switch (handle->diskversion & 0xF)
    {
-        case 3:
+        case MAGIC_DBASE3:
             info->version = 3;
             strncpy(info->format, DBF_FORMAT_NAME " 3", _countof(info->format));
             break;
-        case 4:
+        case MAGIC_DBASE4:
             info->version = 4;
             strncpy(info->format, DBF_FORMAT_NAME " 4", _countof(info->format));
             break;
-        case 12:
+        case MAGIC_DBASE7:
             info->version = 7;
             strncpy(info->format, DBF_FORMAT_NAME " 7", _countof(info->format));
             break;
-        case 0:
+        case 0x00:
         default:
             info->version = 0;
             strncpy(info->format, "Foxpro", _countof(info->format));
