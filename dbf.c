@@ -36,7 +36,7 @@
 
 #define CPM_TEXT_TERMINATOR 0x1A
 
-/* M        */
+                                 /* M        */
 #define MAGIC_DBASE3      0x03   /* 00000011 */
 #define MAGIC_DBASE3_MEMO 0x83   /* 10000011 */
 #define MAGIC_DBASE3_MEMO_2 0x8B /* 10001011 */
@@ -146,7 +146,7 @@ typedef struct _DBF_FILEFIELD_4
 
 typedef union _DBF_FILEFIELD
 {
-   char      name[11];   // field name in ASCII zero-filled
+   char name[1];
    DBF_FILEFIELD_3 v3;
    DBF_FILEFIELD_4 v4;
 } DBF_FILEFIELD;
@@ -214,11 +214,11 @@ typedef struct _DBF_DATA
 
 typedef struct _DBF_FIELD_DATA
 {
-   char    m_Name[DBF_DBASE4_FIELDNAMELENGTH+1];
+   char     m_Name[DBF_DBASE4_FIELDNAMELENGTH+1];
    enum dbf_data_type type;
-   size_t m_Length;
+   size_t   m_Length;
    dbf_uint m_DecCount;
-   char*   ptr;
+   char*    ptr;
    uint32_t namehash;
 } DBF_FIELD_DATA;
 
@@ -350,6 +350,7 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
          struct tm tm;
          size_t field_len;
          size_t header_len;
+         size_t name_len;
 
          handle = dbf_alloc();
          handle->stream = stream;
@@ -368,6 +369,7 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
             case MAGIC_DBASE7_MEMO:
                header_len = sizeof(DBF_FILEHEADER_4);
                field_len  = sizeof(DBF_FILEFIELD_4);
+               name_len   = DBF_DBASE4_FIELDNAMELENGTH;
                handle->diskversion  = header.v4.flags;
                handle->recordcount  = header.v4.recordcount;
                handle->recordlength = header.v4.recordlength;
@@ -379,6 +381,7 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
             default:
                header_len = sizeof(DBF_FILEHEADER_3);
                field_len  = sizeof(DBF_FILEFIELD_3);
+               name_len   = DBF_DBASE3_FIELDNAMELENGTH;
                handle->diskversion  = header.v3.flags;
                handle->recordcount  = header.v3.recordcount;
                handle->recordlength = header.v3.recordlength;
@@ -418,8 +421,8 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
                   handle->fieldcount = i;
                   break;
                }
-               strncpy(field->m_Name, temp.name, _countof(field->m_Name)-1);
-               field->m_Name[_countof(field->m_Name)-1] = 0;
+               strncpy(field->m_Name, temp.name, name_len);
+               field->m_Name[name_len] = 0;
 
                switch (header.flags)
                {
