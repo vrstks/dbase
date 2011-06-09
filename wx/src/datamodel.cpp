@@ -96,9 +96,11 @@ void wxDataModelSorted::Resort(const wxArrayInt* row_array)
 
     if (row_array)
     {
-        for (unsigned int row = 0; row < row_array->GetCount(); row++)
+        for (wxArrayInt::const_iterator it = row_array->begin();
+             it != row_array->end();
+             it++)
         {
-            sorted_array.Add(row_array->Item(row));
+            sorted_array.Add(*it);
         }
     }
     else

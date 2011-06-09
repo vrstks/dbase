@@ -132,14 +132,7 @@ extern void wxFrame_SetInitialPosition(wxFrame*,
                     const wxPoint& pos = wxDefaultPosition,
                     const wxSize& size = wxDefaultSize, int margin_pct = 5);
 
-inline void wxJoin(wxArrayString* dst, const wxArrayString& src)
-{
-   wxString str;
-   for (size_t i = 0; i < src.GetCount(); i++)
-   {
-      dst->Add(src.Item(i));
-   }
-}
+extern void wxJoin(wxArrayString* dst, const wxArrayString& src);
 
 #ifdef _WX_DOCH__
 class wxViewEx : public wxView

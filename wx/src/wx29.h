@@ -52,10 +52,13 @@ protected:
 inline wxString wxJoin(const wxArrayString& as, wxChar sep)
 {
    wxString str;
-   for (size_t i = 0; i < as.GetCount(); i++)
+
+   for (wxArrayString::const_iterator it = as.begin();
+        it != as.end();
+        it++)
    {
-      if (i) str+=sep;
-      str+=as.Item(i);
+      if (it != as.begin()) str+=sep;
+      str+=*it;
    }
    return str;
 }

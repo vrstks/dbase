@@ -47,7 +47,6 @@ bool MainFrame::Create(wxDocManager* manager, const wxString& title,
        SetMenuBar(CreateMenuBar());
        ::wxSetAcceleratorTable(this, wxGetApp().GetAccelerator());
        ::wxFrame_SetInitialPosition(this, pos, size, 10);
-       Show();
    }
    return ok;
 }

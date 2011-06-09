@@ -87,8 +87,9 @@ bool DBFView::OnCreate(wxDocument* doc, long flags)
    if (ok)
    {
       wxFrame* frame = wxStaticCast(doc->GetDocumentTemplate(), DatabaseDocTemplate)->CreateViewFrame(this);
-      wxASSERT(frame == GetFrame());
       DBFWindow* wnd = new DBFWindow(this);
+
+      wxASSERT(frame == GetFrame());
       wnd->Create(frame);
       SetWindow(wnd);
       frame->Show();

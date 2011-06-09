@@ -39,35 +39,41 @@ bool App::OnInit(void)
          wxDocManager* docManager = CreateDocManager();
          wxDocument* doc;
 
-         frame->Create(docManager, GetAppName());
+         ok = frame->Create(docManager, GetAppName());
 
-         m_mru->Load();
+         if (ok)
+         {
+            frame->Show();
+            m_mru->Load();
 
-         SetTopWindow(frame);
-
-          if (m_cmdline.m_fileNames.GetCount())
-          {
-             // get filenames from the commandline
-             for (size_t i = 0; i < m_cmdline.m_fileNames.GetCount(); i++)
-             {
-                const wxFileName& filename = m_cmdline.m_fileNames.Item(i);
-                
-                doc = docManager->CreateDocument(filename.GetFullPath(), wxDOC_SILENT);
-                if (doc == NULL)
-                {
-                    docManager->OnOpenFileFailure();
-                    wxMessageBox(wxString::Format(_("Failed to open %s"), filename.GetFullPath().wx_str()), wxMessageBoxCaption);
-                }
-             }
-          }
-          else
-          {
-             wxFileName filename;
-             if (m_mru->GetFile(0, &filename) && filename.FileExists())
-             {
-                docManager->CreateDocument(filename.GetFullPath(), wxDOC_SILENT);
-             }
-          }
+              if (m_cmdline.m_fileNames.GetCount())
+              {
+                 // get filenames from the commandline
+                 for (size_t i = 0; i < m_cmdline.m_fileNames.GetCount(); i++)
+                 {
+                    const wxFileName& filename = m_cmdline.m_fileNames.Item(i);
+                    
+                    doc = docManager->CreateDocument(filename.GetFullPath(), wxDOC_SILENT);
+                    if (doc == NULL)
+                    {
+                        docManager->OnOpenFileFailure();
+                        wxMessageBox(wxString::Format(_("Failed to open %s"), filename.GetFullPath().wx_str()), wxMessageBoxCaption);
+                    }
+                 }
+              }
+              else
+              {
+                 wxFileName filename;
+                 if (m_mru->GetFile(0, &filename) && filename.FileExists())
+                 {
+                    docManager->CreateDocument(filename.GetFullPath(), wxDOC_SILENT);
+                 }
+              }
+         }
+         else
+         {
+             delete frame;
+         }
       }
    }
    return ok;
