@@ -222,7 +222,7 @@
         <long name="title-mode">0</long>
         <long name="locked">1</long>
         <document>
-          <string name="title">"wxMenuBar: menu_mdi"</string>
+          <string name="title">"menubar: menu_mdi"</string>
           <string name="type">"dialog-document"</string>
           <string name="filename">""</string>
           <string name="icon-name">"menubar"</string>
@@ -510,7 +510,7 @@
           </document>
         </document>
         <document>
-          <string name="title">"wxMenuBar: menu_dbf"</string>
+          <string name="title">"menubar: menu_dbf"</string>
           <string name="type">"dialog-document"</string>
           <string name="filename">""</string>
           <string name="icon-name">"menubar"</string>
@@ -1309,7 +1309,7 @@
           </document>
         </document>
         <document>
-          <string name="title">"wxDialog: Database Structure"</string>
+          <string name="title">"dialog: Database Structure"</string>
           <string name="type">"dialog-document"</string>
           <string name="filename">""</string>
           <string name="icon-name">"dialog"</string>
@@ -1805,26 +1805,25 @@
                 </document>
               </document>
               <document>
-                <string name="title">"wxBoxSizer V"</string>
+                <string name="title">"Spacer"</string>
                 <string name="type">"dialog-control-document"</string>
                 <string name="filename">""</string>
-                <string name="icon-name">"sizer"</string>
+                <string name="icon-name">"spacer"</string>
                 <long name="is-transient">0</long>
                 <long name="owns-file">1</long>
                 <long name="title-mode">0</long>
                 <long name="locked">0</long>
-                <string name="created">"6/9/2006"</string>
-                <string name="proxy-type">"wbBoxSizerProxy"</string>
-                <string name="proxy-Orientation">"Vertical"</string>
-                <string name="proxy-Member variable name">""</string>
-                <string name="proxy-AlignH">"Centre"</string>
+                <string name="proxy-type">"wbSpacerProxy"</string>
+                <long name="proxy-Width">5</long>
+                <long name="proxy-Height">5</long>
+                <string name="proxy-AlignH">"Expand"</string>
                 <string name="proxy-AlignV">"Centre"</string>
                 <long name="proxy-Stretch factor">1</long>
-                <long name="proxy-Border">5</long>
-                <bool name="proxy-wxLEFT">1</bool>
-                <bool name="proxy-wxRIGHT">1</bool>
-                <bool name="proxy-wxTOP">1</bool>
-                <bool name="proxy-wxBOTTOM">1</bool>
+                <long name="proxy-Border">0</long>
+                <bool name="proxy-wxLEFT">0</bool>
+                <bool name="proxy-wxRIGHT">0</bool>
+                <bool name="proxy-wxTOP">0</bool>
+                <bool name="proxy-wxBOTTOM">0</bool>
                 <bool name="proxy-wxSHAPED">0</bool>
                 <bool name="proxy-wxADJUST_MINSIZE">0</bool>
                 <bool name="proxy-wxFIXED_MINSIZE">0</bool>
@@ -1992,7 +1991,7 @@
           </document>
         </document>
         <document>
-          <string name="title">"wxDialog: Field edit"</string>
+          <string name="title">"dialog: Field edit"</string>
           <string name="type">"dialog-document"</string>
           <string name="filename">""</string>
           <string name="icon-name">"dialog"</string>
@@ -2800,10 +2799,10 @@
                 <string name="proxy-AlignH">"Centre"</string>
                 <string name="proxy-AlignV">"Centre"</string>
                 <long name="proxy-Stretch factor">0</long>
-                <long name="proxy-Border">5</long>
-                <bool name="proxy-wxLEFT">1</bool>
-                <bool name="proxy-wxRIGHT">1</bool>
-                <bool name="proxy-wxTOP">1</bool>
+                <long name="proxy-Border">0</long>
+                <bool name="proxy-wxLEFT">0</bool>
+                <bool name="proxy-wxRIGHT">0</bool>
+                <bool name="proxy-wxTOP">0</bool>
                 <bool name="proxy-wxBOTTOM">0</bool>
                 <bool name="proxy-wxSHAPED">0</bool>
                 <bool name="proxy-wxADJUST_MINSIZE">0</bool>
@@ -2868,8 +2867,8 @@
                 <long name="proxy-Stretch factor">0</long>
                 <long name="proxy-Border">5</long>
                 <bool name="proxy-wxLEFT">1</bool>
-                <bool name="proxy-wxRIGHT">1</bool>
-                <bool name="proxy-wxTOP">1</bool>
+                <bool name="proxy-wxRIGHT">0</bool>
+                <bool name="proxy-wxTOP">0</bool>
                 <bool name="proxy-wxBOTTOM">0</bool>
                 <bool name="proxy-wxSHAPED">0</bool>
                 <bool name="proxy-wxADJUST_MINSIZE">0</bool>

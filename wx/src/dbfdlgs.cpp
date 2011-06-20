@@ -116,6 +116,7 @@ wxString wxStructListView::OnGetItemText(long item, long col) const
 {
    wxString str;
    const DBF_FIELD_INFO* info = m_array + item;
+   
    switch (col)
    {
       case ENUM_col_name:
@@ -177,11 +178,10 @@ BEGIN_EVENT_TABLE(wxDBFStructDialog, wxDialog)
    EVT_BUTTON(wxID_DELETE     , wxDBFStructDialog::OnDelete)
    EVT_BUTTON(XRCID("edit")   , wxDBFStructDialog::OnEdit)
    EVT_BUTTON(XRCID("calendar"), wxDBFStructDialog::OnCalendar)
-	EVT_UPDATE_UI(wxID_DELETE  , wxDBFStructDialog::OnUpdateNeedSel)
-	EVT_UPDATE_UI(XRCID("edit"), wxDBFStructDialog::OnUpdateNeedSel)
+   EVT_UPDATE_UI(wxID_DELETE  , wxDBFStructDialog::OnUpdateNeedSel)
+   EVT_UPDATE_UI(XRCID("edit"), wxDBFStructDialog::OnUpdateNeedSel)
    EVT_COMMAND_LEFT_DCLICK(XRCID("list"), wxDBFStructDialog::OnEdit)
-	EVT_UPDATE_UI(wxID_OK, wxDBFStructDialog::OnUpdateNeedData)
-
+   EVT_UPDATE_UI(wxID_OK, wxDBFStructDialog::OnUpdateNeedData)
 END_EVENT_TABLE()
 
 wxDBFStructDialog::wxDBFStructDialog(wxDBase* db) : wxDialog(), m_database(db)
@@ -212,6 +212,7 @@ void wxDBFStructDialog::OnUpdateNeedData(wxUpdateUIEvent& event)
 void wxDBFStructDialog::OnAdd(wxCommandEvent&)
 {
    DBF_FIELD_INFO info = { "", DBF_DATA_TYPE_CHAR, 10, 0 };
+   
    if (::DoModal_FieldEdit(this, &info, wxT("Add Field")))
    {
       m_list->Add(info);
@@ -222,6 +223,7 @@ void wxDBFStructDialog::OnEdit(wxCommandEvent&)
 {
    const int item = m_list->GetFirstSelected();
    DBF_FIELD_INFO info = m_list->m_array[item];
+
    if (::DoModal_FieldEdit(/*wxTheApp->GetTopWindow()*/this, &info, wxT("Edit Field")))
    {
       m_list->m_array[item] = info;
@@ -256,12 +258,16 @@ void wxDBFStructDialog::OnUpdateNeedSel(wxUpdateUIEvent& event)
 bool DoModal_Structure(wxWindow* parent, wxDBase* db, const wxString& caption, const wxString& filename)
 {
    wxDBFStructDialog dlg(db);
-   dlg.Create(parent);
-   if (caption.Length()) dlg.SetTitle(caption);
-   bool ok = (wxID_OK == dlg.ShowModal());
-   if (ok && filename.Length() && !db->IsOpen())
+   
+   bool ok = dlg.Create(parent);
+   if (ok)
    {
-      ok = db->Create(filename, dlg.m_list->m_array, dlg.m_list->m_array_count);
+       if (caption.Length()) dlg.SetTitle(caption);
+       ok = (wxID_OK == dlg.ShowModal());
+       if (ok && filename.Length() && !db->IsOpen())
+       {
+          ok = db->Create(filename, dlg.m_list->m_array, dlg.m_list->m_array_count);
+       }
    }
    return ok;
 }
@@ -271,6 +277,7 @@ bool DoModal_Structure(wxWindow* parent, wxDBase* db, const wxString& caption, c
 
 class wxDBFFieldDialog : public wxDialog
 {
+    typedef wxDialog base;
 public:
    wxString m_name;
    int m_type;
@@ -297,7 +304,7 @@ protected:
 };
 
 BEGIN_EVENT_TABLE(wxDBFFieldDialog, wxDialog)
-	EVT_UPDATE_UI(wxID_OK, wxDBFFieldDialog::OnUpdateNeedData)
+   EVT_UPDATE_UI(wxID_OK, wxDBFFieldDialog::OnUpdateNeedData)
    EVT_UPDATE_UI(XRCID("edit2"), wxDBFFieldDialog::OnUpdateLength)
    EVT_UPDATE_UI(XRCID("edit3"), wxDBFFieldDialog::OnUpdateDecimals)
 END_EVENT_TABLE()
@@ -334,6 +341,7 @@ wxDBFFieldDialog::wxDBFFieldDialog() : wxDialog()
 bool wxDBFFieldDialog::Create(wxWindow* parent)
 {
    bool ok = wxXmlResource::Get()->LoadDialog(this, parent, wxT("field_edit"));
+   
    if (ok)
    {
        m_edit0 = XRCCTRL(*this, "edit0", wxTextCtrl);
@@ -350,13 +358,15 @@ bool wxDBFFieldDialog::Create(wxWindow* parent)
        m_edit1->SetValidator(wxGenericValidator(&m_type));
        m_edit2->SetValidator(wxGenericValidator(&m_length  ));
        m_edit3->SetValidator(wxGenericValidator(&m_decimals));
+       Center();
    }
    return ok;
 }
 
 bool wxDBFFieldDialog::TransferDataFromWindow()
 {
-   bool ok = wxDialog::TransferDataFromWindow();
+   bool ok = base::TransferDataFromWindow();
+
    if (ok) m_name.MakeUpper();
    return ok;
 }
@@ -364,20 +374,23 @@ bool wxDBFFieldDialog::TransferDataFromWindow()
 bool DoModal_FieldEdit(wxWindow* parent, DBF_FIELD_INFO* info, const wxString& caption)
 {
    wxDBFFieldDialog dlg;
-   dlg.Create(parent);
-   dlg.Center();
-   dlg.m_name = wxConvertMB2WX(info->name);
-   dlg.m_type = info->type;
-   dlg.m_length = (int)info->length;
-   dlg.m_decimals = info->decimals;
-   if (caption.Length()) dlg.SetTitle(caption);
-   bool ok = (wxID_OK == dlg.ShowModal());
+   bool ok = dlg.Create(parent);
+   
    if (ok)
    {
-      strncpy(info->name, dlg.m_name.mb_str(), sizeof(info->name));
-      info->type = (enum dbf_data_type)dlg.m_type;
-      info->length = dlg.m_length;
-      info->decimals = dlg.m_decimals;
+       dlg.m_name = wxConvertMB2WX(info->name);
+       dlg.m_type = info->type;
+       dlg.m_length = (int)info->length;
+       dlg.m_decimals = info->decimals;
+       if (caption.Length()) dlg.SetTitle(caption);
+       ok = (wxID_OK == dlg.ShowModal());
+       if (ok)
+       {
+          strncpy(info->name, dlg.m_name.mb_str(), sizeof(info->name));
+          info->type = (enum dbf_data_type)dlg.m_type;
+          info->length = dlg.m_length;
+          info->decimals = dlg.m_decimals;
+       }
    }
    return ok;
 }
