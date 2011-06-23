@@ -1,5 +1,5 @@
 // wxext.h
-// Copyright (c) 2007-2010 by Troels K. All rights reserved.
+// Copyright (c) 2007-2011 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #define WXK_HELP       WXK_F1
@@ -25,6 +25,7 @@ extern wxArtID wxID2ArtID(int wx_id);
 extern void wxFrame_ToggleFullScreen(wxFrame*, long style);
 extern void wxFrame_OnUpdateFullScreen(wxFrame*, wxUpdateUIEvent&);
 extern bool wxWindow_Toggle(wxWindow*);
+extern bool wxClipboard_Set(const wxString& str, bool UsePrimarySelection = false);
 
 #if !defined(__WXCODE_H__) && defined(_WX_LISTCTRL_H_)
 

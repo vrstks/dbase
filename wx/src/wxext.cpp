@@ -614,4 +614,20 @@ void wxJoin(wxArrayString* dst, const wxArrayString& src)
    }
 }
 
+bool wxClipboard_Set(const wxString& str, bool UsePrimarySelection)
+{
+    bool is_opened = wxTheClipboard->IsOpened();
+    bool ok = is_opened || wxTheClipboard->Open();
+    if (ok)
+    {
+        wxTheClipboard->UsePrimarySelection(UsePrimarySelection);
+        ok = wxTheClipboard->SetData(new wxTextDataObject(str));
+        if (!is_opened)
+        {
+            wxTheClipboard->Close();
+        }
+    }
+    return ok;
+}
+
 /////////////////////////////////////////////////////////////////////////////

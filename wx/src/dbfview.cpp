@@ -146,17 +146,6 @@ DBFDocument* DBFView::GetDocument() const
    return wxStaticCast(base::GetDocument(), DBFDocument);
 }
 
-bool wxClipboard_Set(const wxString& str)
-{
-   bool ok = wxTheClipboard->Open();
-   if (ok)
-   {
-      ok = wxTheClipboard->SetData( new wxTextDataObject(str) );
-      wxTheClipboard->Close();
-   }
-   return ok;
-}
-
 void DBFView::OnStructClipboard(wxCommandEvent&)
 {
    const DBFDocument* doc = GetDocument();
