@@ -563,11 +563,19 @@ bool wxRecentFileList::GetFile(size_t index, wxFileName* str) const
    return ok;
 }
 
+wxView* wxDocument_GetCurrentView(const wxDocument* doc)
+{
+   wxView* view = doc->GetDocumentManager()->GetCurrentView();
+
+   return (view && (view->GetDocument() == doc)) ? view : doc->GetFirstView();
+}
+
 void wxDocument_Info(const wxDocument* doc, wxArrayString* as)
 {
    const wxString fmt = wxT("%s:\t%s");
-   wxView*   view  = doc->GetFirstView();
-   wxWindow* frame = view ? view->GetFrame() : NULL;
+   wxView* active_view = wxDocument_GetCurrentView(doc);
+   wxView* view  = active_view ? active_view : doc->GetFirstView();
+   wxWindow* frame = view ? view->GetFrame() : NULL;;
 
    as->Add(wxString::Format(fmt, wxT("Doc class"), doc->GetClassInfo()->GetClassName()));
    if (view)
