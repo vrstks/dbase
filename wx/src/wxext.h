@@ -25,7 +25,17 @@ extern wxArtID wxID2ArtID(int wx_id);
 extern void wxFrame_ToggleFullScreen(wxFrame*, long style);
 extern void wxFrame_OnUpdateFullScreen(wxFrame*, wxUpdateUIEvent&);
 extern bool wxWindow_Toggle(wxWindow*);
-extern bool wxClipboard_Set(const wxString& str, bool UsePrimarySelection = false);
+
+#ifndef STE_ClipboardType_DEFINED
+#define STE_ClipboardType_DEFINED
+enum STE_ClipboardType
+{
+    STE_CLIPBOARD_DEFAULT = 1, // use the normal clipboard
+    STE_CLIPBOARD_PRIMARY = 2, // use the primary clipboard
+    STE_CLIPBOARD_BOTH    = 3  // use both clipboards (only valid for set functions)
+};
+#endif
+extern bool wxSTEditor_SetClipboardText(const wxString&, STE_ClipboardType clip_type = STE_CLIPBOARD_DEFAULT);
 
 #if !defined(__WXCODE_H__) && defined(_WX_LISTCTRL_H_)
 

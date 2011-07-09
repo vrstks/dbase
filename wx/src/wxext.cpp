@@ -622,19 +622,33 @@ void wxJoin(wxArrayString* dst, const wxArrayString& src)
    }
 }
 
-bool wxClipboard_Set(const wxString& str, bool UsePrimarySelection)
+#define STE_HASBIT(value, bit)      (((value) & (bit)) != 0)
+
+bool wxSTEditor_SetClipboardText(const wxString& str, STE_ClipboardType clip_type)
 {
-    bool is_opened = wxTheClipboard->IsOpened();
-    bool ok = is_opened || wxTheClipboard->Open();
+    bool ok = false;
+#if wxUSE_DATAOBJ && wxUSE_CLIPBOARD
+    wxClipboard* clipboard = wxTheClipboard;
+    bool was_open = clipboard->IsOpened();
+    ok = was_open || clipboard->Open();
+
     if (ok)
     {
-        wxTheClipboard->UsePrimarySelection(UsePrimarySelection);
-        ok = wxTheClipboard->SetData(new wxTextDataObject(str));
-        if (!is_opened)
+        if (STE_HASBIT(clip_type, STE_CLIPBOARD_DEFAULT))
+            ok = clipboard->SetData(new wxTextDataObject(str));
+
+#ifndef __WINDOWS__
+        if (STE_HASBIT(clip_type, STE_CLIPBOARD_PRIMARY))
         {
-            wxTheClipboard->Close();
+            ok = clipboard->SetData(new wxTextDataObject(str));
+            clipboard->UsePrimarySelection(STE_HASBIT(clip_type, STE_CLIPBOARD_PRIMARY));
         }
+#endif // __WINDOWS__
+
+        if (!was_open)
+            clipboard->Close();
     }
+#endif // wxUSE_DATAOBJ && wxUSE_CLIPBOARD
     return ok;
 }
 
