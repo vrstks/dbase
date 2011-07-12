@@ -27,6 +27,8 @@
 static const char THIS_FILE[] = __FILE__;
 #endif
 
+#ifndef _WIN64
+
 /////////////////////////////////////////////////////////////////////////////
 // CDaoConverter
 
@@ -463,5 +465,6 @@ bool mdb2dbf(CWnd* parent, const TCHAR* src, CStringArray* newfilearray, const C
    }
    return ok;
 }
+#endif
 
 /////////////////////////////////////////////////////////////////////////////

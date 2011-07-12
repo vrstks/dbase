@@ -82,9 +82,10 @@ BOOL CDBFExplorerApp::InitInstance()
 	//  of your final executable, you should remove from the following
 	//  the specific initialization routines you do not need.
 
-	InitCommonControls();
+   InitCommonControls();
+#ifndef _WIN64
    AfxDaoInit();
-
+#endif
 	// Change the registry key under which our settings are stored.
    SetRegistryKey(_T("Pablo Software Solutions"));
 
@@ -150,6 +151,7 @@ void CDBFExplorerApp::OnHelpIndex()
 	::WinHelp(AfxGetMainWnd()->m_hWnd, AfxGetApp()->m_pszHelpFilePath, HELP_CONTENTS, 0L);	
 }
 
+#ifndef _WIN64
 extern bool mdb2dbf(CWnd* parent, const TCHAR* src, CStringArray* newfile, const CString& rtablename);
 
 class CAccessDocTemplate : public CMultiDocTemplate
@@ -193,6 +195,7 @@ public:
       return doc;
    }
 };
+#endif
 
 void CDBFExplorerApp::AddDocTemplates()
 {
@@ -203,6 +206,8 @@ void CDBFExplorerApp::AddDocTemplates()
 		RUNTIME_CLASS(CDBFExplorerView));
 	AddDocTemplate(doctemplate);
 
-   doctemplate = new CAccessDocTemplate;
+#ifndef _WIN64
+  doctemplate = new CAccessDocTemplate();
+#endif
 	AddDocTemplate(doctemplate);
 }

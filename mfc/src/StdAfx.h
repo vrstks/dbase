@@ -12,7 +12,9 @@
 
 #include <afxtempl.h>
 #include <afxconv.h>
+#ifndef _WIN64
 #include <afxdao.h>
+#endif
 
 extern void AutoSizeColumns(CListCtrl*);
 
