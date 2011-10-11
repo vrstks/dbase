@@ -515,9 +515,10 @@ void dbf_write_header(DBF_HANDLE handle)
 
 void* dbf_detach(DBF_HANDLE* handle_ptr)
 {
-   DBF_DATA* handle = *handle_ptr;
+   DBF_HANDLE handle = *handle_ptr;
    void* stream = handle->stream;
 
+   *handle_ptr = NULL;
    if (handle->modified)
    {
 	   dbf_write_header(handle);
@@ -531,16 +532,15 @@ void* dbf_detach(DBF_HANDLE* handle_ptr)
    free(handle->dup);
    free(handle->fieldarray);
    free(handle->recorddataptr);
-
-   free(*handle_ptr);
-   *handle_ptr = NULL;
+   free(handle);
    return stream;
 }
 
-void dbf_close(DBF_HANDLE* handle)
+void dbf_close(DBF_HANDLE* handle_ptr)
 {
-   zlib_filefunc_def api = (*handle)->api;
-   void* stream = dbf_detach(handle);
+   DBF_HANDLE handle = *handle_ptr;
+   zlib_filefunc_def api = handle->api;
+   void* stream = dbf_detach(handle_ptr);
 
    if (stream) ZCLOSE(api, stream);
 }
@@ -962,7 +962,7 @@ BOOL dbf_putfield(DBF_HANDLE handle, const DBF_FIELD* field, const char* buf)
    {
       const size_t buf_len = strlen(buf);
       char* dup = handle->dup = strdup_host2dos(buf, buf_len, handle->charconv, handle->dup);
-      
+
       // check for correct type
       switch (field->type)
       {
@@ -971,7 +971,7 @@ BOOL dbf_putfield(DBF_HANDLE handle, const DBF_FIELD* field, const char* buf)
          //case DBF_DATA_TYPE_MEMO:
          {
             char* ptr = dup;
-            
+
             Trim(ptr, FIELD_FILL_CHAR);
             while (*ptr)
             {
@@ -1783,7 +1783,7 @@ size_t dbf_getfield(DBF_HANDLE handle, const DBF_FIELD* field, char* buf, size_t
                          {
                              int val = 0;
                              int pos = 0;
-                             
+
                              val += (uint8_t)(field->ptr[pos++] & ~RECORD_INCREMENT_BIT);
                              val <<= 8;
                              val += (uint8_t)(field->ptr[pos++]);
@@ -1791,7 +1791,7 @@ size_t dbf_getfield(DBF_HANDLE handle, const DBF_FIELD* field, char* buf, size_t
                              val += (uint8_t)(field->ptr[pos++]);
                              val <<= 8;
                              val += (uint8_t)(field->ptr[pos++]);
-                             
+
                              snprintf(buf, len, "%d", val);
                              break;
                          }
