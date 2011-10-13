@@ -622,9 +622,9 @@ void wxJoin(wxArrayString* dst, const wxArrayString& src)
    }
 }
 
-#define STE_HASBIT(value, bit)      (((value) & (bit)) != 0)
+#define HASBIT(value, bit)      (((value) & (bit)) != 0)
 
-bool wxSTEditor_SetClipboardText(const wxString& str, STE_ClipboardType clip_type)
+/*static*/ bool wxClipboardHelper::SetText(const wxString& str, Type clip_type)
 {
     bool ok = false;
 #if wxUSE_DATAOBJ && wxUSE_CLIPBOARD
@@ -634,14 +634,14 @@ bool wxSTEditor_SetClipboardText(const wxString& str, STE_ClipboardType clip_typ
 
     if (ok)
     {
-        if (STE_HASBIT(clip_type, STE_CLIPBOARD_DEFAULT))
+        if (HASBIT(clip_type, Default))
             ok = clipboard->SetData(new wxTextDataObject(str));
 
 #ifndef __WINDOWS__
-        if (STE_HASBIT(clip_type, STE_CLIPBOARD_PRIMARY))
+        if (HASBIT(clip_type, Primary))
         {
             ok = clipboard->SetData(new wxTextDataObject(str));
-            clipboard->UsePrimarySelection(STE_HASBIT(clip_type, STE_CLIPBOARD_PRIMARY));
+            clipboard->UsePrimarySelection(HASBIT(clip_type, Primary));
         }
 #endif // __WINDOWS__
 

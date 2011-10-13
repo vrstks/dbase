@@ -26,16 +26,18 @@ extern void wxFrame_ToggleFullScreen(wxFrame*, long style);
 extern void wxFrame_OnUpdateFullScreen(wxFrame*, wxUpdateUIEvent&);
 extern bool wxWindow_Toggle(wxWindow*);
 
-#ifndef STE_ClipboardType_DEFINED
-#define STE_ClipboardType_DEFINED
-enum STE_ClipboardType
+class wxClipboardHelper
 {
-    STE_CLIPBOARD_DEFAULT = 1, // use the normal clipboard
-    STE_CLIPBOARD_PRIMARY = 2, // use the primary clipboard
-    STE_CLIPBOARD_BOTH    = 3  // use both clipboards (only valid for set functions)
+public:
+    enum Type
+    {
+        Default = 1, // use the normal clipboard
+        Primary = 2, // use the primary clipboard
+        Both    = 3  // use both clipboards (only valid for set functions)
+    };
+    // Set the text to the specified clipboard(s).
+    static bool SetText(const wxString& str, Type clip_type = Default);
 };
-#endif
-extern bool wxSTEditor_SetClipboardText(const wxString&, STE_ClipboardType clip_type = STE_CLIPBOARD_DEFAULT);
 
 #if !defined(__WXCODE_H__) && defined(_WX_LISTCTRL_H_)
 

@@ -150,7 +150,8 @@ void DBFView::OnStructClipboard(wxCommandEvent&)
 {
    const DBFDocument* doc = GetDocument();
    const wxString str = ::dbf_getstruct_c(doc->GetTablename(), doc->GetDatabase());
-   bool ok = wxSTEditor_SetClipboardText(str);
+   bool ok = wxClipboardHelper::SetText(str);
+
    ::wxMessageBox(ok ? _("Struct is now on the Clipboard") : _("Failed to open clipboard"),
       wxMessageBoxCaption, wxOK | wxCENTRE, doc->GetDocumentWindow());
 }
