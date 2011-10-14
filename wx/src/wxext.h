@@ -5,8 +5,9 @@
 #define WXK_HELP       WXK_F1
 #define WXK_FULLSCREEN WXK_F11
 
-class wxListCtrl;
-class wxListView;
+class WXDLLIMPEXP_FWD_CORE wxListCtrl;
+class WXDLLIMPEXP_FWD_CORE wxListView;
+class WXDLLIMPEXP_FWD_CORE wxDataObject;
 
 WX_DECLARE_OBJARRAY(wxAcceleratorEntry, AcceleratorArray);
 WX_DECLARE_OBJARRAY(wxFileName, FileNameArray);
@@ -52,7 +53,7 @@ inline void wxListCtrl_SelectAll(wxListCtrl* ctrl, bool on = true)
 }
 
 inline bool wxListView_SetCurSel(wxListCtrl* ctrl, long index, bool focus = true)
-{ 
+{
    bool ok = (index != wxNOT_FOUND) && (index < ctrl->GetItemCount());
    if (ok)
    {
