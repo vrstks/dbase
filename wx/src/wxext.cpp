@@ -624,32 +624,58 @@ void wxJoin(wxArrayString* dst, const wxArrayString& src)
 
 #define HASBIT(value, bit)      (((value) & (bit)) != 0)
 
-/*static*/ bool wxClipboardHelper::SetText(const wxString& str, Type clip_type)
+/*static*/ bool wxClipboardHelper::Set(wxDataObject* def, wxDataObject* primary)
 {
-    bool ok = false;
 #if wxUSE_DATAOBJ && wxUSE_CLIPBOARD
     wxClipboard* clipboard = wxTheClipboard;
     bool was_open = clipboard->IsOpened();
-    ok = was_open || clipboard->Open();
-
+    bool ok = was_open || clipboard->Open();
+    
     if (ok)
     {
-        if (HASBIT(clip_type, Default))
-            ok = clipboard->SetData(new wxTextDataObject(str));
-
-#ifndef __WINDOWS__
-        if (HASBIT(clip_type, Primary))
+        if (def)
         {
-            ok = clipboard->SetData(new wxTextDataObject(str));
-            clipboard->UsePrimarySelection(HASBIT(clip_type, Primary));
+            clipboard->UsePrimarySelection(false);
+            ok = clipboard->SetData(def);
+            if (ok)
+            {
+                def = NULL;
+            }
         }
-#endif // __WINDOWS__
-
+    #ifndef __WXMSW__
+        if (primary)
+        {
+            clipboard->UsePrimarySelection(true);
+            ok = clipboard->SetData(primary);
+            clipboard->UsePrimarySelection(false);
+            if (ok)
+            {
+                primary = NULL;
+            }
+        }
+    #endif // __WXMSW__
         if (!was_open)
+        {
             clipboard->Close();
+        }
+        //clipboard->Flush(); // else emu and wxc is freezing
     }
-#endif // wxUSE_DATAOBJ && wxUSE_CLIPBOARD
+    delete def;
+    delete primary;
     return ok;
+#else
+    return false;
+#endif
+}
+
+/*static*/ bool wxClipboardHelper::SetText(const wxString& str, Type clip_type)
+{
+#if wxUSE_DATAOBJ && wxUSE_CLIPBOARD
+    return Set(HASBIT(clip_type, Default) ? new wxTextDataObject(str) : NULL, 
+               HASBIT(clip_type, Primary) ? new wxTextDataObject(str) : NULL);
+#else
+    return false;
+#endif
 }
 
 /////////////////////////////////////////////////////////////////////////////

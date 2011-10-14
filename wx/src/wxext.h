@@ -37,6 +37,8 @@ public:
     };
     // Set the text to the specified clipboard(s).
     static bool SetText(const wxString& str, Type clip_type = Default);
+
+    static bool Set(wxDataObject* def, wxDataObject* primary = NULL);
 };
 
 #if !defined(__WXCODE_H__) && defined(_WX_LISTCTRL_H_)
