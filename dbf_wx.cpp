@@ -23,8 +23,8 @@ bool wxDBase::Attach(wxInputStream* stream, bool editable, enum dbf_charconv con
 {
    zlib_filefunc_def_s api;
    fill_filefunc(&api, stream);
-
    bool ok = base::Attach(stream, &api, editable, conv, stream_memo, tablename.mb_str());
+
    if (ok)
    {
       m_stream      = stream;
@@ -80,6 +80,7 @@ bool wxDBase::GetValueByRow(wxVariant* var, unsigned int row, unsigned int col)
       case DBF_DATA_TYPE_INTEGER:
       {
          long n;
+
          ok = Read(col, &n);
          if (ok) var->operator=(n);
          break;
@@ -87,6 +88,7 @@ bool wxDBase::GetValueByRow(wxVariant* var, unsigned int row, unsigned int col)
       case DBF_DATA_TYPE_FLOAT  :
       {
          double n;
+
          ok = Read(col, &n);
          if (ok) var->operator=(n);
          break;
@@ -94,6 +96,7 @@ bool wxDBase::GetValueByRow(wxVariant* var, unsigned int row, unsigned int col)
       case DBF_DATA_TYPE_DATE   :
       {
          wxDateTime n;
+
          ok = Read(col, &n);
          if (ok) var->operator=(n);
          break;
@@ -101,6 +104,7 @@ bool wxDBase::GetValueByRow(wxVariant* var, unsigned int row, unsigned int col)
       case DBF_DATA_TYPE_BOOLEAN:
       {
          bool n;
+
          ok = Read(col, &n);
          if (ok) var->operator=(n);
          break;
@@ -109,6 +113,7 @@ bool wxDBase::GetValueByRow(wxVariant* var, unsigned int row, unsigned int col)
       case DBF_DATA_TYPE_CHAR   :
       {
          wxString str;
+
          /*ok = */Read(col, &str);
          if (ok)
          {
@@ -128,6 +133,7 @@ bool wxDBase::GetValueByRow(wxVariant* var, unsigned int row, unsigned int col)
 bool wxDBase::SetValueByRow(const wxVariant& var, unsigned int row, unsigned int col)
 {
    bool ok = true;
+
    if (ok) ok = SetPosition(row);
    if (var.IsType(wxT("datetime")))
    {
@@ -144,7 +150,7 @@ bool wxDBase::SetValueByRow(const wxVariant& var, unsigned int row, unsigned int
    return ok;
 }
 
-#ifdef __WX29_H__
+#ifdef _WX_VERSIONINFO_H_
 /*static*/ wxVersionInfo wxDBase::GetVersionInfo()
 {
    return wxVersionInfo(wxT(DBF_LIB_NAME), DBF_MAJOR_VERSION, DBF_MINOR_VERSION, DBF_SVN_VERSION, 
