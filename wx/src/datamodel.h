@@ -152,10 +152,11 @@ public:
 /////////////////////////////////////////////////////////////////////////////
 // wxDataModel
 
-class wxDataModel : public wxDataViewListModelEx, public wxDataModelBase
+class wxDataModel : 
 #if (wxVERSION_NUMBER >= 2900)
-   , public wxObject
+   public wxObject,
 #endif
+   public wxDataViewListModelEx, public wxDataModelBase
 {
 public:
    wxDataModel();
@@ -177,6 +178,7 @@ private:
    virtual wxString GetColumnType(unsigned int col) const
    {
       ColumnInfo info;
+
       GetColumn(col, &info);
       return info.type;
    }
@@ -198,6 +200,7 @@ private:
    virtual wxString GetColType(unsigned int col)
    {
       ColumnInfo info;
+
       GetColumn(col, &info);
       return info.type;
    }
