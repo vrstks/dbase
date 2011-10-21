@@ -4,6 +4,7 @@
 #define __WX29_H__
 
 #if (wxVERSION_NUMBER < 2902)
+#define _WX_VERSIONINFO_H_
 
 class wxVersionInfo
 {
