@@ -24,6 +24,7 @@ App::App(void) : wxAppEx(), m_mru(NULL)
 bool App::OnInit(void)
 {
    bool ok = base::OnInit();
+
    if (ok)
    {
       m_locale.Init();
@@ -52,7 +53,7 @@ bool App::OnInit(void)
                  for (size_t i = 0; i < m_cmdline.m_fileNames.GetCount(); i++)
                  {
                     const wxFileName& filename = m_cmdline.m_fileNames.Item(i);
-                    
+
                     doc = docManager->CreateDocument(filename.GetFullPath(), wxDOC_SILENT);
                     if (doc == NULL)
                     {
@@ -87,13 +88,14 @@ int App::OnExit(void)
       wxDELETE(m_mru);
    }
    delete wxDocManager::GetDocumentManager();
-   wxTheClipboard->Flush(); 
+   wxTheClipboard->Flush();
    return base::OnExit();
 }
 
 /*static*/ const AcceleratorArray& App::GetAccelerator()
 {
    static AcceleratorArray array;
+
    if (array.IsEmpty())
    {
       array.Add(wxGetStockAcceleratorEx(wxID_EXIT));
@@ -131,6 +133,7 @@ int App::OnExit(void)
 void App::OnMenuAbout(wxCommandEvent& WXUNUSED(event))
 {
    wxAboutDialogInfo info;
+
    MainFrame::GetVersionInfo(&info);
    ::wxAboutBox(info, GetTopWindow());
 }

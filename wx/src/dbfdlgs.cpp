@@ -313,6 +313,7 @@ void wxDBFFieldDialog::OnUpdateLength(wxUpdateUIEvent& event)
 {
    const bool boolean = (m_edit1->GetSelection() == DBF_DATA_TYPE_BOOLEAN);
    const bool memo    = (m_edit1->GetSelection() == DBF_DATA_TYPE_MEMO);
+
    event.Enable(!(boolean || memo));
    if (boolean) m_edit2->SetLabel(wxT("1"));
    else if (memo) m_edit2->SetLabel(wxT("10"));
@@ -320,7 +321,8 @@ void wxDBFFieldDialog::OnUpdateLength(wxUpdateUIEvent& event)
 
 void wxDBFFieldDialog::OnUpdateDecimals(wxUpdateUIEvent& event)
 {
-   const bool flt     = (m_edit1->GetSelection() == DBF_DATA_TYPE_FLOAT);
+   const bool flt = (m_edit1->GetSelection() == DBF_DATA_TYPE_FLOAT);
+
    event.Enable(flt);
    if (!flt) m_edit3->SetLabel(wxT("0"));
 }
@@ -331,6 +333,7 @@ void wxDBFFieldDialog::OnUpdateNeedData(wxUpdateUIEvent& event)
                    || (m_edit1->GetSelection() == wxNOT_FOUND)
                    || m_edit2->GetValue().IsEmpty()
                    || m_edit3->GetValue().IsEmpty());
+
    event.Enable(enable);
 }
 

@@ -34,6 +34,7 @@ wxString dbf_getstruct_c(const wxString& tablename, wxDBase* db)
    wxFileName::SplitPath(db->GetFilename(), NULL, &title, NULL);
 */
    wxString fieldname;
+
    fieldname.Printf(wxT("%s_fields"), title.wx_str());
 
    strStruct.Printf(wxT("const DBF_FIELD_INFO %s[] =\n{\n"), fieldname.wx_str());
@@ -56,13 +57,14 @@ wxString dbf_getstruct_c(const wxString& tablename, wxDBase* db)
 
       DBF_FIELD_INFO info;
       wxString temp;
+      wxString name;
       
       if (!db->GetFieldInfo(i, &info))
       {
           break;
       }
 
-      wxString name = wxConvertMB2WX(info.name);
+      name = wxConvertMB2WX(info.name);
       temp.Printf(wxT("   { %s, %-21s,%3d,%3d },\n"),
          //-(int)(WXSIZEOF(info.name)+1),
          wxString::Format(wxT("\"%s\""), name.wx_str()).wx_str(),
@@ -94,10 +96,12 @@ size_t dbf_getproperties(wxDBase* db, wxArrayString* as_ptr, bool header)
    {
       DBF_INFO info;
       wxDateTime dt;
+      wxString name;
+      wxString format;
       
       db->GetInfo(&info, &dt);
-      wxString name = wxConvertMB2WX(info.tablename);
-      wxString format = wxConvertMB2WX(info.format);
+      name = wxConvertMB2WX(info.tablename);
+      format = wxConvertMB2WX(info.format);
 
       temp.Printf(_("Table name:\t%s"), name.wx_str());  as.Add(temp);
       temp.Printf(_("Format:\t%s"), format.wx_str()); as.Add(temp);
@@ -124,15 +128,15 @@ size_t dbf_getproperties(wxDBase* db, wxArrayString* as_ptr, bool header)
          wxT("Logical")
       };
       C_ASSERT_(1,WXSIZEOF(asz) == DBF_DATA_TYPE_ENUMCOUNT);
-
       DBF_FIELD_INFO info;
+      wxString name;
 
       if (!db->GetFieldInfo(i, &info))
       {
           break;
       }
 
-      wxString name = wxConvertMB2WX(info.name);
+      name = wxConvertMB2WX(info.name);
       temp.Printf(wxT("%d\t%s:\t%s\t%s"),
          (int)i,
          name.wx_str(),
@@ -149,4 +153,3 @@ size_t dbf_getproperties(wxDBase* db, wxArrayString* as_ptr, bool header)
    }
    return as.GetCount();
 }
-

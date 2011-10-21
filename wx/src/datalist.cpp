@@ -31,6 +31,7 @@ END_EVENT_TABLE()
 wxDataListCtrl::wxDataListCtrl(): wxListView()
 {
    const wxColour gray = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
+
    m_attr[ENUM_attr_deleted].SetTextColour(gray);
    m_column_clicked = -1;
    m_id_edit = m_id_selchange = m_id_delete = 0;
@@ -79,6 +80,7 @@ void wxDataListCtrl::Init()
    {
       int format = wxLIST_FORMAT_LEFT;
       wxDataModel::ColumnInfo info;
+
       GetModel()->GetColumn(i, &info);
       if (   (wxT("long"  ) == info.type)
           || (wxT("double") == info.type) )
@@ -109,6 +111,7 @@ wxString wxDataListCtrl::OnGetItemText(long item, long col) const
    wxDataListCtrl* pThis = wxStaticCast(this, wxDataListCtrl);
    wxDataModelBase* db = pThis->GetModel(); // unconst
    wxString str;
+
    db->GetValueByRow(&str, item, col);
    return str;
 }
@@ -118,6 +121,7 @@ wxListItemAttr* wxDataListCtrl::OnGetItemAttr(long item) const
    wxDataModelBase* db = wxStaticCast(this, wxDataListCtrl)->GetModel(); // unconst
    const bool bDeleted = db->IsRowDeleted(item);
    const enum attr attr = bDeleted ? ENUM_attr_deleted : ENUM_attr_none;
+
    return (attr != ENUM_attr_none) ? (wxListItemAttr*)(m_attr + attr) : base::OnGetItemAttr(item);
 }
 
@@ -139,6 +143,7 @@ bool wxDataListCtrl::DeleteRecord(unsigned int index, bool bDelete)
 bool wxDataListCtrl::IsUndeletedInSelection(void)
 {
    bool ok = false;
+
    for (long index = GetFirstSelected(); (!ok) && (index != wxNOT_FOUND); index = GetNextSelected(index))
    {
       ok = ok || (IsRecordOk(index) && !IsRecordDeleted(index));
@@ -149,6 +154,7 @@ bool wxDataListCtrl::IsUndeletedInSelection(void)
 bool wxDataListCtrl::IsDeletedInSelection(void)
 {
    bool ok = false;
+
    for (long index = GetFirstSelected(); (!ok) && (index != wxNOT_FOUND); index = GetNextSelected(index))
    {
       ok = ok || (IsRecordOk(index) && IsRecordDeleted(index));
@@ -159,6 +165,7 @@ bool wxDataListCtrl::IsDeletedInSelection(void)
 bool wxDataListCtrl::IsAnyUnselected(void)
 {
    bool ok = false;
+
    for (unsigned int index = 0; (!ok) && (index < (unsigned int)GetItemCount()); index++)
    {
       ok = ok || !IsSelected(index);
@@ -202,6 +209,7 @@ void wxDataListCtrl::OnUpdateNeedSel_NotDeleted(wxUpdateUIEvent& event)
 void wxDataListCtrl::OnUpdateNeedSel(wxUpdateUIEvent& event)
 {
    const int index = GetFirstSelected();
+
    event.Enable(GetModel() && GetModel()->IsOpen() && (index != wxNOT_FOUND));
 }
 
@@ -230,14 +238,17 @@ void wxDataListCtrl::OnEndLabelEdit(wxListEvent& event)
       const wxString str = event.GetLabel();
       const int pos = GetFirstSelected();
       bool ok = (pos != wxNOT_FOUND);
+
       if (ok)
       {
          wxVariant var;
          wxDataModel::ColumnInfo info;
+
          GetModel()->GetColumn(m_column_clicked, &info);
          if (info.type == wxT("datetime"))
          {
             wxDateTime date;
+
             ok = (NULL != date.ParseFormat(str, wxT("%x")));
             if (ok)
             {
@@ -259,6 +270,6 @@ void wxDataListCtrl::OnEndLabelEdit(wxListEvent& event)
 bool wxDataListCtrl::IsOpen() const
 {
    const wxDataModelBase* db = wxStaticCast(this, wxDataListCtrl)->GetModel(); // unconst
+
    return db && db->IsOpen();
 }
-

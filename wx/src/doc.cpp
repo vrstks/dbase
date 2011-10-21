@@ -45,6 +45,7 @@ DocManager::DocManager() : wxDocManagerEx()
 wxDocManager* App::CreateDocManager()
 {
    DocManager* docManager = new DocManager();
+
    m_mru = new wxRecentFileList(docManager->GetFileHistory());
    return docManager;
 }

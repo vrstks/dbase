@@ -31,6 +31,7 @@ wxDBFModel::~wxDBFModel(void)
       if (m_database->IsOpen())
       {
          DBF_HANDLE handle = m_database->Detach();
+
          ::dbf_detach(&handle);
       }
       delete m_database;
@@ -74,11 +75,13 @@ unsigned int wxDBFModel::GetColumnCount() const
 bool wxDBFModel::GetValueByRow(wxString* str, unsigned int row, unsigned int col) const
 {
    bool ok = m_database->SetPosition(row);
+
    if (ok) switch (m_database->GetFieldType(col))
    {
       case DBF_DATA_TYPE_BOOLEAN:
       {
          bool n;
+
          if (m_database->Read(col, &n))
          {
             str->operator=(n ? _("True") : _("False"));
@@ -88,6 +91,7 @@ bool wxDBFModel::GetValueByRow(wxString* str, unsigned int row, unsigned int col
       case DBF_DATA_TYPE_FLOAT:
       {
          double n;
+
          if (m_database->Read(col, &n))
          {
             str->Printf(wxT("%g"), n); // date only, not time of day
@@ -97,6 +101,7 @@ bool wxDBFModel::GetValueByRow(wxString* str, unsigned int row, unsigned int col
       case DBF_DATA_TYPE_DATE:
       {
          wxDateTime n;
+
          if (m_database->Read(col, &n))
          {
             str->operator=(n.Format(wxT("%x"))); // date only, not time of day
@@ -118,9 +123,10 @@ void wxDBFModel::GetValueByRow(wxVariant& var, unsigned int row, unsigned int co
 bool wxDBFModel::SetValueByRow(const wxString& value, unsigned int row, unsigned int col)
 {
    bool ok = true;
-   if (ok) ok = m_database->SetPosition(row);
-   if (ok) ok = m_database->Write(col, value);
-   if (ok) ok = m_database->PutRecord(row);
+
+   ok = ok && m_database->SetPosition(row);
+   ok = ok && m_database->Write(col, value);
+   ok = ok && m_database->PutRecord(row);
    return ok;
 }
 
@@ -161,9 +167,12 @@ bool wxDBFModel::AddNew(void)
    const unsigned int row_count = model->GetRowCount();
    const unsigned int col_count = model->GetColumnCount();
    DBF_FIELD_INFO* array = new DBF_FIELD_INFO[col_count];
-
    unsigned int col;
    unsigned int row;
+   wxDBase dbf;
+   zlib_filefunc_def api;
+   bool ok;
+
    for (col = 0; col < col_count; col++)
    {
       ColumnInfo info;
@@ -198,11 +207,9 @@ bool wxDBFModel::AddNew(void)
       }
    }
 
-   wxDBase dbf;
-   zlib_filefunc_def api;
    ::fill_filefunc(&api, stream);
 
-   bool ok = dbf.Create(stream, &api, array, col_count);
+   ok = dbf.Create(stream, &api, array, col_count);
    if (ok) for (row = 0; row < row_count; row++)
    {
       dbf.AddNew();

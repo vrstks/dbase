@@ -77,7 +77,7 @@ wxString wxDBase::GetColType(unsigned int col)
 bool wxDBase::GetValueByRow(wxVariant* var, unsigned int row, unsigned int col)
 {
    bool ok = SetPosition(row); // unconst
-   
+
    if (ok) switch (GetFieldType(GetFieldPtr(col)))
    {
       case DBF_DATA_TYPE_INTEGER:
@@ -156,7 +156,7 @@ bool wxDBase::SetValueByRow(const wxVariant& var, unsigned int row, unsigned int
 #ifdef _WX_VERSIONINFO_H_
 /*static*/ wxVersionInfo wxDBase::GetVersionInfo()
 {
-   return wxVersionInfo(wxT(DBF_LIB_NAME), DBF_MAJOR_VERSION, DBF_MINOR_VERSION, DBF_SVN_VERSION, 
+   return wxVersionInfo(wxT(DBF_LIB_NAME), DBF_MAJOR_VERSION, DBF_MINOR_VERSION, DBF_SVN_VERSION,
        wxT("dbase interface library"),
        wxT("Copyright (c) 2007-2011 by Troels K")
        );

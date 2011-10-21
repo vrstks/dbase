@@ -15,6 +15,7 @@ static long out_fseek(
    int origin)
 {
    wxOutputStream* out = (wxOutputStream*)stream;
+
    return (wxInvalidOffset != out->SeekO(offset, (wxSeekMode)origin)) ? 0 : -1;
 }
 
@@ -25,6 +26,7 @@ static uLong fwrite_impl(
    uLong size)
 {
    wxOutputStream* out = (wxOutputStream*)stream;
+
    return (uLong)out->Write(buf, size).LastWrite();
 }
 
@@ -38,6 +40,7 @@ static int fclose_impl(
 static ZPOS_T out_tell(voidpf WXUNUSED(opaque), voidpf stream)
 {
    wxOutputStream* out = (wxOutputStream*)stream;
+
    return out->TellO();
 }
 
@@ -60,6 +63,7 @@ static long in_fseek(
    int origin)
 {
    wxInputStream* in = (wxInputStream*)stream;
+
    return (wxInvalidOffset != in->SeekI(offset, (wxSeekMode)origin)) ? 0 : -1;
 }
 
@@ -70,12 +74,14 @@ static uLong fread_impl(
    uLong size)
 {
    wxInputStream* in = (wxInputStream*)stream;
+
    return (uLong)in->Read(buf, size).LastRead();
 }
 
 static ZPOS_T in_tell(voidpf WXUNUSED(opaque), voidpf stream)
 {
    wxInputStream* in = (wxInputStream*)stream;
+
    return in->TellI();
 }
 

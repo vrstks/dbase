@@ -37,12 +37,14 @@ int wxCALLBACK wxDataViewListModelSortedDefaultCompare
         {
             const long l1 = value1.GetLong();
             const long l2 = value2.GetLong();
+
             result = l1-l2;
         }
         else if (hash == hash_double) // double
         {
             const double d1 = value1.GetDouble();
             const double d2 = value2.GetDouble();
+
             if (d1 == d2) result = 0;
             else if (d1 < d2) result = 1;
             else result = -1;
@@ -51,6 +53,7 @@ int wxCALLBACK wxDataViewListModelSortedDefaultCompare
         {
             const wxDateTime dt1 = value1.GetDateTime();
             const wxDateTime dt2 = value2.GetDateTime();
+
             if (dt1.IsEqualTo(dt2)) result = 0;
             else result = dt1.IsEarlierThan(dt2) ? -1 : +1;
         }
@@ -106,6 +109,7 @@ void wxDataModelSorted::Resort(const wxArrayInt* row_array)
     else
     {
         const unsigned int n = m_child->GetRowCount();
+
         for (unsigned int row = 0; row < n; row++)
         {
             sorted_array.Add(row);
@@ -117,6 +121,7 @@ void wxDataModelSorted::Resort(const wxArrayInt* row_array)
 size_t wxDataModelBase::GetRow(unsigned int row, wxArrayString* as_ptr, bool header) const
 {
    wxArrayString as;
+
    for (unsigned int col = 0; col < GetColumnCount(); col++)
    {
       wxString str;

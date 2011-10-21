@@ -39,6 +39,7 @@ bool MainFrame::Create(wxDocManager* manager, const wxString& title,
     const wxPoint& pos, const wxSize& size)
 {
    bool ok = base::Create(manager, NULL, wxID_ANY, title, pos, size);
+
    if (ok)
    {
        CreateStatusBar()->PushStatusText(_("Ready"));
@@ -54,6 +55,7 @@ bool MainFrame::Create(wxDocManager* manager, const wxString& title,
 wxMenuBar* MainFrame::CreateMenuBar() const
 {
    wxMenuBar* menubar = wxXmlResource::Get()->LoadMenuBar(wxT("menu_mdi"));
+
    ::wxMenu_SetAccelText(menubar, wxGetApp().GetAccelerator());
    return menubar;
 }
@@ -79,7 +81,6 @@ typedef struct _wxTOOLBARITEM
 wxToolBar* MainFrame::CreateToolBar()
 {
    const AcceleratorArray& accel = wxGetApp().GetAccelerator();
-   
    wxToolBar* tb = base::CreateToolBar(wxTB_TEXT | wxBORDER_NONE | wxTB_HORIZONTAL | wxTB_FLAT);
    const wxSize size = tb->GetToolBitmapSize();
 
@@ -110,6 +111,7 @@ wxToolBar* MainFrame::CreateToolBar()
    {
       const wxTOOLBARITEM& element = aID[i];
       wxToolBarToolBase* tool = NULL;
+
       switch (element.id)
       {
          case wxID_SEPARATOR:
@@ -120,6 +122,7 @@ wxToolBar* MainFrame::CreateToolBar()
             const wxArtID art_id = element.id_art ? wxString(element.id_art) : wxID2ArtID(element.id);
             wxBitmap icon = wxArtProvider::GetBitmap(art_id, wxART_OTHER, size);
             wxString str = element.text ? element.text : wxGetStockLabelEx(element.id, wxSTOCK_PLAINTEXT).wx_str();
+
             tool = tb->AddTool(element.id, str, icon);
             if (tool)
             {
@@ -138,6 +141,7 @@ wxToolBar* MainFrame::CreateToolBar()
 /*static*/ void MainFrame::GetVersionInfo(wxAboutDialogInfo* info)
 {
    wxVersionInfo vi = wxDBase::GetVersionInfo();
+
    info->SetName(vi.GetName());
    //info->SetDescription(vi.GetDescription() + wxT("\n\n") + wxStandardPaths::Get().GetExecutablePath());
    info->SetDescription(wxT("\nThis demo program demonstrates the usage of wxDBase\n\n")
@@ -173,6 +177,7 @@ void MainFrame::OnUpdateToolBar(wxUpdateUIEvent& event)
 void MainFrame::OnFullscreen(wxCommandEvent&)
 {
    long style = wxFULLSCREEN_NOBORDER|wxFULLSCREEN_NOCAPTION;
+
    ::wxFrame_ToggleFullScreen(this, style);
 }
 
