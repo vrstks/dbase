@@ -65,6 +65,7 @@ inline wxString wxJoin(const wxArrayString& as, wxChar sep)
 #endif
 
 #if (wxVERSION_NUMBER < 2902)
+#define _WX_VERSIONINFO_H_
 
 class wxVersionInfo
 {

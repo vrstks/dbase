@@ -99,7 +99,7 @@ public:
       return stream;
    }
 
-#ifdef __WX29_H__
+#ifdef _WX_VERSIONINFO_H_
    static wxVersionInfo GetVersionInfo();
 #endif
 
