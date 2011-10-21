@@ -6,6 +6,9 @@
 #include <wx/variant.h>
 #include <wx/docview.h>
 #include <wx/filename.h>
+#if (wxVERSION_NUMBER >= 2902)
+#include <wx/versioninfo.h>
+#endif
 
 #include "wx29.h"
 
