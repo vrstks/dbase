@@ -343,27 +343,36 @@ wxDBFFieldDialog::wxDBFFieldDialog() : wxDialog()
 
 bool wxDBFFieldDialog::Create(wxWindow* parent)
 {
-   bool ok = wxXmlResource::Get()->LoadDialog(this, parent, wxT("field_edit"));
+    bool ok = wxXmlResource::Get()->LoadDialog(this, parent, wxT("field_edit"));
    
-   if (ok)
-   {
-       m_edit0 = XRCCTRL(*this, "edit0", wxTextCtrl);
-       m_edit1 = XRCCTRL(*this, "edit1", wxComboBox);
-       m_edit2 = XRCCTRL(*this, "edit2", wxTextCtrl);
-       m_edit3 = XRCCTRL(*this, "edit3", wxTextCtrl);
+    if (ok)
+    {
+        wxStdDialogButtonSizer* buttons = new wxStdDialogButtonSizer();
 
-       for (size_t i = 0; i < WXSIZEOF(MOD_aszType); i++)
-       {
-          m_edit1->Append(MOD_aszType[i], (void*)i);
-          //m_combo->GetClientData()
-       }
-       m_edit0->SetValidator(wxGenericValidator(&m_name    ));
-       m_edit1->SetValidator(wxGenericValidator(&m_type));
-       m_edit2->SetValidator(wxGenericValidator(&m_length  ));
-       m_edit3->SetValidator(wxGenericValidator(&m_decimals));
-       Center();
-   }
-   return ok;
+        buttons->SetAffirmativeButton(new wxButton(this, wxID_OK));
+        buttons->SetCancelButton(new wxButton(this, wxID_CANCEL));
+        buttons->Realize();
+        GetSizer()->Add(buttons, 0, wxEXPAND | wxTOP | wxBOTTOM, 5);
+
+        m_edit0 = XRCCTRL(*this, "edit0", wxTextCtrl);
+        m_edit1 = XRCCTRL(*this, "edit1", wxComboBox);
+        m_edit2 = XRCCTRL(*this, "edit2", wxTextCtrl);
+        m_edit3 = XRCCTRL(*this, "edit3", wxTextCtrl);
+
+        for (size_t i = 0; i < WXSIZEOF(MOD_aszType); i++)
+        {
+             m_edit1->Append(MOD_aszType[i], (void*)i);
+            //m_combo->GetClientData()
+        }
+        m_edit0->SetValidator(wxGenericValidator(&m_name    ));
+        m_edit1->SetValidator(wxGenericValidator(&m_type));
+        m_edit2->SetValidator(wxGenericValidator(&m_length  ));
+        m_edit3->SetValidator(wxGenericValidator(&m_decimals));
+        Fit();
+        SetMinSize(GetSize());
+        Centre();
+    }
+    return ok;
 }
 
 bool wxDBFFieldDialog::TransferDataFromWindow()
