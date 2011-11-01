@@ -2,8 +2,8 @@
 // Copyright (c) 2010 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
-#ifndef __WX29_H__
-#define __WX29_H__
+#ifndef __WXTRUNK_H__
+#define __WXTRUNK_H__
 
 #if defined(_WX_ABOUTDLG_H_) && (wxVERSION_NUMBER < 2900)
 inline void wxAboutBox(const wxAboutDialogInfo& info, wxWindow* WXUNUSED(parent))
@@ -127,4 +127,4 @@ private:
 
 #endif // _WX_VERSIONINFO_H_
 
-#endif // __WX29_H__
+#endif // __WXTRUNK_H__
