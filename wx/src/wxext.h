@@ -9,7 +9,6 @@ class WXDLLIMPEXP_FWD_CORE wxListCtrl;
 class WXDLLIMPEXP_FWD_CORE wxListView;
 class WXDLLIMPEXP_FWD_CORE wxDataObject;
 
-WX_DECLARE_OBJARRAY(wxAcceleratorEntry, AcceleratorArray);
 WX_DECLARE_OBJARRAY(wxFileName, FileNameArray);
 
 #ifdef _WX_ARTPROV_H_
@@ -92,12 +91,19 @@ inline void wxPostMenuCommand(wxEvtHandler* dest, int id)
 
 extern bool wxInitXRC();
 
-extern wxAcceleratorEntry wxGetStockAcceleratorEx(wxWindowID);
-
+#if wxUSE_ACCEL
 class WXDLLIMPEXP_FWD_CORE wxMenuBar;
-extern void wxMenu_SetAccelText(wxMenuBar*, const AcceleratorArray&);
-extern void wxSetAcceleratorTable(wxWindow*, const AcceleratorArray&);
+WX_DECLARE_OBJARRAY(wxAcceleratorEntry, AcceleratorArray);
+class wxAcceleratorHelper
+{
+public:
+    static wxAcceleratorEntry GetStockAccelerator(wxWindowID);
+    static void SetAccelText(wxMenuBar*, const AcceleratorArray&);
+    static void SetAcceleratorTable(wxWindow*, const AcceleratorArray&);
+    static bool SetAccelText(wxMenuItem*, const wxString& accel, bool append);
+};
 extern wxString wxToolBarTool_MakeShortHelp(const wxString&, const AcceleratorArray& accel, int id);
+#endif
 
 #define wxMessageBoxCaption      wxGetApp().GetAppDisplayName()
 

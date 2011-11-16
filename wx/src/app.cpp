@@ -98,21 +98,21 @@ int App::OnExit(void)
 
    if (array.IsEmpty())
    {
-      array.Add(wxGetStockAcceleratorEx(wxID_EXIT));
-      array.Add(wxGetStockAcceleratorEx(wxID_CUT));
-      array.Add(wxGetStockAcceleratorEx(wxID_COPY));
-      array.Add(wxGetStockAcceleratorEx(wxID_PASTE));
-      array.Add(wxGetStockAcceleratorEx(wxID_HELP));
-      array.Add(wxGetStockAcceleratorEx(wxID_NEW));
-      array.Add(wxGetStockAcceleratorEx(wxID_OPEN));
-      array.Add(wxGetStockAcceleratorEx(wxID_CLOSE));
-      array.Add(wxGetStockAcceleratorEx(wxID_SAVE));
-      array.Add(wxGetStockAcceleratorEx(wxID_PRINT));
-      array.Add(wxGetStockAcceleratorEx(wxID_PREVIEW));
-      array.Add(wxGetStockAcceleratorEx(wxID_SELECTALL));
-      array.Add(wxGetStockAcceleratorEx(wxID_PROPERTIES));
-      array.Add(wxGetStockAcceleratorEx(wxID_FIND));
-      array.Add(wxGetStockAcceleratorEx(wxID_ABOUT));
+      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_EXIT));
+      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_CUT));
+      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_COPY));
+      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_PASTE));
+      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_HELP));
+      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_NEW));
+      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_OPEN));
+      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_CLOSE));
+      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_SAVE));
+      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_PRINT));
+      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_PREVIEW));
+      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_SELECTALL));
+      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_PROPERTIES));
+      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_FIND));
+      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_ABOUT));
 
       array.Add(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_FULLSCREEN, XRCID("view_fullscreen")));
 

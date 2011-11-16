@@ -289,7 +289,8 @@ bool wxListCtrl_EndEditLabel(wxListCtrl* wnd, bool cancel)
 
 #if wxUSE_ACCEL
 
-wxAcceleratorEntry wxGetStockAcceleratorEx(wxWindowID id)
+/*static*/
+wxAcceleratorEntry wxAcceleratorHelper::GetStockAccelerator(wxWindowID id)
 {
     wxAcceleratorEntry ret;
 
@@ -339,7 +340,8 @@ wxAcceleratorEntry wxGetStockAcceleratorEx(wxWindowID id)
 
 #endif // wxUSE_ACCEL
 
-void wxSetAcceleratorTable(wxWindow* wnd, const AcceleratorArray& array)
+/*static*/
+void wxAcceleratorHelper::SetAcceleratorTable(wxWindow* wnd, const AcceleratorArray& array)
 {
    size_t count = array.GetCount();
    wxAcceleratorEntry* temp = new wxAcceleratorEntry[count];
@@ -364,7 +366,8 @@ wxString wxMenuItem_GetText(const wxMenuItem* item)
 
 #define ACCELSTR_SEP "   "
 
-bool wxMenuItem_SetAccelText(wxMenuItem* item, const wxString& accel, bool append)
+/*static*/
+bool wxAcceleratorHelper::SetAccelText(wxMenuItem* item, const wxString& accel, bool append)
 {
    wxString str = wxMenuItem_GetText(item);
    wxString ch_sep = wxT("\t");
@@ -393,16 +396,18 @@ static wxString wxGetAccelText(const wxAcceleratorEntry& accel)
    return wxGetAccelText(accel.GetFlags(), (enum wxKeyCode)accel.GetKeyCode());
 }
 
-void wxMenu_SetAccelText(wxMenuBar* menu, const AcceleratorArray& array)
+/*static*/
+void wxAcceleratorHelper::SetAccelText(wxMenuBar* menu, const AcceleratorArray& array)
 {
    const size_t count = array.GetCount();
    for (size_t i = 0; i < count; i++)
    {
       const wxAcceleratorEntry& entry = array.Item(i);
       wxMenuItem* item = menu->FindItem(entry.GetCommand());
+
       if (item)
       {
-         wxMenuItem_SetAccelText(item, wxGetAccelText(entry), true);
+          wxAcceleratorHelper::SetAccelText(item, wxGetAccelText(entry), true);
       }
    }
 }

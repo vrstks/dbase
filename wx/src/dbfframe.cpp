@@ -36,7 +36,8 @@ bool DBFFrame::Create(wxDocument* doc, wxMDIParentFrame* parent)
 wxMenuBar* DBFFrame::CreateMenuBar() const
 {
    wxMenuBar* menubar = wxXmlResource::Get()->LoadMenuBar(wxT("menu_dbf"));
-   ::wxMenu_SetAccelText(menubar, wxGetApp().GetAccelerator());
+   
+   wxAcceleratorHelper::SetAccelText(menubar, wxGetApp().GetAccelerator());
    return menubar;
 }
 

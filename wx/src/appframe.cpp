@@ -46,7 +46,7 @@ bool MainFrame::Create(wxDocManager* manager, const wxString& title,
        SetToolBar(CreateToolBar());
        SetIcon(wxICON(app));
        SetMenuBar(CreateMenuBar());
-       ::wxSetAcceleratorTable(this, wxGetApp().GetAccelerator());
+       wxAcceleratorHelper::SetAcceleratorTable(this, wxGetApp().GetAccelerator());
        ::wxFrame_SetInitialPosition(this, pos, size, 10);
    }
    return ok;
@@ -56,7 +56,7 @@ wxMenuBar* MainFrame::CreateMenuBar() const
 {
    wxMenuBar* menubar = wxXmlResource::Get()->LoadMenuBar(wxT("menu_mdi"));
 
-   ::wxMenu_SetAccelText(menubar, wxGetApp().GetAccelerator());
+   wxAcceleratorHelper::SetAccelText(menubar, wxGetApp().GetAccelerator());
    return menubar;
 }
 
