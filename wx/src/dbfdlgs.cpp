@@ -1,5 +1,5 @@
 // dbfdlgs.cpp
-// Copyright (c) 2007-2011 by Troels K. All rights reserved.
+// Copyright (c) 2007-2012 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -151,13 +151,15 @@ class wxDBFStructDialog : public wxDialog
 {
 protected:
    wxDBase* m_database;
-public:
    wxStructListView* m_list;
+public:
 
 public:
    wxDBFStructDialog(wxDBase*);
 
    bool Create(wxWindow* parent);
+
+   const wxStructListView* GetList() const { return m_list; }
 
 // Implementation
 public:
@@ -184,18 +186,18 @@ BEGIN_EVENT_TABLE(wxDBFStructDialog, wxDialog)
    EVT_UPDATE_UI(wxID_OK, wxDBFStructDialog::OnUpdateNeedData)
 END_EVENT_TABLE()
 
-wxDBFStructDialog::wxDBFStructDialog(wxDBase* db) : wxDialog(), m_database(db)
+wxDBFStructDialog::wxDBFStructDialog(wxDBase* db) : wxDialog(), m_database(db), m_list(NULL)
 {
 }
 
 bool wxDBFStructDialog::Create(wxWindow* parent)
 {
    bool ok = wxXmlResource::Get()->LoadDialog(this, parent, wxT("struct"));
+
    if (ok)
    {
       m_list = XRCCTRL(*this, "list", wxStructListView);
       m_list->Init(m_database);
-      //Center();
    }
    return ok;
 }
@@ -257,16 +259,18 @@ void wxDBFStructDialog::OnUpdateNeedSel(wxUpdateUIEvent& event)
 
 bool DoModal_Structure(wxWindow* parent, wxDBase* db, const wxString& caption, const wxString& filename)
 {
-   wxDBFStructDialog dlg(db);
-   
+   wxDBFStructDialog dlg(db);   
    bool ok = dlg.Create(parent);
+
    if (ok)
    {
        if (caption.Length()) dlg.SetTitle(caption);
        ok = (wxID_OK == dlg.ShowModal());
        if (ok && filename.Length() && !db->IsOpen())
        {
-          ok = db->Create(filename, dlg.m_list->m_array, dlg.m_list->m_array_count);
+           const wxStructListView* list = dlg.GetList();
+          
+           ok = db->Create(filename, list->m_array, list->m_array_count);
        }
    }
    return ok;
@@ -368,9 +372,8 @@ bool wxDBFFieldDialog::Create(wxWindow* parent)
         m_edit1->SetValidator(wxGenericValidator(&m_type));
         m_edit2->SetValidator(wxGenericValidator(&m_length  ));
         m_edit3->SetValidator(wxGenericValidator(&m_decimals));
-        Fit();
-        SetMinSize(GetSize());
-        Centre();
+        GetSizer()->SetSizeHints(this);
+        Center();
     }
     return ok;
 }
