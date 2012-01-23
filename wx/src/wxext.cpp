@@ -1,5 +1,5 @@
 // wxext.cpp
-// Copyright (c) 2007-2011 by Troels K. All rights reserved.
+// Copyright (c) 2007-2012 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -504,6 +504,7 @@ wxRecentFileList::wxRecentFileList(wxFileHistory* fileHistory) : m_fileHistory(f
 wxMenuItem* wxRecentFileList::GetSubMenu(wxMenuBar* menubar, wxMenu** submenu) const
 {
    wxMenuItem* item = menubar->FindItem(m_fileHistory->GetBaseId(), submenu);
+
    wxASSERT(item);
    return item;
 }
@@ -512,6 +513,7 @@ void wxRecentFileList::Attach(wxMenuBar* menubar)
 {
    wxMenu* submenu;
    wxMenuItem* item = GetSubMenu(menubar, &submenu);
+
    submenu->Delete(item);
    m_fileHistory->UseMenu(submenu);
    m_fileHistory->AddFilesToMenu(submenu);
@@ -521,6 +523,7 @@ bool wxRecentFileList::Detach(wxMenuBar* menubar)
 {
    wxMenu* submenu;
    bool ok = (NULL != GetSubMenu(menubar, &submenu));
+
    if (ok)
    {
       m_fileHistory->RemoveMenu(submenu);
@@ -563,6 +566,7 @@ bool wxRecentFileList::GetFile(size_t index, wxFileName* str) const
 {
    const wxFileHistory* impl = GetImplementation();
    bool ok = (index < impl->GetCount());
+
    if (ok)
    {
       str->operator=(impl->GetHistoryFile(index));

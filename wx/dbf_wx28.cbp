@@ -118,7 +118,7 @@
 		<Unit filename="src\dbfutil.cpp" />
 		<Unit filename="src\dbfview.cpp" />
 		<Unit filename="src\dbfview.h" />
-		<Unit filename="src\doc.cpp" />
+		<Unit filename="src\appdoc.cpp" />
 		<Unit filename="src\precomp.h">
 			<Option compile="1" />
 			<Option weight="0" />

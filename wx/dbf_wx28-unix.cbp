@@ -178,7 +178,7 @@
 		<Unit filename="src/dbfmodel.cpp" />
 		<Unit filename="src/dbfutil.cpp" />
 		<Unit filename="src/dbfview.cpp" />
-		<Unit filename="src/doc.cpp" />
+		<Unit filename="src/appdoc.cpp" />
 		<Unit filename="src/fontutil.h" />
 		<Unit filename="src/pages/ismserver.h" />
 		<Unit filename="src/pages/panelfonts.h" />

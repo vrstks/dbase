@@ -332,7 +332,7 @@ SOURCE=.\src\dbfview.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\doc.cpp
+SOURCE=.\src\appdoc.cpp
 # End Source File
 # End Group
 # End Target

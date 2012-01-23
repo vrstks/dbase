@@ -41,7 +41,7 @@
         <object class="wxMenu">
             <label>&amp;Help</label>
             <object class="wxMenuItem" name="wxID_ABOUT">
-                <label>&amp;About...</label>
+                <label>&amp;About</label>
             </object>
         </object>
     </object>
@@ -169,7 +169,7 @@
         <object class="wxMenu">
             <label>&amp;Help</label>
             <object class="wxMenuItem" name="wxID_ABOUT">
-                <label>&amp;About...</label>
+                <label>&amp;About</label>
             </object>
         </object>
     </object>

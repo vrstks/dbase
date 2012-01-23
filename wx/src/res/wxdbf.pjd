@@ -223,7 +223,7 @@
         <long name="title-mode">0</long>
         <long name="locked">1</long>
         <document>
-          <string name="title">"menubar: menu_mdi"</string>
+          <string name="title">"wxMenuBar: menu_mdi"</string>
           <string name="type">"dialog-document"</string>
           <string name="filename">""</string>
           <string name="icon-name">"menubar"</string>
@@ -487,7 +487,7 @@
             <string name="proxy-Member variable name">""</string>
             <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             <document>
-              <string name="title">"&amp;About...: wxID_ABOUT"</string>
+              <string name="title">"&amp;About: wxID_ABOUT"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menuitem"</string>
@@ -499,7 +499,7 @@
               <string name="proxy-type">"wbMenuItemProxy"</string>
               <string name="proxy-Id name">"wxID_ABOUT"</string>
               <long name="proxy-Id value">5013</long>
-              <string name="proxy-Label">"&amp;About..."</string>
+              <string name="proxy-Label">"&amp;About"</string>
               <string name="proxy-Kind">"Normal"</string>
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>
@@ -511,7 +511,7 @@
           </document>
         </document>
         <document>
-          <string name="title">"menubar: menu_dbf"</string>
+          <string name="title">"wxMenuBar: menu_dbf"</string>
           <string name="type">"dialog-document"</string>
           <string name="filename">""</string>
           <string name="icon-name">"menubar"</string>
@@ -1286,7 +1286,7 @@
             <string name="proxy-Member variable name">""</string>
             <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
             <document>
-              <string name="title">"&amp;About...: wxID_ABOUT"</string>
+              <string name="title">"&amp;About: wxID_ABOUT"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"menuitem"</string>
@@ -1298,7 +1298,7 @@
               <string name="proxy-type">"wbMenuItemProxy"</string>
               <string name="proxy-Id name">"wxID_ABOUT"</string>
               <long name="proxy-Id value">5013</long>
-              <string name="proxy-Label">"&amp;About..."</string>
+              <string name="proxy-Label">"&amp;About"</string>
               <string name="proxy-Kind">"Normal"</string>
               <bool name="proxy-Checked">0</bool>
               <bool name="proxy-Enabled">1</bool>
@@ -1402,6 +1402,14 @@
             <string name="proxy-type">"wbBoxSizerProxy"</string>
             <string name="proxy-Orientation">"Horizontal"</string>
             <string name="proxy-Member variable name">""</string>
+            <string name="proxy-AlignH">"Centre"</string>
+            <string name="proxy-AlignV">"Centre"</string>
+            <long name="proxy-Stretch factor">0</long>
+            <long name="proxy-Border">5</long>
+            <bool name="proxy-wxLEFT">1</bool>
+            <bool name="proxy-wxRIGHT">1</bool>
+            <bool name="proxy-wxTOP">1</bool>
+            <bool name="proxy-wxBOTTOM">1</bool>
             <bool name="proxy-wxSHAPED">0</bool>
             <bool name="proxy-wxADJUST_MINSIZE">0</bool>
             <bool name="proxy-wxFIXED_MINSIZE">0</bool>
@@ -2084,6 +2092,14 @@
             <string name="proxy-type">"wbBoxSizerProxy"</string>
             <string name="proxy-Orientation">"Vertical"</string>
             <string name="proxy-Member variable name">""</string>
+            <string name="proxy-AlignH">"Centre"</string>
+            <string name="proxy-AlignV">"Centre"</string>
+            <long name="proxy-Stretch factor">0</long>
+            <long name="proxy-Border">5</long>
+            <bool name="proxy-wxLEFT">1</bool>
+            <bool name="proxy-wxRIGHT">1</bool>
+            <bool name="proxy-wxTOP">1</bool>
+            <bool name="proxy-wxBOTTOM">1</bool>
             <bool name="proxy-wxSHAPED">0</bool>
             <bool name="proxy-wxADJUST_MINSIZE">0</bool>
             <bool name="proxy-wxFIXED_MINSIZE">0</bool>
