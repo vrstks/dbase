@@ -9,7 +9,7 @@
 #include "wxext.h"
 #include "app.h"
 #include "appframe.h"
-#include "appres.h"
+#include "xmlres.h"
 #include "wx29.h"
 
 IMPLEMENT_APP(App)

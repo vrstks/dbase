@@ -1058,7 +1058,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\src\appres.cpp"
+				RelativePath=".\src\xmlres.cpp"
 				>
 			</File>
 			<File
@@ -1998,7 +1998,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\appres.h"
+				RelativePath=".\src\xmlres.h"
 				>
 			</File>
 			<File
