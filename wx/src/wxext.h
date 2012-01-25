@@ -89,7 +89,19 @@ inline void wxPostMenuCommand(wxEvtHandler* dest, int id)
 }
 #endif
 
-extern bool wxInitXRC();
+class wxXmlResourceHelper
+{
+public:
+    static const wxString FileExt;
+    static const wxString FileExtCompressed;
+    static const wxString DefaultFolder;
+
+    static void Init();
+
+    static bool LoadFromFile(const wxFileName&);
+    static bool LoadFromFile(const char* srcmodule, const wxString& title);
+    static bool LoadFromMemory(const void* buf, size_t buf_len, const wxString& title, wxFileName* filename);
+};
 
 #if wxUSE_ACCEL
 class WXDLLIMPEXP_FWD_CORE wxMenuBar;

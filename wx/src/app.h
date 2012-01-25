@@ -1,5 +1,5 @@
 // app.h
-// Copyright (c) 2007-2011 by Troels K. All rights reserved.
+// Copyright (c) 2007-2012 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __APP_H__
@@ -24,14 +24,16 @@ public:
 class MainFrame;
 class AcceleratorArray;
 class wxRecentFileList;
+class Resource;
 
 class App : public wxAppEx
 {
    typedef wxAppEx base;
 protected:
-   CommandLine m_cmdline;
+   CommandLine       m_cmdline;
    wxRecentFileList* m_mru;
-   wxLocale m_locale;
+   wxLocale          m_locale;
+   Resource*         m_res;
 public:
    App(void);
 

@@ -39,44 +39,70 @@ void wxFrame_OnUpdateFullScreen(wxFrame* wnd, wxUpdateUIEvent& event)
    event.Check(wnd->IsFullScreen());
 }
 
-bool wxGetExeFolder(wxFileName* filename)
+wxFileName wxFileName_CreateTempFileName(const wxString& fullname)
 {
-   filename->Assign(wxStandardPaths::Get().GetExecutablePath());
-   filename->SetFullName(wxEmptyString);
-   return filename->IsOk();
+    wxFileName fileName(wxFileName::CreateTempFileName(wxEmptyString));
+
+    fileName.SetFullName(fullname);
+    return fileName;
 }
 
-bool wxGetDevFolder(wxFileName* filename)
+//static
+const wxString wxXmlResourceHelper::FileExt = wxT("xrc");
+//static
+const wxString wxXmlResourceHelper::FileExtCompressed = wxT("xrs");
+//static
+const wxString wxXmlResourceHelper::DefaultFolder = wxT("xmlres");
+
+//static
+void wxXmlResourceHelper::Init()
 {
-   wxGetExeFolder(filename);
-   filename->RemoveLastDir();
-   filename->AppendDir(wxT("dbf"));
-   filename->AppendDir(wxT("wx"));
-   return filename->DirExists();
-}
-
-bool wxInitXRC()
-{
-   const wxString fullname = wxTheApp->GetAppName().Lower() + wxT(".xrc");
-   wxFileName filename;
-
-   wxGetExeFolder(&filename);
-   filename.SetFullName(fullname);
-   if (!filename.FileExists())
-   {
-      wxFileName dev;
-
-      ::wxGetDevFolder(&dev);
-      dev.AppendDir(wxT("src"));
-      dev.AppendDir(wxT("res"));
-      dev.SetFullName(fullname);
-      if (dev.FileExists())
-      {
-         filename = dev;
-      }
-   }
    wxXmlResource::Get()->InitAllHandlers();
+}
+
+//static
+bool wxXmlResourceHelper::LoadFromMemory(const void* buf, size_t buf_len, const wxString& title, wxFileName* filename_ptr)
+{
+    wxFileName fileName = wxFileName_CreateTempFileName(title + wxT(".xrc"));
+    wxFFile stream;
+    bool ok = stream.Open(fileName.GetFullPath(), wxT("wb"));
+
+    if (ok)
+    {
+        ok = (buf_len == stream.Write(buf, buf_len));
+        stream.Close();
+        if (ok)
+        {
+            ok = wxXmlResource::Get()->Load(fileName.GetFullPath());
+            if (ok)
+            {
+                *filename_ptr = fileName;
+            }
+            else
+            {
+                wxRemoveFile(fileName.GetFullPath());
+            }
+        }
+    }
+    return ok;
+}
+
+//static
+bool wxXmlResourceHelper::LoadFromFile(const wxFileName& filename)
+{
    return wxXmlResource::Get()->Load(filename.GetFullPath());
+}
+
+//static
+bool wxXmlResourceHelper::LoadFromFile(const char* srcmodule, const wxString& title)
+{
+    wxFileName filename(wxString::FromAscii(srcmodule));
+    
+    filename.RemoveLastDir();
+    filename.AppendDir(DefaultFolder);
+    filename.SetName(title);
+    filename.SetExt(FileExt);
+    return LoadFromFile(filename);
 }
 
 wxArtID wxID2ArtID(int wx_id)

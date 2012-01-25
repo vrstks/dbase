@@ -100,11 +100,13 @@
 		<Unit filename="..\ioapi\ioapi.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="src\art.cpp" />
 		<Unit filename="src\app.cpp" />
 		<Unit filename="src\app.h" />
+		<Unit filename="src\appdoc.cpp" />
 		<Unit filename="src\appframe.cpp" />
 		<Unit filename="src\appframe.h" />
+		<Unit filename="src\appres.cpp" />
+		<Unit filename="src\art.cpp" />
 		<Unit filename="src\datalist.cpp" />
 		<Unit filename="src\datamodel.cpp" />
 		<Unit filename="src\dbfdlgs.cpp" />
@@ -118,15 +120,14 @@
 		<Unit filename="src\dbfutil.cpp" />
 		<Unit filename="src\dbfview.cpp" />
 		<Unit filename="src\dbfview.h" />
-		<Unit filename="src\appdoc.cpp" />
 		<Unit filename="src\precomp.h">
 			<Option compile="1" />
 			<Option weight="0" />
 		</Unit>
+		<Unit filename="src\wx29.cpp" />
 		<Unit filename="src\wxdbf.rc">
 			<Option compilerVar="WINDRES" />
 		</Unit>
-		<Unit filename="src\wx29.cpp" />
 		<Unit filename="src\wxext.cpp" />
 		<Unit filename="src\wxstreamc.cpp" />
 		<Extensions>

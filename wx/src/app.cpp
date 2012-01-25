@@ -1,5 +1,5 @@
 // app.cpp
-// Copyright (c) 2007-2011 by Troels K. All rights reserved.
+// Copyright (c) 2007-2012 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -9,6 +9,7 @@
 #include "wxext.h"
 #include "app.h"
 #include "appframe.h"
+#include "appres.h"
 #include "wx29.h"
 
 IMPLEMENT_APP(App)
@@ -17,7 +18,7 @@ BEGIN_EVENT_TABLE(App, wxAppEx)
    EVT_MENU(wxID_ABOUT, App::OnMenuAbout)
 END_EVENT_TABLE()
 
-App::App(void) : wxAppEx(), m_mru(NULL)
+App::App(void) : wxAppEx(), m_mru(NULL), m_res(new Resource())
 {
 }
 
@@ -33,7 +34,8 @@ bool App::OnInit(void)
       SetAppName(wxT("wxDBF"));
 
       wxFileSystem::AddHandler(new wxZipFSHandler());
-      ok = ::wxInitXRC();
+      wxXmlResourceHelper::Init();
+      ok = m_res->Init();
       if (ok)
       {
          MainFrame* frame = new MainFrame();
@@ -89,6 +91,7 @@ int App::OnExit(void)
    }
    delete wxDocManager::GetDocumentManager();
    wxTheClipboard->Flush();
+   wxDELETE(m_res);
    return base::OnExit();
 }
 
