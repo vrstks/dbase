@@ -4,7 +4,7 @@
 
 class Resource
 {
-    wxFileName m_xrcFileName;
+    wxFFile m_xrcFile;
 public:
     bool Init();
 

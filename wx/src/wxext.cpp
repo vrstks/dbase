@@ -39,14 +39,6 @@ void wxFrame_OnUpdateFullScreen(wxFrame* wnd, wxUpdateUIEvent& event)
    event.Check(wnd->IsFullScreen());
 }
 
-wxFileName wxFileName_CreateTempFileName(const wxString& fullname)
-{
-    wxFileName fileName(wxFileName::CreateTempFileName(wxEmptyString));
-
-    fileName.SetFullName(fullname);
-    return fileName;
-}
-
 //static
 const wxString wxXmlResourceHelper::FileExt = wxT("xrc");
 //static
@@ -61,27 +53,37 @@ void wxXmlResourceHelper::Init()
 }
 
 //static
-bool wxXmlResourceHelper::LoadFromMemory(const void* buf, size_t buf_len, const wxString& title, wxFileName* filename_ptr)
+bool wxXmlResourceHelper::LoadFromMemory(const void* buf, size_t buf_len, const wxString& fullname, wxFFile* file_ptr)
 {
-    wxFileName fileName = wxFileName_CreateTempFileName(title + wxT(".xrc"));
-    wxFFile stream;
-    bool ok = stream.Open(fileName.GetFullPath(), wxT("wb"));
+    wxFFile file;
+    wxFileName filename(wxFileName::GetTempDir(), fullname);
+    bool ok;
 
+    filename.AppendDir(filename.GetName()); // subfolder named after file title
+    ok = filename.DirExists() || filename.Mkdir();
     if (ok)
     {
-        ok = (buf_len == stream.Write(buf, buf_len));
-        stream.Close();
-        if (ok)
+        if (filename.FileExists())
         {
-            ok = wxXmlResource::Get()->Load(fileName.GetFullPath());
-            if (ok)
-            {
-                *filename_ptr = fileName;
-            }
-            else
-            {
-                wxRemoveFile(fileName.GetFullPath());
-            }
+            // use existing temp file, another instance is running
+            ok = file.Open(filename.GetFullPath(), wxT("rb"))
+             && (buf_len == file.Length());
+        }
+        else
+        {
+            // create and write new temp file
+            ok = file.Open(filename.GetFullPath(), wxT("wb"))
+             && (buf_len == file.Write(buf, buf_len))
+             && file.Flush();
+        }
+    }
+    if (ok)
+    {
+        ok = LoadFromFile(filename);
+        if (ok && file_ptr)
+        {
+            file_ptr->Attach(file.fp(), file.GetName());
+            file.Detach();
         }
     }
     return ok;
@@ -94,14 +96,13 @@ bool wxXmlResourceHelper::LoadFromFile(const wxFileName& filename)
 }
 
 //static
-bool wxXmlResourceHelper::LoadFromFile(const char* srcmodule, const wxString& title)
+bool wxXmlResourceHelper::LoadFromFile(const char* srcmodule, const wxString& fullname)
 {
     wxFileName filename(wxString::FromAscii(srcmodule));
     
     filename.RemoveLastDir();
     filename.AppendDir(DefaultFolder);
-    filename.SetName(title);
-    filename.SetExt(FileExt);
+    filename.SetFullName(fullname);
     return LoadFromFile(filename);
 }
 

@@ -9,21 +9,27 @@
 
 #include "../xmlres/wxdbf.xrc.c"
 
-bool Resource::Init(void)
+bool Resource::Init()
 {
-    const wxString title = wxTheApp->GetAppName().Lower();
+    const wxString filename = wxTheApp->GetAppName().Lower() + wxFILE_SEP_EXT + wxXmlResourceHelper::FileExt;
     
 #ifdef __WXDEBUG__
-    return wxXmlResourceHelper::LoadFromFile(__FILE__, title);
+    // load xrc file directly
+    return wxXmlResourceHelper::LoadFromFile(__FILE__, filename);
 #else
-    return wxXmlResourceHelper::LoadFromMemory(wxdbf_xrc, sizeof(wxdbf_xrc), title, &m_xrcFileName);
+    // load xrc file from temp file
+    return wxXmlResourceHelper::LoadFromMemory(wxdbf_xrc, sizeof(wxdbf_xrc), filename, &m_xrcFile);
 #endif
 }
 
 Resource::~Resource(void)
 {
-    if (m_xrcFileName.FileExists())
+    if (m_xrcFile.IsOpened())
     {
-        wxRemoveFile(m_xrcFileName.GetFullPath());
+        wxString filename = m_xrcFile.GetName();
+
+        m_xrcFile.Close();
+        wxLogNull no_log;
+        wxRemoveFile(filename);
     }
 }

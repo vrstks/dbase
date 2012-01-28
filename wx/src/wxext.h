@@ -89,6 +89,7 @@ inline void wxPostMenuCommand(wxEvtHandler* dest, int id)
 }
 #endif
 
+class WXDLLIMPEXP_FWD_BASE wxFFile;
 class wxXmlResourceHelper
 {
 public:
@@ -99,8 +100,8 @@ public:
     static void Init();
 
     static bool LoadFromFile(const wxFileName&);
-    static bool LoadFromFile(const char* srcmodule, const wxString& title);
-    static bool LoadFromMemory(const void* buf, size_t buf_len, const wxString& title, wxFileName* filename);
+    static bool LoadFromFile(const char* srcmodule, const wxString& filename);
+    static bool LoadFromMemory(const void* buf, size_t buf_len, const wxString& filename, wxFFile* tempfile = NULL);
 };
 
 #if wxUSE_ACCEL
