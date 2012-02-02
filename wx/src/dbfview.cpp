@@ -84,6 +84,7 @@ END_EVENT_TABLE()
 bool DBFView::OnCreate(wxDocument* doc, long flags)
 {
    bool ok = base::OnCreate(doc, flags);
+
    if (ok)
    {
       wxFrame* frame = wxStaticCast(doc->GetDocumentTemplate(), DatabaseDocTemplate)->CreateViewFrame(this);

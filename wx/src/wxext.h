@@ -1,5 +1,5 @@
 // wxext.h
-// Copyright (c) 2007-2011 by Troels K. All rights reserved.
+// Copyright (c) 2007-2012 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #define WXK_HELP       WXK_F1
@@ -72,7 +72,6 @@ inline bool wxListView_SetCurSel(wxListCtrl* ctrl, long index, bool focus = true
 
 extern bool wxListCtrl_GetItemRect(const wxListView&, long row, long col, wxRect*);
 extern long wxListView_HitTest(const wxListView&, const wxPoint&, int* flags, long* col);
-extern wxString wxListView_GetItemText(const wxListCtrl&, int row, int col);
 extern bool wxListCtrl_EndEditLabel(wxListCtrl* ctrl, bool cancel);
 
 #if defined(_WX_EVENT_H_) || defined(_WX_EVENT_H__)

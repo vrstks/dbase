@@ -39,14 +39,16 @@ wxDocument* DocManager::CreateDocument(const wxString& path, long flags)
 
 DocManager::DocManager() : wxDocManagerEx()
 {
-   DatabaseDocTemplate::Create(this);
+    wxRecentFileList* mru = new wxRecentFileList(GetFileHistory());
+
+    wxGetApp().m_mru = mru;
+    DatabaseDocTemplate::Create(this, mru);
 }
 
 wxDocManager* App::CreateDocManager()
 {
    DocManager* docManager = new DocManager();
 
-   m_mru = new wxRecentFileList(docManager->GetFileHistory());
    return docManager;
 }
 

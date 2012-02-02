@@ -1,5 +1,5 @@
 // dbflist.cpp
-// Copyright (c) 2007-2010 by Troels K. All rights reserved.
+// Copyright (c) 2007-2012 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -14,6 +14,7 @@
 
 #include "datalist.h"
 #include "dbflist.h"
+#include "wx29.h"
 #include "wxext.h"
 #include "datamodel.h"
 
@@ -56,6 +57,7 @@ bool wxDBFListCtrl::Edit(long row, long col)
 {
    wxRect rect;
    bool ok = ::wxListCtrl_GetItemRect(*this, row, col, &rect);
+
    if (ok)
    {
       EnsureVisible(row);
@@ -64,7 +66,7 @@ bool wxDBFListCtrl::Edit(long row, long col)
       ok = (NULL != edit);
       if (ok)
       {
-         edit->SetValue(::wxListView_GetItemText(*this, row, col));
+         edit->SetValue(::wxListCtrl_GetItemText(*this, row, col));
          rect.height+=3;
          edit->Fixate(rect);
       }
@@ -81,6 +83,7 @@ bool wxDBFListCtrl::Edit()
 void wxDBFListCtrl::OnDblClick(wxCommandEvent& /*event*/)
 {
    wxDataModelBase* db = GetModel();
+
    if (!db->IsEditable()) return;
 
    if (m_id_edit)
@@ -89,10 +92,10 @@ void wxDBFListCtrl::OnDblClick(wxCommandEvent& /*event*/)
    }
    else
    {
-      wxPoint pt = ::wxGetMousePosition();
-      pt = ScreenToClient(pt);
+      wxPoint pt = ScreenToClient(::wxGetMousePosition());
       long col;
       long row = ::wxListView_HitTest(*this, pt, NULL, &col);
+
       if (row != wxNOT_FOUND)
       {
          Edit((size_t)row, col);
@@ -104,6 +107,7 @@ bool wxDBFListCtrl::AddNew()
 {
    wxDataModelBase* db = GetModel();
    bool ok = db->AddNew();
+
    if (ok)
    {
       Fill();

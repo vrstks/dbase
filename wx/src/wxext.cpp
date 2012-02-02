@@ -52,10 +52,45 @@ void wxXmlResourceHelper::Init()
    wxXmlResource::Get()->InitAllHandlers();
 }
 
+bool wxCreateFileFromMemory(const void* buf, size_t buf_len, const wxFileName& filename, wxFFile* file_ptr)
+{
+    wxFFile file;
+    bool ok = filename.FileExists();
+
+    if (ok)
+    {
+         // file exists
+        ok = file.Open(filename.GetFullPath(), wxT("rb"));
+        if (ok)
+        {
+            ok = (buf_len == file.Length());
+            if (!ok)
+            {
+                // exists but wrong length
+                file.Close();
+                wxRemoveFile(filename.GetFullPath());
+            }
+        }
+    }
+    if (!ok)
+    {
+        // create file
+        ok =  file.Open(filename.GetFullPath(), wxT("wb"))
+           && (buf_len == file.Write(buf, buf_len))
+           && file.Flush();
+    }
+
+    if (ok && file_ptr)
+    {
+        file_ptr->Attach(file.fp(), file.GetName());
+        file.Detach();
+    }
+    return ok;
+}
+
 //static
 bool wxXmlResourceHelper::LoadFromMemory(const void* buf, size_t buf_len, const wxString& fullname, wxFFile* file_ptr)
 {
-    wxFFile file;
     wxFileName filename(wxFileName::GetTempDir(), fullname);
     bool ok;
 
@@ -63,28 +98,11 @@ bool wxXmlResourceHelper::LoadFromMemory(const void* buf, size_t buf_len, const 
     ok = filename.DirExists() || filename.Mkdir();
     if (ok)
     {
-        if (filename.FileExists())
-        {
-            // use existing temp file, another instance is running
-            ok = file.Open(filename.GetFullPath(), wxT("rb"))
-             && (buf_len == file.Length());
-        }
-        else
-        {
-            // create and write new temp file
-            ok = file.Open(filename.GetFullPath(), wxT("wb"))
-             && (buf_len == file.Write(buf, buf_len))
-             && file.Flush();
-        }
+        ok = wxCreateFileFromMemory(buf, buf_len, filename, file_ptr);
     }
     if (ok)
     {
         ok = LoadFromFile(filename);
-        if (ok && file_ptr)
-        {
-            file_ptr->Attach(file.fp(), file.GetName());
-            file.Detach();
-        }
     }
     return ok;
 }

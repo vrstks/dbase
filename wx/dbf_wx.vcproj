@@ -1982,7 +1982,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\src\xmlres.cpp"
+				RelativePath=".\src\dbfres.cpp"
 				>
 				<FileConfiguration
 					Name="Release|Win32"
@@ -2126,7 +2126,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\xmlres.h"
+				RelativePath=".\src\dbfres.h"
 				>
 			</File>
 		</Filter>

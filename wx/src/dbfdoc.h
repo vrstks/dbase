@@ -1,5 +1,5 @@
 // dbfdoc.h
-// Copyright (c) 2007-2011 by Troels K. All rights reserved.
+// Copyright (c) 2007-2012 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __DBFDOC_H__
@@ -45,13 +45,25 @@ public:
 /////////////////////////////////////////////////////////////////////////////
 // DatabaseDocTemplate
 
+class wxRecentFileList;
 class DatabaseDocTemplate : public wxDocTemplate
 {
-   DatabaseDocTemplate(wxDocManager*);
-public:
-   wxFrame* CreateViewFrame(wxView*);
+    DECLARE_CLASS(DatabaseDocTemplate)
+    DatabaseDocTemplate(wxDocManager*, wxClassInfo* docClassInfo,
+                                       wxClassInfo* viewClassInfo,
+                                       wxClassInfo* frameClassInfo,
+                                       wxRecentFileList*);
+protected:
+    wxClassInfo* m_frameClassInfo;
+    wxRecentFileList* m_mru;
 
-   static wxDocTemplate* Create(wxDocManager*);
+    virtual wxFrame* CreateViewFrame(wxView*);
+public:
+    static DatabaseDocTemplate* Create(wxDocManager*, wxRecentFileList*);
+    static wxIcon GetIcon();
+    wxRecentFileList* GetRecentFileList() const { return m_mru; }
+
+    friend class DBFView;
 };
 
 #endif // __DBFDOC_H__

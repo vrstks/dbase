@@ -9,7 +9,8 @@
 #include "wxext.h"
 #include "app.h"
 #include "appframe.h"
-#include "xmlres.h"
+#include "dbfres.h"
+#include "dbfdefs.h"
 #include "wx29.h"
 
 IMPLEMENT_APP(App)
@@ -18,7 +19,7 @@ BEGIN_EVENT_TABLE(App, wxAppEx)
    EVT_MENU(wxID_ABOUT, App::OnMenuAbout)
 END_EVENT_TABLE()
 
-App::App(void) : wxAppEx(), m_mru(NULL), m_res(new Resource())
+App::App(void) : wxAppEx(), m_mru(NULL), m_res(new DBFResource())
 {
 }
 
@@ -30,8 +31,8 @@ bool App::OnInit(void)
    {
       m_locale.Init();
 
-      SetVendorName(wxT("Troels K"));
-      SetAppName(wxT("wxDBF"));
+      SetVendorName(WXDBF_APP_VENDOR);
+      SetAppName(WXDBF_APP_NAME);
 
       wxFileSystem::AddHandler(new wxZipFSHandler());
       wxXmlResourceHelper::Init();
@@ -93,44 +94,6 @@ int App::OnExit(void)
    wxTheClipboard->Flush();
    wxDELETE(m_res);
    return base::OnExit();
-}
-
-/*static*/ const AcceleratorArray& App::GetAccelerator()
-{
-   static AcceleratorArray array;
-
-   if (array.IsEmpty())
-   {
-      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_EXIT));
-      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_CUT));
-      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_COPY));
-      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_PASTE));
-      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_HELP));
-      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_NEW));
-      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_OPEN));
-      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_CLOSE));
-      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_SAVE));
-      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_PRINT));
-      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_PREVIEW));
-      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_SELECTALL));
-      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_PROPERTIES));
-      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_FIND));
-      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_ABOUT));
-
-      array.Add(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_FULLSCREEN, XRCID("view_fullscreen")));
-
-      array.Add(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_INSERT, wxID_ADD));
-      array.Add(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_DELETE, wxID_DELETE));
-      array.Add(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_F2, XRCID("edit")));
-      array.Add(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_F3, XRCID("find_next")));
-      array.Add(wxAcceleratorEntry(wxACCEL_CTRL, 'H', wxID_REPLACE));
-      array.Add(wxAcceleratorEntry(wxACCEL_CTRL, 'X', XRCID("export")));
-      array.Add(wxAcceleratorEntry(wxACCEL_CTRL, 'D', XRCID("pack")));
-      array.Add(wxAcceleratorEntry(wxACCEL_CTRL, 'M', XRCID("struct")));
-
-      array.Add(wxAcceleratorEntry(wxACCEL_CMD | wxACCEL_SHIFT, 'S', wxID_SAVEAS));
-   }
-   return array;
 }
 
 void App::OnMenuAbout(wxCommandEvent& WXUNUSED(event))

@@ -1,5 +1,5 @@
 // wx29.h
-// Copyright (c) 2010 by Troels K. All rights reserved.
+// Copyright (c) 2010-2012 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __WXTRUNK_H__
@@ -126,5 +126,16 @@ private:
 };
 
 #endif // _WX_VERSIONINFO_H_
+
+#if (wxVERSION_NUMBER >= 2900)
+#ifdef _WX_LISTCTRL_H_BASE_
+inline wxString wxListCtrl_GetItemText(const wxListCtrl& ctrl, long row, long col = 0)
+{
+   return ctrl.GetItemText(row, col);
+}
+#endif
+#else
+extern wxString wxListCtrl_GetItemText(const wxListCtrl&, long row, long col = 0);
+#endif
 
 #endif // __WXTRUNK_H__

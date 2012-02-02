@@ -105,7 +105,7 @@
 		<Unit filename="src\appdoc.cpp" />
 		<Unit filename="src\appframe.cpp" />
 		<Unit filename="src\appframe.h" />
-		<Unit filename="src\xmlres.cpp" />
+		<Unit filename="src\dbfres.cpp" />
 		<Unit filename="src\art.cpp" />
 		<Unit filename="src\datalist.cpp" />
 		<Unit filename="src\datamodel.cpp" />

@@ -1,5 +1,5 @@
 // dbfdoc.cpp
-// Copyright (c) 2007-2011 by Troels K. All rights reserved.
+// Copyright (c) 2007-2012 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -120,24 +120,44 @@ bool DBFDocument::SaveAs()
 
 #include "dbfview.h"
 #include "dbfframe.h"
+#include "../art/database.xpm"
 
-DatabaseDocTemplate::DatabaseDocTemplate(wxDocManager* docManager) : wxDocTemplate(docManager, 
+IMPLEMENT_CLASS(DatabaseDocTemplate, wxDocTemplate)
+
+DatabaseDocTemplate::DatabaseDocTemplate(wxDocManager* docManager,
+                                         wxClassInfo* docClassInfo,
+                                         wxClassInfo* viewClassInfo,
+                                         wxClassInfo* frameClassInfo,
+                                         wxRecentFileList* mru) : wxDocTemplate(docManager, 
         wxString::Format(_("%s Files"), wxT(DBF_FORMAT_NAME)), wxT("*.")wxT(DBF_FILEEXT),
         wxT(""), wxT(DBF_FILEEXT), wxT("dbf doc"), wxT("dbf view"),
-        CLASSINFO(DBFDocument), CLASSINFO(DBFView))
+        docClassInfo, viewClassInfo), m_frameClassInfo(frameClassInfo), m_mru(mru)
 {
 }
 
-/*static*/ wxDocTemplate* DatabaseDocTemplate::Create(wxDocManager* docManager)
+/*static*/ DatabaseDocTemplate* DatabaseDocTemplate::Create(wxDocManager* docManager, wxRecentFileList* mru)
 {
-   return new DatabaseDocTemplate(docManager);
+   return new DatabaseDocTemplate(docManager, CLASSINFO(DBFDocument), CLASSINFO(DBFView), CLASSINFO(DBFFrame), mru);
+}
+
+/*static*/ wxIcon DatabaseDocTemplate::GetIcon()
+{
+    return wxIcon(database_xpm);
 }
 
 wxFrame* DatabaseDocTemplate::CreateViewFrame(wxView* view)
 {
-   DBFFrame* frame = new DBFFrame();
-   frame->Create(view->GetDocument(), wxStaticCast(wxTheApp->GetTopWindow(), wxMDIParentFrame));
-   return frame;
+    DBFFrame* subframe = wxStaticCast(m_frameClassInfo->CreateObject(), DBFFrame);
+
+    if (subframe->Create(view->GetDocument(), wxStaticCast(wxTheApp->GetTopWindow(), wxMDIParentFrame), m_mru))
+    {
+        subframe->SetIcon(GetIcon());
+    }
+    else
+    {
+        wxDELETE(subframe);
+    }
+    return subframe;
 }
 
 /////////////////////////////////////////////////////////////////////////////

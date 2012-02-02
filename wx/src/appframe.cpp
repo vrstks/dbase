@@ -1,5 +1,5 @@
 // appframe.cpp
-// Copyright (c) 2007-2011 by Troels K. All rights reserved.
+// Copyright (c) 2007-2012 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -14,6 +14,7 @@
 #include "../../dbf.h"
 #include "../../dbf.hpp"
 #include "../../dbf_wx.h"
+#include "dbfframe.h"
 
 IMPLEMENT_CLASS(MainFrame, wxDocMDIParentFrame)
 
@@ -46,7 +47,7 @@ bool MainFrame::Create(wxDocManager* manager, const wxString& title,
        SetToolBar(CreateToolBar());
        SetIcon(wxICON(app));
        SetMenuBar(CreateMenuBar());
-       wxAcceleratorHelper::SetAcceleratorTable(this, wxGetApp().GetAccelerator());
+       wxAcceleratorHelper::SetAcceleratorTable(this, DBFFrame::GetAccelerator());
        ::wxFrame_SetInitialPosition(this, pos, size, 10);
    }
    return ok;
@@ -56,7 +57,7 @@ wxMenuBar* MainFrame::CreateMenuBar() const
 {
    wxMenuBar* menubar = wxXmlResource::Get()->LoadMenuBar(wxT("menu_mdi"));
 
-   wxAcceleratorHelper::SetAccelText(menubar, wxGetApp().GetAccelerator());
+   wxAcceleratorHelper::SetAccelText(menubar, DBFFrame::GetAccelerator());
    return menubar;
 }
 
@@ -80,7 +81,7 @@ typedef struct _wxTOOLBARITEM
 
 wxToolBar* MainFrame::CreateToolBar()
 {
-   const AcceleratorArray& accel = wxGetApp().GetAccelerator();
+   const AcceleratorArray& accel = DBFFrame::GetAccelerator();
    wxToolBar* tb = base::CreateToolBar(wxTB_TEXT | wxBORDER_NONE | wxTB_HORIZONTAL | wxTB_FLAT);
    const wxSize size = tb->GetToolBitmapSize();
 

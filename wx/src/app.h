@@ -24,7 +24,7 @@ public:
 class MainFrame;
 class AcceleratorArray;
 class wxRecentFileList;
-class Resource;
+class DBFResource;
 
 class App : public wxAppEx
 {
@@ -33,7 +33,7 @@ protected:
    CommandLine       m_cmdline;
    wxRecentFileList* m_mru;
    wxLocale          m_locale;
-   Resource*         m_res;
+   DBFResource*      m_res;
 public:
    App(void);
 
@@ -41,8 +41,6 @@ public:
    virtual int OnExit(void);
    virtual void OnInitCmdLine(wxCmdLineParser&);
    virtual bool OnCmdLineParsed(wxCmdLineParser&);
-
-   static const AcceleratorArray& GetAccelerator();
 
    wxRecentFileList* GetRecentFileList() const { return m_mru; }
 
@@ -52,6 +50,7 @@ protected:
 protected:
    void OnMenuAbout(wxCommandEvent&);
    DECLARE_EVENT_TABLE()
+   friend class DocManager;
 };
 
 DECLARE_APP(App)
