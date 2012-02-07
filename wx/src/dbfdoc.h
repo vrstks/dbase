@@ -49,6 +49,7 @@ class wxRecentFileList;
 class DatabaseDocTemplate : public wxDocTemplate
 {
     DECLARE_CLASS(DatabaseDocTemplate)
+    static DatabaseDocTemplate* ms_instance;
     DatabaseDocTemplate(wxDocManager*, wxClassInfo* docClassInfo,
                                        wxClassInfo* viewClassInfo,
                                        wxClassInfo* frameClassInfo,
@@ -62,6 +63,8 @@ public:
     static DatabaseDocTemplate* Create(wxDocManager*, wxRecentFileList*);
     static wxIcon GetIcon();
     wxRecentFileList* GetRecentFileList() const { return m_mru; }
+
+    static DatabaseDocTemplate* GetInstance() { return ms_instance; }
 
     friend class DBFView;
 };

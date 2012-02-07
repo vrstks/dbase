@@ -546,18 +546,10 @@ wxRecentFileList::wxRecentFileList(wxFileHistory* fileHistory) : m_fileHistory(f
 {
 }
 
-wxMenuItem* wxRecentFileList::GetSubMenu(wxMenuBar* menubar, wxMenu** submenu) const
-{
-   wxMenuItem* item = menubar->FindItem(m_fileHistory->GetBaseId(), submenu);
-
-   wxASSERT(item);
-   return item;
-}
-
 void wxRecentFileList::Attach(wxMenuBar* menubar)
 {
    wxMenu* submenu;
-   wxMenuItem* item = GetSubMenu(menubar, &submenu);
+   wxMenuItem* item = menubar->FindItem(m_fileHistory->GetBaseId(), &submenu);
 
    submenu->Delete(item);
    m_fileHistory->UseMenu(submenu);
@@ -566,14 +558,22 @@ void wxRecentFileList::Attach(wxMenuBar* menubar)
 
 bool wxRecentFileList::Detach(wxMenuBar* menubar)
 {
-   wxMenu* submenu;
-   bool ok = (NULL != GetSubMenu(menubar, &submenu));
+   const wxList& list = m_fileHistory->GetMenus();
 
-   if (ok)
+   for (wxList::const_iterator it = list.begin();
+        it != list.end();
+        it++)
    {
-      m_fileHistory->RemoveMenu(submenu);
+       wxMenu* menu = wxStaticCast(*it, wxMenu);
+
+       if (menu->GetMenuBar() == menubar)
+       {
+           m_fileHistory->RemoveMenu(menu);
+           return true;
+       }
    }
-   return ok;
+   wxASSERT(false);
+   return false;
 }
 
 void wxRecentFileList::Attach(wxFrame* frame)

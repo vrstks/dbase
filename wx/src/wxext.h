@@ -156,8 +156,6 @@ public:
    wxFileHistory* GetImplementation() const;
 
    bool GetFile(size_t, wxFileName*) const;
-protected:
-   wxMenuItem* GetSubMenu(wxMenuBar*, wxMenu**) const;
 };
 
 class wxDocument;
