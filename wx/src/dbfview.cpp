@@ -1,11 +1,11 @@
 // dbfview.cpp
-// Copyright (c) 2007-2011 by Troels K. All rights reserved.
+// Copyright (c) 2007-2012 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
 
 #include "wxext.h"
-#include "app.h"
+//#include "app.h"
 #include "dbfview.h"
 #include "dbfdoc.h"
 #include "dbfdlgs.h"
@@ -154,7 +154,7 @@ void DBFView::OnStructClipboard(wxCommandEvent&)
    bool ok = wxClipboardHelper::SetText(str);
 
    ::wxMessageBox(ok ? _("Struct is now on the Clipboard") : _("Failed to open clipboard"),
-      wxMessageBoxCaption, wxOK | wxCENTRE, doc->GetDocumentWindow());
+      wxMessageBoxCaptionStr, wxOK | wxCENTRE, doc->GetDocumentWindow());
 }
 
 void DBFView::OnProperties(wxCommandEvent&)
@@ -167,7 +167,7 @@ void DBFView::OnProperties(wxCommandEvent&)
    wxDBFModel datamodel(doc->GetDatabase());
    datamodel.GetProperties(&as, true);
 
-   ::wxMessageBox(::wxJoin(as, wxT('\n')), wxMessageBoxCaption, wxOK | wxCENTRE, GetFrame());
+   ::wxMessageBox(::wxJoin(as, wxT('\n')), wxMessageBoxCaptionStr, wxOK | wxCENTRE, GetFrame());
 }
 
 void DBFView::OnSelectAll(wxCommandEvent&)
@@ -206,7 +206,8 @@ void DBFView::OnUpdateNeedSel(wxUpdateUIEvent& event)
 void DBFView::OnDeleteAll(wxCommandEvent&)
 {
    const DBFDocument* doc = GetDocument();
-   if (wxOK == wxMessageBox(_("Delete all?"), wxMessageBoxCaption, wxOK | wxCANCEL | wxICON_QUESTION, doc->GetDocumentWindow()))
+
+   if (wxOK == wxMessageBox(_("Delete all?"), wxMessageBoxCaptionStr, wxOK | wxCANCEL | wxICON_QUESTION, doc->GetDocumentWindow()))
    {
       GetWindow()->DeleteAll(true);
    }
@@ -215,7 +216,7 @@ void DBFView::OnDeleteAll(wxCommandEvent&)
 void DBFView::OnDelete(wxCommandEvent&)
 {
    const DBFDocument* doc = GetDocument();
-   if (wxOK == wxMessageBox(_("Delete selection?"), wxMessageBoxCaption, wxOK | wxCANCEL | wxICON_QUESTION, doc->GetDocumentWindow()))
+   if (wxOK == wxMessageBox(_("Delete selection?"), wxMessageBoxCaptionStr, wxOK | wxCANCEL | wxICON_QUESTION, doc->GetDocumentWindow()))
    {
       GetWindow()->DeleteSelection(true);
    }
