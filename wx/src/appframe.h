@@ -17,8 +17,7 @@ class MainFrame : public wxDocMDIParentFrame
 public:
    MainFrame(void);
 
-   bool Create(wxDocManager*, const wxString& title, 
-       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize);
+   bool Create(wxDocManager*, const wxString& title);
 
    virtual void SetMenuBar(wxMenuBar*);
    virtual ~MainFrame();

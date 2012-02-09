@@ -36,10 +36,9 @@ BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
 // EVT_UPDATE_UI(wxID_HELP          , MainFrame::OnUpdateDisable)
 END_EVENT_TABLE()
 
-bool MainFrame::Create(wxDocManager* manager, const wxString& title,
-    const wxPoint& pos, const wxSize& size)
+bool MainFrame::Create(wxDocManager* manager, const wxString& title)
 {
-   bool ok = base::Create(manager, NULL, wxID_ANY, title, pos, size);
+   bool ok = base::Create(manager, NULL, wxID_ANY, title);
 
    if (ok)
    {
@@ -48,7 +47,7 @@ bool MainFrame::Create(wxDocManager* manager, const wxString& title,
        SetIcon(wxICON(app));
        SetMenuBar(CreateMenuBar());
        wxAcceleratorHelper::SetAcceleratorTable(this, DBFFrame::GetAccelerator());
-       ::wxFrame_SetInitialPosition(this, pos, size, 10);
+       ::wxFrame_SetInitialPosition(this);
    }
    return ok;
 }
