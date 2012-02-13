@@ -14,7 +14,7 @@ bool DBFResource::Init()
 {
     const wxString filename = wxString(WXDBF_APP_EXETITLE) + wxFILE_SEP_EXT + wxXmlResourceHelper::FileExt;
     
-#ifdef __WXDEBUG__
+#ifdef _DEBUG
     // load xrc file directly
     return wxXmlResourceHelper::LoadFromFile(__FILE__, filename);
 #else
