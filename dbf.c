@@ -1,5 +1,5 @@
 /* dbf.c */
-/* Copyright (c) 2007-2011 by Troels K. All rights reserved. */
+/* Copyright (c) 2007-2012 by Troels K. All rights reserved. */
 /* License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt */
 /* Partially based on MFC source code by www.pablosoftwaresolutions.com 2002   */
 /* Partially based on Turbo C source code by Mark Sadler.      */
@@ -276,7 +276,7 @@ EXTERN_C DBF_HANDLE dbf_alloc(void)
    handle->modified        = FALSE;
    handle->recorddataptr   = NULL;
    handle->editable        = FALSE;
-   handle->currentrecord   = 0;
+   handle->currentrecord   = (dbf_uint)-1;
    handle->lastupdate      = time(NULL);
    handle->recordcount     = 0;
    handle->recordlength    = 0;
@@ -752,7 +752,7 @@ BOOL dbf_setposition(DBF_HANDLE handle, dbf_uint record)
 {
    BOOL ok = (record < handle->recordcount);
 
-   if (ok)
+   if (ok && (record != handle->currentrecord))
    {
       ok = (0 == ZSEEK(handle->api, handle->stream, handle->headerlength + (record - 0) * handle->recordlength, ZLIB_FILEFUNC_SEEK_SET));
       if (ok) ok = (handle->recordlength == ZREAD(handle->api, handle->stream, handle->recorddataptr, handle->recordlength));

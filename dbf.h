@@ -1,5 +1,5 @@
 /* dbf.h */
-/* Copyright (c) 2007-2011 by Troels K. All rights reserved. */
+/* Copyright (c) 2007-2012 by Troels K. All rights reserved. */
 /* License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt */
 /*  Partially based on Turbo C source code by Mark Sadler.      */
 /*  Partially based on MFC source code by www.pablosoftwaresolutions.com 2002   */
@@ -27,7 +27,7 @@ struct tm;
 
 #define DBF_MAJOR_VERSION      1
 #define DBF_MINOR_VERSION      2
-#define DBF_SVN_VERSION        295
+#define DBF_SVN_VERSION        323
 #define DBF_WEBSITE            "http://sf.net/projects/dbase"
 #define DBF_FORMAT_NAME        "dBASE"
 #define DBF_LIB_NAME           "dbflib"
