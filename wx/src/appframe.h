@@ -1,5 +1,5 @@
 // appframe.h
-// Copyright (c) 2007-2011 by Troels K. All rights reserved.
+// Copyright (c) 2007-2012 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __APPFRAME_H__
@@ -8,12 +8,15 @@
 /////////////////////////////////////////////////////////////////////////////
 // MainFrame
 
+class MDIWindowMenuEvtHandler;
 class WXDLLIMPEXP_FWD_ADV wxAboutDialogInfo;
 
 class MainFrame : public wxDocMDIParentFrame
 {
    typedef wxDocMDIParentFrame base;
    DECLARE_CLASS(MainFrame)
+protected:
+   MDIWindowMenuEvtHandler* m_windowMenuEvtHandler;
 public:
    MainFrame(void);
 
@@ -21,6 +24,9 @@ public:
 
    virtual void SetMenuBar(wxMenuBar*);
    virtual ~MainFrame();
+#ifdef __WXMSW__
+   virtual bool MSWTranslateMessage(WXMSG*);
+#endif
 
    static void GetVersionInfo(wxAboutDialogInfo*);
 protected:

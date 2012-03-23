@@ -16,14 +16,88 @@
 #include "../../dbf_wx.h"
 #include "dbfframe.h"
 
+/////////////////////////////////////////////////////////////////////////////
+// MDIWindowMenuEvtHandler
+
+class MDIWindowMenuEvtHandler : public wxEvtHandler
+{
+protected:
+    wxMDIParentFrame* m_target_wnd;
+public:
+    MDIWindowMenuEvtHandler(wxMDIParentFrame*);
+
+    virtual ~MDIWindowMenuEvtHandler();
+protected:
+    void OnClose(wxCommandEvent&);
+    void OnCloseAll(wxCommandEvent&);
+    void OnUpdateNeedWindow(wxUpdateUIEvent&);
+    DECLARE_EVENT_TABLE()
+};
+
+MDIWindowMenuEvtHandler::MDIWindowMenuEvtHandler(wxMDIParentFrame* wnd) : wxEvtHandler(), m_target_wnd(NULL)
+{
+    wxMenu* windowMenu = wnd->GetWindowMenu();
+
+    if (windowMenu)
+    {   
+        windowMenu->AppendSeparator();
+        windowMenu->Append(wxID_CLOSE, _("Cl&ose"), _("Close window"));
+        windowMenu->Append(wxID_CLOSE_ALL, _("Close &All"), _("Close all open windows"));
+        wnd->PushEventHandler(this);
+        m_target_wnd = wnd;
+    }
+}
+
+MDIWindowMenuEvtHandler::~MDIWindowMenuEvtHandler()
+{
+    if (m_target_wnd)
+    {
+        m_target_wnd->RemoveEventHandler(this);
+    }
+}
+
+BEGIN_EVENT_TABLE(MDIWindowMenuEvtHandler, wxEvtHandler)
+    EVT_MENU(wxID_CLOSE_ALL, MDIWindowMenuEvtHandler::OnCloseAll)
+    EVT_UPDATE_UI(wxID_CLOSE, MDIWindowMenuEvtHandler::OnUpdateNeedWindow)
+    EVT_UPDATE_UI(wxID_CLOSE_ALL, MDIWindowMenuEvtHandler::OnUpdateNeedWindow)
+END_EVENT_TABLE()
+
+void MDIWindowMenuEvtHandler::OnUpdateNeedWindow(wxUpdateUIEvent& event)
+{
+    event.Enable(m_target_wnd->GetActiveChild() != NULL);
+}
+
+void MDIWindowMenuEvtHandler::OnCloseAll(wxCommandEvent&)
+{
+    const wxWindowList list = m_target_wnd->GetChildren(); // make a copy of the window list
+
+    for (wxWindowList::const_iterator i = list.begin();
+         i != list.end();
+         i++)
+    {
+        if (wxDynamicCast(*i, wxMDIChildFrame))
+        {
+            if (!(*i)->Close())
+            {
+                // Close was vetoed
+                break;
+            }
+        }
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// MainFrame
+
 IMPLEMENT_CLASS(MainFrame, wxDocMDIParentFrame)
 
-MainFrame::MainFrame() : wxDocMDIParentFrame()
+MainFrame::MainFrame() : wxDocMDIParentFrame(), m_windowMenuEvtHandler(NULL)
 {
 }
 
 MainFrame::~MainFrame()
 {
+    delete m_windowMenuEvtHandler;
 }
 
 BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
@@ -48,6 +122,7 @@ bool MainFrame::Create(wxDocManager* manager, const wxString& title)
        SetMenuBar(CreateMenuBar());
        wxAcceleratorHelper::SetAcceleratorTable(this, DBFFrame::GetAccelerator());
        ::wxFrame_SetInitialPosition(this);
+       m_windowMenuEvtHandler = new MDIWindowMenuEvtHandler(this);
    }
    return ok;
 }
@@ -153,6 +228,35 @@ wxToolBar* MainFrame::CreateToolBar()
    info->SetLicense(wxT("wxWindows"));
    info->SetWebSite(wxT(DBF_WEBSITE));
 }
+
+#ifdef __WXMSW__
+bool MainFrame::MSWTranslateMessage(WXMSG* msg)
+{
+    bool processed = false;
+
+#if (wxVERSION_NUMBER < 2900)
+    if ( (!processed) && (msg->message == WM_COMMAND))
+    {
+        switch (msg->wParam)
+        {
+            //case wxID_CLOSE:
+            case wxID_CLOSE_ALL:
+                wxPostMenuCommand(m_windowMenuEvtHandler, msg->wParam);
+                processed = true;
+                break;
+            default:
+                break;
+        }
+    }
+#endif
+
+    if (!processed)
+    {
+         processed = base::MSWTranslateMessage(msg);
+    }
+    return processed;
+}
+#endif
 
 void MainFrame::OnStatusBar(wxCommandEvent&)
 {
