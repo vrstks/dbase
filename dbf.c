@@ -212,6 +212,8 @@ typedef struct _DBF_DATA
    char* dup;
 } DBF_DATA;
 
+typedef uint32_t hash_t;
+
 typedef struct _DBF_FIELD_DATA
 {
    char     m_Name[DBF_DBASE4_FIELDNAMELENGTH+1];
@@ -219,16 +221,17 @@ typedef struct _DBF_FIELD_DATA
    size_t   m_Length;
    dbf_uint m_DecCount;
    char*    ptr;
-   uint32_t namehash;
+   hash_t   namehash;
 } DBF_FIELD_DATA;
 
 static uint32_t strhash(const char* str, BOOL case_sensitive)
 {
-   uint32_t hash = 5381;
+   hash_t hash = 5381;
 
    for (; *str; str++)
    {
       int c = case_sensitive ? *str : toupper(*str);
+
       hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
    }
    return hash;
@@ -895,7 +898,7 @@ const DBF_FIELD* dbf_getfieldptr(DBF_HANDLE handle, dbf_uint index)
 int dbf_findfield(DBF_HANDLE handle, const char* fieldname_host)
 {
    dbf_uint i;
-   uint32_t namehash;
+   hash_t namehash;
    char fieldname[20];
 
    strcpy_host2dos(fieldname, fieldname_host, _countof(fieldname), ENUM_dbf_charconv_oem_host);
@@ -904,6 +907,7 @@ int dbf_findfield(DBF_HANDLE handle, const char* fieldname_host)
    for (i = 0; i < handle->fieldcount; i++)
    {
       const DBF_FIELD* temp = handle->fieldarray + i;
+
       if (   (namehash == temp->namehash)
           && (0 == strcasecmp(temp->m_Name, fieldname)))
       {
@@ -1630,8 +1634,8 @@ DBF_HANDLE dbf_create_attach(void* stream, zlib_filefunc_def* api,
       temp.type     = dbf_gettype_ext2int(field->type);
       temp.length   = (uint8_t)field->m_Length;
       temp.deccount = (uint8_t)field->m_DecCount;
-      field->ptr = recorddataptr + header.recordlength;
-      field->namehash   = strhash(field->m_Name, FALSE);
+      field->ptr      = recorddataptr + header.recordlength;
+      field->namehash = strhash(field->m_Name, FALSE);
 
       ZWRITE(*api, stream, &temp, sizeof(temp));
       header.recordlength = (uint16_t)(header.recordlength + field->m_Length);

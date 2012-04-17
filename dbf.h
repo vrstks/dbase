@@ -27,7 +27,7 @@ struct tm;
 
 #define DBF_MAJOR_VERSION      1
 #define DBF_MINOR_VERSION      2
-#define DBF_SVN_VERSION        323
+#define DBF_SVN_VERSION        325
 #define DBF_WEBSITE            "http://sf.net/projects/dbase"
 #define DBF_FORMAT_NAME        "dBASE"
 #define DBF_LIB_NAME           "dbflib"
