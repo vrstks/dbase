@@ -145,8 +145,8 @@ protected:
 public:
    wxRecentFileList(wxFileHistory*);
 
-   void Load(wxConfigBase* config = NULL);
-   void Save(wxConfigBase* config = NULL);
+   void Load(wxConfigBase* config = NULL, const wxString& configPath = wxEmptyString);
+   void Save(wxConfigBase* config = NULL, const wxString& configPath = wxEmptyString);
 
    void Attach(wxMenuBar*);
    void Attach(wxFrame*);

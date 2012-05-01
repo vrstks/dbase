@@ -586,18 +586,18 @@ bool wxRecentFileList::Detach(wxFrame* frame)
    return Detach(frame->GetMenuBar());
 }
 
-void wxRecentFileList::Load(wxConfigBase* config)
+void wxRecentFileList::Load(wxConfigBase* config, const wxString& configPath)
 {
    if (NULL == config) config = wxConfigBase::Get();
-   config->SetPath(wxT("MRU"));
+   config->SetPath(configPath.empty() ? wxT("MRU") : configPath);
    m_fileHistory->Load(*config);
    config->SetPath(wxT("/"));
 }
 
-void wxRecentFileList::Save(wxConfigBase* config)
+void wxRecentFileList::Save(wxConfigBase* config, const wxString& configPath)
 {
    if (NULL == config) config = wxConfigBase::Get();
-   config->SetPath(wxT("MRU"));
+   config->SetPath(configPath.empty() ? wxT("MRU") : configPath);
    m_fileHistory->Save(*config);
    config->SetPath(wxT("/"));
 }
