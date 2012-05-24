@@ -8,6 +8,7 @@
 class WXDLLIMPEXP_FWD_CORE wxListCtrl;
 class WXDLLIMPEXP_FWD_CORE wxListView;
 class WXDLLIMPEXP_FWD_CORE wxDataObject;
+class WXDLLIMPEXP_FWD_CORE wxMDIParentFrame;
 
 WX_DECLARE_OBJARRAY(wxFileName, FileNameArray);
 
@@ -186,3 +187,21 @@ private:
     wxWindow* m_viewWindow;
 };
 #endif
+
+/////////////////////////////////////////////////////////////////////////////
+// MDIWindowMenuEvtHandler
+
+class MDIWindowMenuEvtHandler : public wxEvtHandler
+{
+protected:
+    wxMDIParentFrame* m_target_wnd;
+public:
+    MDIWindowMenuEvtHandler(wxMDIParentFrame*);
+
+    virtual ~MDIWindowMenuEvtHandler();
+protected:
+    void OnClose(wxCommandEvent&);
+    void OnCloseAll(wxCommandEvent&);
+    void OnUpdateNeedWindow(wxUpdateUIEvent&);
+    DECLARE_EVENT_TABLE()
+};

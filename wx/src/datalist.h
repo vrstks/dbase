@@ -1,5 +1,5 @@
 // datalist.h
-// Copyright (c) 2007-2011 by Troels K. All rights reserved.
+// Copyright (c) 2007-2012 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __DATALIST_H__
@@ -44,6 +44,7 @@ protected:
 
 // Implementation
 public:
+   virtual ~wxDataListCtrl();
    virtual wxString OnGetItemText(long item, long col) const;
    virtual wxListItemAttr* OnGetItemAttr(long item) const;
    virtual bool DeleteRecord(unsigned int index, bool bDelete);

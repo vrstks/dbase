@@ -1,5 +1,5 @@
 // datalist.cpp
-// Copyright (c) 2007-2011 by Troels K. All rights reserved.
+// Copyright (c) 2007-2012 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include <wx/listctrl.h>
@@ -35,6 +35,10 @@ wxDataListCtrl::wxDataListCtrl(): wxListView()
    m_attr[ENUM_attr_deleted].SetTextColour(gray);
    m_column_clicked = -1;
    m_id_edit = m_id_selchange = m_id_delete = 0;
+}
+
+wxDataListCtrl::~wxDataListCtrl()
+{
 }
 
 void wxDataListCtrl::OnSelChange(wxListEvent& event)

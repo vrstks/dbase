@@ -735,3 +735,58 @@ void wxJoin(wxArrayString* dst, const wxArrayString& src)
 }
 
 /////////////////////////////////////////////////////////////////////////////
+// MDIWindowMenuEvtHandler
+
+MDIWindowMenuEvtHandler::MDIWindowMenuEvtHandler(wxMDIParentFrame* wnd) : wxEvtHandler(), m_target_wnd(NULL)
+{
+    wxMenu* windowMenu = wnd->GetWindowMenu();
+
+    if (windowMenu)
+    {   
+        windowMenu->AppendSeparator();
+        windowMenu->Append(wxID_CLOSE, _("Cl&ose"), _("Close window"));
+        windowMenu->Append(wxID_CLOSE_ALL, _("Close &All"), _("Close all open windows"));
+        wnd->PushEventHandler(this);
+        m_target_wnd = wnd;
+    }
+}
+
+MDIWindowMenuEvtHandler::~MDIWindowMenuEvtHandler()
+{
+    if (m_target_wnd)
+    {
+        m_target_wnd->RemoveEventHandler(this);
+    }
+}
+
+BEGIN_EVENT_TABLE(MDIWindowMenuEvtHandler, wxEvtHandler)
+    EVT_MENU(wxID_CLOSE_ALL, MDIWindowMenuEvtHandler::OnCloseAll)
+    EVT_UPDATE_UI(wxID_CLOSE, MDIWindowMenuEvtHandler::OnUpdateNeedWindow)
+    EVT_UPDATE_UI(wxID_CLOSE_ALL, MDIWindowMenuEvtHandler::OnUpdateNeedWindow)
+END_EVENT_TABLE()
+
+void MDIWindowMenuEvtHandler::OnUpdateNeedWindow(wxUpdateUIEvent& event)
+{
+    event.Enable(m_target_wnd->GetActiveChild() != NULL);
+}
+
+void MDIWindowMenuEvtHandler::OnCloseAll(wxCommandEvent&)
+{
+    const wxWindowList list = m_target_wnd->GetChildren(); // make a copy of the window list
+
+    for (wxWindowList::const_iterator i = list.begin();
+         i != list.end();
+         i++)
+    {
+        if (wxDynamicCast(*i, wxMDIChildFrame))
+        {
+            if (!(*i)->Close())
+            {
+                // Close was vetoed
+                break;
+            }
+        }
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////
