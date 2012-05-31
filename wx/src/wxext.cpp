@@ -745,7 +745,7 @@ MDIWindowMenuEvtHandler::MDIWindowMenuEvtHandler(wxMDIParentFrame* wnd) : wxEvtH
     {   
         windowMenu->AppendSeparator();
         windowMenu->Append(wxID_CLOSE, _("Cl&ose"), _("Close window"));
-        windowMenu->Append(wxID_CLOSE_ALL, _("Close &All"), _("Close all open windows"));
+        windowMenu->Append(wxID_CLOSE_ALL, _("Close A&ll"), _("Close all open windows"));
         wnd->PushEventHandler(this);
         m_target_wnd = wnd;
     }

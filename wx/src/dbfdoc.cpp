@@ -16,6 +16,7 @@
 #include "../../dbf_wx.inl"
 #include "dbfdoc.h"
 #include "wxext.h"
+#include "wx29.h"
 
 IMPLEMENT_DYNAMIC_CLASS(DBFDocument, wxDocument)
 
@@ -140,7 +141,7 @@ DatabaseDocTemplate::DatabaseDocTemplate(wxDocManager* docManager,
 
 /*static*/ DatabaseDocTemplate* DatabaseDocTemplate::Create(wxDocManager* docManager, wxRecentFileList* mru)
 {
-   return new DatabaseDocTemplate(docManager, CLASSINFO(DBFDocument), CLASSINFO(DBFView), CLASSINFO(DBFFrame), mru);
+   return new DatabaseDocTemplate(docManager, wxCLASSINFO(DBFDocument), wxCLASSINFO(DBFView), wxCLASSINFO(DBFFrame), mru);
 }
 
 /*static*/ wxIcon DatabaseDocTemplate::GetIcon()

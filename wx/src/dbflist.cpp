@@ -62,7 +62,7 @@ bool wxDBFListCtrl::Edit(long row, long col)
    {
       EnsureVisible(row);
       m_column_clicked = col;
-      wxFieldEdit* edit = wxStaticCast(EditLabel(row, CLASSINFO(wxFieldEdit)), wxFieldEdit);
+      wxFieldEdit* edit = wxStaticCast(EditLabel(row, wxCLASSINFO(wxFieldEdit)), wxFieldEdit);
       ok = (NULL != edit);
       if (ok)
       {

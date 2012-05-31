@@ -5,6 +5,10 @@
 #ifndef __WXTRUNK_H__
 #define __WXTRUNK_H__
 
+#ifndef wxCLASSINFO
+    #define wxCLASSINFO CLASSINFO
+#endif
+
 #if defined(_WX_ABOUTDLG_H_) && (wxVERSION_NUMBER < 2900)
 inline void wxAboutBox(const wxAboutDialogInfo& info, wxWindow* WXUNUSED(parent))
 {
