@@ -93,7 +93,6 @@ bool DBFView::OnCreate(wxDocument* doc, long flags)
       wxASSERT(frame == GetFrame());
       wnd->Create(frame);
       SetWindow(wnd);
-      frame->Show();
    }
    return ok;
 }
