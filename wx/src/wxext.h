@@ -26,6 +26,7 @@ extern wxArtID wxID2ArtID(int wx_id);
 extern void wxFrame_ToggleFullScreen(wxFrame*, long style);
 extern void wxFrame_OnUpdateFullScreen(wxFrame*, wxUpdateUIEvent&);
 extern bool wxWindow_Toggle(wxWindow*);
+extern wxStdDialogButtonSizer* wxCreateStdDialogButtonSizer(wxWindow* parent, long flags);
 
 class wxClipboardHelper
 {

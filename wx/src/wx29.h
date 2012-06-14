@@ -9,6 +9,10 @@
     #define wxCLASSINFO CLASSINFO
 #endif
 
+#ifndef wxAPPLY
+    #define wxAPPLY 0x00000020
+#endif
+
 #if defined(_WX_ABOUTDLG_H_) && (wxVERSION_NUMBER < 2900)
 inline void wxAboutBox(const wxAboutDialogInfo& info, wxWindow* WXUNUSED(parent))
 {

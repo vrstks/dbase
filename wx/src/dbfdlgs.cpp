@@ -192,14 +192,16 @@ wxDBFStructDialog::wxDBFStructDialog(wxDBase* db) : wxDialog(), m_database(db), 
 
 bool wxDBFStructDialog::Create(wxWindow* parent)
 {
-   bool ok = wxXmlResource::Get()->LoadDialog(this, parent, wxT("struct"));
+    bool ok = wxXmlResource::Get()->LoadDialog(this, parent, wxT("struct"));
 
-   if (ok)
-   {
-      m_list = XRCCTRL(*this, "list", wxStructListView);
-      m_list->Init(m_database);
-   }
-   return ok;
+    if (ok)
+    {
+        wxCreateStdDialogButtonSizer(this, wxOK|wxCANCEL);
+        
+        m_list = XRCCTRL(*this, "list", wxStructListView);
+        m_list->Init(m_database);
+    }
+    return ok;
 }
 
 wxDBFStructDialog::~wxDBFStructDialog()
@@ -264,7 +266,10 @@ bool DoModal_Structure(wxWindow* parent, wxDBase* db, const wxString& caption, c
 
    if (ok)
    {
-       if (caption.Length()) dlg.SetTitle(caption);
+       if (!caption.empty())
+       {
+           dlg.SetTitle(caption);
+       }
        ok = (wxID_OK == dlg.ShowModal());
        if (ok && filename.Length() && !db->IsOpen())
        {
@@ -351,12 +356,7 @@ bool wxDBFFieldDialog::Create(wxWindow* parent)
    
     if (ok)
     {
-        wxStdDialogButtonSizer* buttons = new wxStdDialogButtonSizer();
-
-        buttons->SetAffirmativeButton(new wxButton(this, wxID_OK));
-        buttons->SetCancelButton(new wxButton(this, wxID_CANCEL));
-        buttons->Realize();
-        GetSizer()->Add(buttons, 0, wxEXPAND | wxTOP | wxBOTTOM, 5);
+        wxCreateStdDialogButtonSizer(this, wxOK|wxCANCEL);
 
         m_edit0 = XRCCTRL(*this, "edit0", wxTextCtrl);
         m_edit1 = XRCCTRL(*this, "edit1", wxComboBox);

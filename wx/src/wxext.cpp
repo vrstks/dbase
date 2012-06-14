@@ -6,6 +6,7 @@
 #include <wx/stdpaths.h>
 
 #include "wxext.h"
+#include "wx29.h"
 
 #include <wx/arrimpl.cpp>
 WX_DEFINE_OBJARRAY(AcceleratorArray)
@@ -117,7 +118,7 @@ bool wxXmlResourceHelper::LoadFromFile(const wxFileName& filename)
 bool wxXmlResourceHelper::LoadFromFile(const char* srcmodule, const wxString& fullname)
 {
     wxFileName filename(wxString::FromAscii(srcmodule));
-    
+
     filename.RemoveLastDir();
     filename.AppendDir(DefaultFolder);
     filename.SetFullName(fullname);
@@ -520,7 +521,7 @@ wxString wxGetStockLabelEx(wxWindowID id, long flags)
            if ( stockLabel.EndsWith(wxT("..."), &baseLabel) )
                stockLabel = baseLabel;
        }
-#else 
+#else
        // handled below
 #endif
    }
@@ -657,9 +658,9 @@ void wxFrame_SetInitialPosition(wxFrame* wnd, const wxPoint& pos, const wxSize& 
    {
       wxRect rect = wxGetClientDisplayRect();
       wxSize size(
-         (rect.width  * (100 - margin_pct*2))/100, 
+         (rect.width  * (100 - margin_pct*2))/100,
          (rect.height * (100 - margin_pct*2))/100);
-         
+
       wnd->SetSize(size);
    }
    if (pos == wxDefaultPosition)
@@ -686,7 +687,7 @@ void wxJoin(wxArrayString* dst, const wxArrayString& src)
     wxClipboard* clipboard = wxTheClipboard;
     bool was_open = clipboard->IsOpened();
     bool ok = was_open || clipboard->Open();
-    
+
     if (ok)
     {
         if (def)
@@ -727,7 +728,7 @@ void wxJoin(wxArrayString* dst, const wxArrayString& src)
 /*static*/ bool wxClipboardHelper::SetText(const wxString& str, Type clip_type)
 {
 #if wxUSE_DATAOBJ && wxUSE_CLIPBOARD
-    return Set(HASBIT(clip_type, Default) ? new wxTextDataObject(str) : NULL, 
+    return Set(HASBIT(clip_type, Default) ? new wxTextDataObject(str) : NULL,
                HASBIT(clip_type, Primary) ? new wxTextDataObject(str) : NULL);
 #else
     return false;
@@ -742,7 +743,7 @@ MDIWindowMenuEvtHandler::MDIWindowMenuEvtHandler(wxMDIParentFrame* wnd) : wxEvtH
     wxMenu* windowMenu = wnd->GetWindowMenu();
 
     if (windowMenu)
-    {   
+    {
         windowMenu->AppendSeparator();
         windowMenu->Append(wxID_CLOSE, _("Cl&ose"), _("Close window"));
         windowMenu->Append(wxID_CLOSE_ALL, _("Close A&ll"), _("Close all open windows"));
@@ -787,6 +788,33 @@ void MDIWindowMenuEvtHandler::OnCloseAll(wxCommandEvent&)
             }
         }
     }
+}
+
+wxStdDialogButtonSizer* wxCreateStdDialogButtonSizer(wxWindow* parent, long flags)
+{
+    wxStdDialogButtonSizer* buttonpane = new wxStdDialogButtonSizer();
+
+    if ((flags & wxOK) && (flags & wxCANCEL))
+    {
+        buttonpane->AddButton(new wxButton(parent, wxID_OK));
+        buttonpane->AddButton(new wxButton(parent, wxID_CANCEL));
+        buttonpane->GetAffirmativeButton()->SetDefault();
+    }
+    else if (flags & wxCANCEL)
+    {
+        buttonpane->AddButton(new wxButton(parent, wxID_CANCEL, _("Cl&ose")));
+        buttonpane->GetCancelButton()->SetDefault();
+    }
+    if (flags & wxAPPLY)
+    {
+        buttonpane->AddButton(new wxButton(parent, wxID_APPLY, _("&Apply")));
+    }
+    buttonpane->Realize();
+
+    //parent->GetSizer()->Add(new wxStaticLine(parent), 0, wxEXPAND | wxALL, 5); // separator
+    parent->GetSizer()->Add(buttonpane, 0, wxEXPAND | wxLEFT | wxBOTTOM, 5);
+
+    return buttonpane;
 }
 
 /////////////////////////////////////////////////////////////////////////////

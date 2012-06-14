@@ -176,27 +176,29 @@
     <object class="wxDialog" name="struct" subclass="Dialog">
         <style>wxCAPTION|wxRESIZE_BORDER|wxSYSTEM_MENU|wxCLOSE_BOX</style>
         <exstyle>wxWS_EX_BLOCK_EVENTS</exstyle>
+        <size>400,300</size>
         <title>Modify Database Structure</title>
         <centered>1</centered>
         <object class="wxBoxSizer">
-            <orient>wxHORIZONTAL</orient>
+            <orient>wxVERTICAL</orient>
             <object class="sizeritem">
-                <flag>wxGROW|wxALL</flag>
-                <border>5</border>
-                <option>1</option>
-                <object class="wxListCtrl" name="list" subclass="wxStructListView">
-                    <size>300,-1</size>
-                    <style>wxLC_REPORT|wxLC_VIRTUAL|wxLC_SINGLE_SEL</style>
-                </object>
-            </object>
-            <object class="sizeritem">
-                <flag>wxGROW|wxALL</flag>
+                <flag>wxGROW</flag>
                 <border>0</border>
+                <option>1</option>
                 <object class="wxBoxSizer">
-                    <orient>wxVERTICAL</orient>
+                    <orient>wxHORIZONTAL</orient>
                     <object class="sizeritem">
-                        <flag>wxALIGN_CENTER_HORIZONTAL|wxBOTTOM</flag>
+                        <flag>wxGROW|wxALL</flag>
                         <border>5</border>
+                        <option>1</option>
+                        <object class="wxListCtrl" name="list" subclass="wxStructListView">
+                            <size>300,-1</size>
+                            <style>wxLC_REPORT|wxLC_VIRTUAL|wxLC_SINGLE_SEL</style>
+                        </object>
+                    </object>
+                    <object class="sizeritem">
+                        <flag>wxGROW|wxALL</flag>
+                        <border>0</border>
                         <object class="wxBoxSizer">
                             <orient>wxVERTICAL</orient>
                             <object class="sizeritem">
@@ -221,38 +223,10 @@
                                 </object>
                             </object>
                             <object class="sizeritem">
-                                <flag>wxALIGN_CENTER_HORIZONTAL|wxLEFT|wxRIGHT|wxTOP</flag>
+                                <flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
                                 <border>5</border>
                                 <object class="wxButton" name="calendar">
                                     <label>Ca&amp;lendar</label>
-                                </object>
-                            </object>
-                        </object>
-                    </object>
-                    <object class="spacer">
-                        <flag>wxGROW</flag>
-                        <border>0</border>
-                        <option>1</option>
-                        <size>5,5</size>
-                    </object>
-                    <object class="sizeritem">
-                        <flag>wxALIGN_CENTER_HORIZONTAL|wxTOP|wxBOTTOM</flag>
-                        <border>5</border>
-                        <object class="wxBoxSizer">
-                            <orient>wxVERTICAL</orient>
-                            <object class="sizeritem">
-                                <flag>wxALIGN_CENTER_HORIZONTAL|wxLEFT|wxRIGHT|wxTOP</flag>
-                                <border>5</border>
-                                <object class="wxButton" name="wxID_OK">
-                                    <label>&amp;OK</label>
-                                    <default>1</default>
-                                </object>
-                            </object>
-                            <object class="sizeritem">
-                                <flag>wxALIGN_CENTER_HORIZONTAL|wxLEFT|wxRIGHT|wxTOP</flag>
-                                <border>5</border>
-                                <object class="wxButton" name="wxID_CANCEL">
-                                    <label>&amp;Cancel</label>
                                 </object>
                             </object>
                         </object>
@@ -264,6 +238,7 @@
     <object class="wxDialog" name="field_edit" subclass="Dialog">
         <style>wxCAPTION|wxRESIZE_BORDER|wxSYSTEM_MENU|wxCLOSE_BOX</style>
         <exstyle>wxWS_EX_BLOCK_EVENTS</exstyle>
+        <size>400,300</size>
         <object class="wxBoxSizer">
             <orient>wxVERTICAL</orient>
             <object class="sizeritem">

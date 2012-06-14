@@ -43,22 +43,20 @@ wxDataListCtrl::~wxDataListCtrl()
 
 void wxDataListCtrl::OnSelChange(wxListEvent& event)
 {
-   if (m_id_selchange && (GetFirstSelected() != wxNOT_FOUND))
-   {
-      wxPostMenuCommand(GetParent(), m_id_selchange);
-   }
-   event.Skip();
+    if (m_id_selchange && (GetFirstSelected() != wxNOT_FOUND))
+    {
+        wxPostMenuCommand(GetParent(), m_id_selchange);
+    }
+    event.Skip();
 }
 
-void wxDataListCtrl::OnSelect(wxListEvent&)
+void wxDataListCtrl::OnSelect(wxListEvent& event)
 {
-   if (m_id_edit)
-   {
-      if (GetFirstSelected() != wxNOT_FOUND)
-      {
-         wxPostMenuCommand(GetParent(), m_id_edit);
-      }
-   }
+    if (m_id_edit && (GetFirstSelected() != wxNOT_FOUND))
+    {
+        wxPostMenuCommand(GetParent(), m_id_edit);
+    }
+    event.Skip();
 }
 
 void wxDataListCtrl::OnKeyDown(wxKeyEvent& event)
