@@ -46,7 +46,7 @@ wxMenuBar* DBFFrame::CreateMenuBar() const
 {
    static AcceleratorArray array;
 
-   if (array.IsEmpty())
+   if (array.empty())
    {
       array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_EXIT));
       array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_CUT));

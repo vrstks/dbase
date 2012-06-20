@@ -35,7 +35,7 @@ public:
    void SetAppName(const wxString& name)
    {
       base::SetAppName(name);   
-      if (m_appDisplayName.IsEmpty())
+      if (m_appDisplayName.empty())
       {
          SetAppDisplayName(name);
       }

@@ -196,20 +196,20 @@ static wxString wxGetAccelText(int flags, int keyCode)
 
    if (flags & wxACCEL_CTRL)
    {
-      if (str.Length()) str+=sep;
+      if (!str.empty()) str+=sep;
       str+=_("Ctrl");
    }
    if (flags & wxACCEL_ALT)
    {
-      if (str.Length()) str+=sep;
+      if (!str.empty()) str+=sep;
       str+=_("Alt");
    }
    if (flags & wxACCEL_SHIFT)
    {
-      if (str.Length()) str+=sep;
+      if (!str.empty()) str+=sep;
       str+=_("Shift");
    }
-   if (str.Length()) str+=sep;
+   if (!str.empty()) str+=sep;
    switch (keyCode)
    {
       case WXK_INSERT         : str+=_("Insert" ); break;
@@ -461,20 +461,21 @@ void wxAcceleratorHelper::SetAccelText(wxMenuBar* menu, const AcceleratorArray& 
 wxString wxToolBarTool_MakeShortHelp(const wxString& rstr, const AcceleratorArray& accel, int id)
 {
    wxString str = rstr;
-   if (accel.GetCount() && str.Length())
+   if (accel.GetCount() && !str.empty())
    {
       wxString strAccel;
 
       for (size_t i = 0; i < accel.GetCount(); i++)
       {
          const wxAcceleratorEntry& element = accel.Item(i);
+
          if (element.GetCommand() == id)
          {
-            if (strAccel.Length()) strAccel+=wxT(ACCELSTR_SEP);
+            if (!strAccel.empty()) strAccel+=wxT(ACCELSTR_SEP);
             strAccel+=wxGetAccelText(element);
          }
       }
-      if (strAccel.Length())
+      if (!strAccel.empty())
       {
          str+=wxString::Format(wxT(" (%s)"), strAccel.wx_str());
       }
@@ -508,7 +509,7 @@ wxString wxGetStockLabelEx(wxWindowID id, long flags)
          break;
    }
 #undef STOCKITEM
-   if (stockLabel.Length())
+   if (!stockLabel.empty())
    {
        if ( !(flags & wxSTOCK_WITH_MNEMONIC) )
        {

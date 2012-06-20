@@ -271,11 +271,11 @@ bool DoModal_Structure(wxWindow* parent, wxDBase* db, const wxString& caption, c
            dlg.SetTitle(caption);
        }
        ok = (wxID_OK == dlg.ShowModal());
-       if (ok && filename.Length() && !db->IsOpen())
+       if (ok && (!filename.empty()) && (!db->IsOpen()))
        {
            const wxStructListView* list = dlg.GetList();
           
-           ok = db->Create(filename, list->m_array, list->m_array_count);
+           ok = db->Create(wxFileName(filename), list->m_array, list->m_array_count);
        }
    }
    return ok;
@@ -338,10 +338,10 @@ void wxDBFFieldDialog::OnUpdateDecimals(wxUpdateUIEvent& event)
 
 void wxDBFFieldDialog::OnUpdateNeedData(wxUpdateUIEvent& event)
 {
-   bool enable = !(   m_edit0->GetValue().IsEmpty()
+   bool enable = !(   m_edit0->GetValue().empty()
                    || (m_edit1->GetSelection() == wxNOT_FOUND)
-                   || m_edit2->GetValue().IsEmpty()
-                   || m_edit3->GetValue().IsEmpty());
+                   || m_edit2->GetValue().empty()
+                   || m_edit3->GetValue().empty());
 
    event.Enable(enable);
 }
@@ -397,7 +397,7 @@ bool DoModal_FieldEdit(wxWindow* parent, DBF_FIELD_INFO* info, const wxString& c
        dlg.m_type = info->type;
        dlg.m_length = (int)info->length;
        dlg.m_decimals = info->decimals;
-       if (caption.Length()) dlg.SetTitle(caption);
+       if (!caption.empty()) dlg.SetTitle(caption);
        ok = (wxID_OK == dlg.ShowModal());
        if (ok)
        {

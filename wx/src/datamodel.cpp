@@ -150,7 +150,7 @@ size_t wxDataModelBase::GetProperties(wxArrayString* as_ptr, bool header) const
    {
       wxString str;
 
-      if (GetTableName().Length())
+      if (!GetTableName().empty())
       {
          str.Printf(_("Table:\t%s\t\t"), GetTableName().wx_str());
          as.Add(str);
