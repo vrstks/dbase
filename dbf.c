@@ -12,6 +12,10 @@
 #include <ctype.h>
 #include <limits.h>
 #include <math.h>
+#ifdef __BORLANDC__
+    #include <ctime>
+#endif
+
 #include "bool.h"
 #include "dbf.h"
 #include "ioapi/zlib.h"
@@ -19,9 +23,12 @@
 #include "minmax.h"
 #include "stdint-ms.h"
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
 #define strcasecmp _stricmp
 #define snprintf _snprintf
+#elif defined(__BORLANDC__)
+#define strcasecmp stricmp
+#define snprintf snprintf
 #endif
 #ifndef PATH_MAX
 #define PATH_MAX _MAX_PATH
