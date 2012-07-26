@@ -42,7 +42,8 @@
 #endif
 
 #define CPM_TEXT_TERMINATOR 0x1A
-
+#define NOT_FOUND -1
+#define TIME_ERR ((time_t)-1)
                                  /* M        */
 #define MAGIC_DBASE3      0x03   /* 00000011 */
 #define MAGIC_DBASE3_MEMO 0x83   /* 10000011 */
@@ -561,7 +562,7 @@ void dbf_getmemofilename(const char* file_dbf, char* buf, size_t buf_len)
    size_t len;
 
    strncpy(name, file_dbf, sizeof(name));
-   len = strlen(name)-1;
+   len = strlen(name) - 1;
    if (len) switch(name[len])
    {
       case 'F':
@@ -867,7 +868,7 @@ BOOL dbf_insertrecord(DBF_HANDLE handle, dbf_uint index)
           for (j = 0; j < handle->fieldcount; j++)
           {
             const DBF_FIELD* field;
-            dbf_setposition(handle, i-1);
+            dbf_setposition(handle, i - 1);
 
             field = dbf_getfieldptr(handle, j);
             dbf_getfield(handle, field, buf, sizeof(buf), DBF_DATA_TYPE_ANY);
@@ -923,14 +924,14 @@ int dbf_findfield(DBF_HANDLE handle, const char* fieldname_host)
    }
    strncpy(handle->lasterrormsg, "Invalid field pointer", _countof(handle->lasterrormsg));
    handle->lasterror = DBASE_INVALID_FIELDNO;
-   return -1;
+   return NOT_FOUND;
 }
 
 const DBF_FIELD* dbf_getfieldptr_name(DBF_HANDLE handle, const char* fieldname)
 {
    const int index = dbf_findfield(handle, fieldname);
 
-   return (index != -1) ? (handle->fieldarray + index) : NULL;
+   return (index != NOT_FOUND) ? (handle->fieldarray + index) : NULL;
 }
 
 BOOL dbf_isnull(DBF_HANDLE handle, const DBF_FIELD* field)
@@ -956,7 +957,7 @@ static int dotnormalize(char* str, char dot, size_t len)
          str[i] = (char)(dot ? dot : *localeconv()->decimal_point);
          return (int)i;
    }
-   return -1;
+   return NOT_FOUND;
 }
 
 void dbf_write_header_memo(DBF_HANDLE handle)
@@ -1084,7 +1085,7 @@ BOOL dbf_putfield(DBF_HANDLE handle, const DBF_FIELD* field, const char* buf)
                dotnormalize(dup, 0, buf_len);
                i = snprintf(field->ptr, field->m_Length, "%f", atof(dup));
                sep = dotnormalize(field->ptr, '.', field->m_Length);
-               if (sep != -1)
+               if (sep != NOT_FOUND)
                {
                   int pad = field->m_DecCount - (i - sep);
                   for (; (pad >= 0) && (i < field->m_Length); i++, pad--)
@@ -1150,11 +1151,12 @@ BOOL dbf_getfield_time(DBF_HANDLE handle, const DBF_FIELD* field, time_t* utc_pt
             ok = dbf_getfield_tm(handle, field, &tm, &ms);
             if (ok)
             {
-               time_t temp = mktime(&tm);
-               ok = (-1 != temp);
+               time_t utc = mktime(&tm);
+
+               ok = (TIME_ERR != utc);
                if (ok)
                {
-                  if (utc_ptr) *utc_ptr = temp;
+                  if (utc_ptr) *utc_ptr = utc;
                   if (ms_ptr ) *ms_ptr  = ms;
                }
             }
@@ -1317,7 +1319,8 @@ BOOL dbf_putfield_tm(DBF_HANDLE handle, const DBF_FIELD* field, const struct tm*
       case DBF_DATA_TYPE_FLOAT:
       {
          const time_t utc = mktime((struct tm*)tm); // unconst due to bad prototype in MSVC7
-         ok = (-1 != utc);
+
+         ok = (TIME_ERR != utc);
          if (ok) ok = dbf_putfield_time(handle, field, utc, ms, type);
          break;
       }
@@ -1540,7 +1543,7 @@ static int find_memo(const DBF_FIELD_INFO* array, dbf_uint array_count)
          return (int)i;
       }
    }
-   return -1;
+   return NOT_FOUND;
 }
 
 DBF_HANDLE dbf_create(const char* filename, const DBF_FIELD_INFO* array, dbf_uint array_count, enum dbf_charconv charconv, const char* tablename)
@@ -1553,7 +1556,7 @@ DBF_HANDLE dbf_create(const char* filename, const DBF_FIELD_INFO* array, dbf_uin
    fill_fopen_filefunc(&api);
    stream = (*api.zopen_file)(api.opaque, filename, ZLIB_FILEFUNC_MODE_CREATE | ZLIB_FILEFUNC_MODE_WRITE);
 
-   if (stream && (-1 != find_memo(array, array_count)))
+   if (stream && (NOT_FOUND != find_memo(array, array_count)))
    {
       char temp[PATH_MAX];
 
@@ -1755,7 +1758,7 @@ size_t dbf_getfield(DBF_HANDLE handle, const DBF_FIELD* field, char* buf, size_t
                            len = i;
                            break;
                      }
-                     for (; trim && len && (text[len-1] == FIELD_FILL_CHAR); len--)
+                     for (; trim && len && (text[len - 1] == FIELD_FILL_CHAR); len--)
                      {
                      }
                      if (buf)
@@ -1778,7 +1781,7 @@ size_t dbf_getfield(DBF_HANDLE handle, const DBF_FIELD* field, char* buf, size_t
                break;
             }
             default:
-               for (len = field->m_Length; trim && len && (field->ptr[len-1] == FIELD_FILL_CHAR); len--)
+               for (len = field->m_Length; trim && len && (field->ptr[len - 1] == FIELD_FILL_CHAR); len--)
                {
                }
                if (buf)

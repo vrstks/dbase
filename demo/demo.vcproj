@@ -4,6 +4,7 @@
 	Version="9,00"
 	Name="demo"
 	ProjectGUID="{F1E725D2-EC42-4F7C-ACF7-0CCE8A736B69}"
+	RootNamespace="demo"
 	TargetFrameworkVersion="0"
 	>
 	<Platforms>
@@ -264,6 +265,10 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl"
 			>
+			<File
+				RelativePath="..\dbf.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"

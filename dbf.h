@@ -27,7 +27,7 @@ struct tm;
 
 #define DBF_MAJOR_VERSION      1
 #define DBF_MINOR_VERSION      2
-#define DBF_SVN_VERSION        332
+#define DBF_SVN_VERSION        334
 #define DBF_WEBSITE            "http://sf.net/projects/dbase"
 #define DBF_FORMAT_NAME        "dBASE"
 #define DBF_LIB_NAME           "dbflib"
@@ -121,9 +121,9 @@ EXTERN_C void        dbf_close         (DBF_HANDLE*);
 EXTERN_C void        dbf_close_memo    (DBF_HANDLE);
 EXTERN_C void        dbf_write_header  (DBF_HANDLE);
 EXTERN_C void        dbf_write_header_memo(DBF_HANDLE);
-EXTERN_C dbf_uint  dbf_getposition   (DBF_HANDLE);
-EXTERN_C dbf_uint  dbf_getrecordcount(DBF_HANDLE);
-EXTERN_C dbf_uint  dbf_getfieldcount (DBF_HANDLE);
+EXTERN_C dbf_uint    dbf_getposition   (DBF_HANDLE);
+EXTERN_C dbf_uint    dbf_getrecordcount(DBF_HANDLE);
+EXTERN_C dbf_uint    dbf_getfieldcount (DBF_HANDLE);
 
 typedef struct _DBF_INFO
 {
