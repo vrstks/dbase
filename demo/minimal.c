@@ -9,9 +9,11 @@
 int main(int argc, char* argv[])
 {
    BOOL ok = argc > 1;
+
    if (ok)
    {
-      DBF_HANDLE handle = dbf_open(argv[1], NULL, FALSE, ENUM_dbf_charconv_oem_host);
+      DBF_HANDLE handle = dbf_open(argv[1], NULL, FALSE, ENUM_dbf_charconv_oem_host, NULL);
+
       ok = (handle != NULL);
       if (ok)
       {
@@ -27,7 +29,6 @@ int main(int argc, char* argv[])
                char temp[80] = "";
                
                dbf_getfield(handle, dbf_getfieldptr(handle, j), temp, sizeof(temp), DBF_DATA_TYPE_ANY);
-
                if (j) printf(";");
                printf(temp);
             }
@@ -38,7 +39,7 @@ int main(int argc, char* argv[])
    }
    else
    {
-      printf("Usage: demo.exe file.dbf\n");
+      printf("Usage: demo.exe tablename.dbf\n");
    }
    return ok ? EXIT_SUCCESS : EXIT_FAILURE;
 }
