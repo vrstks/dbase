@@ -2086,6 +2086,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dbf_wx.inl"
+				>
+			</File>
+			<File
 				RelativePath="src\dbfdlgs.h"
 				>
 			</File>

@@ -1,5 +1,5 @@
 // dbf_mfc.inl
-// Copyright (c) 2007-2009 by Troels K. All rights reserved.
+// Copyright (c) 2007-2012 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 inline CDbaseFile::CDbaseFile() : CObject(), CDBase()
@@ -11,12 +11,22 @@ inline CDbaseFile::~CDbaseFile()
 }
 
 /* Open dBase file, read dbf header and fill field list */
-inline int CDbaseFile::Open(const TCHAR* filename, bool editable, enum dbf_charconv charconv)
+inline int CDbaseFile::Open(const TCHAR* filename, enum dbf_editmode editmode)
 {
    USES_CONVERSION;
-   m_handle = dbf_open(T2CA(filename), NULL, editable, charconv, NULL);
-   if (m_handle) m_strFileName = filename;
-   return m_handle ? DBASE_SUCCESS : DBASE_NO_FILE;
+   BOOL ok = base::Open(T2CA(filename), editmode);
+
+   if (ok) m_strFileName = filename;
+   return ok ? DBASE_SUCCESS : DBASE_NO_FILE;
+}
+
+inline int CDbaseFile::Open(const TCHAR* filename, enum dbf_editmode editmode, const DBF_OPEN& parm)
+{
+   USES_CONVERSION;
+   BOOL ok = base::Open(T2CA(filename), editmode, parm);
+
+   if (ok) m_strFileName = filename;
+   return ok ? DBASE_SUCCESS : DBASE_NO_FILE;
 }
 
 inline bool CDbaseFile::Create(const TCHAR* lpszFileName, 

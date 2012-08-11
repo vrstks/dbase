@@ -1,5 +1,5 @@
 // dbf_wx.h
-// Copyright (c) 2007-2011 by Troels K. All rights reserved.
+// Copyright (c) 2007-2012 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __DBF_WX_H__
@@ -31,15 +31,16 @@ public:
 
 // Operations
 public:	
-   bool Open  (const wxFileName&, bool editable = true, enum dbf_charconv charconv = ENUM_dbf_charconv_compatible);
-   bool Open  (wxInputStream*, enum dbf_charconv charconv = ENUM_dbf_charconv_compatible);
-   bool Create(const wxFileName&, const DBF_FIELD_INFO* array, dbf_uint array_count, enum dbf_charconv charconv = ENUM_dbf_charconv_compatible);
+   bool Open  (const wxFileName&, enum dbf_editmode);
+   bool Open  (const wxFileName&, enum dbf_editmode, const DBF_OPEN&);
+   bool Open  (wxInputStream*, enum dbf_charconv charconv = dbf_charconv_compatible);
+   bool Create(const wxFileName&, const DBF_FIELD_INFO* array, dbf_uint array_count, enum dbf_charconv charconv = dbf_charconv_compatible);
    bool Create(/*const wxString& filename, */void* stream, struct zlib_filefunc_def_s*, 
       const DBF_FIELD_INFO* array, dbf_uint array_count, 
-      enum dbf_charconv charconv = ENUM_dbf_charconv_compatible, void* memo = NULL);
+      enum dbf_charconv charconv = dbf_charconv_compatible, void* memo = NULL);
    bool Create(wxOutputStream*, 
       const DBF_FIELD_INFO* array, dbf_uint array_count, 
-      enum dbf_charconv charconv = ENUM_dbf_charconv_compatible, void* memo = NULL);
+      enum dbf_charconv charconv = dbf_charconv_compatible, void* memo = NULL);
 
    size_t Read(const DBF_FIELD* , wxString*, size_t buf_len = 1024);
    size_t Read(const char* field, wxString*, size_t buf_len = 1024);
@@ -86,10 +87,10 @@ public:
    void       GetInfo(DBF_INFO*, wxDateTime* dt = NULL) const;
 
    bool       Attach(/*const wxString& filename, */void* stream, struct zlib_filefunc_def_s*, 
-                     bool editable = true, enum dbf_charconv conv = ENUM_dbf_charconv_compatible, void* memo = NULL);
+                     enum dbf_editmode editmode = dbf_editmode_editable, enum dbf_charconv conv = dbf_charconv_compatible, void* memo = NULL);
    bool       Attach(DBF_HANDLE/*, const wxString& filename*/);
    bool       Attach(wxDBase*);
-   bool       Attach(wxInputStream*, bool editable = true, enum dbf_charconv conv = ENUM_dbf_charconv_compatible, 
+   bool       Attach(wxInputStream*, enum dbf_editmode editmode = dbf_editmode_editable, enum dbf_charconv conv = dbf_charconv_compatible, 
                      wxInputStream* memo = NULL, const wxString& tablename = wxEmptyString);
    DBF_HANDLE Detach(void);
    wxInputStream* DetachStream(void)

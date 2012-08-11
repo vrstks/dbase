@@ -255,7 +255,7 @@ int CDbaseFile::Create(const TCHAR* filename, const CStringArray& strFieldArray)
       field->length = nLength;
       field->decimals = nDecCount;
 	}
-   m_handle = ::dbf_create(T2CA(filename), array, array_count, ENUM_dbf_charconv_compatible, NULL);
+   m_handle = ::dbf_create(T2CA(filename), array, array_count, dbf_charconv_compatible, NULL);
    free(array); array = NULL;
    if (m_handle)
    {

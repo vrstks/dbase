@@ -122,17 +122,17 @@ BOOL CDBFExplorerDoc::OnNewDocument()
 /********************************************************************/
 BOOL CDBFExplorerDoc::OnOpenDocument(LPCTSTR lpszPathName) 
 {
-	// open database
-   bool editable = true;
-	if (m_dBaseFile->Open(lpszPathName, editable) != DBASE_SUCCESS)
-	{
-      editable = false;
-	   if (m_dBaseFile->Open(lpszPathName, editable) != DBASE_SUCCESS)
-		   return FALSE;
+    enum dbf_editmode editmode = dbf_editmode_editable;
+
+    // open database
+    if (m_dBaseFile->Open(lpszPathName, editmode) != DBASE_SUCCESS)
+    {
+       editmode = dbf_editmode_readonly;
+	   if (m_dBaseFile->Open(lpszPathName, editmode) != DBASE_SUCCESS)
+        return FALSE;
 	}
-	
-	SetModifiedFlag(FALSE);     // start off with unmodified
-	return TRUE;
+    SetModifiedFlag(FALSE);     // start off with unmodified
+    return TRUE;
 }
 
 /********************************************************************/

@@ -1,5 +1,5 @@
 // dbf.hpp
-// Copyright (c) 2007-2011 by Troels K. All rights reserved.
+// Copyright (c) 2007-2012 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __DBF_HPP__
@@ -31,10 +31,10 @@ protected:
 
 // Operations
 public:
-   bool Open(const char* filename, struct zlib_filefunc_def_s* api = NULL, bool editable = true, enum dbf_charconv charconv = ENUM_dbf_charconv_compatible, const char* tablename = NULL);
-   bool Open(const char* filename, bool editable = true, enum dbf_charconv charconv = ENUM_dbf_charconv_compatible, const char* tablename = NULL);
-   bool Create(const char* filename, const DBF_FIELD_INFO* array, dbf_uint array_count, enum dbf_charconv charconv = ENUM_dbf_charconv_compatible, const char* tablename = NULL);
-   bool Create(void* stream, struct zlib_filefunc_def_s*, const DBF_FIELD_INFO* array, dbf_uint array_count, enum dbf_charconv charconv = ENUM_dbf_charconv_compatible, void* memo = NULL);
+   bool Open(const char* filename, enum dbf_editmode);
+   bool Open(const char* filename, enum dbf_editmode, const DBF_OPEN&);
+   bool Create(const char* filename, const DBF_FIELD_INFO* array, dbf_uint array_count, enum dbf_charconv charconv = dbf_charconv_compatible, const char* tablename = NULL);
+   bool Create(void* stream, struct zlib_filefunc_def_s*, const DBF_FIELD_INFO* array, dbf_uint array_count, enum dbf_charconv charconv = dbf_charconv_compatible, void* memo = NULL);
    bool CloneDatabase(const char* lpszCloneName, bool bCopyRecords = false, bool bSkipDeleted = false);
    void GetFileAPI(struct zlib_filefunc_def_s*) const;
    void* GetMemoFile(void);
@@ -131,7 +131,8 @@ public:
    dbf_uint GetFieldCount(void) const;
 
    bool       Attach(void* stream, struct zlib_filefunc_def_s*, 
-                     bool editable = true, enum dbf_charconv conv = ENUM_dbf_charconv_compatible, 
+                     enum dbf_editmode editmode = dbf_editmode_editable,
+                     enum dbf_charconv conv = dbf_charconv_compatible, 
                      void* memo = NULL,
                      const char* tablename = NULL);
    bool       Attach(DBF_HANDLE);

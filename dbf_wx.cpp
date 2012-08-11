@@ -22,12 +22,13 @@
 #include "dbf_wx.inl"
 #include "wx/src/wxstreamc.h"
 
-bool wxDBase::Attach(wxInputStream* stream, bool editable, enum dbf_charconv conv, wxInputStream* stream_memo, const wxString& tablename)
+bool wxDBase::Attach(wxInputStream* stream, enum dbf_editmode editmode, enum dbf_charconv conv, wxInputStream* stream_memo, const wxString& tablename)
 {
    zlib_filefunc_def_s api;
-   fill_filefunc(&api, stream);
-   bool ok = base::Attach(stream, &api, editable, conv, stream_memo, tablename.mb_str());
+   bool ok;
 
+   fill_filefunc(&api, stream);
+   ok = base::Attach(stream, &api, editmode, conv, stream_memo, tablename.mb_str());
    if (ok)
    {
       m_stream      = stream;

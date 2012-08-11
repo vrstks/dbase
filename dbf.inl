@@ -1,5 +1,5 @@
 // dbf.inl
-// Copyright (c) 2007-2011 by Troels K. All rights reserved.
+// Copyright (c) 2007-2012 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 inline CDBase::CDBase() : m_handle(NULL)
@@ -16,9 +16,9 @@ inline bool CDBase::IsOpen(void) const
    return (m_handle != NULL);
 }
 
-inline bool CDBase::Attach(void* stream, struct zlib_filefunc_def_s* api, bool editable, enum dbf_charconv conv, void* memo, const char* tablename)
+inline bool CDBase::Attach(void* stream, struct zlib_filefunc_def_s* api, enum dbf_editmode editmode, enum dbf_charconv conv, void* memo, const char* tablename)
 {
-   m_handle = ::dbf_attach(stream, api, editable, conv, memo, tablename);
+   m_handle = ::dbf_attach(stream, api, editmode, conv, memo, tablename);
    return (m_handle != NULL);
 }
 
@@ -40,15 +40,16 @@ inline DBF_HANDLE CDBase::Detach(void)
    return handle;
 }
 
-inline bool CDBase::Open(const char* filename, struct zlib_filefunc_def_s* api, bool editable, enum dbf_charconv charconv, const char* tablename)
+inline bool CDBase::Open(const char* filename, enum dbf_editmode editmode)
 {
-   m_handle = ::dbf_open(filename, api, editable, charconv, tablename);
+   m_handle = ::dbf_open(filename, editmode, NULL);
    return (m_handle != NULL);
 }
 
-inline bool CDBase::Open(const char* filename, bool editable, enum dbf_charconv charconv, const char* tablename)
+inline bool CDBase::Open(const char* filename, enum dbf_editmode editmode, const DBF_OPEN& parm)
 {
-   return Open(filename, NULL, editable, charconv, tablename);
+   m_handle = ::dbf_open(filename, editmode, &parm);
+   return (m_handle != NULL);
 }
 
 inline bool CDBase::Create(void* stream, struct zlib_filefunc_def_s* api, const DBF_FIELD_INFO* array, dbf_uint array_count, enum dbf_charconv charconv, void* memo)
@@ -369,7 +370,7 @@ inline void* CDBase::GetMemoFile()
 
 inline bool CDBase::IsEditable(void) const
 {
-   return ::dbf_iseditable(m_handle) ? true : false;
+   return (dbf_editmode_editable == ::dbf_geteditmode(m_handle));
 }
 
 inline bool CDBase::IsModified(void) const

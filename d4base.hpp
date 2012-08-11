@@ -1,5 +1,5 @@
 // d4base.hpp
-// Copyright (c) 2007-2009 by Troels K. All rights reserved.
+// Copyright (c) 2007-2012 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __D4BASE_HPP__
@@ -78,12 +78,12 @@ public:
 	int GetFieldCount(void);
 	const TCHAR* GetFilePath(void) const;
 
-   field_ref    GetFieldRef(LPCSTR field)  const;
+   field_ref    GetFieldRef(const char* field)  const;
    field_ref    GetFieldRef(int nIndex) const;
    DataTypeEnum GetFieldType(field_ref) const;
    DataTypeEnum GetFieldType(int index) const;
-   DataTypeEnum GetFieldType(LPCSTR field) const;
-   LPCSTR    GetFieldName(field_ref) const;
+   DataTypeEnum GetFieldType(const char* field) const;
+   const char*    GetFieldName(field_ref) const;
    int       GetFieldWidth(field_ref) const;
    bool      Append(bool bBlank = TRUE);
    bool      Update(void);
@@ -93,42 +93,42 @@ public:
    bool IsMemo(field_ref ref) const;
    bool IsDeleted(void) const;
 
-   bool Read (LPCSTR field, LPSTR str, int str_len);
-   bool Read (field_ref   , LPSTR str, int str_len);
-   bool Read (LPCSTR field, long*);
+   bool Read (const char* field, char* str, int str_len);
+   bool Read (field_ref   , char* str, int str_len);
+   bool Read (const char* field, long*);
    bool Read (field_ref   , long*);
-   bool Read (LPCSTR field, double*);
+   bool Read (const char* field, double*);
    bool Read (field_ref   , double*);
-   bool ReadBool(LPCSTR field, bool*);
+   bool ReadBool(const char* field, bool*);
    bool ReadBool(field_ref   , bool*);
-   bool Write(LPCSTR field, LPCSTR str);
-   bool Write(field_ref   , LPCSTR str);
-   bool Write(LPCSTR field, long value);
+   bool Write(const char* field, const char* str);
+   bool Write(field_ref   , const char* str);
+   bool Write(const char* field, long value);
    bool Write(field_ref   , long value);
-   bool Write(LPCSTR field, double value);
+   bool Write(const char* field, double value);
    bool Write(field_ref   , double value);
-   bool WriteBool(LPCSTR field, bool value);
+   bool WriteBool(const char* field, bool value);
    bool WriteBool(field_ref   , bool value);
 
-   bool Read (LPCSTR field, struct tm*);
+   bool Read (const char* field, struct tm*);
    bool Read (field_ref   , struct tm*);
-   bool Write(LPCSTR field, const struct tm*);
+   bool Write(const char* field, const struct tm*);
    bool Write(field_ref   , const struct tm*);
 
-   bool Read (LPCSTR field, COleDateTime*);
+   bool Read (const char* field, COleDateTime*);
    bool Read (field_ref   , COleDateTime*);
-   bool Write(LPCSTR field, const COleDateTime&);
+   bool Write(const char* field, const COleDateTime&);
    bool Write(field_ref   , const COleDateTime&);
 
 #ifdef __AFXCONV_H__
-   field_ref    GetFieldRef(LPCWSTR field)  const;
-   bool Read (LPCSTR field, LPWSTR str, int str_len);
+   field_ref    GetFieldRef(const wchar_t* field)  const;
+   bool Read (const char* field, LPWSTR str, int str_len);
    bool Read (field_ref   , LPWSTR str, int str_len);
-   bool Write(LPCSTR field, LPCWSTR str);
-   bool Write(field_ref    , LPCWSTR str);
+   bool Write(const char* field, const wchar_t* str);
+   bool Write(field_ref    , const wchar_t* str);
 #endif
 #if defined(__AFXCONV_H__) || !defined(_UNICODE)
-   bool Read(LPCSTR field , CString*, int nPreAllocSize = 255);
+   bool Read(const char* field , CString*, int nPreAllocSize = 255);
    bool Read(field_ref    , CString*, int nPreAllocSize = 255);
 #endif
    void Select(void) const;

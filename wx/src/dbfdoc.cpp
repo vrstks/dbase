@@ -46,10 +46,11 @@ bool DBFDocument::DoOpenDocument(const wxString& path)
 {
    wxFileName filename(path);
    bool ok = filename.FileExists();
+
    if (ok)
    {
-      ok = m_database->Open(filename, true, ENUM_dbf_charconv_compatible);
-      if (!ok) ok = m_database->Open(filename, false, ENUM_dbf_charconv_compatible);
+      ok = m_database->Open(filename, dbf_editmode_editable);
+      if (!ok) ok = m_database->Open(filename, dbf_editmode_readonly);
       if (ok)
       {
          UpdateAllViews(NULL, (wxObject*)(long)ENUM_hint_initialupdate);
@@ -69,7 +70,7 @@ bool DBFDocument::DoOpenDocument(const wxString& path)
 
 bool DBFDocument::IsModified(void) const
 {
-   return false && m_database->IsOpen() && m_database->IsModified();
+   return m_database->IsOpen() && m_database->IsModified();
 }
 
 void DBFDocument::Modify(bool mod)
@@ -80,6 +81,7 @@ void DBFDocument::Modify(bool mod)
 bool DBFDocument::OnCloseDocument()
 {
    bool ok = base::OnCloseDocument();
+
    if (m_database->IsOpen()) m_database->Close();
    return ok;
 }
@@ -92,6 +94,7 @@ bool DBFDocument::IsEditable(void) const
 bool DBFDocument::OnNewDocument()
 {
    bool ok = base::OnNewDocument();
+
    if (ok)
    {
       wxDBase database;
@@ -110,6 +113,7 @@ bool DBFDocument::OnNewDocument()
 bool DBFDocument::SaveAs()
 {
    bool ok = base::SaveAs();
+
    if (ok)
    {
    }

@@ -201,6 +201,18 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
+				RelativePath=".\cdemo.c"
+				>
+			</File>
+			<File
+				RelativePath=".\cppdemo.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\d4base.c"
+				>
+			</File>
+			<File
 				RelativePath="..\dbf.c"
 				>
 				<FileConfiguration
@@ -241,24 +253,8 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="minimal.c"
+				RelativePath=".\main.c"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
 			</File>
 		</Filter>
 		<Filter
@@ -267,6 +263,10 @@
 			>
 			<File
 				RelativePath="..\dbf.h"
+				>
+			</File>
+			<File
+				RelativePath=".\demo.h"
 				>
 			</File>
 		</Filter>

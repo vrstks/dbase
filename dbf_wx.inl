@@ -1,5 +1,5 @@
 // dbf_wx.inl
-// Copyright (c) 2007-2011 by Troels K. All rights reserved.
+// Copyright (c) 2007-2012 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 inline wxDBase::wxDBase() : wxObject(), CDBase(), m_stream(NULL), m_stream_memo(NULL)
@@ -16,10 +16,17 @@ inline wxDBase::~wxDBase()
    wxASSERT(m_stream_memo == NULL);
 }
 
-inline bool wxDBase::Open(const wxFileName& filename, bool editable, enum dbf_charconv charconv)
+inline bool wxDBase::Open(const wxFileName& filename, enum dbf_editmode editmode)
 {
    wxASSERT(!IsOpen());
-   bool ok = base::Open(filename.GetFullPath().mb_str(), editable, charconv, filename.GetName().mb_str());
+   bool ok = base::Open(filename.GetFullPath().mb_str(), editmode);
+   return ok;
+}
+
+inline bool wxDBase::Open(const wxFileName& filename, enum dbf_editmode editmode, const DBF_OPEN& parm)
+{
+   wxASSERT(!IsOpen());
+   bool ok = base::Open(filename.GetFullPath().mb_str(), editmode, parm);
    return ok;
 }
 
@@ -36,14 +43,16 @@ inline bool wxDBase::Create(void* stream, struct zlib_filefunc_def_s* api,
 {
    wxASSERT(!IsOpen());
    bool ok = base::Create(stream, api, array, array_count, charconv, memo);
+
    return ok;
 }
 
 inline bool wxDBase::Attach(void* stream, struct zlib_filefunc_def_s* api,
-                            bool editable, enum dbf_charconv conv, void* memo)
+                            enum dbf_editmode editmode, enum dbf_charconv conv, void* memo)
 {
    wxASSERT(!IsOpen());
-   bool ok = base::Attach(stream, api, editable, conv, memo);
+   bool ok = base::Attach(stream, api, editmode, conv, memo);
+
    return ok;
 }
 
@@ -51,6 +60,7 @@ inline bool wxDBase::Attach(DBF_HANDLE handle)
 {
    wxASSERT(!IsOpen());
    bool ok = base::Attach(handle);
+
    return ok;
 }
 
@@ -64,6 +74,7 @@ inline size_t wxDBase::Read(const DBF_FIELD* field, wxString* str, size_t buf_le
 {
    wxCharBuffer buf(buf_len);
    size_t ret = base::Read(field, buf.data(), buf_len);
+
    str->operator=(wxConvertMB2WX(buf));
    return ret;
 }
@@ -98,9 +109,11 @@ inline bool wxDBase::Read(const DBF_FIELD* field, wxDateTime* dt)
    struct tm tm;
    int ms;
    bool ok = base::Read(field, &tm, &ms);
+
    if (ok && dt)
    {
       wxDateTime::Tm Tm(tm, wxDateTime::TimeZone());
+
       Tm.msec = ms;
       dt->Set(Tm); // don't use tm ctor, we want ms and years < 1970
       if (ms) dt->SetMillisecond(ms);
@@ -131,6 +144,7 @@ inline bool wxDBase::Write(const char* field, const wxDateTime& dt, enum dbf_dat
 inline bool wxDBase::Write(const DBF_FIELD* field, const wxDateTime& dt, enum dbf_data_type type)
 {
    bool ok = dt.IsValid();
+
    if (ok)
    {
       wxDateTime::Tm Tm = dt.GetTm();
@@ -276,6 +290,7 @@ inline void wxDBase::GetInfo(DBF_INFO* info, wxDateTime* dt) const
       // avoid wxDateTime(time_t) ctor to enable linking
       // against "old" wx compilation (MSVC6+7: time_t = 32bits, MSVC8: time_t=64 bits)
       const struct tm* ptm = localtime(&info->lastupdate);
+
       if (ptm)
       {
          dt->Set(*ptm);
@@ -288,9 +303,11 @@ inline bool wxDBase::ParseDate(const wxString& buf, wxDateTime::Tm* dtm, enum db
    struct tm tm;
    int ms;
    bool ok = base::ParseDate(buf.mb_str(), &tm, &ms, type);
+
    if (ok)
    {
       wxDateTime::Tm temp(tm, wxDateTime::Local);
+
       temp.msec = ms;
       *dtm = temp;
    }

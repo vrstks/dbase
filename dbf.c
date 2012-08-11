@@ -196,7 +196,7 @@ typedef struct _DBF_DATA
 
    dbf_uint currentrecord;         // current record in memory
    enum dbf_charconv charconv;
-   BOOL editable;
+   enum dbf_editmode editmode;
 
    void* stream;
    zlib_filefunc_def api;
@@ -286,7 +286,7 @@ EXTERN_C DBF_HANDLE dbf_alloc(void)
    handle->fieldarray     = NULL;
    handle->modified        = FALSE;
    handle->recorddataptr   = NULL;
-   handle->editable        = FALSE;
+   handle->editmode        = dbf_editmode_readonly;
    handle->currentrecord   = (dbf_uint)-1;
    handle->lastupdate      = time(NULL);
    handle->recordcount     = 0;
@@ -298,7 +298,7 @@ EXTERN_C DBF_HANDLE dbf_alloc(void)
    *handle->lasterrormsg   = 0;
    *handle->tablename      = 0;
    fill_fopen_filefunc(&handle->api);
-   handle->charconv = ENUM_dbf_charconv_compatible;
+   handle->charconv = dbf_charconv_compatible;
    return handle;
 }
 
@@ -318,7 +318,7 @@ static BOOL sanity_check_4(const DBF_FILEHEADER_4* header)
    return ok;
 }
 
-DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum dbf_charconv charconv, void* memo, const char* tablename)
+DBF_HANDLE dbf_attach(void* stream, const zlib_filefunc_def* api, enum dbf_editmode editmode, enum dbf_charconv charconv, void* memo, const char* tablename)
 {
    DBF_HANDLE handle = NULL;
    size_t len = 0;
@@ -458,7 +458,7 @@ DBF_HANDLE dbf_attach(void* stream, zlib_filefunc_def* api, BOOL editable, enum 
                fielddata_pos += field->m_Length;
             }
             handle->modified = FALSE;
-            handle->editable = editable;
+            handle->editmode = editmode;
             handle->charconv = charconv;
             if (tablename)
             {
@@ -576,26 +576,45 @@ void dbf_getmemofilename(const char* file_dbf, char* buf, size_t buf_len)
    strncpy(buf, name, buf_len);
 }
 
-DBF_HANDLE dbf_open(const char* file, zlib_filefunc_def* api, BOOL editable, enum dbf_charconv charconv, const char* tablename)
+DBF_HANDLE dbf_open(const char* file, enum dbf_editmode editmode, const DBF_OPEN* parm)
 {
    DBF_HANDLE handle = NULL;
    void* stream = NULL;
    zlib_filefunc_def temp;
+   const zlib_filefunc_def *api;
+   int openmode = ZLIB_FILEFUNC_MODE_EXISTING | ( (editmode == dbf_editmode_editable) ? ZLIB_FILEFUNC_MODE_WRITE : ZLIB_FILEFUNC_MODE_READ);
+   DBF_OPEN parm_default;
 
-   if (api == NULL)
+   if (parm == NULL)
+   {
+       parm_default.api = NULL;
+       parm_default.charconv = dbf_charconv_default;
+       parm_default.try_memo = TRUE;
+       parm_default.tablename = NULL;
+
+       parm = &parm_default;
+   }
+   if (parm->api)
+   {
+       api = parm->api;
+   }
+   else
    {
       fill_fopen_filefunc(&temp);
       api = &temp;
    }
-   stream = (*api->zopen_file)(api->opaque, file, ZLIB_FILEFUNC_MODE_EXISTING | (editable ? ZLIB_FILEFUNC_MODE_WRITE : ZLIB_FILEFUNC_MODE_READ));
+   stream = (*api->zopen_file)(api->opaque, file, openmode);
    if (stream)
    {
       void* memostream = NULL;
       char temp[PATH_MAX];
 
       dbf_getmemofilename(file, temp, _countof(temp));
-      memostream = (*api->zopen_file)(api->opaque, temp, ZLIB_FILEFUNC_MODE_EXISTING | ZLIB_FILEFUNC_MODE_WRITE);
-      handle = dbf_attach(stream, api, editable, charconv, memostream, tablename);
+      if (parm->try_memo)
+      {
+          memostream = (*api->zopen_file)(api->opaque, temp, openmode);
+      }
+      handle = dbf_attach(stream, api, editmode, parm->charconv, memostream, parm->tablename);
       if (handle)
       {
          switch (handle->diskversion)
@@ -689,7 +708,7 @@ void dbf_getinfo(DBF_HANDLE handle, DBF_INFO* info)
    info->recordcount = handle->recordcount;
    info->lastupdate  = handle->lastupdate;
    info->memo        = (handle->memo.stream != NULL);
-   info->editable    = handle->editable;
+   info->editmode    = handle->editmode;
    info->modified    = handle->modified;
    strncpy(info->tablename, handle->tablename, _countof(info->tablename));
 }
@@ -909,7 +928,7 @@ int dbf_findfield(DBF_HANDLE handle, const char* fieldname_host)
    hash_t namehash;
    char fieldname[20];
 
-   strcpy_host2dos(fieldname, fieldname_host, _countof(fieldname), ENUM_dbf_charconv_oem_host);
+   strcpy_host2dos(fieldname, fieldname_host, _countof(fieldname), dbf_charconv_oem_host);
    namehash = strhash(fieldname, FALSE);
 
    for (i = 0; i < handle->fieldcount; i++)
@@ -968,7 +987,7 @@ void dbf_write_header_memo(DBF_HANDLE handle)
 
 BOOL dbf_putfield(DBF_HANDLE handle, const DBF_FIELD* field, const char* buf)
 {
-   BOOL ok = field && handle->editable;
+   BOOL ok = field && (handle->editmode == dbf_editmode_editable);
 
    if (ok)
    {
@@ -1573,8 +1592,14 @@ DBF_HANDLE dbf_create(const char* filename, const DBF_FIELD_INFO* array, dbf_uin
       handle = dbf_create_attach(stream, &api, array, array_count, charconv, memo);
       if (handle)
       {
-         dbf_close(&handle); // ioapi quirk - change mode to ZLIB_FILEFUNC_MODE_EXISTING | ZLIB_FILEFUNC_MODE_WRITE
-         handle = dbf_open(filename, &api, TRUE, charconv, tablename);
+          DBF_OPEN parm;
+
+          dbf_close(&handle); // ioapi quirk - change mode to ZLIB_FILEFUNC_MODE_EXISTING | ZLIB_FILEFUNC_MODE_WRITE
+          parm.api = &api;
+          parm.charconv = charconv;
+          parm.tablename = tablename;
+          parm.try_memo = TRUE;
+          handle = dbf_open(filename, dbf_editmode_editable, &parm);
       }
       else
       {
@@ -1584,7 +1609,7 @@ DBF_HANDLE dbf_create(const char* filename, const DBF_FIELD_INFO* array, dbf_uin
    return handle;
 }
 
-DBF_HANDLE dbf_create_attach(void* stream, zlib_filefunc_def* api,
+DBF_HANDLE dbf_create_attach(void* stream, const zlib_filefunc_def* api,
                              const DBF_FIELD_INFO* array, dbf_uint array_count,
                              enum dbf_charconv charconv, void* memo)
 {
@@ -1665,7 +1690,7 @@ DBF_HANDLE dbf_create_attach(void* stream, zlib_filefunc_def* api,
    handle->stream       = stream;
    handle->diskversion  = header.flags;
    handle->charconv     = charconv;
-   handle->editable     = TRUE;
+   handle->editmode     = dbf_editmode_editable;
    handle->fieldarray   = fieldarray;
    handle->fieldcount   = array_count;
    handle->recorddataptr = recorddataptr;
@@ -1696,9 +1721,9 @@ void* dbf_getmemofile(DBF_HANDLE handle)
    return handle->memo.stream;
 }
 
-BOOL dbf_iseditable(DBF_HANDLE handle)
+enum dbf_editmode dbf_geteditmode(DBF_HANDLE handle)
 {
-   return handle->editable;
+   return handle->editmode;
 }
 
 BOOL dbf_ismodified(DBF_HANDLE handle)
@@ -1877,12 +1902,12 @@ static void strcpy_dos2host(char* buf, const char* src, size_t buf_len, enum dbf
 {
    switch (mode)
    {
-      case ENUM_dbf_charconv_oem_host:
+      case dbf_charconv_oem_host:
       #ifdef _WIN32
          OemToCharBuffA(src, buf, (DWORD)buf_len);
          break;
       #endif
-      case ENUM_dbf_charconv_off:
+      case dbf_charconv_off:
       default:
          strncpy(buf, src, buf_len);
          break;
@@ -1893,12 +1918,12 @@ static void strcpy_host2dos(char* buf, const char* src, size_t buf_len, enum dbf
 {
    switch (mode)
    {
-      case ENUM_dbf_charconv_oem_host:
+      case dbf_charconv_oem_host:
       #ifdef _WIN32
          CharToOemBuffA(src, buf, (DWORD)buf_len);
          break;
       #endif
-      case ENUM_dbf_charconv_off:
+      case dbf_charconv_off:
       default:
          strncpy(buf, src, buf_len);
          break;
