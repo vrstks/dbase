@@ -601,7 +601,7 @@ DBF_HANDLE dbf_open(const char* file, enum dbf_editmode editmode, const DBF_OPEN
    else
    {
       fill_fopen_filefunc(&temp);
-      api = &temp;
+      api = parm_default.api = &temp;
    }
    stream = (*api->zopen_file)(api->opaque, file, openmode);
    if (stream)
@@ -1591,7 +1591,7 @@ DBF_HANDLE dbf_create(const char* filename, const DBF_FIELD_INFO* array, dbf_uin
    else
    {
       fill_fopen_filefunc(&temp);
-      api = &temp;
+      api = parm_default.api = &temp;
    }
 
    stream = (*api->zopen_file)(api->opaque, filename, openmode);
