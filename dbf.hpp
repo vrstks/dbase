@@ -33,8 +33,9 @@ protected:
 public:
    bool Open(const char* filename, enum dbf_editmode);
    bool Open(const char* filename, enum dbf_editmode, const DBF_OPEN&);
-   bool Create(const char* filename, const DBF_FIELD_INFO* array, dbf_uint array_count, enum dbf_charconv charconv = dbf_charconv_compatible, const char* tablename = NULL);
-   bool Create(void* stream, struct zlib_filefunc_def_s*, const DBF_FIELD_INFO* array, dbf_uint array_count, enum dbf_charconv charconv = dbf_charconv_compatible, void* memo = NULL);
+   bool Create(const char* filename, const DBF_FIELD_INFO* array, dbf_uint array_count);
+   bool Create(const char* filename, const DBF_FIELD_INFO* array, dbf_uint array_count, const DBF_OPEN&);
+   bool Create(void* stream, const struct zlib_filefunc_def_s*, const DBF_FIELD_INFO* array, dbf_uint array_count, enum dbf_charconv charconv = dbf_charconv_compatible, void* memo = NULL);
    bool CloneDatabase(const char* lpszCloneName, bool bCopyRecords = false, bool bSkipDeleted = false);
    void GetFileAPI(struct zlib_filefunc_def_s*) const;
    void* GetMemoFile(void);

@@ -52,15 +52,21 @@ inline bool CDBase::Open(const char* filename, enum dbf_editmode editmode, const
    return (m_handle != NULL);
 }
 
-inline bool CDBase::Create(void* stream, struct zlib_filefunc_def_s* api, const DBF_FIELD_INFO* array, dbf_uint array_count, enum dbf_charconv charconv, void* memo)
+inline bool CDBase::Create(void* stream, const struct zlib_filefunc_def_s* api, const DBF_FIELD_INFO* array, dbf_uint array_count, enum dbf_charconv charconv, void* memo)
 {
    m_handle = ::dbf_create_attach(stream, api, array, array_count, charconv, memo);
    return (m_handle != NULL);
 }
 
-inline bool CDBase::Create(const char* filename, const DBF_FIELD_INFO* array, dbf_uint array_count, enum dbf_charconv charconv, const char* tablename)
+inline bool CDBase::Create(const char* filename, const DBF_FIELD_INFO* array, dbf_uint array_count)
 {
-   m_handle = ::dbf_create(filename, array, array_count, charconv, tablename);
+   m_handle = ::dbf_create(filename, array, array_count, NULL);
+   return (m_handle != NULL);
+}
+
+inline bool CDBase::Create(const char* filename, const DBF_FIELD_INFO* array, dbf_uint array_count, const DBF_OPEN& parm)
+{
+   m_handle = ::dbf_create(filename, array, array_count, &parm);
    return (m_handle != NULL);
 }
 

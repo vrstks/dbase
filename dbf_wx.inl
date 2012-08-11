@@ -30,14 +30,21 @@ inline bool wxDBase::Open(const wxFileName& filename, enum dbf_editmode editmode
    return ok;
 }
 
-inline bool wxDBase::Create(const wxFileName& filename, const DBF_FIELD_INFO* array, dbf_uint array_count, enum dbf_charconv charconv)
+inline bool wxDBase::Create(const wxFileName& filename, const DBF_FIELD_INFO* array, dbf_uint array_count)
 {
    wxASSERT(!IsOpen());
-   bool ok = base::Create(filename.GetFullPath().mb_str(), array, array_count, charconv, filename.GetName().mb_str());
+   bool ok = base::Create(filename.GetFullPath().mb_str(), array, array_count);
    return ok;
 }
 
-inline bool wxDBase::Create(void* stream, struct zlib_filefunc_def_s* api, 
+inline bool wxDBase::Create(const wxFileName& filename, const DBF_FIELD_INFO* array, dbf_uint array_count, const DBF_OPEN& parm)
+{
+   wxASSERT(!IsOpen());
+   bool ok = base::Create(filename.GetFullPath().mb_str(), array, array_count, parm);
+   return ok;
+}
+
+inline bool wxDBase::Create(void* stream, const struct zlib_filefunc_def_s* api, 
    const DBF_FIELD_INFO* array, dbf_uint array_count, 
    enum dbf_charconv charconv, void* memo)
 {

@@ -34,8 +34,9 @@ public:
    bool Open  (const wxFileName&, enum dbf_editmode);
    bool Open  (const wxFileName&, enum dbf_editmode, const DBF_OPEN&);
    bool Open  (wxInputStream*, enum dbf_charconv charconv = dbf_charconv_compatible);
-   bool Create(const wxFileName&, const DBF_FIELD_INFO* array, dbf_uint array_count, enum dbf_charconv charconv = dbf_charconv_compatible);
-   bool Create(/*const wxString& filename, */void* stream, struct zlib_filefunc_def_s*, 
+   bool Create(const wxFileName&, const DBF_FIELD_INFO* array, dbf_uint array_count);
+   bool Create(const wxFileName&, const DBF_FIELD_INFO* array, dbf_uint array_count, const DBF_OPEN&);
+   bool Create(/*const wxString& filename, */void* stream, const struct zlib_filefunc_def_s*, 
       const DBF_FIELD_INFO* array, dbf_uint array_count, 
       enum dbf_charconv charconv = dbf_charconv_compatible, void* memo = NULL);
    bool Create(wxOutputStream*, 

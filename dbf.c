@@ -589,7 +589,7 @@ DBF_HANDLE dbf_open(const char* file, enum dbf_editmode editmode, const DBF_OPEN
    {
        parm_default.api = NULL;
        parm_default.charconv = dbf_charconv_default;
-       parm_default.try_memo = TRUE;
+       parm_default.memo = TRUE;
        parm_default.tablename = NULL;
 
        parm = &parm_default;
@@ -610,7 +610,7 @@ DBF_HANDLE dbf_open(const char* file, enum dbf_editmode editmode, const DBF_OPEN
       char temp[PATH_MAX];
 
       dbf_getmemofilename(file, temp, _countof(temp));
-      if (parm->try_memo)
+      if (parm->memo)
       {
           memostream = (*api->zopen_file)(api->opaque, temp, openmode);
       }
@@ -1565,45 +1565,60 @@ static int find_memo(const DBF_FIELD_INFO* array, dbf_uint array_count)
    return NOT_FOUND;
 }
 
-DBF_HANDLE dbf_create(const char* filename, const DBF_FIELD_INFO* array, dbf_uint array_count, enum dbf_charconv charconv, const char* tablename)
+DBF_HANDLE dbf_create(const char* filename, const DBF_FIELD_INFO* array, dbf_uint array_count, const DBF_OPEN* parm)
 {
    DBF_HANDLE handle = NULL;
    void* stream;
    void* memo = NULL;
-   zlib_filefunc_def api;
+   zlib_filefunc_def temp;
+   const zlib_filefunc_def *api;
+   DBF_OPEN parm_default;
+   int openmode = ZLIB_FILEFUNC_MODE_CREATE | ZLIB_FILEFUNC_MODE_WRITE;
 
-   fill_fopen_filefunc(&api);
-   stream = (*api.zopen_file)(api.opaque, filename, ZLIB_FILEFUNC_MODE_CREATE | ZLIB_FILEFUNC_MODE_WRITE);
+   if (parm == NULL)
+   {
+       parm_default.api = NULL;
+       parm_default.charconv = dbf_charconv_default;
+       parm_default.memo = (NOT_FOUND != find_memo(array, array_count));
+       parm_default.tablename = NULL;
 
-   if (stream && (NOT_FOUND != find_memo(array, array_count)))
+       parm = &parm_default;
+   }
+   if (parm->api)
+   {
+       api = parm->api;
+   }
+   else
+   {
+      fill_fopen_filefunc(&temp);
+      api = &temp;
+   }
+
+   stream = (*api->zopen_file)(api->opaque, filename, openmode);
+
+   if (stream && parm->memo)
    {
       char temp[PATH_MAX];
 
       dbf_getmemofilename(filename, temp, _countof(temp));
-      memo = (*api.zopen_file)(api.opaque, temp, ZLIB_FILEFUNC_MODE_CREATE | ZLIB_FILEFUNC_MODE_WRITE);
+      memo = (*api->zopen_file)(api->opaque, temp, openmode);
       if (NULL == memo)
       {
-         ZCLOSE(api, stream);
+         ZCLOSE(*api, stream);
          stream = NULL;
       }
    }
    if (stream)
    {
-      handle = dbf_create_attach(stream, &api, array, array_count, charconv, memo);
+      handle = dbf_create_attach(stream, api, array, array_count, parm->charconv, memo);
       if (handle)
       {
-          DBF_OPEN parm;
-
           dbf_close(&handle); // ioapi quirk - change mode to ZLIB_FILEFUNC_MODE_EXISTING | ZLIB_FILEFUNC_MODE_WRITE
-          parm.api = &api;
-          parm.charconv = charconv;
-          parm.tablename = tablename;
-          parm.try_memo = TRUE;
-          handle = dbf_open(filename, dbf_editmode_editable, &parm);
+          handle = dbf_open(filename, dbf_editmode_editable, parm);
       }
       else
       {
-         ZCLOSE(api, stream);
+         ZCLOSE(*api, stream);
       }
    }
    return handle;

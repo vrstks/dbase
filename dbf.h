@@ -27,7 +27,7 @@ struct tm;
 
 #define DBF_MAJOR_VERSION      1
 #define DBF_MINOR_VERSION      2
-#define DBF_SVN_VERSION        336
+#define DBF_SVN_VERSION        337
 #define DBF_WEBSITE            "http://sf.net/projects/dbase"
 #define DBF_FORMAT_NAME        "dBASE"
 #define DBF_LIB_NAME           "dbflib"
@@ -114,7 +114,7 @@ typedef struct _DBF_OPEN
     const struct zlib_filefunc_def_s* api;
     enum dbf_charconv charconv;
     const char* tablename;
-    BOOL try_memo; // try opening .dbt file
+    BOOL memo; // open (or create) .dbt file
 } DBF_OPEN;
 
 EXTERN_C DBF_HANDLE  dbf_alloc         (void);
@@ -122,7 +122,7 @@ EXTERN_C DBF_HANDLE  dbf_create_attach (void* stream, const struct zlib_filefunc
 EXTERN_C DBF_HANDLE  dbf_attach        (void* stream, const struct zlib_filefunc_def_s*, enum dbf_editmode, enum dbf_charconv, void* memo, const char* tablename);
 EXTERN_C void*       dbf_detach        (DBF_HANDLE*);
 EXTERN_C DBF_HANDLE  dbf_open          (const char* file, enum dbf_editmode, const DBF_OPEN*);
-EXTERN_C DBF_HANDLE  dbf_create        (const char* file, const DBF_FIELD_INFO* array, dbf_uint array_count, enum dbf_charconv, const char* tablename);
+EXTERN_C DBF_HANDLE  dbf_create        (const char* file, const DBF_FIELD_INFO* array, dbf_uint array_count, const DBF_OPEN*);
 EXTERN_C void        dbf_getfileapi    (DBF_HANDLE, struct zlib_filefunc_def_s*);
 EXTERN_C void*       dbf_getmemofile   (DBF_HANDLE);
 EXTERN_C enum dbf_editmode dbf_geteditmode(DBF_HANDLE);
