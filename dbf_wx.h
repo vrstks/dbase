@@ -31,17 +31,17 @@ public:
 
 // Operations
 public:	
-   bool Open  (const wxFileName&, enum dbf_editmode);
-   bool Open  (const wxFileName&, enum dbf_editmode, const DBF_OPEN&);
-   bool Open  (wxInputStream*, enum dbf_charconv charconv = dbf_charconv_compatible);
+   bool Open  (const wxFileName&, dbf_editmode);
+   bool Open  (const wxFileName&, dbf_editmode, const DBF_OPEN&);
+   bool Open  (wxInputStream*, dbf_charconv charconv = dbf_charconv_compatible);
    bool Create(const wxFileName&, const DBF_FIELD_INFO* array, dbf_uint array_count);
    bool Create(const wxFileName&, const DBF_FIELD_INFO* array, dbf_uint array_count, const DBF_OPEN&);
    bool Create(/*const wxString& filename, */void* stream, const struct zlib_filefunc_def_s*, 
       const DBF_FIELD_INFO* array, dbf_uint array_count, 
-      enum dbf_charconv charconv = dbf_charconv_compatible, void* memo = NULL);
+      dbf_charconv charconv = dbf_charconv_compatible, void* memo = NULL);
    bool Create(wxOutputStream*, 
       const DBF_FIELD_INFO* array, dbf_uint array_count, 
-      enum dbf_charconv charconv = dbf_charconv_compatible, void* memo = NULL);
+      dbf_charconv charconv = dbf_charconv_compatible, void* memo = NULL);
 
    size_t Read(const DBF_FIELD* , wxString*, size_t buf_len = 1024);
    size_t Read(const char* field, wxString*, size_t buf_len = 1024);
@@ -63,9 +63,9 @@ public:
    bool Read(const char* field, double*);   
    bool Read(dbf_uint field , double*);   
 
-   bool Write(const DBF_FIELD* , const wxDateTime&, enum dbf_data_type type = DBF_DATA_TYPE_ANY);
-   bool Write(const char* field, const wxDateTime&, enum dbf_data_type type = DBF_DATA_TYPE_ANY);
-   bool Write(dbf_uint field , const wxDateTime&, enum dbf_data_type type = DBF_DATA_TYPE_ANY);
+   bool Write(const DBF_FIELD* , const wxDateTime&, dbf_data_type type = DBF_DATA_TYPE_ANY);
+   bool Write(const char* field, const wxDateTime&, dbf_data_type type = DBF_DATA_TYPE_ANY);
+   bool Write(dbf_uint field , const wxDateTime&, dbf_data_type type = DBF_DATA_TYPE_ANY);
 
    bool Write(const DBF_FIELD* , const bool&);
    bool Write(const char* field, const bool&);
@@ -87,11 +87,11 @@ public:
 
    void       GetInfo(DBF_INFO*, wxDateTime* dt = NULL) const;
 
-   bool       Attach(/*const wxString& filename, */void* stream, struct zlib_filefunc_def_s*, 
-                     enum dbf_editmode editmode = dbf_editmode_editable, enum dbf_charconv conv = dbf_charconv_compatible, void* memo = NULL);
+   bool       Attach(/*const wxString& filename, */void* stream, const struct zlib_filefunc_def_s*, 
+                     dbf_editmode editmode = dbf_editmode_editable, dbf_charconv conv = dbf_charconv_compatible, void* memo = NULL);
    bool       Attach(DBF_HANDLE/*, const wxString& filename*/);
    bool       Attach(wxDBase*);
-   bool       Attach(wxInputStream*, enum dbf_editmode editmode = dbf_editmode_editable, enum dbf_charconv conv = dbf_charconv_compatible, 
+   bool       Attach(wxInputStream*, dbf_editmode editmode = dbf_editmode_editable, dbf_charconv conv = dbf_charconv_compatible, 
                      wxInputStream* memo = NULL, const wxString& tablename = wxEmptyString);
    DBF_HANDLE Detach(void);
    wxInputStream* DetachStream(void)
@@ -124,7 +124,7 @@ protected:
 public:
    void Fixups(void);
    bool Update(/*int index*/);
-   static bool ParseDate(const wxString&, wxDateTime::Tm*, enum dbf_data_type);
+   static bool ParseDate(const wxString&, wxDateTime::Tm*, dbf_data_type);
 };
 
 #endif // __DBF_WX_H__

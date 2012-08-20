@@ -1,5 +1,5 @@
 // msaccess.cpp
-// Copyright (c) 2007-2011 by Troels K. All rights reserved.
+// Copyright (c) 2007-2012 by Troels K. All rights reserved.
 
 /* 
    This program is free software; you can redistribute it and/or modify
@@ -73,9 +73,10 @@ public:
    CDbaseFile m_dbf;
    CDaoConverter_DBF(CDaoDatabase* db, const TCHAR* tablename) : CDaoConverter(db, tablename) {}
 
-   enum dbf_data_type GetFieldType(int field, const CDaoFieldInfo& info, size_t* length)
+   dbf_data_type GetFieldType(int field, const CDaoFieldInfo& info, size_t* length)
    {
-      enum dbf_data_type type;
+      dbf_data_type type;
+
       switch (info.m_nType)
       {
          case dbDate:

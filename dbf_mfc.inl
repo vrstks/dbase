@@ -11,7 +11,7 @@ inline CDbaseFile::~CDbaseFile()
 }
 
 /* Open dBase file, read dbf header and fill field list */
-inline int CDbaseFile::Open(const TCHAR* filename, enum dbf_editmode editmode)
+inline int CDbaseFile::Open(const TCHAR* filename, dbf_editmode editmode)
 {
    USES_CONVERSION;
    BOOL ok = base::Open(T2CA(filename), editmode);
@@ -20,7 +20,7 @@ inline int CDbaseFile::Open(const TCHAR* filename, enum dbf_editmode editmode)
    return ok ? DBASE_SUCCESS : DBASE_NO_FILE;
 }
 
-inline int CDbaseFile::Open(const TCHAR* filename, enum dbf_editmode editmode, const DBF_OPEN& parm)
+inline int CDbaseFile::Open(const TCHAR* filename, dbf_editmode editmode, const DBF_OPEN& parm)
 {
    USES_CONVERSION;
    BOOL ok = base::Open(T2CA(filename), editmode, parm);
@@ -32,9 +32,10 @@ inline int CDbaseFile::Open(const TCHAR* filename, enum dbf_editmode editmode, c
 inline bool CDbaseFile::Create(const TCHAR* lpszFileName, 
    void* stream, struct zlib_filefunc_def_s* api, 
    const DBF_FIELD_INFO* array, size_t array_count, 
-   enum dbf_charconv charconv, void* memo)
+   dbf_charconv charconv, void* memo)
 {
    bool ok = base::Create(stream, api, array, array_count, charconv, memo);
+
    if (ok) m_strFileName = lpszFileName;
    return ok;
 }
@@ -506,4 +507,3 @@ inline bool CDbaseFile::Write(size_t field, const COleDateTime& dt)
 {
    return Write(GetFieldPtr(field), dt);
 }
-

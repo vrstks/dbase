@@ -1,5 +1,5 @@
 // dbfutil.cpp
-// Copyright (c) 2007-2011 by Troels K. All rights reserved.
+// Copyright (c) 2007-2012 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include <wx/wx.h>
@@ -27,12 +27,9 @@
 wxString dbf_getstruct_c(const wxString& tablename, wxDBase* db)
 {
    const wxString title = tablename;
+   //wxString title = wxFileName(db->GetFilename()).GetName();
    wxString strStruct;
    wxString strEnum;
-/*
-   wxString title;
-   wxFileName::SplitPath(db->GetFilename(), NULL, &title, NULL);
-*/
    wxString fieldname;
 
    fieldname.Printf(wxT("%s_fields"), title.wx_str());

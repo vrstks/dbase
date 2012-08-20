@@ -122,7 +122,7 @@ BOOL CDBFExplorerDoc::OnNewDocument()
 /********************************************************************/
 BOOL CDBFExplorerDoc::OnOpenDocument(LPCTSTR lpszPathName) 
 {
-    enum dbf_editmode editmode = dbf_editmode_editable;
+    dbf_editmode editmode = dbf_editmode_editable;
 
     // open database
     if (m_dBaseFile->Open(lpszPathName, editmode) != DBASE_SUCCESS)

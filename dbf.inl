@@ -16,7 +16,7 @@ inline bool CDBase::IsOpen(void) const
    return (m_handle != NULL);
 }
 
-inline bool CDBase::Attach(void* stream, struct zlib_filefunc_def_s* api, enum dbf_editmode editmode, enum dbf_charconv conv, void* memo, const char* tablename)
+inline bool CDBase::Attach(void* stream, const struct zlib_filefunc_def_s* api, dbf_editmode editmode, dbf_charconv conv, void* memo, const char* tablename)
 {
    m_handle = ::dbf_attach(stream, api, editmode, conv, memo, tablename);
    return (m_handle != NULL);
@@ -40,19 +40,19 @@ inline DBF_HANDLE CDBase::Detach(void)
    return handle;
 }
 
-inline bool CDBase::Open(const char* filename, enum dbf_editmode editmode)
+inline bool CDBase::Open(const char* filename, dbf_editmode editmode)
 {
    m_handle = ::dbf_open(filename, editmode, NULL);
    return (m_handle != NULL);
 }
 
-inline bool CDBase::Open(const char* filename, enum dbf_editmode editmode, const DBF_OPEN& parm)
+inline bool CDBase::Open(const char* filename, dbf_editmode editmode, const DBF_OPEN& parm)
 {
    m_handle = ::dbf_open(filename, editmode, &parm);
    return (m_handle != NULL);
 }
 
-inline bool CDBase::Create(void* stream, const struct zlib_filefunc_def_s* api, const DBF_FIELD_INFO* array, dbf_uint array_count, enum dbf_charconv charconv, void* memo)
+inline bool CDBase::Create(void* stream, const struct zlib_filefunc_def_s* api, const DBF_FIELD_INFO* array, dbf_uint array_count, dbf_charconv charconv, void* memo)
 {
    m_handle = ::dbf_create_attach(stream, api, array, array_count, charconv, memo);
    return (m_handle != NULL);
@@ -195,32 +195,32 @@ inline bool CDBase::Write(const DBF_FIELD* field, const SYSTEMTIME& st)
 }
 #endif
 
-inline bool CDBase::Write(const DBF_FIELD* field, const struct tm& tm, int ms, enum dbf_data_type type)
+inline bool CDBase::Write(const DBF_FIELD* field, const struct tm& tm, int ms, dbf_data_type type)
 {
    return ::dbf_putfield_tm(m_handle, field, &tm, ms, type) ? true : false;
 }
 
-inline bool CDBase::Write(const char* field, const struct tm& tm, int ms, enum dbf_data_type type)
+inline bool CDBase::Write(const char* field, const struct tm& tm, int ms, dbf_data_type type)
 {
    return Write(GetFieldPtr(field), tm, ms, type);
 }
 
-inline bool CDBase::Write(dbf_uint field, const struct tm& tm, int ms, enum dbf_data_type type)
+inline bool CDBase::Write(dbf_uint field, const struct tm& tm, int ms, dbf_data_type type)
 {
    return Write(GetFieldPtr(field), tm, ms, type);
 }
 
-inline bool CDBase::WriteTime(const DBF_FIELD* field, time_t utc, int ms, enum dbf_data_type type)
+inline bool CDBase::WriteTime(const DBF_FIELD* field, time_t utc, int ms, dbf_data_type type)
 {
    return ::dbf_putfield_time(m_handle, field, utc, ms, type) ? true : false;
 }
 
-inline bool CDBase::WriteTime(const char* field, time_t utc, int ms, enum dbf_data_type type)
+inline bool CDBase::WriteTime(const char* field, time_t utc, int ms, dbf_data_type type)
 {
    return WriteTime(GetFieldPtr(field), utc, ms, type);
 }
 
-inline bool CDBase::WriteTime(dbf_uint field, time_t utc, int ms, enum dbf_data_type type)
+inline bool CDBase::WriteTime(dbf_uint field, time_t utc, int ms, dbf_data_type type)
 {
    return WriteTime(GetFieldPtr(field), utc, ms, type);
 }
@@ -288,17 +288,17 @@ inline const DBF_FIELD* CDBase::GetFieldPtr(const char* field) const
    return ::dbf_getfieldptr_name(m_handle, field);
 }
 
-inline size_t CDBase::Read(const DBF_FIELD* field, char* buf, size_t buf_len, enum dbf_data_type type) const
+inline size_t CDBase::Read(const DBF_FIELD* field, char* buf, size_t buf_len, dbf_data_type type) const
 {
    return ::dbf_getfield(m_handle, field, buf, buf_len, type);
 }
 
-inline size_t CDBase::Read(dbf_uint field, char* buf, size_t buf_len, enum dbf_data_type type) const
+inline size_t CDBase::Read(dbf_uint field, char* buf, size_t buf_len, dbf_data_type type) const
 {
    return Read(GetFieldPtr(field), buf, buf_len, type);
 }
 
-inline size_t CDBase::Read(const char* field, char* buf, size_t buf_len, enum dbf_data_type type) const
+inline size_t CDBase::Read(const char* field, char* buf, size_t buf_len, dbf_data_type type) const
 {
    return Read(GetFieldPtr(field), buf, buf_len, type);
 }
@@ -318,7 +318,7 @@ inline bool CDBase::IsEmpty(void) const
    return (0 == GetRecordCount());
 }
 
-inline bool CDBase::Copy(void* stream, void* stream_memo, struct zlib_filefunc_def_s* api, bool include_records, bool include_deleted_records)
+inline bool CDBase::Copy(void* stream, void* stream_memo, const struct zlib_filefunc_def_s* api, bool include_records, bool include_deleted_records)
 {
    return ::dbf_copy(m_handle, stream, stream_memo, api, include_records, include_deleted_records) ? true : false;
 }
@@ -343,12 +343,12 @@ inline bool CDBase::GetFieldInfo(dbf_uint index, DBF_FIELD_INFO* info) const
    return ::dbf_getfield_info(m_handle, index, info) ? true : false;
 }
 
-inline enum dbf_data_type CDBase::GetFieldType(const DBF_FIELD* field) const
+inline dbf_data_type CDBase::GetFieldType(const DBF_FIELD* field) const
 {
    return ::dbf_getfield_type(m_handle, field);
 }
 
-inline enum dbf_data_type CDBase::GetFieldType(dbf_uint field) const
+inline dbf_data_type CDBase::GetFieldType(dbf_uint field) const
 {
    return ::dbf_getfield_type(m_handle, GetFieldPtr(field));
 }
@@ -454,7 +454,7 @@ inline int CDBase::FindField(const char* fieldname) const
    return ::dbf_findfield(m_handle, fieldname);
 }
 
-inline bool CDBase::ParseDate(const char* buf, struct tm* tm, int* ms, enum dbf_data_type type)
+inline bool CDBase::ParseDate(const char* buf, struct tm* tm, int* ms, dbf_data_type type)
 {
    return ::dbf_parsedate(buf, tm, ms, type) ? true : false;
 }

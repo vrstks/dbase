@@ -9,16 +9,17 @@
 #include "wx29.h"
 
 #include <wx/arrimpl.cpp>
-WX_DEFINE_OBJARRAY(AcceleratorArray)
-WX_DEFINE_OBJARRAY(FileNameArray)
+WX_DEFINE_OBJARRAY(wxArrayAccelerator)
+WX_DEFINE_OBJARRAY(wxArrayFileName)
 
 IMPLEMENT_CLASS(wxViewEx, wxView)
 
 bool wxWindow_Toggle(wxWindow* wnd)
 {
-   const bool show = !wnd->IsShown();
-   wnd->Show(show);
    wxWindow* parent = wnd->GetParent();
+   const bool show = !wnd->IsShown();
+
+   wnd->Show(show);
    if (wxIS_KIND_OF(parent, wxFrame))
    {
       wxStaticCast(parent, wxFrame)->SendSizeEvent(); // needed when mdi
@@ -239,11 +240,13 @@ static wxString wxGetAccelText(int flags, int keyCode)
 bool wxListCtrl_GetItemRect(const wxListView& ctrl, long row, long col, wxRect* rect)
 {
    bool ok = ctrl.GetItemRect(row, *rect, wxLIST_RECT_BOUNDS);
+
    if (ok)
    {
       for (int i = 0/*, count = ctrl.GetColumnCount()*/; ; i++)
       {
          const int width = ctrl.GetColumnWidth(i);
+
          if (i < col)
          {
             rect->x+=width;
@@ -267,10 +270,12 @@ long wxListView_HitTest(const wxListView& ctrl, const wxPoint& point, int* flags
 {
    int rFlags;
    const long row = ((wxListCtrl&)/*unconst*/ctrl).HitTest(point, rFlags);
+
    if (col && (row != wxNOT_FOUND))
    {
       const int offset = ctrl.GetScrollPos(wxHORIZONTAL);
       int pos = 0;
+
       *col = -1;
       for (int i = 0, count = ctrl.GetColumnCount(); i < count; i++)
       {
@@ -284,20 +289,6 @@ long wxListView_HitTest(const wxListView& ctrl, const wxPoint& point, int* flags
    }
    if (flags) *flags = rFlags;
    return row;
-}
-
-wxString wxListView_GetItemText(const wxListCtrl& ctrl, int row, int col)
-{
-   wxString str;
-   wxListItem info;
-   info.m_itemId = row;
-   info.m_col = col;
-   info.m_mask = wxLIST_MASK_TEXT;
-   if (ctrl.GetItem(info))
-   {
-      str = info.m_text;
-   }
-   return str;
 }
 
 bool wxListCtrl_EndEditLabel(wxListCtrl* wnd, bool cancel)
@@ -387,7 +378,7 @@ wxAcceleratorEntry wxAcceleratorHelper::GetStockAccelerator(wxWindowID id)
 #endif // wxUSE_ACCEL
 
 /*static*/
-void wxAcceleratorHelper::SetAcceleratorTable(wxWindow* wnd, const AcceleratorArray& array)
+void wxAcceleratorHelper::SetAcceleratorTable(wxWindow* wnd, const wxArrayAccelerator& array)
 {
    size_t count = array.GetCount();
    wxAcceleratorEntry* temp = new wxAcceleratorEntry[count];
@@ -439,13 +430,14 @@ bool wxAcceleratorHelper::SetAccelText(wxMenuItem* item, const wxString& accel, 
 
 static wxString wxGetAccelText(const wxAcceleratorEntry& accel)
 {
-   return wxGetAccelText(accel.GetFlags(), (enum wxKeyCode)accel.GetKeyCode());
+   return wxGetAccelText(accel.GetFlags(), accel.GetKeyCode());
 }
 
 /*static*/
-void wxAcceleratorHelper::SetAccelText(wxMenuBar* menu, const AcceleratorArray& array)
+void wxAcceleratorHelper::SetAccelText(wxMenuBar* menu, const wxArrayAccelerator& array)
 {
    const size_t count = array.GetCount();
+
    for (size_t i = 0; i < count; i++)
    {
       const wxAcceleratorEntry& entry = array.Item(i);
@@ -458,9 +450,10 @@ void wxAcceleratorHelper::SetAccelText(wxMenuBar* menu, const AcceleratorArray& 
    }
 }
 
-wxString wxToolBarTool_MakeShortHelp(const wxString& rstr, const AcceleratorArray& accel, int id)
+wxString wxToolBarTool_MakeShortHelp(const wxString& rstr, const wxArrayAccelerator& accel, int id)
 {
    wxString str = rstr;
+
    if (accel.GetCount() && !str.empty())
    {
       wxString strAccel;

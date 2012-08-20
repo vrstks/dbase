@@ -16,14 +16,14 @@ inline wxDBase::~wxDBase()
    wxASSERT(m_stream_memo == NULL);
 }
 
-inline bool wxDBase::Open(const wxFileName& filename, enum dbf_editmode editmode)
+inline bool wxDBase::Open(const wxFileName& filename, dbf_editmode editmode)
 {
    wxASSERT(!IsOpen());
    bool ok = base::Open(filename.GetFullPath().mb_str(), editmode);
    return ok;
 }
 
-inline bool wxDBase::Open(const wxFileName& filename, enum dbf_editmode editmode, const DBF_OPEN& parm)
+inline bool wxDBase::Open(const wxFileName& filename, dbf_editmode editmode, const DBF_OPEN& parm)
 {
    wxASSERT(!IsOpen());
    bool ok = base::Open(filename.GetFullPath().mb_str(), editmode, parm);
@@ -46,7 +46,7 @@ inline bool wxDBase::Create(const wxFileName& filename, const DBF_FIELD_INFO* ar
 
 inline bool wxDBase::Create(void* stream, const struct zlib_filefunc_def_s* api, 
    const DBF_FIELD_INFO* array, dbf_uint array_count, 
-   enum dbf_charconv charconv, void* memo)
+   dbf_charconv charconv, void* memo)
 {
    wxASSERT(!IsOpen());
    bool ok = base::Create(stream, api, array, array_count, charconv, memo);
@@ -54,8 +54,8 @@ inline bool wxDBase::Create(void* stream, const struct zlib_filefunc_def_s* api,
    return ok;
 }
 
-inline bool wxDBase::Attach(void* stream, struct zlib_filefunc_def_s* api,
-                            enum dbf_editmode editmode, enum dbf_charconv conv, void* memo)
+inline bool wxDBase::Attach(void* stream, const struct zlib_filefunc_def_s* api,
+                            dbf_editmode editmode, dbf_charconv conv, void* memo)
 {
    wxASSERT(!IsOpen());
    bool ok = base::Attach(stream, api, editmode, conv, memo);
@@ -138,17 +138,17 @@ inline bool wxDBase::Read(const char* field, wxDateTime* dt)
    return Read(GetFieldPtr(field), dt);
 }
 
-inline bool wxDBase::Write(dbf_uint field, const wxDateTime& dt, enum dbf_data_type type)
+inline bool wxDBase::Write(dbf_uint field, const wxDateTime& dt, dbf_data_type type)
 {
    return Write(GetFieldPtr(field), dt, type);
 }
 
-inline bool wxDBase::Write(const char* field, const wxDateTime& dt, enum dbf_data_type type)
+inline bool wxDBase::Write(const char* field, const wxDateTime& dt, dbf_data_type type)
 {
    return Write(GetFieldPtr(field), dt, type);
 }
 
-inline bool wxDBase::Write(const DBF_FIELD* field, const wxDateTime& dt, enum dbf_data_type type)
+inline bool wxDBase::Write(const DBF_FIELD* field, const wxDateTime& dt, dbf_data_type type)
 {
    bool ok = dt.IsValid();
 
@@ -305,7 +305,7 @@ inline void wxDBase::GetInfo(DBF_INFO* info, wxDateTime* dt) const
    }
 }
 
-inline bool wxDBase::ParseDate(const wxString& buf, wxDateTime::Tm* dtm, enum dbf_data_type type)
+inline bool wxDBase::ParseDate(const wxString& buf, wxDateTime::Tm* dtm, dbf_data_type type)
 {
    struct tm tm;
    int ms;

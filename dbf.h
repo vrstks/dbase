@@ -27,7 +27,7 @@ struct tm;
 
 #define DBF_MAJOR_VERSION      1
 #define DBF_MINOR_VERSION      2
-#define DBF_SVN_VERSION        338
+#define DBF_SVN_VERSION        339
 #define DBF_WEBSITE            "http://sf.net/projects/dbase"
 #define DBF_FORMAT_NAME        "dBASE"
 #define DBF_LIB_NAME           "dbflib"
@@ -190,7 +190,7 @@ EXTERN_C enum dbf_data_type dbf_getfield_type(DBF_HANDLE, const DBF_FIELD*);
 EXTERN_C BOOL        dbf_copy(DBF_HANDLE handle, 
                               void* stream,
                               void* stream_memo,
-                              struct zlib_filefunc_def_s*,
+                              const struct zlib_filefunc_def_s*,
                               BOOL include_records, 
                               BOOL include_deleted_records);
 

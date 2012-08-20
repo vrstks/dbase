@@ -31,9 +31,9 @@
 
 #include "stdafx.h"
 #include "dbfexplorer.h"
-#include "FieldEdit.h"
 #include "..\..\bool.h"
 #include "..\..\dbf.h"
+#include "FieldEdit.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

@@ -31,13 +31,13 @@
 
 #include "stdafx.h"
 #include "DBFExplorer.h"
+#include "..\..\dbf_mfc.h"
 
 #include "MainFrm.h"
 #include "DBFExplorerView.h"
 #include "DBFExplorerDoc.h"
 #include "FieldEdit.h"
 #include "MemoEditorDlg.h"
-#include "..\..\dbf_mfc.h"
 
 #include <afxpriv.h>	// for WM_SETMESSAGESTRING message
 
@@ -407,9 +407,10 @@ CEdit* CDBFExplorerView::EditSubItem(int nItem, int nSubItem)
 /********************************************************************/
 void CDBFExplorerView::OnEndlabeledit(NMHDR* pNMHDR, LRESULT* pResult) 
 {
-   USES_CONVERSION;
+    USES_CONVERSION;
 	LV_DISPINFO* pDispInfo = (LV_DISPINFO*)pNMHDR;
 	LV_ITEM	*plvItem = &pDispInfo->item;
+
 	if (plvItem->pszText)
 	{
 		GetListCtrl().SetItemText(plvItem->iItem, plvItem->iSubItem, plvItem->pszText);
@@ -419,7 +420,7 @@ void CDBFExplorerView::OnEndlabeledit(NMHDR* pNMHDR, LRESULT* pResult)
 		// update database
 		CDBFExplorerDoc* pDoc = GetDocument();
 
-		if (pDoc->m_dBaseFile->GetRecord(pItem->dwRecordIndex) == DBASE_SUCCESS)
+		if (pItem && pDoc->m_dBaseFile->GetRecord(pItem->dwRecordIndex) == DBASE_SUCCESS)
 		{
 			if (pDoc->m_dBaseFile->Write(plvItem->iSubItem, plvItem->pszText))
          {
@@ -1020,24 +1021,24 @@ void CDBFExplorerView::ReplaceCurrentText(CPoint &pt, LPCTSTR lpszText, LPCTSTR 
 /********************************************************************/
 void CDBFExplorerView::EditField(int nItem, int nSubItem)
 {
-	CDBFExplorerDoc* pDoc = GetDocument();
+    CDBFExplorerDoc* pDoc = GetDocument();
+    DBF_FIELD_INFO info;
 
-   DBF_FIELD_INFO info;
-   if (!(pDoc->m_dBaseFile->IsEditable() && pDoc->m_dBaseFile->GetFieldInfo(nSubItem, &info)))
-	{
-      return;
-   }
+    if (!(pDoc->m_dBaseFile->IsEditable() && pDoc->m_dBaseFile->GetFieldInfo(nSubItem, &info)))
+    {
+        return;
+    }
 
 	if (info.type == DBF_DATA_TYPE_MEMO)
 	{
 		ITEMINFO *pItem = (ITEMINFO *)GetListCtrl().GetItemData(nItem);
 		CMemoEditorDlg dlg(GetParent());
 
-		if (pDoc->m_dBaseFile->GetRecord(pItem->dwRecordIndex) == DBASE_SUCCESS)
+		if (pItem && pDoc->m_dBaseFile->GetRecord(pItem->dwRecordIndex) == DBASE_SUCCESS)
 		{
 			char*buff;
-
 			int nLength = pDoc->m_dBaseFile->GetMemoFieldLength(nSubItem);
+
 			if (nLength)
 			{
 				try

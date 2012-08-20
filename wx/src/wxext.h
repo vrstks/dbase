@@ -10,7 +10,7 @@ class WXDLLIMPEXP_FWD_CORE wxListView;
 class WXDLLIMPEXP_FWD_CORE wxDataObject;
 class WXDLLIMPEXP_FWD_CORE wxMDIParentFrame;
 
-WX_DECLARE_OBJARRAY(wxFileName, FileNameArray);
+WX_DECLARE_OBJARRAY(wxFileName, wxArrayFileName);
 
 #ifdef _WX_ARTPROV_H_
 #define wxART_PREVIEW      wxART_MAKE_ART_ID(wxART_PREVIEW)
@@ -107,16 +107,16 @@ public:
 
 #if wxUSE_ACCEL
 class WXDLLIMPEXP_FWD_CORE wxMenuBar;
-WX_DECLARE_OBJARRAY(wxAcceleratorEntry, AcceleratorArray);
+WX_DECLARE_OBJARRAY(wxAcceleratorEntry, wxArrayAccelerator);
 class wxAcceleratorHelper
 {
 public:
     static wxAcceleratorEntry GetStockAccelerator(wxWindowID);
-    static void SetAccelText(wxMenuBar*, const AcceleratorArray&);
-    static void SetAcceleratorTable(wxWindow*, const AcceleratorArray&);
+    static void SetAccelText(wxMenuBar*, const wxArrayAccelerator&);
+    static void SetAcceleratorTable(wxWindow*, const wxArrayAccelerator&);
     static bool SetAccelText(wxMenuItem*, const wxString& accel, bool append);
 };
-extern wxString wxToolBarTool_MakeShortHelp(const wxString&, const AcceleratorArray& accel, int id);
+extern wxString wxToolBarTool_MakeShortHelp(const wxString&, const wxArrayAccelerator& accel, int id);
 #endif
 
 #define wxMessageBoxCaption      wxGetApp().GetAppDisplayName()

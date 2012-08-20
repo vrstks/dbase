@@ -122,7 +122,7 @@ wxListItemAttr* wxDataListCtrl::OnGetItemAttr(long item) const
 {
    wxDataModelBase* db = wxStaticCast(this, wxDataListCtrl)->GetModel(); // unconst
    const bool bDeleted = db->IsRowDeleted(item);
-   const enum attr attr = bDeleted ? ENUM_attr_deleted : ENUM_attr_none;
+   const attr attr = bDeleted ? ENUM_attr_deleted : ENUM_attr_none;
 
    return (attr != ENUM_attr_none) ? (wxListItemAttr*)(m_attr + attr) : base::OnGetItemAttr(item);
 }

@@ -18,7 +18,7 @@
 
 static DBF_HANDLE MOD_handle = NULL;
 
-int d4use2(const TCHAR* file, struct zlib_filefunc_def_s* api, int readonly)
+int d4use2(const TCHAR* file, const struct zlib_filefunc_def_s* api, int readonly)
 {
    return 0;
 }

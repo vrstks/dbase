@@ -42,9 +42,9 @@ wxMenuBar* DBFFrame::CreateMenuBar() const
    wxAcceleratorHelper::SetAccelText(menubar, GetAccelerator());
    return menubar;
 }
-/*static*/ const AcceleratorArray& DBFFrame::GetAccelerator()
+/*static*/ const wxArrayAccelerator& DBFFrame::GetAccelerator()
 {
-   static AcceleratorArray array;
+   static wxArrayAccelerator array;
 
    if (array.empty())
    {

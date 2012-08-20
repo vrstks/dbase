@@ -220,7 +220,7 @@ typedef struct _DBF_DATA
    char* dup;
 } DBF_DATA;
 
-typedef uint32_t hash_t;
+typedef uint32_t strhash_t;
 
 typedef struct _DBF_FIELD_DATA
 {
@@ -229,12 +229,12 @@ typedef struct _DBF_FIELD_DATA
    size_t   m_Length;
    dbf_uint m_DecCount;
    char*    ptr;
-   hash_t   namehash;
+   strhash_t namehash;
 } DBF_FIELD_DATA;
 
 static uint32_t strhash(const char* str, BOOL case_sensitive)
 {
-   hash_t hash = 5381;
+   strhash_t hash = 5381;
 
    for (; *str; str++)
    {
@@ -925,7 +925,7 @@ const DBF_FIELD* dbf_getfieldptr(DBF_HANDLE handle, dbf_uint index)
 int dbf_findfield(DBF_HANDLE handle, const char* fieldname_host)
 {
    dbf_uint i;
-   hash_t namehash;
+   strhash_t namehash;
    char fieldname[20];
 
    strcpy_host2dos(fieldname, fieldname_host, _countof(fieldname), dbf_charconv_oem_host);
@@ -1717,7 +1717,7 @@ DBF_HANDLE dbf_create_attach(void* stream, const zlib_filefunc_def* api,
 BOOL dbf_copy(DBF_HANDLE handle,
               void* stream,
               void* stream_memo,
-              zlib_filefunc_def* api,
+              const zlib_filefunc_def* api,
               BOOL include_records,
               BOOL include_deleted_records)
 {

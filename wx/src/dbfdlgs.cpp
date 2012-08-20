@@ -402,7 +402,7 @@ bool DoModal_FieldEdit(wxWindow* parent, DBF_FIELD_INFO* info, const wxString& c
        if (ok)
        {
           strncpy(info->name, dlg.m_name.mb_str(), sizeof(info->name));
-          info->type = (enum dbf_data_type)dlg.m_type;
+          info->type = (dbf_data_type)dlg.m_type;
           info->length = dlg.m_length;
           info->decimals = dlg.m_decimals;
        }

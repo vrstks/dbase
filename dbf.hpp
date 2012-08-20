@@ -31,11 +31,11 @@ protected:
 
 // Operations
 public:
-   bool Open(const char* filename, enum dbf_editmode);
-   bool Open(const char* filename, enum dbf_editmode, const DBF_OPEN&);
+   bool Open(const char* filename, dbf_editmode);
+   bool Open(const char* filename, dbf_editmode, const DBF_OPEN&);
    bool Create(const char* filename, const DBF_FIELD_INFO* array, dbf_uint array_count);
    bool Create(const char* filename, const DBF_FIELD_INFO* array, dbf_uint array_count, const DBF_OPEN&);
-   bool Create(void* stream, const struct zlib_filefunc_def_s*, const DBF_FIELD_INFO* array, dbf_uint array_count, enum dbf_charconv charconv = dbf_charconv_compatible, void* memo = NULL);
+   bool Create(void* stream, const struct zlib_filefunc_def_s*, const DBF_FIELD_INFO* array, dbf_uint array_count, dbf_charconv charconv = dbf_charconv_compatible, void* memo = NULL);
    bool CloneDatabase(const char* lpszCloneName, bool bCopyRecords = false, bool bSkipDeleted = false);
    void GetFileAPI(struct zlib_filefunc_def_s*) const;
    void* GetMemoFile(void);
@@ -68,9 +68,9 @@ public:
 
    int FindField(const char* fieldname) const;
    
-   size_t Read(const DBF_FIELD* , char* buf, size_t buf_len, enum dbf_data_type type = DBF_DATA_TYPE_ANY) const;
-   size_t Read(dbf_uint field   , char* buf, size_t buf_len, enum dbf_data_type type = DBF_DATA_TYPE_ANY) const;
-   size_t Read(const char* field, char* buf, size_t buf_len, enum dbf_data_type type = DBF_DATA_TYPE_ANY) const;
+   size_t Read(const DBF_FIELD* , char* buf, size_t buf_len, dbf_data_type type = DBF_DATA_TYPE_ANY) const;
+   size_t Read(dbf_uint field   , char* buf, size_t buf_len, dbf_data_type type = DBF_DATA_TYPE_ANY) const;
+   size_t Read(const char* field, char* buf, size_t buf_len, dbf_data_type type = DBF_DATA_TYPE_ANY) const;
    
    int GetField_Date(dbf_uint field , char*);
    int GetField_Date(const char* field, char*);
@@ -101,13 +101,13 @@ public:
 #ifdef _WINBASE_
    bool Write(const DBF_FIELD*, const SYSTEMTIME&);
 #endif
-   bool Write(const DBF_FIELD* , const struct tm&, int ms = 0, enum dbf_data_type type = DBF_DATA_TYPE_ANY);
-   bool Write(const char* field, const struct tm&, int ms = 0, enum dbf_data_type type = DBF_DATA_TYPE_ANY);
-   bool Write(dbf_uint field , const struct tm&, int ms = 0, enum dbf_data_type type = DBF_DATA_TYPE_ANY);
+   bool Write(const DBF_FIELD* , const struct tm&, int ms = 0, dbf_data_type type = DBF_DATA_TYPE_ANY);
+   bool Write(const char* field, const struct tm&, int ms = 0, dbf_data_type type = DBF_DATA_TYPE_ANY);
+   bool Write(dbf_uint field , const struct tm&, int ms = 0, dbf_data_type type = DBF_DATA_TYPE_ANY);
 
-   bool WriteTime(const DBF_FIELD* , time_t, int ms = 0, enum dbf_data_type type = DBF_DATA_TYPE_ANY);
-   bool WriteTime(const char* field, time_t, int ms = 0, enum dbf_data_type type = DBF_DATA_TYPE_ANY);
-   bool WriteTime(dbf_uint field , time_t, int ms = 0, enum dbf_data_type type = DBF_DATA_TYPE_ANY);
+   bool WriteTime(const DBF_FIELD* , time_t, int ms = 0, dbf_data_type type = DBF_DATA_TYPE_ANY);
+   bool WriteTime(const char* field, time_t, int ms = 0, dbf_data_type type = DBF_DATA_TYPE_ANY);
+   bool WriteTime(dbf_uint field , time_t, int ms = 0, dbf_data_type type = DBF_DATA_TYPE_ANY);
 
    bool Write(const DBF_FIELD* , const bool&);
    bool Write(const char* field, const bool&);
@@ -125,23 +125,23 @@ public:
    bool Write(const DBF_FIELD* , double);
    bool Write(dbf_uint field , double);
 
-   bool Copy(void* stream, void* stream_memo, struct zlib_filefunc_def_s*, bool include_records, bool include_deleted_records);
+   bool Copy(void* stream, void* stream_memo, const struct zlib_filefunc_def_s*, bool include_records, bool include_deleted_records);
 
    dbf_uint GetPosition(void) const;
    dbf_uint GetRecordCount(void) const;
    dbf_uint GetFieldCount(void) const;
 
-   bool       Attach(void* stream, struct zlib_filefunc_def_s*, 
-                     enum dbf_editmode editmode = dbf_editmode_editable,
-                     enum dbf_charconv conv = dbf_charconv_compatible, 
+   bool       Attach(void* stream, const struct zlib_filefunc_def_s*, 
+                     dbf_editmode editmode = dbf_editmode_editable,
+                     dbf_charconv conv = dbf_charconv_compatible, 
                      void* memo = NULL,
                      const char* tablename = NULL);
    bool       Attach(DBF_HANDLE);
    bool       Attach(CDBase*);
    DBF_HANDLE Detach(void);
    bool GetFieldInfo(dbf_uint index, DBF_FIELD_INFO*) const;
-   enum dbf_data_type GetFieldType(dbf_uint field) const;
-   enum dbf_data_type GetFieldType(const DBF_FIELD*) const;
+   dbf_data_type GetFieldType(dbf_uint field) const;
+   dbf_data_type GetFieldType(const DBF_FIELD*) const;
 
 // Implementation
 public:
@@ -157,7 +157,7 @@ public:
    
    bool OpenMemo(void* stream);
    bool CreateMemo(void* stream);
-   static bool ParseDate(const char*, struct tm*, int* ms, enum dbf_data_type);
+   static bool ParseDate(const char*, struct tm*, int* ms, dbf_data_type);
 };
 
 #endif // __DBF_HPP__

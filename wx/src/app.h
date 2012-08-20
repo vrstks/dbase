@@ -11,7 +11,7 @@ class CommandLine
 {
 // Attributes
 public:
-   FileNameArray m_fileNames;
+   wxArrayFileName m_fileNames;
 
 // Construction
 public:
@@ -22,7 +22,7 @@ public:
 // App
 
 class MainFrame;
-class AcceleratorArray;
+class wxArrayAccelerator;
 class wxRecentFileList;
 class DBFResource;
 

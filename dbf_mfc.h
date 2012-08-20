@@ -38,13 +38,13 @@ protected:
 
 // Operations
 public:
-    int Open(const TCHAR* lpszFileName, enum dbf_editmode editmode = dbf_editmode_editable);
-    int Open(const TCHAR* lpszFileName, enum dbf_editmode editmode, const DBF_OPEN& parm);
+    int Open(const TCHAR* lpszFileName, dbf_editmode editmode = dbf_editmode_editable);
+    int Open(const TCHAR* lpszFileName, dbf_editmode editmode, const DBF_OPEN& parm);
     int Create(const TCHAR* lpszFileName, const CStringArray& strFieldArray);
     bool Create(const TCHAR* lpszFileName, 
       void* stream, struct zlib_filefunc_def_s*, 
       const DBF_FIELD_INFO* array, size_t array_count, 
-      enum dbf_charconv charconv = dbf_charconv_compatible, void* memo = NULL);
+      dbf_charconv charconv = dbf_charconv_compatible, void* memo = NULL);
     bool CloneDatabase(const TCHAR* lpszCloneName, bool bCopyRecords = FALSE, bool bSkipDeleted = FALSE);
 
     const char* GetLastError(void) const;

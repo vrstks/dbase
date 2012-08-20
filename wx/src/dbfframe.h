@@ -9,7 +9,7 @@
 // DBFFrame
 
 class wxRecentFileList;
-class AcceleratorArray;
+class wxArrayAccelerator;
 class DBFFrame : public wxDocMDIChildFrame
 {
    DECLARE_DYNAMIC_CLASS(DBFFrame)
@@ -23,7 +23,7 @@ public:
 #if (wxVERSION_NUMBER < 2900)
    wxMDIParentFrame* GetMDIParent() const;
 #endif
-   static const AcceleratorArray& GetAccelerator();
+   static const wxArrayAccelerator& GetAccelerator();
 
    virtual ~DBFFrame();
    virtual void SetMenuBar(wxMenuBar*);
