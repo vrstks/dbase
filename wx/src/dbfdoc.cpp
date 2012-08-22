@@ -131,21 +131,21 @@ IMPLEMENT_CLASS(DatabaseDocTemplate, wxDocTemplate)
 
 /*static*/ DatabaseDocTemplate* DatabaseDocTemplate::ms_instance = NULL;
 
+/*static*/ const wxDocTemplateClassInfo DatabaseDocTemplate::m_DefaultClassInfo(wxCLASSINFO(DBFDocument), wxCLASSINFO(DBFView), wxCLASSINFO(DBFFrame));
+
 DatabaseDocTemplate::DatabaseDocTemplate(wxDocManager* docManager,
-                                         wxClassInfo* docClassInfo,
-                                         wxClassInfo* viewClassInfo,
-                                         wxClassInfo* frameClassInfo,
+                                         const wxDocTemplateClassInfo& classInfo,
                                          wxRecentFileList* mru) : wxDocTemplate(docManager, 
         wxString::Format(_("%s Files"), wxT(DBF_FORMAT_NAME)), wxT("*.")wxT(DBF_FILEEXT),
         wxT(""), wxT(DBF_FILEEXT), wxT("dbf doc"), wxT("dbf view"),
-        docClassInfo, viewClassInfo), m_frameClassInfo(frameClassInfo), m_mru(mru)
+        classInfo.m_doc, classInfo.m_view), m_frameClassInfo(classInfo.m_frame), m_mru(mru)
 {
     ms_instance = this;
 }
 
 /*static*/ DatabaseDocTemplate* DatabaseDocTemplate::Create(wxDocManager* docManager, wxRecentFileList* mru)
 {
-   return new DatabaseDocTemplate(docManager, wxCLASSINFO(DBFDocument), wxCLASSINFO(DBFView), wxCLASSINFO(DBFFrame), mru);
+   return new DatabaseDocTemplate(docManager, m_DefaultClassInfo, mru);
 }
 
 /*static*/ wxIcon DatabaseDocTemplate::GetIcon()
