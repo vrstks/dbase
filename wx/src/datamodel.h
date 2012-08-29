@@ -1,5 +1,5 @@
 // datamodel.h
-// Copyright (c) 2007-2011 by Troels K. All rights reserved.
+// Copyright (c) 2007-2012 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __DATAMODEL_H__
@@ -168,6 +168,9 @@ public:
 #if (wxVERSION_NUMBER >= 2900)
    virtual unsigned int GetRowCount() const = 0;
    virtual unsigned int GetColumnCount() const = 0;
+
+   virtual bool IsListModel() const { return true; }
+   virtual bool IsVirtualListModel() const { return true; }
 #else
 #endif
    virtual wxString GetDataModelName(void) const = 0;
