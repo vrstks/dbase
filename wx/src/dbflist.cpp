@@ -12,10 +12,10 @@
 #include "../../dbf.inl"
 #include "../../dbf_wx.h"
 
-#include "datalist.h"
-#include "dbflist.h"
 #include "wx29.h"
 #include "wxext.h"
+#include "datalist.h"
+#include "dbflist.h"
 #include "datamodel.h"
 
 BEGIN_EVENT_TABLE(wxDBFListCtrl, wxDataListCtrl)
@@ -56,7 +56,7 @@ void wxFieldEdit::OnMove(wxMoveEvent& event)
 bool wxDBFListCtrl::Edit(long row, long col)
 {
    wxRect rect;
-   bool ok = ::wxListCtrl_GetItemRect(*this, row, col, &rect);
+   bool ok = GetSubItemRect(row, col, rect);
 
    if (ok)
    {
@@ -94,7 +94,7 @@ void wxDBFListCtrl::OnDblClick(wxCommandEvent& /*event*/)
    {
       wxPoint pt = ScreenToClient(::wxGetMousePosition());
       long col;
-      long row = ::wxListView_HitTest(*this, pt, NULL, &col);
+      long row = HitTest(pt, NULL, &col);
 
       if (row != wxNOT_FOUND)
       {
@@ -111,8 +111,8 @@ bool wxDBFListCtrl::AddNew()
    if (ok)
    {
       Fill();
-      ::wxListCtrl_SelectAll(this, false);
-      ::wxListView_SetCurSel(this, GetItemCount()-1);
+      SelectAll(false);
+      SelectRow(GetItemCount()-1);
       Edit();
    }
    return ok;

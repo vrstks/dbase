@@ -31,19 +31,20 @@ static const wxChar* const MOD_aszType[] =
 };
 C_ASSERT_(1,WXSIZEOF(MOD_aszType) == DBF_DATA_TYPE_ENUMCOUNT);
 
-class wxStructListView : public wxListView
+class wxStructListView : public wxAltColourListView
 {
-   DECLARE_DYNAMIC_CLASS(wxStructListView)
+    typedef wxAltColourListView base;
+    DECLARE_DYNAMIC_CLASS(wxStructListView)
 public:
    DBF_FIELD_INFO* m_array;
    unsigned int m_array_count;
-   enum
+   enum col
    {
-      ENUM_col_name,
-      ENUM_col_type,
-      ENUM_col_length,
-      //ENUM_col_decimals,
-      ENUM_col_enumcount
+      col_name,
+      col_type,
+      col_length,
+      //col_decimals,
+      col_enumcount
    };
 
    wxStructListView();
@@ -57,9 +58,9 @@ public:
    virtual wxString OnGetItemText(long item, long col) const;
 };
 
-IMPLEMENT_DYNAMIC_CLASS(wxStructListView, wxListView)
+IMPLEMENT_DYNAMIC_CLASS(wxStructListView, wxAltColourListView)
 
-wxStructListView::wxStructListView() : wxListView(), m_array(NULL), m_array_count(0)
+wxStructListView::wxStructListView() : wxAltColourListView(), m_array(NULL), m_array_count(0)
 {
 }
 
@@ -77,12 +78,12 @@ void wxStructListView::Init(wxDBase* db)
       wxT("Length"),
       //wxT("Decimals")
    };
-   C_ASSERT_(1, ENUM_col_enumcount == WXSIZEOF(aszType));
+   C_ASSERT_(1, col_enumcount == WXSIZEOF(aszType));
    size_t i;
 
    for (i = 0; i < WXSIZEOF(aszType); i++)
    {
-      InsertColumn((long)i, aszType[i], (i == ENUM_col_length) ? wxLIST_FORMAT_RIGHT : wxLIST_FORMAT_LEFT, 80);
+      InsertColumn((long)i, aszType[i], (i == col_length) ? wxLIST_FORMAT_RIGHT : wxLIST_FORMAT_LEFT, 80);
    }
 
    m_array_count = (db && db->IsOpen()) ? db->GetFieldCount() : 0;
@@ -93,7 +94,7 @@ void wxStructListView::Init(wxDBase* db)
       db->GetFieldInfo((dbf_uint)i, m_array + i);
    }
    Fill();
-   ::wxListView_SetCurSel(this, 0);
+   SelectRow(0);
    SetFocus();
 }
 
@@ -109,7 +110,7 @@ void wxStructListView::Add(const DBF_FIELD_INFO& info)
    m_array[m_array_count] = info;
    m_array_count++;
    Fill();
-   ::wxListView_SetCurSel(this, m_array_count-1);
+   SelectRow(m_array_count-1);
 }
 
 wxString wxStructListView::OnGetItemText(long item, long col) const
@@ -119,13 +120,13 @@ wxString wxStructListView::OnGetItemText(long item, long col) const
    
    switch (col)
    {
-      case ENUM_col_name:
+      case col_name:
          str = wxConvertMB2WX(info->name);
          break;
-      case ENUM_col_type:
+      case col_type:
          str = MOD_aszType[info->type];
          break;
-      case ENUM_col_length:
+      case col_length:
          if (info->decimals)
          {
             str.Printf(wxT("%d:%d"), info->length, info->decimals);
@@ -136,7 +137,7 @@ wxString wxStructListView::OnGetItemText(long item, long col) const
          }
          break;
          /*
-      case ENUM_col_decimals:
+      case col_decimals:
          str.Printf(wxT("%d"), info.decimals);
          break;
          */

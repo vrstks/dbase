@@ -9,19 +9,19 @@
 // wxDataListCtrl
 
 class wxDataModelBase;
-class wxDataListCtrl : public wxListView
+class wxDataListCtrl : public wxAltColourListView
 {
-   typedef wxListView base;
+   typedef wxAltColourListView base;
 //   DECLARE_CLASS(wxDataListCtrl)
 // Attributes
 public:
    enum attr
    {
-      ENUM_attr_deleted,
-      ENUM_attr_enumcount,
-      ENUM_attr_none = -1
+      attr_deleted,
+      attr_enumcount,
+      attr_none = -1
    };
-   wxListItemAttr m_attr[ENUM_attr_enumcount];
+   wxListItemAttr m_attr[attr_enumcount];
    
    int m_column_clicked;
    

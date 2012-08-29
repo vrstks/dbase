@@ -32,7 +32,9 @@ public:
 
    bool Create(wxWindow* parent)
    {
-       return base::Create(parent, wxID_ANY, wxPoint(0,0), parent->GetClientSize(), wxLC_REPORT | wxLC_VIRTUAL | wxLC_EDIT_LABELS);
+       bool ok = base::Create(parent, wxID_ANY, wxPoint(0,0), parent->GetClientSize(), wxLC_REPORT | wxLC_VIRTUAL | wxLC_EDIT_LABELS);
+       SetAlternateRowColour();
+       return ok;
    }
 
    virtual ~DBFWindow()
@@ -118,7 +120,7 @@ void DBFView::OnUpdate(wxView* sender, wxObject* hint)
    {
       case DBFDocument::ENUM_hint_initialupdate:
          GetWindow()->Init();
-         ::wxListView_SetCurSel(GetWindow(), 0);
+         GetWindow()->SelectRow(0);
          break;
       default:
          base::OnUpdate(sender, hint);
@@ -171,7 +173,7 @@ void DBFView::OnProperties(wxCommandEvent&)
 
 void DBFView::OnSelectAll(wxCommandEvent&)
 {
-   ::wxListCtrl_SelectAll(GetWindow());
+    GetWindow()->SelectAll();
 }
 
 void DBFView::OnUndelete(wxCommandEvent&)

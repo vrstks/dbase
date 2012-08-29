@@ -237,93 +237,6 @@ static wxString wxGetAccelText(int flags, int keyCode)
    return str;
 }
 
-bool wxListCtrl_GetItemRect(const wxListView& ctrl, long row, long col, wxRect* rect)
-{
-   bool ok = ctrl.GetItemRect(row, *rect, wxLIST_RECT_BOUNDS);
-
-   if (ok)
-   {
-      for (int i = 0/*, count = ctrl.GetColumnCount()*/; ; i++)
-      {
-         const int width = ctrl.GetColumnWidth(i);
-
-         if (i < col)
-         {
-            rect->x+=width;
-         }
-         else if (i == col)
-         {
-            rect->width = width;
-            break;
-         }
-         else
-         {
-            ok = false;
-            break;
-         }
-      }
-   }
-   return ok;
-}
-
-long wxListView_HitTest(const wxListView& ctrl, const wxPoint& point, int* flags, long* col)
-{
-   int rFlags;
-   const long row = ((wxListCtrl&)/*unconst*/ctrl).HitTest(point, rFlags);
-
-   if (col && (row != wxNOT_FOUND))
-   {
-      const int offset = ctrl.GetScrollPos(wxHORIZONTAL);
-      int pos = 0;
-
-      *col = -1;
-      for (int i = 0, count = ctrl.GetColumnCount(); i < count; i++)
-      {
-         pos+=ctrl.GetColumnWidth(i);
-         if ((point.x + offset) < pos)
-         {
-            *col = i;
-            break;
-         }
-      }
-   }
-   if (flags) *flags = rFlags;
-   return row;
-}
-
-bool wxListCtrl_EndEditLabel(wxListCtrl* wnd, bool cancel)
-{
-#ifdef __WXMSW__
-   #if (wxVERSION_NUMBER >= 2901)
-      return wnd->EndEditLabel(cancel);
-   #else
-      HWND hwnd = ListView_GetEditControl((HWND)wnd->GetHWND());
-      bool ok = (hwnd != NULL);
-      if (ok)
-      {
-      #ifdef ListView_CancelEditLabel
-         if (cancel && (wxApp::GetComCtl32Version() >= 600))
-         {
-            ListView_CancelEditLabel((HWND)wnd->GetHWND());
-            return ok;
-         }
-      #endif
-         if (::IsWindowVisible(hwnd))
-         {
-            ::SendMessage(hwnd, WM_KEYDOWN, cancel ? VK_ESCAPE : VK_RETURN, 0);
-         }
-         else
-         {
-            ::SendMessage(hwnd, WM_CLOSE, 0, 0);
-         }
-      }
-      return ok;
-   #endif
-#else
-   return false;
-#endif
-}
-
 #if wxUSE_ACCEL
 
 /*static*/
@@ -809,6 +722,170 @@ wxStdDialogButtonSizer* wxCreateStdDialogButtonSizer(wxWindow* parent, long flag
     parent->GetSizer()->Add(buttonpane, 0, wxEXPAND | wxLEFT | wxBOTTOM, 5);
 
     return buttonpane;
+}
+
+#if (wxVERSION_NUMBER < 2900)
+static unsigned char wxColourBase_AlphaBlend(unsigned char fg, unsigned char bg, double alpha)
+{
+    double result = bg + (alpha * (fg - bg));
+    result = wxMax(result,   0.0);
+    result = wxMin(result, 255.0);
+    return (unsigned char)result;
+}
+
+static void wxColourBase_ChangeLightness(unsigned char* r, unsigned char* g, unsigned char* b, int ialpha)
+{
+    if (ialpha == 100) return;
+
+    // ialpha is 0..200 where 0 is completely black
+    // and 200 is completely white and 100 is the same
+    // convert that to normal alpha 0.0 - 1.0
+    ialpha = wxMax(ialpha,   0);
+    ialpha = wxMin(ialpha, 200);
+    double alpha = ((double)(ialpha - 100.0))/100.0;
+
+    unsigned char bg;
+    if (ialpha > 100)
+    {
+        // blend with white
+        bg = 255;
+        alpha = 1.0 - alpha;  // 0 = transparent fg; 1 = opaque fg
+    }
+    else
+    {
+        // blend with black
+        bg = 0;
+        alpha = 1.0 + alpha;  // 0 = transparent fg; 1 = opaque fg
+    }
+
+    *r = wxColourBase_AlphaBlend(*r, bg, alpha);
+    *g = wxColourBase_AlphaBlend(*g, bg, alpha);
+    *b = wxColourBase_AlphaBlend(*b, bg, alpha);
+}
+
+static wxColour wxColourBase_ChangeLightness(const wxColour& colour, int ialpha)
+{
+    wxByte r = colour.Red();
+    wxByte g = colour.Green();
+    wxByte b = colour.Blue();
+    wxColourBase_ChangeLightness(&r, &g, &b, ialpha);
+    return wxColour(r,g,b);
+}
+#endif
+
+IMPLEMENT_DYNAMIC_CLASS(wxAltColourListView, wxListView)
+
+void wxAltColourListView::SetAlternateRowColour()
+{
+    // Determine the alternate rows colour automatically from the
+    // background colour.
+    const wxColour bgColour = GetBackgroundColour();
+
+    // Depending on the background, alternate row color
+    // will be 3% more dark or 50% brighter.
+#if (wxVERSION_NUMBER >= 2900)
+    int alpha = (bgColour.GetRGB() > 0x808080) ? 97 : 150;
+    m_alternateRowColour.SetBackgroundColour(bgColour.ChangeLightness(alpha));
+#else
+    int alpha = ((bgColour.Red() | (bgColour.Green() << 8) | (bgColour.Blue() << 16)) > 0x808080) ? 97 : 150;
+    m_alternateRowColour.SetBackgroundColour(wxColourBase_ChangeLightness(bgColour, alpha));
+#endif
+}
+
+wxListItemAttr* wxAltColourListView::OnGetItemAttr(long row) const
+{
+    return (m_alternateRowColour.GetBackgroundColour().IsOk() && (row % 2))
+        ? wxConstCast(&m_alternateRowColour, wxListItemAttr)
+        : base::OnGetItemAttr(row);
+}
+
+#if (wxVERSION_NUMBER < 2900)
+bool wxAltColourListView::GetSubItemRect( long row, long col, wxRect& rect, int code) const
+{
+    bool ok = base::GetItemRect(row, rect, code);
+
+    if (ok)
+    {
+      for (int i = 0/*, count = ctrl.GetColumnCount()*/; ; i++)
+      {
+         const int width = GetColumnWidth(i);
+
+         if (i < col)
+         {
+            rect.x+=width;
+         }
+         else if (i == col)
+         {
+            rect.width = width;
+            break;
+         }
+         else
+         {
+            ok = false;
+            break;
+         }
+      }
+    }
+    return ok;
+}
+#endif
+
+long wxAltColourListView::HitTest(const wxPoint& point, int* flags, long* col) const
+{
+    int rFlags;
+    const long row = base::HitTest(point, rFlags);
+
+    if (col && (row != wxNOT_FOUND))
+    {
+      const int offset = GetScrollPos(wxHORIZONTAL);
+      int pos = 0;
+
+      *col = -1;
+      for (int i = 0, count = GetColumnCount(); i < count; i++)
+      {
+         pos += GetColumnWidth(i);
+         if ((point.x + offset) < pos)
+         {
+            *col = i;
+            break;
+         }
+      }
+    }
+    if (flags) *flags = rFlags;
+    return row;
+}
+
+bool wxAltColourListView::EndEditLabel(bool cancel)
+{
+#ifdef __WXMSW__
+    #if (wxVERSION_NUMBER >= 2901)
+        return base::EndEditLabel(cancel);
+    #else
+      HWND hwnd = ListView_GetEditControl((HWND)GetHWND());
+      bool ok = (hwnd != NULL);
+      if (ok)
+      {
+      #ifdef ListView_CancelEditLabel
+         if (cancel && (wxApp::GetComCtl32Version() >= 600))
+         {
+            ListView_CancelEditLabel((HWND)GetHWND());
+            return ok;
+         }
+      #endif
+         if (::IsWindowVisible(hwnd))
+         {
+            ::SendMessage(hwnd, WM_KEYDOWN, cancel ? VK_ESCAPE : VK_RETURN, 0);
+         }
+         else
+         {
+            ::SendMessage(hwnd, WM_CLOSE, 0, 0);
+         }
+      }
+      return ok;
+    #endif
+#else
+    return false;
+#endif
 }
 
 /////////////////////////////////////////////////////////////////////////////

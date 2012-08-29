@@ -20,23 +20,13 @@ Here we [re]introduce the wx2.8 (row,col) sorted model class in wx2.9, wxDataVie
 
 #if (wxVERSION_NUMBER >= 2900)
 
-class wxDataViewListModelEx : public wxDataViewListModel
+class wxDataViewListModelEx : public wxDataViewIndexListModel
 {
 public:
-   wxDataViewListModelEx() : wxDataViewListModel()
+   wxDataViewListModelEx() : wxDataViewIndexListModel()
    {
    }
    virtual unsigned int GetRowCount() const = 0;
-
-private:
-   virtual unsigned int GetChildren(const wxDataViewItem&, wxDataViewItemArray&) const
-   {
-      return 0;
-   }
-   virtual unsigned GetRow( const wxDataViewItem&) const
-   {
-      return 0;
-   }
 };
 
 WX_DEFINE_SORTED_ARRAY_SIZE_T(unsigned int, wxDataViewSortedIndexArray);
@@ -168,10 +158,6 @@ public:
 #if (wxVERSION_NUMBER >= 2900)
    virtual unsigned int GetRowCount() const = 0;
    virtual unsigned int GetColumnCount() const = 0;
-
-   virtual bool IsListModel() const { return true; }
-   virtual bool IsVirtualListModel() const { return true; }
-#else
 #endif
    virtual wxString GetDataModelName(void) const = 0;
 

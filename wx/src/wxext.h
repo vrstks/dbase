@@ -5,8 +5,6 @@
 #define WXK_HELP       WXK_F1
 #define WXK_FULLSCREEN WXK_F11
 
-class WXDLLIMPEXP_FWD_CORE wxListCtrl;
-class WXDLLIMPEXP_FWD_CORE wxListView;
 class WXDLLIMPEXP_FWD_CORE wxDataObject;
 class WXDLLIMPEXP_FWD_CORE wxMDIParentFrame;
 
@@ -42,39 +40,6 @@ public:
 
     static bool Set(wxDataObject* def, wxDataObject* primary = NULL);
 };
-
-#if !defined(__WXCODE_H__) && defined(_WX_LISTCTRL_H_)
-
-inline void wxListCtrl_SelectAll(wxListCtrl* ctrl, bool on = true)
-{
-   for (int i = 0; i < ctrl->GetItemCount(); i++)
-   {
-      ctrl->SetItemState(i, on ? wxLIST_STATE_SELECTED : 0, wxLIST_STATE_SELECTED);
-   }
-}
-
-inline bool wxListView_SetCurSel(wxListCtrl* ctrl, long index, bool focus = true)
-{
-   bool ok = (index != wxNOT_FOUND) && (index < ctrl->GetItemCount());
-   if (ok)
-   {
-      bool on = true;
-      ctrl->SetItemState(index, on ? wxLIST_STATE_SELECTED : 0, wxLIST_STATE_SELECTED); //ctrl->Select(index);
-      if (focus)
-      {
-         ctrl->SetItemState(index, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
-         ctrl->EnsureVisible(index);
-         //ctrl->Focus(index);
-      }
-   }
-   return ok;
-}
-
-#endif
-
-extern bool wxListCtrl_GetItemRect(const wxListView&, long row, long col, wxRect*);
-extern long wxListView_HitTest(const wxListView&, const wxPoint&, int* flags, long* col);
-extern bool wxListCtrl_EndEditLabel(wxListCtrl* ctrl, bool cancel);
 
 #if defined(_WX_EVENT_H_) || defined(_WX_EVENT_H__)
 inline void wxPostCommandEvent(wxEvtHandler* dest, wxEventType commandType, int id)
@@ -206,3 +171,73 @@ protected:
     void OnUpdateNeedWindow(wxUpdateUIEvent&);
     DECLARE_EVENT_TABLE()
 };
+
+#ifdef _WX_LISTCTRL_H_BASE_
+class wxAltColourListView : public wxListView
+{
+    typedef wxListView base;
+    DECLARE_DYNAMIC_CLASS(wxAltColourListView)
+public:
+    wxColour GetAlternateRowColour() const             { return m_alternateRowColour.GetBackgroundColour(); }
+    void SetAlternateRowColour(const wxColour& colour) { m_alternateRowColour.SetBackgroundColour(colour); }
+    void SetAlternateRowColour();
+
+    virtual wxListItemAttr* OnGetItemAttr(long row) const;
+
+    void SelectAll(bool on = true)
+    {
+       for (int i = 0; i < GetItemCount(); i++)
+       {
+          SetItemState(i, on ? wxLIST_STATE_SELECTED : 0, wxLIST_STATE_SELECTED);
+       }
+    }
+
+    long GetSelectedRow(wxString* str = NULL) const
+    { 
+       long row = InReportView() ? GetFirstSelected() : GetFocusedItem();
+
+       if (str && (wxNOT_FOUND != row)) str->operator=(GetItemText(row));
+       return row;
+    }
+
+    bool SelectRow(long row, bool focus = true)
+    {
+       bool ok = (row != wxNOT_FOUND) && (row < GetItemCount());
+       if (ok)
+       {
+          bool on = true;
+
+          SetItemState(row, on ? wxLIST_STATE_SELECTED : 0, wxLIST_STATE_SELECTED);
+          if (focus)
+          {
+             SetItemState(row, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
+             EnsureVisible(row);
+          }
+       }
+       return ok;
+    }
+
+#if (wxVERSION_NUMBER < 2900)
+    bool GetSubItemRect( long row, long col, wxRect& rect, int code = wxLIST_RECT_BOUNDS ) const;
+#endif
+    long HitTest(const wxPoint&, int* flags, long* col) const;
+    bool EndEditLabel(bool cancel);
+
+    bool RefreshSubItem(long row, long col, bool eraseBackground = true)
+    {
+        wxRect rect;
+
+        bool ok = GetSubItemRect(row, col, rect);
+        if (ok)
+        {
+            rect.x+=1, rect.width-=2;
+            RefreshRect(rect, eraseBackground);
+        }
+        return ok;
+    }
+
+private:
+    // user defined color to draw row lines, may be invalid
+    wxListItemAttr m_alternateRowColour;
+};
+#endif

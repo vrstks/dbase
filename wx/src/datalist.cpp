@@ -2,11 +2,7 @@
 // Copyright (c) 2007-2012 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
-#include <wx/listctrl.h>
-#include <wx/dataview.h>
-#include <wx/app.h>
-#include <wx/settings.h>
-#include <wx/msgdlg.h>
+#include "precomp.h"
 
 #include "../../ioapi/zlib.h"
 #include "../../ioapi/ioapi.h"
@@ -16,24 +12,24 @@
 #include "../../dbf.inl"
 #include "../../dbf_wx.h"
 
-#include "datalist.h"
 #include "wxext.h"
+#include "datalist.h"
 #include "datamodel.h"
 
-//IMPLEMENT_CLASS(wxDataListCtrl, wxListView)
+//IMPLEMENT_CLASS(wxDataListCtrl, wxAltColourListView)
 
-BEGIN_EVENT_TABLE(wxDataListCtrl, wxListView)
+BEGIN_EVENT_TABLE(wxDataListCtrl, wxAltColourListView)
    EVT_KEY_DOWN(wxDataListCtrl::OnKeyDown)
    EVT_LIST_ITEM_SELECTED(wxID_ANY, wxDataListCtrl::OnSelChange)
    EVT_LIST_ITEM_ACTIVATED(wxID_ANY, wxDataListCtrl::OnSelect)
 END_EVENT_TABLE()
 
-wxDataListCtrl::wxDataListCtrl(): wxListView()
+wxDataListCtrl::wxDataListCtrl(): wxAltColourListView()
 {
    const wxColour gray = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
 
-   m_attr[ENUM_attr_deleted].SetTextColour(gray);
-   m_column_clicked = -1;
+   m_attr[attr_deleted].SetTextColour(gray);
+   m_column_clicked = wxNOT_FOUND;
    m_id_edit = m_id_selchange = m_id_delete = 0;
 }
 
@@ -122,9 +118,9 @@ wxListItemAttr* wxDataListCtrl::OnGetItemAttr(long item) const
 {
    wxDataModelBase* db = wxStaticCast(this, wxDataListCtrl)->GetModel(); // unconst
    const bool bDeleted = db->IsRowDeleted(item);
-   const attr attr = bDeleted ? ENUM_attr_deleted : ENUM_attr_none;
+   const attr attr = bDeleted ? attr_deleted : attr_none;
 
-   return (attr != ENUM_attr_none) ? (wxListItemAttr*)(m_attr + attr) : base::OnGetItemAttr(item);
+   return (attr != attr_none) ? (wxListItemAttr*)(m_attr + attr) : base::OnGetItemAttr(item);
 }
 
 bool wxDataListCtrl::IsRecordOk(unsigned int index)
@@ -228,7 +224,7 @@ void wxDataListCtrl::OnBeginLabelEdit(wxListEvent& event)
    }
    else
    {
-      ::wxListCtrl_EndEditLabel(this, true);
+      EndEditLabel(true);
    }
 }
 
