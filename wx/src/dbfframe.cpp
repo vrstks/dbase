@@ -6,7 +6,7 @@
 
 #include "dbfframe.h"
 #include "dbfdoc.h"
-#include "wxext.h"
+#include "wx/ext/wx.h"
 
 IMPLEMENT_DYNAMIC_CLASS(DBFFrame, wxDocMDIChildFrame)
 

@@ -5,7 +5,7 @@
 #include "precomp.h"
 
 #include "dbfutil.h"
-#include "wxext.h"
+#include "wx/ext/wx.h"
 
 #include "../../ioapi/zlib.h"
 #include "../../ioapi/ioapi.h"

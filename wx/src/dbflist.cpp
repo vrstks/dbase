@@ -12,8 +12,8 @@
 #include "../../dbf.inl"
 #include "../../dbf_wx.h"
 
-#include "wx29.h"
-#include "wxext.h"
+#include "wx/ext/trunk.h"
+#include "wx/ext/wx.h"
 #include "datalist.h"
 #include "dbflist.h"
 #include "datamodel.h"
@@ -66,7 +66,7 @@ bool wxDBFListCtrl::Edit(long row, long col)
       ok = (NULL != edit);
       if (ok)
       {
-         edit->SetValue(::wxListCtrl_GetItemText(*this, row, col));
+         edit->SetValue(GetItemText(row, col));
          rect.height+=3;
          edit->Fixate(rect);
       }

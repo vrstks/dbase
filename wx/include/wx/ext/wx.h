@@ -1,4 +1,4 @@
-// wxext.h
+// wx/ext/wx.h
 // Copyright (c) 2007-2012 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
@@ -235,6 +235,23 @@ public:
         }
         return ok;
     }
+
+#if (wxVERSION_NUMBER < 2900)
+    wxString GetItemText(long row, long col = 0) const
+    {
+       wxString str;
+       wxListItem info;
+
+       info.m_itemId = row;
+       info.m_col = col;
+       info.m_mask = wxLIST_MASK_TEXT;
+       if (GetItem(info))
+       {
+          str = info.m_text;
+       }
+       return str;
+    }
+#endif
 
 private:
     // user defined color to draw row lines, may be invalid

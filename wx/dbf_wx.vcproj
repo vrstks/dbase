@@ -53,7 +53,7 @@
 				AdditionalOptions="/EHsc "
 				Optimization="1"
 				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="$(WXWIN)\include;$(WXWIN)\lib\vc_lib\msw"
+				AdditionalIncludeDirectories="include;$(WXWIN)\include;$(WXWIN)\lib\vc_lib\msw"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"
 				StringPooling="true"
 				RuntimeLibrary="0"
@@ -150,7 +150,7 @@
 				AdditionalOptions="/EHsc "
 				Optimization="1"
 				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="$(WXWIN)\include;$(WXWIN)\lib\vc_lib\msw"
+				AdditionalIncludeDirectories="include;$(WXWIN)\include;$(WXWIN)\lib\vc_lib\msw"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"
 				StringPooling="true"
 				RuntimeLibrary="0"
@@ -247,7 +247,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/EHsc /Zm115"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(WXWIN)\lib\vc_dll\mswud;$(WXWIN)\include"
+				AdditionalIncludeDirectories="include;$(WXWIN)\lib\vc_dll\mswud;$(WXWIN)\include"
 				PreprocessorDefinitions="_DEBUG;__WXDEBUG__;WXUSINGDLL;_CRT_SECURE_NO_WARNINGS"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -345,7 +345,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/EHsc "
 				Optimization="0"
-				AdditionalIncludeDirectories="$(WXWIN)\lib\vc_dll\mswud;$(WXWIN)\include"
+				AdditionalIncludeDirectories="include;$(WXWIN)\lib\vc_dll\mswud;$(WXWIN)\include"
 				PreprocessorDefinitions="__WXDEBUG__;WXUSINGDLL;_CRT_SECURE_NO_WARNINGS"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -444,7 +444,7 @@
 				AdditionalOptions="/EHsc "
 				Optimization="1"
 				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswu"
+				AdditionalIncludeDirectories="include;$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswu"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"
 				StringPooling="true"
 				RuntimeLibrary="0"
@@ -542,7 +542,7 @@
 				AdditionalOptions="/EHsc "
 				Optimization="1"
 				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswu"
+				AdditionalIncludeDirectories="include;$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswu"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"
 				StringPooling="true"
 				RuntimeLibrary="0"
@@ -638,7 +638,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/EHsc "
 				Optimization="0"
-				AdditionalIncludeDirectories="$(WXWIN)\lib\vc_dll\mswd;$(WXWIN)\include"
+				AdditionalIncludeDirectories="include;$(WXWIN)\lib\vc_dll\mswd;$(WXWIN)\include"
 				PreprocessorDefinitions="_DEBUG;__WXDEBUG__;WXUSINGDLL;_CRT_SECURE_NO_WARNINGS"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -735,7 +735,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/EHsc "
 				Optimization="0"
-				AdditionalIncludeDirectories="$(WXWIN)\lib\vc_dll\mswd;$(WXWIN)\include"
+				AdditionalIncludeDirectories="include;$(WXWIN)\lib\vc_dll\mswd;$(WXWIN)\include"
 				PreprocessorDefinitions="__WXDEBUG__;WXUSINGDLL;_CRT_SECURE_NO_WARNINGS"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -1782,42 +1782,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\src\wx29.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Unicode Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Unicode Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="1"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath="src\wxdbf.rc"
 				>
 				<FileConfiguration
@@ -2049,6 +2013,42 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath=".\src\wxtrunk.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Unicode Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Unicode Release|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="1"
+					/>
+				</FileConfiguration>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -2126,11 +2126,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\wx29.h"
+				RelativePath="include\wx\ext\trunk.h"
 				>
 			</File>
 			<File
-				RelativePath=".\src\wxext.h"
+				RelativePath="include\wx\ext\wx.h"
 				>
 			</File>
 		</Filter>

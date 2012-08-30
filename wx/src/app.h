@@ -5,7 +5,7 @@
 #ifndef __APP_H__
 #define __APP_H__
 
-#include "wx29.h" // wxAppEx
+#include "wx/ext/trunk.h" // wxAppEx
 
 class CommandLine
 {

@@ -4,7 +4,7 @@
 
 #include "precomp.h"
 
-#include "wxext.h"
+#include "wx/ext/wx.h"
 #include "dbfres.h"
 #include "dbfdefs.h"
 

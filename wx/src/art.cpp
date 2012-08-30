@@ -1,10 +1,10 @@
 // art.cpp
-// Copyright (c) 2007-2010 by Troels K. All rights reserved.
+// Copyright (c) 2007-2012 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
 
-#include "wxext.h"
+#include "wx/ext/wx.h"
 
 #include "../art/help.xpm"
 #include "../art/plus.xpm"

@@ -6,12 +6,12 @@
 #include <wx/aboutdlg.h>
 #include <wx/cmdline.h>
 
-#include "wxext.h"
+#include "wx/ext/trunk.h"
+#include "wx/ext/wx.h"
 #include "app.h"
 #include "appframe.h"
 #include "dbfres.h"
 #include "dbfdefs.h"
-#include "wx29.h"
 
 IMPLEMENT_APP(App)
 

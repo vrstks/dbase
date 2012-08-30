@@ -15,8 +15,8 @@
 #include "../../dbf_wx.h"
 #include "../../dbf_wx.inl"
 #include "dbfdoc.h"
-#include "wxext.h"
-#include "wx29.h"
+#include "wx/ext/wx.h"
+#include "wx/ext/trunk.h"
 
 IMPLEMENT_DYNAMIC_CLASS(DBFDocument, wxDocument)
 

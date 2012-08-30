@@ -14,7 +14,7 @@
 #include "../../dbf.inl"
 #include "../../dbf_wx.h"
 #include "../../dbf_wx.inl"
-#include "wxext.h"
+#include "wx/ext/wx.h"
 
 #define C_ASSERT_(n,e) typedef char __C_ASSERT__##n[(e)?1:-1]
 

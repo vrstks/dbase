@@ -6,8 +6,8 @@
 #include <wx/stdpaths.h>
 #include <wx/aboutdlg.h>
 
-#include "wx29.h"
-#include "wxext.h"
+#include "wx/ext/trunk.h"
+#include "wx/ext/wx.h"
 #include "appframe.h"
 #include "app.h"
 #include "../../bool.h"

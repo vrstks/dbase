@@ -12,7 +12,7 @@
 #include "../../dbf.inl"
 #include "../../dbf_wx.h"
 
-#include "wxext.h"
+#include "wx/ext/wx.h"
 #include "datalist.h"
 #include "datamodel.h"
 

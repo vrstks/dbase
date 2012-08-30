@@ -5,8 +5,8 @@
 #include "precomp.h"
 #include <wx/stdpaths.h>
 
-#include "wxext.h"
-#include "wx29.h"
+#include "wx/ext/wx.h"
+#include "wx/ext/trunk.h"
 
 #include <wx/arrimpl.cpp>
 WX_DEFINE_OBJARRAY(wxArrayAccelerator)

@@ -1,9 +1,9 @@
-// wx29.h
+// wx/wxt/trunk.h
 // Copyright (c) 2010-2012 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
-#ifndef __WXTRUNK_H__
-#define __WXTRUNK_H__
+#ifndef __WX_EXT_TRUNK_H__
+#define __WX_EXT_TRUNK_H__
 
 #ifndef wxCLASSINFO
     #define wxCLASSINFO CLASSINFO
@@ -135,15 +135,4 @@ private:
 
 #endif // _WX_VERSIONINFO_H_
 
-#if (wxVERSION_NUMBER >= 2900)
-#ifdef _WX_LISTCTRL_H_BASE_
-inline wxString wxListCtrl_GetItemText(const wxListCtrl& ctrl, long row, long col = 0)
-{
-   return ctrl.GetItemText(row, col);
-}
-#endif
-#else
-extern wxString wxListCtrl_GetItemText(const wxListCtrl&, long row, long col = 0);
-#endif
-
-#endif // __WXTRUNK_H__
+#endif // __WX_EXT_TRUNK_H__

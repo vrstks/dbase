@@ -4,7 +4,8 @@
 
 #include "precomp.h"
 
-#include "wxext.h"
+#include "wx/ext/trunk.h"
+#include "wx/ext/wx.h"
 //#include "app.h"
 #include "dbfview.h"
 #include "dbfdoc.h"
@@ -12,7 +13,6 @@
 #include "datalist.h"
 #include "dbflist.h"
 #include "dbfutil.h"
-#include "wx29.h"
 #include "dbfmodel.h"
 
 /////////////////////////////////////////////////////////////////////////////

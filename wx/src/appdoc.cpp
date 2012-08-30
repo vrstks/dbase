@@ -4,11 +4,11 @@
 
 #include "precomp.h"
 
-#include "wxext.h"
+#include "wx/ext/trunk.h"
+#include "wx/ext/wx.h"
 #include "app.h"
 #include "dbfdoc.h"
 #include "appframe.h"
-#include "wx29.h"
 #include "../../bool.h"
 #include "../../dbf.h"
 
