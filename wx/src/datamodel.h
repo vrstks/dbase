@@ -155,11 +155,16 @@ public:
    virtual bool SetValueByRow(const wxString& , unsigned int row, unsigned int col);
    virtual void GetValueByRow(      wxVariant&, unsigned int row, unsigned int col) const = 0;
    virtual bool SetValueByRow(const wxVariant&, unsigned int row, unsigned int col) = 0;
+   virtual wxString GetDataModelName(void) const = 0;
 #if (wxVERSION_NUMBER >= 2900)
    virtual unsigned int GetRowCount() const = 0;
    virtual unsigned int GetColumnCount() const = 0;
+#else
+   void RowValueChanged(unsigned int row, unsigned int col)
+   {
+       ValueChanged(col, row);
+   }
 #endif
-   virtual wxString GetDataModelName(void) const = 0;
 
 private:
 #if (wxVERSION_NUMBER >= 2900)
