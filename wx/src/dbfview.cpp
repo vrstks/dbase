@@ -118,7 +118,7 @@ void DBFView::OnUpdate(wxView* sender, wxObject* hint)
 {
    switch ((long)hint)
    {
-      case DBFDocument::ENUM_hint_initialupdate:
+      case DBFDocument::hint_initialupdate:
          GetWindow()->Init();
          GetWindow()->SelectRow(0);
          break;

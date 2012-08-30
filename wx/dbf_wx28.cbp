@@ -85,6 +85,7 @@
 		</Build>
 		<Compiler>
 			<Add directory="$(#WX.include)" />
+			<Add directory="include" />
 		</Compiler>
 		<ResourceCompiler>
 			<Add directory="$(#WX.include)" />
@@ -126,7 +127,7 @@
 			<Option compile="1" />
 			<Option weight="0" />
 		</Unit>
-		<Unit filename="src\wx29.cpp" />
+		<Unit filename="src\wxtrunk.cpp" />
 		<Unit filename="src\wxdbf.rc">
 			<Option compilerVar="WINDRES" />
 		</Unit>

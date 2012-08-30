@@ -21,9 +21,9 @@ protected:
 public:
    DBFDocument(void);
 
-   enum
+   enum hint
    {
-      ENUM_hint_initialupdate = 123 // must be non-null
+      hint_initialupdate = 123 // must be non-null
    };
 
    wxDBase* GetDatabase(void) const { return m_database; }

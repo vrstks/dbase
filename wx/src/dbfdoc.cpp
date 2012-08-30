@@ -53,7 +53,7 @@ bool DBFDocument::DoOpenDocument(const wxString& path)
       if (!ok) ok = m_database->Open(filename, dbf_editmode_readonly);
       if (ok)
       {
-         UpdateAllViews(NULL, (wxObject*)(long)ENUM_hint_initialupdate);
+         UpdateAllViews(NULL, (wxObject*)(long)hint_initialupdate);
          m_tablename = filename.GetName();
       }
       else
@@ -104,7 +104,7 @@ bool DBFDocument::OnNewDocument()
       if (ok && database.IsOpen())
       {
          m_database->Attach(&database);
-         UpdateAllViews(NULL, (wxObject*)(long)ENUM_hint_initialupdate);
+         UpdateAllViews(NULL, (wxObject*)(long)hint_initialupdate);
       }
    }
    return ok;
