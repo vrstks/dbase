@@ -26,11 +26,8 @@ END_EVENT_TABLE()
 
 wxDataListCtrl::wxDataListCtrl(): wxAltColourListView()
 {
-   const wxColour gray = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
-
-   m_attr[attr_deleted].SetTextColour(gray);
-   m_column_clicked = wxNOT_FOUND;
-   m_id_edit = m_id_selchange = m_id_delete = 0;
+    m_column_clicked = wxNOT_FOUND;
+    m_id_edit = m_id_selchange = m_id_delete = 0;
 }
 
 wxDataListCtrl::~wxDataListCtrl()
@@ -116,11 +113,19 @@ wxString wxDataListCtrl::OnGetItemText(long item, long col) const
 
 wxListItemAttr* wxDataListCtrl::OnGetItemAttr(long item) const
 {
-   wxDataModelBase* db = wxStaticCast(this, wxDataListCtrl)->GetModel(); // unconst
-   const bool bDeleted = db->IsRowDeleted(item);
-   const attr attr = bDeleted ? attr_deleted : attr_none;
+    wxListItemAttr* attr = base::OnGetItemAttr(item);
+    wxDataModelBase* db = wxStaticCast(this, wxDataListCtrl)->GetModel(); // unconst
 
-   return (attr != attr_none) ? (wxListItemAttr*)(m_attr + attr) : base::OnGetItemAttr(item);
+    if (db->IsRowDeleted(item))
+    {
+        const wxColour gray = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
+        wxListItemAttr* mine = wxConstCast(&m_attr, wxListItemAttr);
+
+        mine->AssignFrom(*attr);
+        mine->SetTextColour(gray);
+        attr = mine;
+    }
+    return attr;
 }
 
 bool wxDataListCtrl::IsRecordOk(unsigned int index)

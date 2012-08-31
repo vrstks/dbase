@@ -168,6 +168,21 @@ public:
    }
 #endif
 
+#if (wxVERSION_NUMBER >= 2900)
+   void Reset(unsigned int new_size)
+   {
+       wxDataViewListModelEx::Reset(new_size);
+   }
+   void Reset()
+   {
+       Reset(GetRowCount());
+   }
+#else
+   void Reset()
+   {
+   }
+#endif
+
 private:
 #if (wxVERSION_NUMBER >= 2900)
    virtual void GetValue(wxVariant&, unsigned int row, unsigned int col) const;

@@ -15,13 +15,7 @@ class wxDataListCtrl : public wxAltColourListView
 //   DECLARE_CLASS(wxDataListCtrl)
 // Attributes
 public:
-   enum attr
-   {
-      attr_deleted,
-      attr_enumcount,
-      attr_none = -1
-   };
-   wxListItemAttr m_attr[attr_enumcount];
+   wxListItemAttr m_attr;
    
    int m_column_clicked;
    
