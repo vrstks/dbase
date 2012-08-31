@@ -2,6 +2,8 @@
 // Copyright (c) 2007-2012 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
+#ifdef _WX_DATAVIEW_H_BASE_
+
 #ifndef __DATAMODEL_H__
 #define __DATAMODEL_H__
 
@@ -438,4 +440,88 @@ inline bool wxDataModelSorted::AddNew(void)
    return m_child->AddNew();
 }
 
+#if (wxVERSION_NUMBER >= 2900)
+class wxDataViewModelNotifierEx : public wxDataViewModelNotifier
+#else
+class wxDataViewModelNotifierEx : public wxDataViewListModelNotifier
+#endif
+{
+public:
+    wxDataViewModelNotifierEx() { }
+    virtual ~wxDataViewModelNotifierEx() { }
+
+#if (wxVERSION_NUMBER >= 2900)
+    virtual bool ItemAdded(const wxDataViewItem& WXUNUSED(parent), const wxDataViewItem& WXUNUSED(item))
+    {
+        return true;
+    }
+    virtual bool ItemDeleted(const wxDataViewItem& WXUNUSED(parent), const wxDataViewItem& WXUNUSED(item))
+    {
+        return true;
+    }
+    virtual bool ItemChanged(const wxDataViewItem& WXUNUSED(item))
+    {
+        return true;
+    }
+    virtual bool ItemsAdded(const wxDataViewItem& WXUNUSED(parent), const wxDataViewItemArray& WXUNUSED(items))
+    {
+        return true;
+    }
+    virtual bool ItemsDeleted(const wxDataViewItem& WXUNUSED(parent), const wxDataViewItemArray& WXUNUSED(items))
+    {
+        return true;
+    }
+    virtual bool ItemsChanged(const wxDataViewItemArray& WXUNUSED(items))
+    {
+        return true;
+    }
+    virtual bool ValueChanged(const wxDataViewItem& WXUNUSED(item), unsigned int WXUNUSED(col))
+    {
+        return true;
+    }
+    virtual bool Cleared()
+    {
+        return true;
+    }
+    virtual void Resort()
+    {
+    }
+#else
+    virtual bool RowAppended()
+    {
+        return true;
+    }
+    virtual bool RowPrepended()
+    {
+        return true;
+    }
+    virtual bool RowInserted(unsigned int WXUNUSED(before))
+    {
+        return true;
+    }
+    virtual bool RowDeleted(unsigned int WXUNUSED(row))
+    {
+        return true;
+    }
+    virtual bool RowChanged(unsigned int WXUNUSED(row))
+    {
+        return true;
+    }
+    virtual bool ValueChanged(unsigned int WXUNUSED(col), unsigned int WXUNUSED(row))
+    {
+        return true;
+    }
+    virtual bool RowsReordered(unsigned int* WXUNUSED(new_order))
+    {
+        return true;
+    }
+    virtual bool Cleared()
+    {
+        return true;
+    }
+#endif
+};
+
 #endif // __DATAMODEL_H__
+
+#endif // _WX_DATAVIEW_H_BASE_
