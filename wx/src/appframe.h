@@ -34,15 +34,15 @@ protected:
     wxToolBar* CreateToolBar();
 
 protected:
-   void OnStatusBar  (wxCommandEvent&);
-   void OnToolBar    (wxCommandEvent&);
-   void OnFullscreen (wxCommandEvent&);
-   
-   void OnUpdateFullscreen (wxUpdateUIEvent&);
-   void OnUpdateStatusBar  (wxUpdateUIEvent&);
-   void OnUpdateToolBar    (wxUpdateUIEvent&);
+    void OnStatusBar        (wxCommandEvent&);
+    void OnToolBar          (wxCommandEvent&);
+    void OnFullscreen       (wxCommandEvent&);
+    void OnWindowsDialog    (wxCommandEvent&);
+    void OnUpdateFullscreen (wxUpdateUIEvent&);
+    void OnUpdateStatusBar  (wxUpdateUIEvent&);
+    void OnUpdateToolBar    (wxUpdateUIEvent&);
 
-   DECLARE_EVENT_TABLE()
+    DECLARE_EVENT_TABLE()
 };
 
 #endif // __APPFRAME_H__

@@ -10,6 +10,7 @@
 #include "wx/ext/wx.h"
 #include "appframe.h"
 #include "app.h"
+#include "dbfdlgs.h"
 #include "../../bool.h"
 #include "../../dbf.h"
 #include "../../dbf.hpp"
@@ -34,6 +35,7 @@ BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
    EVT_MENU(XRCID("statusbar")      , MainFrame::OnStatusBar)
    EVT_MENU(XRCID("toolbar")        , MainFrame::OnToolBar)
    EVT_MENU(XRCID("view_fullscreen"), MainFrame::OnFullscreen)
+   EVT_MENU(XRCID("windows")        , MainFrame::OnWindowsDialog)
    EVT_UPDATE_UI(XRCID("view_fullscreen"), MainFrame::OnUpdateFullscreen)
    EVT_UPDATE_UI(XRCID("toolbar")   , MainFrame::OnUpdateToolBar)
    EVT_UPDATE_UI(XRCID("statusbar") , MainFrame::OnUpdateStatusBar)
@@ -42,19 +44,28 @@ END_EVENT_TABLE()
 
 bool MainFrame::Create(wxDocManager* manager, const wxString& title)
 {
-   bool ok = base::Create(manager, NULL, wxID_ANY, title);
+    bool ok = base::Create(manager, NULL, wxID_ANY, title);
 
-   if (ok)
-   {
-       CreateStatusBar()->PushStatusText(_("Ready"));
-       SetToolBar(CreateToolBar());
-       SetIcon(wxICON(app));
-       SetMenuBar(CreateMenuBar());
-       wxAcceleratorHelper::SetAcceleratorTable(this, DBFFrame::GetAccelerator());
-       ::wxFrame_SetInitialPosition(this);
-       m_windowMenuEvtHandler = new MDIWindowMenuEvtHandler(this);
-   }
-   return ok;
+    if (ok)
+    {
+        CreateStatusBar()->PushStatusText(_("Ready"));
+        SetToolBar(CreateToolBar());
+        SetIcon(wxICON(app));
+        SetMenuBar(CreateMenuBar());
+        wxAcceleratorHelper::SetAcceleratorTable(this, DBFFrame::GetAccelerator());
+        ::wxFrame_SetInitialPosition(this);
+        m_windowMenuEvtHandler = new MDIWindowMenuEvtHandler(this);
+
+        wxMenu* windowMenu = GetWindowMenu();
+        windowMenu->AppendSeparator();
+        windowMenu->Append(XRCID("windows"), _("&Windows..."), _("Windows dialog"));
+
+    #ifdef _DEBUG
+        wxPostMenuCommand(this, XRCID("windows"));
+        //wxPostMenuCommand(this, XRCID("struct"));
+    #endif
+    }
+    return ok;
 }
 
 wxMenuBar* MainFrame::CreateMenuBar() const
@@ -175,6 +186,11 @@ bool MainFrame::MSWTranslateMessage(WXMSG* msg)
                 processed = true;
                 break;
             default:
+                if ((int)msg->wParam == XRCID("windows"))
+                {
+                    wxPostMenuCommand(m_windowMenuEvtHandler, msg->wParam);
+                    processed = true;
+                }
                 break;
         }
     }
@@ -218,4 +234,9 @@ void MainFrame::OnFullscreen(wxCommandEvent&)
 void MainFrame::OnUpdateFullscreen (wxUpdateUIEvent& event)
 {
    ::wxFrame_OnUpdateFullScreen(this, event);
+}
+
+void MainFrame::OnWindowsDialog(wxCommandEvent&)
+{
+    ::DoModal_Windows(this, m_docManager->GetDocuments());
 }

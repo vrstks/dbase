@@ -18,10 +18,7 @@ class DBFFrame : public wxDocMDIChildFrame
 public:
    DBFFrame(void);
 
-   virtual bool Create(wxDocument*, wxMDIParentFrame*, wxRecentFileList*,
-                const wxPoint& pos = wxDefaultPosition,
-                const wxSize& size = wxDefaultSize,
-                long style = wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE | wxMAXIMIZE);
+   bool Create(wxDocument*, wxMDIParentFrame*, wxRecentFileList*);
 
 #if (wxVERSION_NUMBER < 2900)
    wxMDIParentFrame* GetMDIParent() const;

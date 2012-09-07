@@ -411,4 +411,93 @@ bool DoModal_FieldEdit(wxWindow* parent, DBF_FIELD_INFO* info, const wxString& c
    return ok;
 }
 
+class WindowsDialog : public wxDialog
+{
+    typedef wxDialog base;
+    wxListBox* m_list;
+    wxList m_docList;
+    int m_selection;
+public:
+
+    WindowsDialog(const wxList& docList);
+
+    bool Create(wxWindow* parent);
+
+protected:
+    void OnUpdateNeedSel(wxUpdateUIEvent&);
+    DECLARE_EVENT_TABLE()
+};
+
+BEGIN_EVENT_TABLE(WindowsDialog, wxDialog)
+    EVT_UPDATE_UI(wxID_CLOSE, WindowsDialog::OnUpdateNeedSel)
+    EVT_UPDATE_UI(XRCID("activate"), WindowsDialog::OnUpdateNeedSel)
+END_EVENT_TABLE()
+
+WindowsDialog::WindowsDialog(const wxList& docList) : wxDialog(), m_list(NULL), m_docList(docList)
+{
+}
+
+void WindowsDialog::OnUpdateNeedSel(wxUpdateUIEvent& event)
+{
+    wxArrayInt array;
+    event.Enable(0 != m_list->GetSelections(array));
+}
+
+bool WindowsDialog::Create(wxWindow* parent)
+{
+    bool ok = wxXmlResource::Get()->LoadDialog(this, parent, wxT("windows"));
+
+    if (ok)
+    {
+        wxList::const_iterator it;
+        wxDocument* activeDoc = NULL;
+        size_t i;
+        wxStdDialogButtonSizer* buttonpane = wxCreateStdDialogButtonSizer(this, wxOK);
+
+        buttonpane->GetAffirmativeButton()->SetId(wxID_CANCEL);
+        buttonpane->SetAffirmativeButton(NULL);
+        GetSizer()->SetSizeHints(this);
+        m_list = XRCCTRL(*this, "list", wxListBox);
+
+        for (it = m_docList.begin(); it != m_docList.end(); it++)
+        {
+            wxDocument* doc = wxStaticCast(*it, wxDocument);
+
+            m_list->AppendString(doc->GetFilename());
+        }
+
+        for (it = m_docList.begin(), i = 0; it != m_docList.end(); it++, i++)
+        {
+            wxDocument* doc = wxStaticCast(*it, wxDocument);
+            wxDocManager* docManager = doc->GetDocumentManager();
+
+            if (activeDoc == NULL)
+            {
+                wxView* activeView = docManager->GetCurrentView();
+                if (activeView == NULL)
+                {
+                    break;
+                }
+                activeDoc = activeView->GetDocument();
+            }
+            if (doc == activeDoc)
+            {
+                m_selection = i;
+                break;
+            }
+        }
+    }
+    return ok;
+}
+
+void DoModal_Windows(wxWindow* parent, const wxList& docList)
+{
+    WindowsDialog dlg(docList);
+    
+    if (dlg.Create(parent))
+    {   
+        dlg.ShowModal();
+    }
+}
+
 /////////////////////////////////////////////////////////////////////////////

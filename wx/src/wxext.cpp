@@ -707,6 +707,11 @@ wxStdDialogButtonSizer* wxCreateStdDialogButtonSizer(wxWindow* parent, long flag
         buttonpane->AddButton(new wxButton(parent, wxID_CANCEL));
         buttonpane->GetAffirmativeButton()->SetDefault();
     }
+    else if (flags & wxOK)
+    {
+        buttonpane->AddButton(new wxButton(parent, wxID_OK));
+        buttonpane->GetAffirmativeButton()->SetDefault();
+    }
     else if (flags & wxCANCEL)
     {
         buttonpane->AddButton(new wxButton(parent, wxID_CANCEL, _("Cl&ose")));

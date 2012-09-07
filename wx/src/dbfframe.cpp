@@ -22,12 +22,12 @@ DBFFrame::~DBFFrame()
 BEGIN_EVENT_TABLE(DBFFrame, wxDocMDIChildFrame)
 END_EVENT_TABLE()
 
-bool DBFFrame::Create(wxDocument* doc, wxMDIParentFrame* parent, wxRecentFileList* mru,
-                      const wxPoint& pos,
-                      const wxSize& size,
-                      long style)
+bool DBFFrame::Create(wxDocument* doc, wxMDIParentFrame* parent, wxRecentFileList* mru)
 {
-   bool ok = base::Create(doc, doc->GetFirstView(), parent, wxID_ANY, wxEmptyString, pos, size, style);
+   wxRect rect = parent->GetClientWindow()->GetClientRect();
+
+   bool ok = base::Create(doc, doc->GetFirstView(), parent, wxID_ANY, wxEmptyString, rect.GetPosition(), rect.GetSize(),
+       wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE);
 
    if (ok)
    {
