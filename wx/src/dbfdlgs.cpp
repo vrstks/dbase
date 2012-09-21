@@ -414,87 +414,144 @@ bool DoModal_FieldEdit(wxWindow* parent, DBF_FIELD_INFO* info, const wxString& c
 class WindowsDialog : public wxDialog
 {
     typedef wxDialog base;
-    wxListBox* m_list;
-    wxList m_docList;
-    int m_selection;
 public:
+    WindowsDialog();
 
-    WindowsDialog(const wxList& docList);
+    bool Create(wxWindow* parent, const wxList& docList);
 
-    bool Create(wxWindow* parent);
+    wxDocument* GetDocument(int item)
+    {
+        return wxStaticCast(m_listBox->GetClientData(item), wxDocument);
+    }
+    void ActivateDocument(int item)
+    {
+        GetDocument(item)->GetFirstView()->Activate(true);
+    }
+    virtual int ShowModal();
+protected:
+    void OnClose(wxCommandEvent&);
+    void OnActivate(wxCommandEvent&);
+    void OnUpdateNeedSel(wxUpdateUIEvent&);
+    void OnDblClick(wxCommandEvent&);
+    DECLARE_EVENT_TABLE()
 
 protected:
-    void OnUpdateNeedSel(wxUpdateUIEvent&);
-    DECLARE_EVENT_TABLE()
+    wxListBox* m_listBox;
+    int m_selection;
 };
 
 BEGIN_EVENT_TABLE(WindowsDialog, wxDialog)
+    EVT_BUTTON(wxID_CLOSE, WindowsDialog::OnClose)
+    EVT_BUTTON(XRCID("activate"), WindowsDialog::OnActivate)
     EVT_UPDATE_UI(wxID_CLOSE, WindowsDialog::OnUpdateNeedSel)
     EVT_UPDATE_UI(XRCID("activate"), WindowsDialog::OnUpdateNeedSel)
+    EVT_LISTBOX_DCLICK(wxID_ANY, WindowsDialog::OnDblClick)
 END_EVENT_TABLE()
 
-WindowsDialog::WindowsDialog(const wxList& docList) : wxDialog(), m_list(NULL), m_docList(docList)
+WindowsDialog::WindowsDialog() : wxDialog(), m_listBox(NULL), m_selection(wxNOT_FOUND)
 {
 }
 
-void WindowsDialog::OnUpdateNeedSel(wxUpdateUIEvent& event)
-{
-    wxArrayInt array;
-    event.Enable(0 != m_list->GetSelections(array));
-}
-
-bool WindowsDialog::Create(wxWindow* parent)
+bool WindowsDialog::Create(wxWindow* parent, const wxList& docList)
 {
     bool ok = wxXmlResource::Get()->LoadDialog(this, parent, wxT("windows"));
 
     if (ok)
     {
-        wxList::const_iterator it;
-        wxDocument* activeDoc = NULL;
-        size_t i;
         wxStdDialogButtonSizer* buttonpane = wxCreateStdDialogButtonSizer(this, wxOK);
 
         buttonpane->GetAffirmativeButton()->SetId(wxID_CANCEL);
         buttonpane->SetAffirmativeButton(NULL);
         GetSizer()->SetSizeHints(this);
-        m_list = XRCCTRL(*this, "list", wxListBox);
+        m_listBox = XRCCTRL(*this, "list", wxListBox);
 
-        for (it = m_docList.begin(); it != m_docList.end(); it++)
-        {
-            wxDocument* doc = wxStaticCast(*it, wxDocument);
-
-            m_list->AppendString(doc->GetFilename());
-        }
-
-        for (it = m_docList.begin(), i = 0; it != m_docList.end(); it++, i++)
+        for (wxList::const_iterator it = docList.begin(); it != docList.end(); it++)
         {
             wxDocument* doc = wxStaticCast(*it, wxDocument);
             wxDocManager* docManager = doc->GetDocumentManager();
-
-            if (activeDoc == NULL)
+            wxView* activeView = docManager->GetCurrentView();
+            wxString text = doc->GetFilename();
+            
+            if (text.empty())
             {
-                wxView* activeView = docManager->GetCurrentView();
-                if (activeView == NULL)
-                {
-                    break;
-                }
-                activeDoc = activeView->GetDocument();
+                text = doc->GetTitle();
             }
-            if (doc == activeDoc)
+            int index = m_listBox->Append(text, doc);
+
+            if (activeView && (doc == activeView->GetDocument()))
             {
-                m_selection = i;
-                break;
+                m_listBox->SetSelection(index);
             }
         }
     }
     return ok;
 }
 
+void WindowsDialog::OnUpdateNeedSel(wxUpdateUIEvent& event)
+{
+    wxArrayInt selections;
+
+    event.Enable(0 != m_listBox->GetSelections(selections));
+}
+
+void WindowsDialog::OnClose(wxCommandEvent&)
+{
+    wxArrayInt selections;
+
+    m_listBox->GetSelections(selections);
+    for (wxArrayInt::const_reverse_iterator it = selections.rbegin(); it != selections.rend(); it++)
+    {
+        int index = *it;
+        wxDocument* doc = GetDocument(index);
+
+        if (doc->GetDocumentManager()->CloseDocument(doc))
+        {
+            m_listBox->Delete(index);
+        }
+    }
+}
+
+void WindowsDialog::OnActivate(wxCommandEvent&)
+{
+    wxArrayInt selections;
+
+    m_listBox->GetSelections(selections);
+    m_selection = selections[0];
+    EndModal(wxID_OK);
+}
+
+void WindowsDialog::OnDblClick(wxCommandEvent& event)
+{
+    switch (event.GetSelection())
+    {
+        case wxNOT_FOUND:
+            event.Skip();
+            break;
+        default:
+            m_selection = event.GetSelection();
+            EndModal(wxID_OK);
+            break;
+    }
+}
+
+int WindowsDialog::ShowModal()
+{
+    int n = wxDialog::ShowModal();
+
+    if (   (n == wxID_OK)
+        && (wxNOT_FOUND != m_selection)
+        )
+    {
+        ActivateDocument(m_selection);
+    }
+    return n;
+}
+
 void DoModal_Windows(wxWindow* parent, const wxList& docList)
 {
-    WindowsDialog dlg(docList);
+    WindowsDialog dlg;
     
-    if (dlg.Create(parent))
+    if (dlg.Create(parent, docList))
     {   
         dlg.ShowModal();
     }

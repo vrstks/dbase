@@ -31,6 +31,7 @@ public:
    // To get statusbar menu help
    virtual void DoGiveHelp(const wxString& text, bool show);
 #endif
+    virtual void Raise();
 #ifdef __WXGTK__
     virtual void SetLabel(const wxString& label)
     {

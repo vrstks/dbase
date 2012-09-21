@@ -60,7 +60,7 @@ bool MainFrame::Create(wxDocManager* manager, const wxString& title)
         windowMenu->AppendSeparator();
         windowMenu->Append(XRCID("windows"), _("&Windows..."), _("Windows dialog"));
 
-    #ifdef _DEBUG
+    #ifdef x_DEBUG
         wxPostMenuCommand(this, XRCID("windows"));
         //wxPostMenuCommand(this, XRCID("struct"));
     #endif

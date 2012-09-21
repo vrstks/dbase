@@ -1,5 +1,5 @@
 // dbfview.h
-// Copyright (c) 2007-2011 by Troels K. All rights reserved.
+// Copyright (c) 2007-2012 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __DBFVIEW_H__
@@ -26,6 +26,7 @@ public:
    virtual bool OnClose(bool deleteWindow = true);
    virtual bool OnCreate(wxDocument*, long flags);
    virtual void OnUpdate(wxView* sender, wxObject* hint = NULL);
+   virtual void OnActivateView(bool activate, wxView* activeView, wxView * deactiveView);
 protected:
    void OnStructClipboard(wxCommandEvent&);
    void OnStruct(wxCommandEvent&);

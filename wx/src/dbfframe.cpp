@@ -110,3 +110,16 @@ wxMDIParentFrame* DBFFrame::GetMDIParent() const
 #endif
 }
 #endif
+
+void DBFFrame::Raise()
+{
+#if (wxVERSION_NUMBER >= 2904)
+    base::Raise();
+#else
+    if (IsIconized())
+    {
+        Restore();
+    }
+    Activate();
+#endif
+}
