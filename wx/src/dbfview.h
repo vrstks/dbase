@@ -26,7 +26,6 @@ public:
    virtual bool OnClose(bool deleteWindow = true);
    virtual bool OnCreate(wxDocument*, long flags);
    virtual void OnUpdate(wxView* sender, wxObject* hint = NULL);
-   virtual void OnActivateView(bool activate, wxView* activeView, wxView * deactiveView);
 protected:
    void OnStructClipboard(wxCommandEvent&);
    void OnStruct(wxCommandEvent&);

@@ -425,7 +425,7 @@ public:
     }
     void ActivateDocument(int item)
     {
-        GetDocument(item)->GetFirstView()->Activate(true);
+        GetDocument(item)->GetFirstView()->GetFrame()->Raise();
     }
     virtual int ShowModal();
 protected:
@@ -469,7 +469,6 @@ bool WindowsDialog::Create(wxWindow* parent, const wxList& docList)
         {
             wxDocument* doc = wxStaticCast(*it, wxDocument);
             wxDocManager* docManager = doc->GetDocumentManager();
-            wxView* activeView = docManager->GetCurrentView();
             wxString text = doc->GetFilename();
             
             if (text.empty())
@@ -478,7 +477,7 @@ bool WindowsDialog::Create(wxWindow* parent, const wxList& docList)
             }
             int index = m_listBox->Append(text, doc);
 
-            if (activeView && (doc == activeView->GetDocument()))
+            if (doc == docManager->GetCurrentDocument())
             {
                 m_listBox->SetSelection(index);
             }
@@ -538,10 +537,9 @@ int WindowsDialog::ShowModal()
 {
     int n = wxDialog::ShowModal();
 
-    if (   (n == wxID_OK)
-        && (wxNOT_FOUND != m_selection)
-        )
+    if ( (n == wxID_OK) && (wxNOT_FOUND != m_selection) )
     {
+        // ShowModal() restores previous focus, so do this later
         ActivateDocument(m_selection);
     }
     return n;

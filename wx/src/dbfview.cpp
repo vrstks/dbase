@@ -232,18 +232,3 @@ void DBFView::OnEdit(wxCommandEvent&)
 {
    GetWindow()->Edit();
 }
-
-void DBFView::OnActivateView(bool activate, wxView* activeView, wxView * deactiveView)
-{
-    base::OnActivateView(activate, activeView, deactiveView);
-
-    if (activate)
-    {
-        wxWindow* frame = GetFrame();
-
-        if (wxDynamicCast(frame, wxMDIChildFrame))
-        {
-            wxStaticCast(frame, wxMDIChildFrame)->Raise();
-        }
-    }
-}
