@@ -28,6 +28,7 @@ public:
 
    wxDBase* GetDatabase(void) const { return m_database; }
    wxString GetTablename(void) const { return m_tablename; }
+   wxFileName GetFilename(void) const { return wxFileName(base::GetFilename()); }
    bool IsEditable(void) const;
 
 // Implementation

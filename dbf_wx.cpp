@@ -10,7 +10,7 @@
 #include <wx/versioninfo.h>
 #endif
 
-#include "wx29.h"
+#include "wx/ext/trunk.h"
 
 #include "ioapi/zlib.h"
 #include "ioapi/ioapi.h"

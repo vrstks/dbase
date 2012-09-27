@@ -65,16 +65,16 @@ wxString dbf_getstruct_c(const wxString& tablename, wxDBase* db)
          );
       strStruct+=temp;
       name.MakeLower();
-      temp.Printf(wxT("   ENUM_dbf_%s_%s,\n"), title.wx_str(), name.wx_str());
+      temp.Printf(wxT("   dbf_%s_%s,\n"), title.wx_str(), name.wx_str());
       strEnum+=temp;
    }
    strStruct+= wxT("};\n");
-   strEnum  += wxString::Format(wxT("   ENUM_dbf_%s_enumcount\n};\n"), title.wx_str());
+   strEnum  += wxString::Format(wxT("   dbf_%s_enumcount\n};\n"), title.wx_str());
    wxString str;
    str+=strEnum;
    str+=wxT("\n");
    str+=strStruct;
-   str+=wxString::Format(wxT("C_ASSERT(ENUM_dbf_%s_enumcount == WXSIZEOF(%s));\n"), title.wx_str(), fieldname.wx_str());
+   str+=wxString::Format(wxT("C_ASSERT(dbf_%s_enumcount == WXSIZEOF(%s));\n"), title.wx_str(), fieldname.wx_str());
    return str;
 }
 

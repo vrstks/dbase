@@ -19,6 +19,7 @@ public:
 
    DBFDocument* GetDocument() const;
    DBFWindow* GetWindow() const;
+   wxWindow* GetModalParent() const { return GetFrame(); }
 
 // Implementation
 public:

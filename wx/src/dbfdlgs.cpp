@@ -260,7 +260,7 @@ void wxDBFStructDialog::OnUpdateNeedSel(wxUpdateUIEvent& event)
    event.Enable(m_list->GetFirstSelected() != wxNOT_FOUND);
 }
 
-bool DoModal_Structure(wxWindow* parent, wxDBase* db, const wxString& caption, const wxString& filename)
+bool DoModal_Structure(wxWindow* parent, wxDBase* db, const wxString& caption, const wxFileName& fileName)
 {
    wxDBFStructDialog dlg(db);   
    bool ok = dlg.Create(parent);
@@ -272,11 +272,11 @@ bool DoModal_Structure(wxWindow* parent, wxDBase* db, const wxString& caption, c
            dlg.SetTitle(caption);
        }
        ok = (wxID_OK == dlg.ShowModal());
-       if (ok && (!filename.empty()) && (!db->IsOpen()))
+       if (ok && fileName.IsOk() && !db->IsOpen())
        {
            const wxStructListView* list = dlg.GetList();
           
-           ok = db->Create(wxFileName(filename), list->m_array, list->m_array_count);
+           ok = db->Create(fileName, list->m_array, list->m_array_count);
        }
    }
    return ok;

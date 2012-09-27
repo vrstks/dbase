@@ -25,6 +25,7 @@ extern void wxFrame_ToggleFullScreen(wxFrame*, long style);
 extern void wxFrame_OnUpdateFullScreen(wxFrame*, wxUpdateUIEvent&);
 extern bool wxWindow_Toggle(wxWindow*);
 extern wxStdDialogButtonSizer* wxCreateStdDialogButtonSizer(wxWindow* parent, long flags);
+extern void wxModalTextDialog(wxWindow* parent, const wxString& text, const wxString& caption = wxEmptyString);
 
 class wxClipboardHelper
 {

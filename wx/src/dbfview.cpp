@@ -6,7 +6,6 @@
 
 #include "wx/ext/trunk.h"
 #include "wx/ext/wx.h"
-//#include "app.h"
 #include "dbfview.h"
 #include "dbfdoc.h"
 #include "dbfdlgs.h"
@@ -155,20 +154,22 @@ void DBFView::OnStructClipboard(wxCommandEvent&)
    bool ok = wxClipboardHelper::SetText(str);
 
    ::wxMessageBox(ok ? _("Struct is now on the Clipboard") : _("Failed to open clipboard"),
-      wxMessageBoxCaptionStr, wxOK | wxCENTRE, doc->GetDocumentWindow());
+      wxMessageBoxCaptionStr, wxOK | wxCENTRE, GetModalParent());
 }
 
 void DBFView::OnProperties(wxCommandEvent&)
 {
-   const DBFDocument* doc = GetDocument();
-   wxArrayString as;
+    const DBFDocument* doc = GetDocument();
+    wxArrayString as;
 
-   ::wxDocument_Info(doc, &as);
+    ::wxDocument_Info(doc, &as);
 
-   wxDBFModel datamodel(doc->GetDatabase());
-   datamodel.GetProperties(&as, true);
+    wxDBFModel datamodel(doc->GetDatabase());
+    datamodel.GetProperties(&as, true);
 
-   ::wxMessageBox(::wxJoin(as, wxT('\n')), wxMessageBoxCaptionStr, wxOK | wxCENTRE, GetFrame());
+    wxString str = ::wxJoin(as, wxT('\n'));
+
+    ::wxModalTextDialog(GetModalParent(), str, doc->GetFilename().GetFullName());
 }
 
 void DBFView::OnSelectAll(wxCommandEvent&)
@@ -206,9 +207,7 @@ void DBFView::OnUpdateNeedSel(wxUpdateUIEvent& event)
 
 void DBFView::OnDeleteAll(wxCommandEvent&)
 {
-   const DBFDocument* doc = GetDocument();
-
-   if (wxOK == wxMessageBox(_("Delete all?"), wxMessageBoxCaptionStr, wxOK | wxCANCEL | wxICON_QUESTION, doc->GetDocumentWindow()))
+   if (wxOK == wxMessageBox(_("Delete all?"), wxMessageBoxCaptionStr, wxOK | wxCANCEL | wxICON_QUESTION, GetModalParent()))
    {
       GetWindow()->DeleteAll(true);
    }
@@ -216,8 +215,7 @@ void DBFView::OnDeleteAll(wxCommandEvent&)
 
 void DBFView::OnDelete(wxCommandEvent&)
 {
-   const DBFDocument* doc = GetDocument();
-   if (wxOK == wxMessageBox(_("Delete selection?"), wxMessageBoxCaptionStr, wxOK | wxCANCEL | wxICON_QUESTION, doc->GetDocumentWindow()))
+   if (wxOK == wxMessageBox(_("Delete selection?"), wxMessageBoxCaptionStr, wxOK | wxCANCEL | wxICON_QUESTION, GetModalParent()))
    {
       GetWindow()->DeleteSelection(true);
    }

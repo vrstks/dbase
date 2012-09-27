@@ -893,4 +893,10 @@ bool wxAltColourListView::EndEditLabel(bool cancel)
 #endif
 }
 
+void wxModalTextDialog(wxWindow* parent, const wxString& text, const wxString& caption)
+{
+    wxTextEntryDialog dialog(parent, wxEmptyString, caption.empty() ? wxGetTextFromUserPromptStr : caption, text, wxOK | wxTE_MULTILINE);
+    dialog.ShowModal();
+}
+
 /////////////////////////////////////////////////////////////////////////////
