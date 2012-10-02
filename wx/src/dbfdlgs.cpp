@@ -218,7 +218,7 @@ void wxDBFStructDialog::OnAdd(wxCommandEvent&)
 {
    DBF_FIELD_INFO info = { "", DBF_DATA_TYPE_CHAR, 10, 0 };
    
-   if (::DoModal_FieldEdit(this, &info, wxT("Add Field")))
+   if (::DoModal_FieldEdit(this, &info, _("Add Field")))
    {
       m_list->Add(info);
    }
@@ -229,7 +229,7 @@ void wxDBFStructDialog::OnEdit(wxCommandEvent&)
    const int item = m_list->GetFirstSelected();
    DBF_FIELD_INFO info = m_list->m_array[item];
 
-   if (::DoModal_FieldEdit(/*wxTheApp->GetTopWindow()*/this, &info, wxT("Edit Field")))
+   if (::DoModal_FieldEdit(/*wxTheApp->GetTopWindow()*/this, &info, _("Edit Field")))
    {
       m_list->m_array[item] = info;
       m_list->Refresh();

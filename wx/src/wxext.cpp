@@ -293,7 +293,7 @@ wxAcceleratorEntry wxAcceleratorHelper::GetStockAccelerator(wxWindowID id)
 /*static*/
 void wxAcceleratorHelper::SetAcceleratorTable(wxWindow* wnd, const wxArrayAccelerator& array)
 {
-   size_t count = array.GetCount();
+   size_t count = array.size();
    wxAcceleratorEntry* temp = new wxAcceleratorEntry[count];
 
    for (size_t i = 0; i < count; i++)
@@ -349,7 +349,7 @@ static wxString wxGetAccelText(const wxAcceleratorEntry& accel)
 /*static*/
 void wxAcceleratorHelper::SetAccelText(wxMenuBar* menu, const wxArrayAccelerator& array)
 {
-   const size_t count = array.GetCount();
+   const size_t count = array.size();
 
    for (size_t i = 0; i < count; i++)
    {
@@ -367,11 +367,11 @@ wxString wxToolBarTool_MakeShortHelp(const wxString& rstr, const wxArrayAccelera
 {
    wxString str = rstr;
 
-   if (accel.GetCount() && !str.empty())
+   if ((!accel.empty()) && (!str.empty()))
    {
       wxString strAccel;
 
-      for (size_t i = 0; i < accel.GetCount(); i++)
+      for (size_t i = 0; i < accel.size(); i++)
       {
          const wxAcceleratorEntry& element = accel.Item(i);
 
@@ -541,22 +541,22 @@ void wxDocument_Info(const wxDocument* doc, wxArrayString* as)
    wxView* view  = active_view ? active_view : doc->GetFirstView();
    wxWindow* frame = view ? view->GetFrame() : NULL;;
 
-   as->Add(wxString::Format(fmt, wxT("Doc class"), doc->GetClassInfo()->GetClassName()));
+   as->push_back(wxString::Format(fmt, wxT("Doc class"), doc->GetClassInfo()->GetClassName()));
    if (view)
    {
-      as->Add(wxString::Format(fmt, wxT("View class"), view->GetClassInfo()->GetClassName()));
+      as->push_back(wxString::Format(fmt, wxT("View class"), view->GetClassInfo()->GetClassName()));
    }
-   as->Add(wxString::Format(fmt, wxT("Frame class"), frame ? frame->GetClassInfo()->GetClassName() : wxEmptyString));
+   as->push_back(wxString::Format(fmt, wxT("Frame class"), frame ? frame->GetClassInfo()->GetClassName() : wxEmptyString));
    if (frame)
    {
-      as->Add(wxString::Format(fmt, wxT("Frame label"), frame->GetLabel().wx_str()));
+      as->push_back(wxString::Format(fmt, wxT("Frame label"), frame->GetLabel().wx_str()));
    }
-   as->Add(wxString::Format(fmt, wxT("GetFilename"), doc->GetFilename().wx_str()));
-   as->Add(wxString::Format(fmt, wxT("GetTitle"), doc->GetTitle().wx_str()));
-   as->Add(wxString::Format(fmt, wxT("GetUserReadableName"), doc->GetUserReadableName().wx_str()));
-   as->Add(wxString::Format(fmt, wxT("IsModified"), doc->IsModified() ? _("Yes") : _("No")));
-   as->Add(wxString::Format(fmt, wxT("GetDocumentSaved"), doc->GetDocumentSaved() ? _("Yes") : _("No")));
-   as->Add(wxString::Format(fmt, wxT("GetDocumentName"), doc->GetDocumentName().wx_str()));
+   as->push_back(wxString::Format(fmt, wxT("GetFilename"), doc->GetFilename().wx_str()));
+   as->push_back(wxString::Format(fmt, wxT("GetTitle"), doc->GetTitle().wx_str()));
+   as->push_back(wxString::Format(fmt, wxT("GetUserReadableName"), doc->GetUserReadableName().wx_str()));
+   as->push_back(wxString::Format(fmt, wxT("IsModified"), doc->IsModified() ? _("Yes") : _("No")));
+   as->push_back(wxString::Format(fmt, wxT("GetDocumentSaved"), doc->GetDocumentSaved() ? _("Yes") : _("No")));
+   as->push_back(wxString::Format(fmt, wxT("GetDocumentName"), doc->GetDocumentName().wx_str()));
 }
 
 void wxFrame_SetInitialPosition(wxFrame* wnd, const wxPoint& pos, const wxSize& size, int margin_pct)
@@ -582,7 +582,7 @@ void wxJoin(wxArrayString* dst, const wxArrayString& src)
         it != src.end();
         it++)
    {
-      dst->Add(*it);
+      dst->push_back(*it);
    }
 }
 

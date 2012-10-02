@@ -94,16 +94,16 @@ size_t dbf_getproperties(wxDBase* db, wxArrayString* as_ptr, bool header)
       name = wxConvertMB2WX(info.tablename);
       format = wxConvertMB2WX(info.format);
 
-      temp.Printf(_("Table name:\t%s"), name.wx_str());  as.Add(temp);
-      temp.Printf(_("Format:\t%s"), format.wx_str()); as.Add(temp);
-      temp.Printf(_("Memo file:\t%s"), info.memo ? _("Yes") : _("No")); as.Add(temp);
-      temp.Printf(_("Record count:\t%d"), info.recordcount); as.Add(temp);
-      temp.Printf(_("Modified:\t%s"), info.modified ? _("Yes") : _("No")); as.Add(temp);
+      temp.Printf(_("Table name:\t%s"), name.wx_str());  as.push_back(temp);
+      temp.Printf(_("Format:\t%s"), format.wx_str()); as.push_back(temp);
+      temp.Printf(_("Memo file:\t%s"), info.memo ? _("Yes") : _("No")); as.push_back(temp);
+      temp.Printf(_("Record count:\t%d"), info.recordcount); as.push_back(temp);
+      temp.Printf(_("Modified:\t%s"), info.modified ? _("Yes") : _("No")); as.push_back(temp);
       if (dt.IsValid())
       {
-         temp.Printf(_("Last changed:\t%s"), dt.Format(wxT("%x")).wx_str()); as.Add(temp);
+         temp.Printf(_("Last changed:\t%s"), dt.Format(wxT("%x")).wx_str()); as.push_back(temp);
       }
-      temp.Printf(_("Field count:\t%d"), info.fieldcount); as.Add(temp);
+      temp.Printf(_("Field count:\t%d"), info.fieldcount); as.push_back(temp);
    }
    for (dbf_uint i = 0; ; i++)
    {
@@ -136,11 +136,11 @@ size_t dbf_getproperties(wxDBase* db, wxArrayString* as_ptr, bool header)
             ? wxString::Format(wxT("%d:%d"), info.length, info.decimals).wx_str()
             : wxString::Format(wxT("%d"), info.length).wx_str()
          );
-      as.Add(temp);
+      as.push_back(temp);
    }
    if (as_ptr)
    {
       wxJoin(as_ptr, as);
    }
-   return as.GetCount();
+   return as.size();
 }

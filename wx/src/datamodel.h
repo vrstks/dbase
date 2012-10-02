@@ -54,7 +54,7 @@ public:
 
    virtual unsigned int GetRowCount() const
    {
-       return m_array.GetCount();
+       return m_array.size();
    }
 
    virtual unsigned int GetColumnCount() const

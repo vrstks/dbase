@@ -136,10 +136,10 @@ size_t wxDataModelBase::GetRow(unsigned int row, wxArrayString* as_ptr, bool hea
              info.name.wx_str(),
              str.wx_str());
       }
-      as.Add(str);
+      as.push_back(str);
    }
    if (as_ptr) as_ptr->operator=(as);
-   return as.GetCount();
+   return as.size();
 }
 
 size_t wxDataModelBase::GetProperties(wxArrayString* as_ptr, bool header) const
@@ -153,13 +153,13 @@ size_t wxDataModelBase::GetProperties(wxArrayString* as_ptr, bool header) const
       if (!GetTableName().empty())
       {
          str.Printf(_("Table:\t%s\t\t"), GetTableName().wx_str());
-         as.Add(str);
+         as.push_back(str);
       }
       str.Printf(_("Records:\t%d\t\t"), GetRowCount());
-      as.Add(str);
-      as.Add(wxEmptyString);
-      as.Add(_("Fields:"));
-      //as.Add(wxEmptyString);
+      as.push_back(str);
+      as.push_back(wxEmptyString);
+      as.push_back(_("Fields:"));
+      //as.push_back(wxEmptyString);
    }
    for (unsigned int i = 0; i < GetColumnCount(); i++)
    {
@@ -175,8 +175,8 @@ size_t wxDataModelBase::GetProperties(wxArrayString* as_ptr, bool header) const
              info.len
              );
       }
-      as.Add(str);
+      as.push_back(str);
    }
    if (as_ptr) *as_ptr = as;
-   return as.GetCount();
+   return as.size();
 }

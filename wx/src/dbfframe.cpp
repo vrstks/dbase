@@ -50,34 +50,34 @@ wxMenuBar* DBFFrame::CreateMenuBar() const
 
    if (array.empty())
    {
-      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_EXIT));
-      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_CUT));
-      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_COPY));
-      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_PASTE));
-      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_HELP));
-      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_NEW));
-      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_OPEN));
-      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_CLOSE));
-      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_SAVE));
-      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_PRINT));
-      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_PREVIEW));
-      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_SELECTALL));
-      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_PROPERTIES));
-      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_FIND));
-      array.Add(wxAcceleratorHelper::GetStockAccelerator(wxID_ABOUT));
+      array.push_back(wxAcceleratorHelper::GetStockAccelerator(wxID_EXIT));
+      array.push_back(wxAcceleratorHelper::GetStockAccelerator(wxID_CUT));
+      array.push_back(wxAcceleratorHelper::GetStockAccelerator(wxID_COPY));
+      array.push_back(wxAcceleratorHelper::GetStockAccelerator(wxID_PASTE));
+      array.push_back(wxAcceleratorHelper::GetStockAccelerator(wxID_HELP));
+      array.push_back(wxAcceleratorHelper::GetStockAccelerator(wxID_NEW));
+      array.push_back(wxAcceleratorHelper::GetStockAccelerator(wxID_OPEN));
+      array.push_back(wxAcceleratorHelper::GetStockAccelerator(wxID_CLOSE));
+      array.push_back(wxAcceleratorHelper::GetStockAccelerator(wxID_SAVE));
+      array.push_back(wxAcceleratorHelper::GetStockAccelerator(wxID_PRINT));
+      array.push_back(wxAcceleratorHelper::GetStockAccelerator(wxID_PREVIEW));
+      array.push_back(wxAcceleratorHelper::GetStockAccelerator(wxID_SELECTALL));
+      array.push_back(wxAcceleratorHelper::GetStockAccelerator(wxID_PROPERTIES));
+      array.push_back(wxAcceleratorHelper::GetStockAccelerator(wxID_FIND));
+      array.push_back(wxAcceleratorHelper::GetStockAccelerator(wxID_ABOUT));
 
-      array.Add(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_FULLSCREEN, XRCID("view_fullscreen")));
+      array.push_back(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_FULLSCREEN, XRCID("view_fullscreen")));
 
-      array.Add(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_INSERT, wxID_ADD));
-      array.Add(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_DELETE, wxID_DELETE));
-      array.Add(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_F2, XRCID("edit")));
-      array.Add(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_F3, XRCID("find_next")));
-      array.Add(wxAcceleratorEntry(wxACCEL_CTRL, 'H', wxID_REPLACE));
-      array.Add(wxAcceleratorEntry(wxACCEL_CTRL, 'X', XRCID("export")));
-      array.Add(wxAcceleratorEntry(wxACCEL_CTRL, 'D', XRCID("pack")));
-      array.Add(wxAcceleratorEntry(wxACCEL_CTRL, 'M', XRCID("struct")));
+      array.push_back(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_INSERT, wxID_ADD));
+      array.push_back(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_DELETE, wxID_DELETE));
+      array.push_back(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_F2, XRCID("edit")));
+      array.push_back(wxAcceleratorEntry(wxACCEL_NORMAL, WXK_F3, XRCID("find_next")));
+      array.push_back(wxAcceleratorEntry(wxACCEL_CTRL, 'H', wxID_REPLACE));
+      array.push_back(wxAcceleratorEntry(wxACCEL_CTRL, 'X', XRCID("export")));
+      array.push_back(wxAcceleratorEntry(wxACCEL_CTRL, 'D', XRCID("pack")));
+      array.push_back(wxAcceleratorEntry(wxACCEL_CTRL, 'M', XRCID("struct")));
 
-      array.Add(wxAcceleratorEntry(wxACCEL_CMD | wxACCEL_SHIFT, 'S', wxID_SAVEAS));
+      array.push_back(wxAcceleratorEntry(wxACCEL_CMD | wxACCEL_SHIFT, 'S', wxID_SAVEAS));
    }
    return array;
 }

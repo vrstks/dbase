@@ -50,18 +50,18 @@ bool App::OnInit(void)
             frame->Show();
             m_mru->Load();
 
-              if (m_cmdline.m_fileNames.GetCount())
+              if (!m_cmdline.m_fileNames.empty())
               {
                  // get filenames from the commandline
-                 for (size_t i = 0; i < m_cmdline.m_fileNames.GetCount(); i++)
+                 for (size_t i = 0; i < m_cmdline.m_fileNames.size(); i++)
                  {
-                    const wxFileName& filename = m_cmdline.m_fileNames.Item(i);
+                    const wxFileName& fileName = m_cmdline.m_fileNames.Item(i);
 
-                    doc = docManager->CreateDocument(filename.GetFullPath(), wxDOC_SILENT);
+                    doc = docManager->CreateDocument(fileName.GetFullPath(), wxDOC_SILENT);
                     if (doc == NULL)
                     {
                         docManager->OnOpenFileFailure();
-                        wxMessageBox(wxString::Format(_("Failed to open %s"), filename.GetFullPath().wx_str()), wxMessageBoxCaption);
+                        wxMessageBox(wxString::Format(_("Failed to open %s"), fileName.GetFullPath().wx_str()), wxMessageBoxCaption);
                     }
                  }
               }
@@ -124,7 +124,7 @@ bool App::OnCmdLineParsed(wxCmdLineParser& parser)
 {
    for (size_t i = 0; i < parser.GetParamCount(); i++)
    {
-      m_cmdline.m_fileNames.Add(wxFileName(parser.GetParam(i)));
+      m_cmdline.m_fileNames.push_back(wxFileName(parser.GetParam(i)));
    }
    return base::OnCmdLineParsed(parser);
 }
