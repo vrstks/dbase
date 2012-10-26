@@ -42,30 +42,32 @@ bool DBFDocument::DoSaveDocument(const wxString& WXUNUSED(filename))
     return true;
 }
 
-bool DBFDocument::DoOpenDocument(const wxString& path)
+bool DBFDocument::DoOpenDocument(const wxString& filePath)
 {
-   wxFileName filename(path);
-   bool ok = filename.FileExists();
+    const wxFileName fileName(filePath);
+    //wxFileInputStream stream(fileName.GetFullPath());
+    //bool ok = stream.IsOk();
+    bool ok = fileName.FileExists();
 
-   if (ok)
-   {
-      ok = m_database->Open(filename, dbf_editmode_editable);
-      if (!ok) ok = m_database->Open(filename, dbf_editmode_readonly);
-      if (ok)
-      {
-         UpdateAllViews(NULL, (wxObject*)(long)hint_initialupdate);
-         m_tablename = filename.GetName();
-      }
-      else
-      {
-         wxMessageBox(_("Bad file format"));
-      }
-   }
-   else
-   {
-      wxMessageBox(_("File not found"));
-   }
-   return ok;
+    if (ok)
+    {
+        ok = m_database->Open(fileName, dbf_editmode_editable);
+        if (!ok) ok = m_database->Open(fileName, dbf_editmode_readonly);
+        if (ok)
+        {
+            UpdateAllViews(NULL, (wxObject*)(long)hint_initialupdate);
+            m_tablename = fileName.GetName();
+        }
+        else
+        {
+            wxLogError(_("Bad file format in file \"%s\"."), fileName.GetFullPath().wx_str());
+        }
+    }
+    else
+    {
+        wxLogError(_("Failed to open the file \"%s\" for reading."), fileName.GetFullPath().wx_str());
+    }
+    return ok;
 }
 
 bool DBFDocument::IsModified(void) const

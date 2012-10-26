@@ -37,6 +37,7 @@ protected:
 public:
    App(void);
 
+   virtual ~App(void);
    virtual bool OnInit(void);
    virtual int OnExit(void);
    virtual void OnInitCmdLine(wxCmdLineParser&);

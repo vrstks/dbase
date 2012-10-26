@@ -23,64 +23,69 @@ App::App(void) : wxAppEx(), m_mru(NULL), m_res(new DBFResource())
 {
 }
 
+App::~App(void)
+{
+    delete m_res;
+}
+
 bool App::OnInit(void)
 {
-   bool ok = base::OnInit();
+    bool ok = base::OnInit();
 
-   if (ok)
-   {
-      m_locale.Init();
+    if (ok)
+    {
+        m_locale.Init();
 
-      SetVendorName(WXDBF_APP_VENDOR);
-      SetAppName(WXDBF_APP_NAME);
+        SetVendorName(WXDBF_APP_VENDOR);
+        SetAppName(WXDBF_APP_NAME);
 
-      wxFileSystem::AddHandler(new wxZipFSHandler());
-      wxXmlResourceHelper::Init();
-      ok = m_res->Init();
-      if (ok)
-      {
-         MainFrame* frame = new MainFrame();
-         wxDocManager* docManager = CreateDocManager();
-         wxDocument* doc;
+        wxFileSystem::AddHandler(new wxZipFSHandler());
+        wxXmlResourceHelper::Init();
 
-         ok = frame->Create(docManager, GetAppName());
+        ok = m_res->Init();
+        if (ok)
+        {
+            MainFrame* frame = new MainFrame();
+            wxDocManager* docManager = CreateDocManager();
 
-         if (ok)
-         {
-            frame->Show();
-            m_mru->Load();
+            ok = frame->Create(docManager, GetAppName());
+            if (ok)
+            {
+                frame->Show();
+                m_mru->Load();
 
-              if (!m_cmdline.m_fileNames.empty())
-              {
-                 // get filenames from the commandline
-                 for (size_t i = 0; i < m_cmdline.m_fileNames.size(); i++)
-                 {
-                    const wxFileName& fileName = m_cmdline.m_fileNames.Item(i);
-
-                    doc = docManager->CreateDocument(fileName.GetFullPath(), wxDOC_SILENT);
-                    if (doc == NULL)
+                if (!m_cmdline.m_fileNames.empty())
+                {
+                    // get filenames from the commandline
+                    for (size_t i = 0; i < m_cmdline.m_fileNames.size(); i++)
                     {
-                        docManager->OnOpenFileFailure();
-                        wxMessageBox(wxString::Format(_("Failed to open %s"), fileName.GetFullPath().wx_str()), wxMessageBoxCaption);
+                        const wxFileName& fileName = m_cmdline.m_fileNames.Item(i);
+                        wxDocument* doc = docManager->CreateDocument(fileName.GetFullPath(), wxDOC_SILENT);
+
+                        if (doc == NULL)
+                        {
+                            docManager->OnOpenFileFailure();
+                            wxLogError(wxString::Format(_("Failed to open %s"), fileName.GetFullPath().wx_str()));
+                        }
                     }
-                 }
-              }
-              else
-              {
-                 wxFileName filename;
-                 if (m_mru->GetFile(0, &filename) && filename.FileExists())
-                 {
-                    docManager->CreateDocument(filename.GetFullPath(), wxDOC_SILENT);
-                 }
-              }
-         }
-         else
-         {
-             delete frame;
-         }
-      }
-   }
-   return ok;
+                }
+                else
+                {
+                    wxFileName fileName;
+
+                    if (m_mru->GetFile(0, &fileName) && fileName.FileExists())
+                    {
+                        docManager->CreateDocument(fileName.GetFullPath(), wxDOC_SILENT);
+                    }
+                }
+            }
+            else
+            {
+                delete frame;
+            }
+        }
+    }
+    return ok;
 }
 
 int App::OnExit(void)
@@ -92,7 +97,6 @@ int App::OnExit(void)
    }
    delete wxDocManager::GetDocumentManager();
    wxTheClipboard->Flush();
-   wxDELETE(m_res);
    return base::OnExit();
 }
 

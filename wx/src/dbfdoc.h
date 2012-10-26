@@ -11,36 +11,37 @@
 class wxDBase;
 class DBFDocument : public wxDocument
 {
-   typedef wxDocument base;
-   DECLARE_DYNAMIC_CLASS(DBFDocument)
+    typedef wxDocument base;
+    DECLARE_DYNAMIC_CLASS(DBFDocument)
 
 // Attributes
 protected:
-   wxDBase* m_database;
-   wxString m_tablename;
+    wxDBase* m_database;
+    wxString m_tablename;
 public:
-   DBFDocument(void);
+    DBFDocument(void);
 
-   enum hint
-   {
-      hint_initialupdate = 123 // must be non-null
-   };
+    enum hint
+    {
+        hint_initialupdate = 123 // must be non-null
+    };
 
-   wxDBase* GetDatabase(void) const { return m_database; }
-   wxString GetTablename(void) const { return m_tablename; }
-   wxFileName GetFilename(void) const { return wxFileName(base::GetFilename()); }
-   bool IsEditable(void) const;
+    wxDBase* GetDatabase(void) const { return m_database; }
+    wxString GetTablename(void) const { return m_tablename; }
+    wxFileName GetFilename(void) const { return wxFileName(base::GetFilename()); }
+    bool IsEditable(void) const;
 
 // Implementation
 public:
-   virtual ~DBFDocument(void);
-   virtual bool OnNewDocument();
-   virtual bool SaveAs();
-   virtual bool DoSaveDocument(const wxString& filename);
-   virtual bool DoOpenDocument(const wxString& filename);
-   virtual bool IsModified(void) const;
-   virtual void Modify(bool mod);
-   virtual bool OnCloseDocument();
+    virtual ~DBFDocument(void);
+    virtual bool OnNewDocument();
+    virtual bool SaveAs();
+    virtual bool IsModified(void) const;
+    virtual void Modify(bool mod);
+    virtual bool OnCloseDocument();
+protected:
+    virtual bool DoSaveDocument(const wxString& filename);
+    virtual bool DoOpenDocument(const wxString& filename);
 };
 
 /////////////////////////////////////////////////////////////////////////////

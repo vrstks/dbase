@@ -13,14 +13,18 @@
 bool DBFResource::Init()
 {
     const wxString filename = wxString(WXDBF_APP_EXETITLE) + wxFILE_SEP_EXT + wxXmlResourceHelper::FileExt;
+    bool ok;
     
 #ifdef _DEBUG
     // load xrc file directly
-    return wxXmlResourceHelper::LoadFromFile(__FILE__, filename);
+    ok = wxXmlResourceHelper::LoadFromFile(__FILE__, filename);
+    if (!ok) wxLogError(_("Failed to load resources from %s"), filename.wx_str());
 #else
     // load xrc file from temp file
-    return wxXmlResourceHelper::LoadFromMemory(wxdbf_xrc, sizeof(wxdbf_xrc), filename, &m_xrcFile);
+    ok = wxXmlResourceHelper::LoadFromMemory(wxdbf_xrc, sizeof(wxdbf_xrc), filename, &m_xrcFile);
+    if (!ok) wxLogError(_("Failed to load resources"));
 #endif
+    return ok;
 }
 
 DBFResource::~DBFResource(void)
