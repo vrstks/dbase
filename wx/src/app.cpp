@@ -30,6 +30,7 @@ App::~App(void)
 
 bool App::OnInit(void)
 {
+    //CheckBuildOptions(WX_BUILD_OPTIONS_SIGNATURE, "program");
     bool ok = base::OnInit();
 
     if (ok)

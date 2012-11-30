@@ -4,6 +4,7 @@
 
 #include "precomp.h"
 #include <wx/valgen.h>
+#include <vector>
 
 #include "dbfdlgs.h"
 #include "../../ioapi/zlib.h"
@@ -31,21 +32,23 @@ static const wxChar* const MOD_aszType[] =
 };
 C_ASSERT_(1,WXSIZEOF(MOD_aszType) == DBF_DATA_TYPE_ENUMCOUNT);
 
+typedef std::vector<DBF_FIELD_INFO> FieldVector;
+
 class wxStructListView : public wxAltColourListView
 {
     typedef wxAltColourListView base;
     DECLARE_DYNAMIC_CLASS(wxStructListView)
 public:
-   DBF_FIELD_INFO* m_array;
-   unsigned int m_array_count;
-   enum col
-   {
-      col_name,
-      col_type,
-      col_length,
-      //col_decimals,
-      col_enumcount
-   };
+    FieldVector m_array;
+
+    enum col
+    {
+        col_name,
+        col_type,
+        col_length,
+        //col_decimals,
+        col_enumcount
+    };
 
    wxStructListView();
    void Init(wxDBase*);
@@ -60,13 +63,12 @@ public:
 
 IMPLEMENT_DYNAMIC_CLASS(wxStructListView, wxAltColourListView)
 
-wxStructListView::wxStructListView() : wxAltColourListView(), m_array(NULL), m_array_count(0)
+wxStructListView::wxStructListView() : wxAltColourListView(), m_array()
 {
 }
 
 wxStructListView::~wxStructListView()
 {
-   free(m_array);
 }
 
 void wxStructListView::Init(wxDBase* db)
@@ -86,12 +88,14 @@ void wxStructListView::Init(wxDBase* db)
       InsertColumn((long)i, aszType[i], (i == col_length) ? wxLIST_FORMAT_RIGHT : wxLIST_FORMAT_LEFT, 80);
    }
 
-   m_array_count = (db && db->IsOpen()) ? db->GetFieldCount() : 0;
-   m_array = (DBF_FIELD_INFO*)realloc(m_array, sizeof(*m_array) * m_array_count);
+   size_t count = (db && db->IsOpen()) ? db->GetFieldCount() : 0;
 
-   for (i = 0; i < m_array_count; i++)
+   for (i = 0; i < count; i++)
    {
-      db->GetFieldInfo((dbf_uint)i, m_array + i);
+       DBF_FIELD_INFO info;
+
+       db->GetFieldInfo((dbf_uint)i, &info);
+       m_array.push_back(info);
    }
    Fill();
    SelectRow(0);
@@ -100,40 +104,38 @@ void wxStructListView::Init(wxDBase* db)
 
 void wxStructListView::Fill()
 {
-   SetItemCount(m_array_count);
-   Refresh();
+    SetItemCount(m_array.size());
+    Refresh();
 }
 
 void wxStructListView::Add(const DBF_FIELD_INFO& info)
 {
-   m_array = (DBF_FIELD_INFO*)realloc(m_array, sizeof(*m_array) * (m_array_count + 1));
-   m_array[m_array_count] = info;
-   m_array_count++;
-   Fill();
-   SelectRow(m_array_count-1);
+    m_array.push_back(info);
+    Fill();
+    SelectRow(m_array.size() - 1);
 }
 
 wxString wxStructListView::OnGetItemText(long item, long col) const
 {
    wxString str;
-   const DBF_FIELD_INFO* info = m_array + item;
+   const DBF_FIELD_INFO& info = m_array[item];
    
    switch (col)
    {
       case col_name:
-         str = wxConvertMB2WX(info->name);
+         str = wxConvertMB2WX(info.name);
          break;
       case col_type:
-         str = MOD_aszType[info->type];
+         str = MOD_aszType[info.type];
          break;
       case col_length:
-         if (info->decimals)
+         if (info.decimals)
          {
-            str.Printf(wxT("%d:%d"), info->length, info->decimals);
+            str.Printf(wxT("%d:%d"), info.length, info.decimals);
          }
          else
          {
-            str.Printf(wxT("%d"), info->length);
+            str.Printf(wxT("%d"), info.length);
          }
          break;
          /*
@@ -231,13 +233,17 @@ void wxDBFStructDialog::OnEdit(wxCommandEvent&)
 
    if (::DoModal_FieldEdit(/*wxTheApp->GetTopWindow()*/this, &info, _("Edit Field")))
    {
-      m_list->m_array[item] = info;
-      m_list->Refresh();
+       m_list->m_array.at(item) = info;
+       m_list->Refresh();
    }
 }
 
 void wxDBFStructDialog::OnDelete(wxCommandEvent&)
 {
+    const int item = m_list->GetFirstSelected();
+
+    m_list->m_array.erase(m_list->m_array.begin() + item);
+    m_list->Fill();
 }
 
 void wxDBFStructDialog::OnCalendar(wxCommandEvent&)
@@ -248,10 +254,11 @@ void wxDBFStructDialog::OnCalendar(wxCommandEvent&)
       { "TEXT"    , DBF_DATA_TYPE_CHAR   , 80, 0 },
       { "ANNIVERS", DBF_DATA_TYPE_BOOLEAN, DBF_LEN_BOOLEAN, 0 }
    };
-   m_list->m_array_count = WXSIZEOF(aField);
-   size_t len = m_list->m_array_count * sizeof(*m_list->m_array);
-   m_list->m_array = (DBF_FIELD_INFO*)realloc(m_list->m_array, len);
-   memcpy(m_list->m_array, aField, len);
+   m_list->m_array.clear();
+   for (size_t i = 0; i < WXSIZEOF(aField); i++)
+   {
+       m_list->m_array.push_back(aField[i]);
+   }
    m_list->Fill();
 }
 
@@ -276,7 +283,7 @@ bool DoModal_Structure(wxWindow* parent, wxDBase* db, const wxString& caption, c
        {
            const wxStructListView* list = dlg.GetList();
           
-           ok = db->Create(fileName, list->m_array, list->m_array_count);
+           ok = db->Create(fileName, &list->m_array[0], list->m_array.size());
        }
    }
    return ok;
@@ -383,7 +390,11 @@ bool wxDBFFieldDialog::TransferDataFromWindow()
 {
    bool ok = base::TransferDataFromWindow();
 
-   if (ok) m_name.MakeUpper();
+   if (ok)
+   {
+       m_name.Truncate(DBF_DBASE3_FIELDNAMELENGTH);
+       m_name.MakeUpper();
+   }
    return ok;
 }
 

@@ -20,7 +20,7 @@
 
 IMPLEMENT_DYNAMIC_CLASS(DBFDocument, wxDocument)
 
-DBFDocument::DBFDocument(void) : wxDocument(), m_database(new wxDBase)
+DBFDocument::DBFDocument(void) : wxDocument(), m_database(new wxDBase())
 {
 }
 
@@ -72,7 +72,8 @@ bool DBFDocument::DoOpenDocument(const wxString& filePath)
 
 bool DBFDocument::IsModified(void) const
 {
-   return m_database->IsOpen() && m_database->IsModified();
+   //return m_database->IsOpen() && m_database->IsModified();
+    return base::IsModified();
 }
 
 void DBFDocument::Modify(bool mod)

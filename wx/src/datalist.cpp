@@ -241,31 +241,44 @@ void wxDataListCtrl::OnEndLabelEdit(wxListEvent& event)
       const wxString str = event.GetLabel();
       const int pos = GetFirstSelected();
       bool ok = (pos != wxNOT_FOUND);
+      wxString errorMsg = _("Failed");
 
       if (ok)
       {
          wxVariant var;
          wxDataModel::ColumnInfo info;
 
-         GetModel()->GetColumn(m_column_clicked, &info);
-         if (info.type == wxT("datetime"))
+         ok = GetModel()->GetColumn(m_column_clicked, &info);
+         if (ok && (info.type == wxT("string")) )
          {
-            wxDateTime date;
+             ok = (str.length() <= info.len);
+             if (!ok) errorMsg = _("Text too long");
+         }
+         if (ok)
+         {
+             if (info.type == wxT("datetime"))
+             {
+                wxDateTime date;
 
-            ok = (NULL != date.ParseFormat(str, wxT("%x")));
-            if (ok)
-            {
-               wxASSERT(date.IsValid());
-               var = date;
-            }
+                ok = (NULL != date.ParseFormat(str, wxT("%x")));
+                if (ok)
+                {
+                   wxASSERT(date.IsValid());
+                   var = date;
+                }
+             }
+             else
+             {
+                var = str;
+             }
+             if (ok) ok = db->SetValueByRow(var, pos, m_column_clicked);
          }
-         else
-         {
-            var = str;
-         }
-         if (ok) ok = db->SetValueByRow(var, pos, m_column_clicked);
       }
-      if (!ok) wxMessageBox(_("Failed"));
+      if (!ok)
+      {
+          wxMessageBox(errorMsg);
+          event.Veto();
+      }
    }
    m_column_clicked = -1;
 }
