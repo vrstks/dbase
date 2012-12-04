@@ -8,7 +8,9 @@
 class WXDLLIMPEXP_FWD_CORE wxDataObject;
 class WXDLLIMPEXP_FWD_CORE wxMDIParentFrame;
 
-WX_DECLARE_OBJARRAY(wxFileName, wxArrayFileName);
+class wxArrayFileName : public std::vector<wxFileName>
+{
+};
 
 #ifdef _WX_ARTPROV_H_
 #define wxART_PREVIEW      wxART_MAKE_ART_ID(wxART_PREVIEW)

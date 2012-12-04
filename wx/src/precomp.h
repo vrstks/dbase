@@ -16,3 +16,5 @@
 #include <wx/dataview.h>
 #include <wx/stockitem.h>
 #include <wx/ffile.h>
+
+#include <vector>

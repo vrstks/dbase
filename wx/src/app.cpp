@@ -58,9 +58,9 @@ bool App::OnInit(void)
                 if (!m_cmdline.m_fileNames.empty())
                 {
                     // get filenames from the commandline
-                    for (size_t i = 0; i < m_cmdline.m_fileNames.size(); i++)
+                    for (wxArrayFileName::const_iterator it = m_cmdline.m_fileNames.begin(); it != m_cmdline.m_fileNames.end(); it++)
                     {
-                        const wxFileName& fileName = m_cmdline.m_fileNames.Item(i);
+                        const wxFileName& fileName = *it;
                         wxDocument* doc = docManager->CreateDocument(fileName.GetFullPath(), wxDOC_SILENT);
 
                         if (doc == NULL)
