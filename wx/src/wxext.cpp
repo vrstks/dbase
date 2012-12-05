@@ -526,21 +526,24 @@ bool wxRecentFileList::GetFile(size_t index, wxFileName* str) const
    return ok;
 }
 
-wxView* wxDocument_GetCurrentView(const wxDocument* doc)
+// static
+wxView* wxDocViewHelpers::GetCurrentView(const wxDocument& rdoc)
 {
-   wxView* view = doc->GetDocumentManager()->GetCurrentView();
+    const wxDocument* doc = &rdoc;
+    wxView* view = doc->GetDocumentManager()->GetCurrentView();
 
-   return (view && (view->GetDocument() == doc)) ? view : doc->GetFirstView();
+    return (view && (view->GetDocument() == doc)) ? view : doc->GetFirstView();
 }
 
-void wxDocument_Info(const wxDocument* doc, wxArrayString* as)
+// static
+void wxDocViewHelpers::GetInfo(const wxDocument& doc, wxArrayString* as)
 {
    const wxString fmt = wxT("%s:\t%s");
-   wxView* active_view = wxDocument_GetCurrentView(doc);
-   wxView* view  = active_view ? active_view : doc->GetFirstView();
+   wxView* active_view = wxDocViewHelpers::GetCurrentView(doc);
+   wxView* view  = active_view ? active_view : doc.GetFirstView();
    wxWindow* frame = view ? view->GetFrame() : NULL;;
 
-   as->push_back(wxString::Format(fmt, wxT("Doc class"), doc->GetClassInfo()->GetClassName()));
+   as->push_back(wxString::Format(fmt, wxT("Doc class"), doc.GetClassInfo()->GetClassName()));
    if (view)
    {
       as->push_back(wxString::Format(fmt, wxT("View class"), view->GetClassInfo()->GetClassName()));
@@ -550,12 +553,12 @@ void wxDocument_Info(const wxDocument* doc, wxArrayString* as)
    {
       as->push_back(wxString::Format(fmt, wxT("Frame label"), frame->GetLabel().wx_str()));
    }
-   as->push_back(wxString::Format(fmt, wxT("GetFilename"), doc->GetFilename().wx_str()));
-   as->push_back(wxString::Format(fmt, wxT("GetTitle"), doc->GetTitle().wx_str()));
-   as->push_back(wxString::Format(fmt, wxT("GetUserReadableName"), doc->GetUserReadableName().wx_str()));
-   as->push_back(wxString::Format(fmt, wxT("IsModified"), doc->IsModified() ? _("Yes") : _("No")));
-   as->push_back(wxString::Format(fmt, wxT("GetDocumentSaved"), doc->GetDocumentSaved() ? _("Yes") : _("No")));
-   as->push_back(wxString::Format(fmt, wxT("GetDocumentName"), doc->GetDocumentName().wx_str()));
+   as->push_back(wxString::Format(fmt, wxT("GetFilename"), doc.GetFilename().wx_str()));
+   as->push_back(wxString::Format(fmt, wxT("GetTitle"), doc.GetTitle().wx_str()));
+   as->push_back(wxString::Format(fmt, wxT("GetUserReadableName"), doc.GetUserReadableName().wx_str()));
+   as->push_back(wxString::Format(fmt, wxT("IsModified"), doc.IsModified() ? _("Yes") : _("No")));
+   as->push_back(wxString::Format(fmt, wxT("GetDocumentSaved"), doc.GetDocumentSaved() ? _("Yes") : _("No")));
+   as->push_back(wxString::Format(fmt, wxT("GetDocumentName"), doc.GetDocumentName().wx_str()));
 }
 
 void wxFrame_SetInitialPosition(wxFrame* wnd, const wxPoint& pos, const wxSize& size, int margin_pct)

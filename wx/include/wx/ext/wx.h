@@ -128,8 +128,15 @@ public:
    bool GetFile(size_t, wxFileName*) const;
 };
 
-class wxDocument;
-extern void wxDocument_Info(const wxDocument*, wxArrayString*);
+class WXDLLIMPEXP_FWD_CORE wxDocument;
+
+class wxDocViewHelpers
+{
+public:
+    static wxView* GetCurrentView(const wxDocument&);
+    static void GetInfo(const wxDocument&, wxArrayString*);
+};
+
 extern void wxFrame_SetInitialPosition(wxFrame*,
                     const wxPoint& pos = wxDefaultPosition,
                     const wxSize& size = wxDefaultSize, int margin_pct = 5);

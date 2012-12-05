@@ -162,7 +162,7 @@ void DBFView::OnProperties(wxCommandEvent&)
     const DBFDocument* doc = GetDocument();
     wxArrayString as;
 
-    ::wxDocument_Info(doc, &as);
+    wxDocViewHelpers::GetInfo(*doc, &as);
 
     wxDBFModel datamodel(doc->GetDatabase());
     datamodel.GetProperties(&as, true);
