@@ -179,7 +179,7 @@ bool wxDBFModel::AddNew(void)
       DBF_FIELD_INFO* item = array + col;
 
       model->GetColumn(col, &info);      
-      strncpy(item->name, wxConvertWX2MB(info.name), WXSIZEOF(item->name));
+      strncpy(item->name, info.name.mb_str(), WXSIZEOF(item->name));
       item->name[WXSIZEOF(item->name) - 1] = 0;
       item->decimals = 0;
       item->length = wxMin(info.len, 255UL);

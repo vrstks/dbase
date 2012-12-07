@@ -90,8 +90,8 @@ typedef struct _wxTOOLBARITEM
 #else
    const wxChar* id_art;
 #endif
-   const wxChar* text;
-   const wxChar* help;
+   wxString text;
+   wxString help;
 } wxTOOLBARITEM;
 
 wxToolBar* MainFrame::CreateToolBar()
@@ -102,25 +102,25 @@ wxToolBar* MainFrame::CreateToolBar()
 
    const wxTOOLBARITEM aID[] =
    {
-      { wxID_NEW           , NULL               , NULL         , NULL      },
-      { wxID_OPEN          , NULL               , NULL         , NULL      },
-      { wxID_SAVE          , NULL               , NULL         , NULL      },
-      { wxID_SEPARATOR     , NULL               , NULL         , NULL      },
-      { wxID_ADD           , NULL               , NULL         , NULL      },
+      { wxID_NEW           , NULL               , wxEmptyString, wxEmptyString },
+      { wxID_OPEN          , NULL               , wxEmptyString, wxEmptyString },
+      { wxID_SAVE          , NULL               , wxEmptyString, wxEmptyString },
+      { wxID_SEPARATOR     , NULL               , wxEmptyString, wxEmptyString },
+      { wxID_ADD           , NULL               , wxEmptyString, wxEmptyString },
       { XRCID("edit")      , wxART_HELP_SETTINGS, _("Edit")    , _("Edit") },
-      { wxID_DELETE        , NULL               , NULL         , NULL      },
-      { wxID_SEPARATOR     , NULL               , NULL         , NULL      },
-      { wxID_PRINT         , NULL               , NULL         , NULL      },
-      { wxID_PREVIEW       , NULL               , _("Preview") , NULL      },
-      { wxID_SEPARATOR     , NULL               , NULL         , NULL      },
+      { wxID_DELETE        , NULL               , wxEmptyString, wxEmptyString },
+      { wxID_SEPARATOR     , NULL               , wxEmptyString, wxEmptyString },
+      { wxID_PRINT         , NULL               , wxEmptyString, wxEmptyString },
+      { wxID_PREVIEW       , NULL               , _("Preview") , wxEmptyString },
+      { wxID_SEPARATOR     , NULL               , wxEmptyString, wxEmptyString },
       { XRCID("struct")    , wxART_HELP_SIDE_PANEL, _("Structure"), _("Modify Structure") },
       { XRCID("pack")      , wxART_DEL_BOOKMARK , _("Pack")  , _("Pack Database") },
-      { wxID_SEPARATOR     , NULL               , NULL         , NULL      },
-      { wxID_FIND          , NULL               , NULL         , NULL      },
-      { wxID_SEPARATOR     , NULL               , NULL         , NULL      },
-      { wxID_ABOUT /*wxID_HELP*/, NULL          , _("Help")    , NULL      },
-      { wxID_EXIT          , NULL               , NULL         , NULL      },
-      { wxID_SEPARATOR     , NULL               , NULL         , NULL      },
+      { wxID_SEPARATOR     , NULL               , wxEmptyString, wxEmptyString },
+      { wxID_FIND          , NULL               , wxEmptyString, wxEmptyString },
+      { wxID_SEPARATOR     , NULL               , wxEmptyString, wxEmptyString },
+      { wxID_ABOUT /*wxID_HELP*/, NULL          , _("Help")    , wxEmptyString },
+      { wxID_EXIT          , NULL               , wxEmptyString, wxEmptyString },
+      { wxID_SEPARATOR     , NULL               , wxEmptyString, wxEmptyString },
    };
 
    for (size_t i = 0; i < WXSIZEOF(aID); i++)
@@ -137,12 +137,12 @@ wxToolBar* MainFrame::CreateToolBar()
          {
             const wxArtID art_id = element.id_art ? wxString(element.id_art) : wxID2ArtID(element.id);
             wxBitmap icon = wxArtProvider::GetBitmap(art_id, wxART_OTHER, size);
-            wxString str = element.text ? element.text : wxGetStockLabelEx(element.id, wxSTOCK_PLAINTEXT).wx_str();
+            wxString str = element.text.empty() ? wxGetStockLabelEx(element.id, wxSTOCK_PLAINTEXT) : element.text;
 
             tool = tb->AddTool(element.id, str, icon);
             if (tool)
             {
-               str = element.help ? element.help : wxGetStockLabelEx(element.id, wxSTOCK_PLAINTEXT).wx_str();
+               str = element.help.empty() ? wxGetStockLabelEx(element.id, wxSTOCK_PLAINTEXT) : element.help;
                str = wxToolBarTool_MakeShortHelp(str, accel, element.id);
                tool->SetShortHelp(str);
             }
