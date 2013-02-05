@@ -9,9 +9,9 @@
 // wxDataListCtrl
 
 class wxDataModelBase;
-class wxDataListCtrl : public wxAltColourListView
+class wxDataListCtrl : public wxTrunkListView
 {
-   typedef wxAltColourListView base;
+   typedef wxTrunkListView base;
 //   DECLARE_CLASS(wxDataListCtrl)
 // Attributes
 public:

@@ -1,5 +1,5 @@
 // wx/wxt/trunk.h
-// Copyright (c) 2010-2012 by Troels K. All rights reserved.
+// Copyright (c) 2010-2013 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __WX_EXT_TRUNK_H__
@@ -57,9 +57,10 @@ protected:
 };
 
 #if (wxVERSION_NUMBER < 2900)
-inline wxString wxJoin(const wxArrayString& as, wxChar sep)
+inline wxString wxJoin(const wxArrayString& as, wxChar sep, wxChar escape = wxT('\\'))
 {
    wxString str;
+   wxUnusedVar(escape);
 
    for (wxArrayString::const_iterator it = as.begin();
         it != as.end();

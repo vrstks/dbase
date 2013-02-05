@@ -1,5 +1,5 @@
 // dbfdlgs.cpp
-// Copyright (c) 2007-2012 by Troels K. All rights reserved.
+// Copyright (c) 2007-2013 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -34,9 +34,9 @@ C_ASSERT_(1,WXSIZEOF(MOD_aszType) == DBF_DATA_TYPE_ENUMCOUNT);
 
 typedef std::vector<DBF_FIELD_INFO> FieldVector;
 
-class wxStructListView : public wxAltColourListView
+class wxStructListView : public wxTrunkListView
 {
-    typedef wxAltColourListView base;
+    typedef wxTrunkListView base;
     DECLARE_DYNAMIC_CLASS(wxStructListView)
 public:
     FieldVector m_array;
@@ -61,9 +61,9 @@ public:
    virtual wxString OnGetItemText(long item, long col) const;
 };
 
-IMPLEMENT_DYNAMIC_CLASS(wxStructListView, wxAltColourListView)
+IMPLEMENT_DYNAMIC_CLASS(wxStructListView, wxTrunkListView)
 
-wxStructListView::wxStructListView() : wxAltColourListView(), m_array()
+wxStructListView::wxStructListView() : wxTrunkListView(), m_array()
 {
 }
 
@@ -203,6 +203,7 @@ bool wxDBFStructDialog::Create(wxWindow* parent)
         
         m_list = XRCCTRL(*this, "list", wxStructListView);
         m_list->Init(m_database);
+        GetSizer()->SetSizeHints(this);
     }
     return ok;
 }

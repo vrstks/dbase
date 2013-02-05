@@ -1,5 +1,5 @@
 // wxext.cpp
-// Copyright (c) 2007-2012 by Troels K. All rights reserved.
+// Copyright (c) 2007-2013 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -8,10 +8,22 @@
 #include "wx/ext/wx.h"
 #include "wx/ext/trunk.h"
 
-#include <wx/arrimpl.cpp>
-WX_DEFINE_OBJARRAY(wxArrayAccelerator)
-
 IMPLEMENT_CLASS(wxViewEx, wxView)
+
+bool wxRemoveFile(wxFFile* file)
+{
+    bool ok = true;
+
+    if (file->IsOpened())
+    {
+        wxString filename = file->GetName();
+
+        file->Close();
+        wxLogNull no_log;
+        ok = wxRemoveFile(filename);
+    }
+    return ok;
+}
 
 bool wxWindow_Toggle(wxWindow* wnd)
 {
@@ -297,7 +309,7 @@ void wxAcceleratorHelper::SetAcceleratorTable(wxWindow* wnd, const wxArrayAccele
 
    for (size_t i = 0; i < count; i++)
    {
-      temp[i] = array.Item(i);
+      temp[i] = array.at(i);
    }
    wxAcceleratorTable accel((int)count, temp);
    wnd->SetAcceleratorTable(accel);
@@ -348,18 +360,16 @@ static wxString wxGetAccelText(const wxAcceleratorEntry& accel)
 /*static*/
 void wxAcceleratorHelper::SetAccelText(wxMenuBar* menu, const wxArrayAccelerator& array)
 {
-   const size_t count = array.size();
+    for (wxArrayAccelerator::const_iterator it = array.begin(); it != array.end(); it++)
+    {
+        const wxAcceleratorEntry& entry = *it;
+        wxMenuItem* item = menu->FindItem(entry.GetCommand());
 
-   for (size_t i = 0; i < count; i++)
-   {
-      const wxAcceleratorEntry& entry = array.Item(i);
-      wxMenuItem* item = menu->FindItem(entry.GetCommand());
-
-      if (item)
-      {
-          wxAcceleratorHelper::SetAccelText(item, wxGetAccelText(entry), true);
-      }
-   }
+        if (item)
+        {
+            wxAcceleratorHelper::SetAccelText(item, wxGetAccelText(entry), true);
+        }
+    }
 }
 
 wxString wxToolBarTool_MakeShortHelp(const wxString& rstr, const wxArrayAccelerator& accel, int id)
@@ -370,9 +380,9 @@ wxString wxToolBarTool_MakeShortHelp(const wxString& rstr, const wxArrayAccelera
    {
       wxString strAccel;
 
-      for (size_t i = 0; i < accel.size(); i++)
+      for (wxArrayAccelerator::const_iterator it = accel.begin(); it != accel.end(); it++)
       {
-         const wxAcceleratorEntry& element = accel.Item(i);
+         const wxAcceleratorEntry& element = *it;
 
          if (element.GetCommand() == id)
          {
@@ -780,34 +790,43 @@ static wxColour wxColourBase_ChangeLightness(const wxColour& colour, int ialpha)
 }
 #endif
 
-IMPLEMENT_DYNAMIC_CLASS(wxAltColourListView, wxListView)
+IMPLEMENT_DYNAMIC_CLASS(wxTrunkListView, wxListView)
 
-void wxAltColourListView::SetAlternateRowColour()
+#if (wxVERSION_NUMBER < 2905)
+void wxTrunkListView::EnableAlternateRowColours(bool enable)
 {
-    // Determine the alternate rows colour automatically from the
-    // background colour.
-    const wxColour bgColour = GetBackgroundColour();
+    if (enable)
+    {
+        // Determine the alternate rows colour automatically from the
+        // background colour.
+        const wxColour bgColour = GetBackgroundColour();
 
-    // Depending on the background, alternate row color
-    // will be 3% more dark or 50% brighter.
-#if (wxVERSION_NUMBER >= 2900)
-    int alpha = (bgColour.GetRGB() > 0x808080) ? 97 : 150;
-    m_alternateRowColour.SetBackgroundColour(bgColour.ChangeLightness(alpha));
-#else
-    int alpha = ((bgColour.Red() | (bgColour.Green() << 8) | (bgColour.Blue() << 16)) > 0x808080) ? 97 : 150;
-    m_alternateRowColour.SetBackgroundColour(wxColourBase_ChangeLightness(bgColour, alpha));
-#endif
+        // Depending on the background, alternate row color
+        // will be 3% more dark or 50% brighter.
+    #if (wxVERSION_NUMBER >= 2900)
+        int alpha = (bgColour.GetRGB() > 0x808080) ? 97 : 150;
+        m_alternateRowColour.SetBackgroundColour(bgColour.ChangeLightness(alpha));
+    #else
+        int alpha = ((bgColour.Red() | (bgColour.Green() << 8) | (bgColour.Blue() << 16)) > 0x808080) ? 97 : 150;
+        m_alternateRowColour.SetBackgroundColour(wxColourBase_ChangeLightness(bgColour, alpha));
+    #endif
+    }
+    else
+    {
+        m_alternateRowColour.SetBackgroundColour(wxColour());
+    }
 }
 
-wxListItemAttr* wxAltColourListView::OnGetItemAttr(long row) const
+wxListItemAttr* wxTrunkListView::OnGetItemAttr(long row) const
 {
     return (m_alternateRowColour.GetBackgroundColour().IsOk() && (row % 2))
         ? wxConstCast(&m_alternateRowColour, wxListItemAttr)
         : base::OnGetItemAttr(row);
 }
+#endif
 
 #if (wxVERSION_NUMBER < 2900)
-bool wxAltColourListView::GetSubItemRect( long row, long col, wxRect& rect, int code) const
+bool wxTrunkListView::GetSubItemRect( long row, long col, wxRect& rect, int code) const
 {
     bool ok = base::GetItemRect(row, rect, code);
 
@@ -837,7 +856,7 @@ bool wxAltColourListView::GetSubItemRect( long row, long col, wxRect& rect, int 
 }
 #endif
 
-long wxAltColourListView::HitTest(const wxPoint& point, int* flags, long* col) const
+long wxTrunkListView::HitTest(const wxPoint& point, int* flags, long* col) const
 {
     int rFlags;
     const long row = base::HitTest(point, rFlags);
@@ -862,7 +881,7 @@ long wxAltColourListView::HitTest(const wxPoint& point, int* flags, long* col) c
     return row;
 }
 
-bool wxAltColourListView::EndEditLabel(bool cancel)
+bool wxTrunkListView::EndEditLabel(bool cancel)
 {
 #ifdef __WXMSW__
     #if (wxVERSION_NUMBER >= 2901)

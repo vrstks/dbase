@@ -1,5 +1,5 @@
 // dbfview.cpp
-// Copyright (c) 2007-2012 by Troels K. All rights reserved.
+// Copyright (c) 2007-2013 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -32,7 +32,7 @@ public:
    bool Create(wxWindow* parent)
    {
        bool ok = base::Create(parent, wxID_ANY, wxPoint(0,0), parent->GetClientSize(), wxLC_REPORT | wxLC_VIRTUAL | wxLC_EDIT_LABELS);
-       SetAlternateRowColour();
+       EnableAlternateRowColours();
        return ok;
    }
 
@@ -167,7 +167,7 @@ void DBFView::OnProperties(wxCommandEvent&)
     wxDBFModel datamodel(doc->GetDatabase());
     datamodel.GetProperties(&as, true);
 
-    wxString str = ::wxJoin(as, wxT('\n'));
+    wxString str = ::wxJoin(as, wxT('\n'), 0);
 
     ::wxModalTextDialog(GetModalParent(), str, doc->GetFilename().GetFullName());
 }

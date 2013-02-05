@@ -1,5 +1,5 @@
 // wx/ext/wx.h
-// Copyright (c) 2007-2012 by Troels K. All rights reserved.
+// Copyright (c) 2007-2013 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #define WXK_HELP       WXK_F1
@@ -8,9 +8,7 @@
 class WXDLLIMPEXP_FWD_CORE wxDataObject;
 class WXDLLIMPEXP_FWD_CORE wxMDIParentFrame;
 
-class wxArrayFileName : public std::vector<wxFileName>
-{
-};
+class wxArrayFileName : public std::vector<wxFileName> {};
 
 #ifdef _WX_ARTPROV_H_
 #define wxART_PREVIEW      wxART_MAKE_ART_ID(wxART_PREVIEW)
@@ -28,6 +26,7 @@ extern void wxFrame_OnUpdateFullScreen(wxFrame*, wxUpdateUIEvent&);
 extern bool wxWindow_Toggle(wxWindow*);
 extern wxStdDialogButtonSizer* wxCreateStdDialogButtonSizer(wxWindow* parent, long flags);
 extern void wxModalTextDialog(wxWindow* parent, const wxString& text, const wxString& caption = wxEmptyString);
+extern bool wxRemoveFile(wxFFile*);
 
 class wxClipboardHelper
 {
@@ -75,7 +74,7 @@ public:
 
 #if wxUSE_ACCEL
 class WXDLLIMPEXP_FWD_CORE wxMenuBar;
-WX_DECLARE_OBJARRAY(wxAcceleratorEntry, wxArrayAccelerator);
+class wxArrayAccelerator : public std::vector<wxAcceleratorEntry> {};
 class wxAcceleratorHelper
 {
 public:
@@ -183,16 +182,16 @@ protected:
 };
 
 #ifdef _WX_LISTCTRL_H_BASE_
-class wxAltColourListView : public wxListView
+class wxTrunkListView : public wxListView
 {
     typedef wxListView base;
-    DECLARE_DYNAMIC_CLASS(wxAltColourListView)
+    DECLARE_DYNAMIC_CLASS(wxTrunkListView)
 public:
-    wxColour GetAlternateRowColour() const             { return m_alternateRowColour.GetBackgroundColour(); }
+#if (wxVERSION_NUMBER < 2905)
     void SetAlternateRowColour(const wxColour& colour) { m_alternateRowColour.SetBackgroundColour(colour); }
-    void SetAlternateRowColour();
-
+    void EnableAlternateRowColours(bool enable = true);
     virtual wxListItemAttr* OnGetItemAttr(long row) const;
+#endif
 
     void SelectAll(bool on = true)
     {
@@ -264,7 +263,9 @@ public:
 #endif
 
 private:
+#if (wxVERSION_NUMBER < 2905)
     // user defined color to draw row lines, may be invalid
     wxListItemAttr m_alternateRowColour;
+#endif
 };
 #endif

@@ -16,15 +16,15 @@
 #include "datalist.h"
 #include "datamodel.h"
 
-//IMPLEMENT_CLASS(wxDataListCtrl, wxAltColourListView)
+//IMPLEMENT_CLASS(wxDataListCtrl, wxTrunkListView)
 
-BEGIN_EVENT_TABLE(wxDataListCtrl, wxAltColourListView)
+BEGIN_EVENT_TABLE(wxDataListCtrl, wxTrunkListView)
    EVT_KEY_DOWN(wxDataListCtrl::OnKeyDown)
    EVT_LIST_ITEM_SELECTED(wxID_ANY, wxDataListCtrl::OnSelChange)
    EVT_LIST_ITEM_ACTIVATED(wxID_ANY, wxDataListCtrl::OnSelect)
 END_EVENT_TABLE()
 
-wxDataListCtrl::wxDataListCtrl(): wxAltColourListView()
+wxDataListCtrl::wxDataListCtrl(): wxTrunkListView()
 {
     m_column_clicked = wxNOT_FOUND;
     m_id_edit = m_id_selchange = m_id_delete = 0;
