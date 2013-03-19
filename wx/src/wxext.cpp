@@ -3,10 +3,9 @@
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
-#include <wx/stdpaths.h>
 
-#include "wx/ext/wx.h"
 #include "wx/ext/trunk.h"
+#include "wx/ext/wx.h"
 
 IMPLEMENT_CLASS(wxViewEx, wxView)
 
@@ -76,7 +75,7 @@ bool wxCreateFileFromMemory(const void* buf, size_t buf_len, const wxFileName& f
         ok = file.Open(filename.GetFullPath(), wxT("rb"));
         if (ok)
         {
-            ok = (buf_len == file.Length());
+            ok = (wxFileOffset(buf_len) == file.Length());
             if (!ok)
             {
                 // exists but wrong length
@@ -534,6 +533,28 @@ bool wxRecentFileList::GetFile(size_t index, wxFileName* str) const
       str->operator=(impl->GetHistoryFile(index));
    }
    return ok;
+}
+
+// static
+void wxDocViewHelpers::ActivateDocument(const wxDocument& doc)
+{
+    doc.GetFirstView()->GetFrame()->Raise();
+}
+
+// static
+wxDocVector wxDocViewHelpers::GetDocumentsVector(const wxDocManager& docManager)
+{
+#if (wxVERSION_NUMBER >= 2905)
+    return docManager.GetDocumentsVector();
+#else
+    wxDocVector vector;
+    const wxList& docList = wxConstCast(&docManager, wxDocManager)->GetDocuments();
+    for (wxList::const_iterator it = docList.begin(); it != docList.end(); it++)
+    {
+        vector.push_back(wxStaticCast(*it, wxDocument));
+    }
+    return vector;
+#endif
 }
 
 // static

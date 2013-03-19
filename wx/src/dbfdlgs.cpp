@@ -3,8 +3,9 @@
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
-#include <wx/valgen.h>
-#include <vector>
+
+#include "wx/ext/trunk.h"
+#include "wx/ext/wx.h"
 
 #include "dbfdlgs.h"
 #include "../../ioapi/zlib.h"
@@ -15,7 +16,6 @@
 #include "../../dbf.inl"
 #include "../../dbf_wx.h"
 #include "../../dbf_wx.inl"
-#include "wx/ext/wx.h"
 
 #define C_ASSERT_(n,e) typedef char __C_ASSERT__##n[(e)?1:-1]
 
@@ -429,15 +429,11 @@ class WindowsDialog : public wxDialog
 public:
     WindowsDialog();
 
-    bool Create(wxWindow* parent, const wxList& docList);
+    bool Create(wxWindow* parent, const wxDocVector&);
 
     wxDocument* GetDocument(int item)
     {
         return wxStaticCast(m_listBox->GetClientData(item), wxDocument);
-    }
-    void ActivateDocument(int item)
-    {
-        GetDocument(item)->GetFirstView()->GetFrame()->Raise();
     }
     virtual int ShowModal();
 protected:
@@ -464,7 +460,7 @@ WindowsDialog::WindowsDialog() : wxDialog(), m_listBox(NULL), m_selection(wxNOT_
 {
 }
 
-bool WindowsDialog::Create(wxWindow* parent, const wxList& docList)
+bool WindowsDialog::Create(wxWindow* parent, const wxDocVector& docList)
 {
     bool ok = wxXmlResource::Get()->LoadDialog(this, parent, wxT("windows"));
 
@@ -477,9 +473,9 @@ bool WindowsDialog::Create(wxWindow* parent, const wxList& docList)
         GetSizer()->SetSizeHints(this);
         m_listBox = XRCCTRL(*this, "list", wxListBox);
 
-        for (wxList::const_iterator it = docList.begin(); it != docList.end(); it++)
+        for (wxDocVector::const_iterator it = docList.begin(); it != docList.end(); it++)
         {
-            wxDocument* doc = wxStaticCast(*it, wxDocument);
+            wxDocument* doc = *it;
             wxDocManager* docManager = doc->GetDocumentManager();
             wxString text = doc->GetFilename();
             
@@ -552,12 +548,12 @@ int WindowsDialog::ShowModal()
     if ( (n == wxID_OK) && (wxNOT_FOUND != m_selection) )
     {
         // ShowModal() restores previous focus, so do this later
-        ActivateDocument(m_selection);
+        wxDocViewHelpers::ActivateDocument(*GetDocument(m_selection));
     }
     return n;
 }
 
-void DoModal_Windows(wxWindow* parent, const wxList& docList)
+void DoModal_Windows(wxWindow* parent, const wxDocVector& docList)
 {
     WindowsDialog dlg;
     

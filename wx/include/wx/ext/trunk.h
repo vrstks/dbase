@@ -13,6 +13,11 @@
     #define wxAPPLY 0x00000020
 #endif
 
+#if (wxVERSION_NUMBER < 2905)
+#include <vector>
+typedef std::vector<wxDocument*> wxDocVector;
+#endif
+
 #if defined(_WX_ABOUTDLG_H_) && (wxVERSION_NUMBER < 2900)
 inline void wxAboutBox(const wxAboutDialogInfo& info, wxWindow* WXUNUSED(parent))
 {
