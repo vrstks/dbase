@@ -73,7 +73,7 @@ wxStructListView::~wxStructListView()
 
 void wxStructListView::Init(wxDBase* db)
 {
-   static const wxChar* aszType[] =
+   const wxChar* aszType[] =
    {
       wxT("Name"),
       wxT("Type"),
@@ -249,7 +249,7 @@ void wxDBFStructDialog::OnDelete(wxCommandEvent&)
 
 void wxDBFStructDialog::OnCalendar(wxCommandEvent&)
 {
-   static const DBF_FIELD_INFO aField[] =
+   const DBF_FIELD_INFO aField[] =
    {
       { "DATE"    , DBF_DATA_TYPE_DATE   , DBF_LEN_DATE, 0 },
       { "TEXT"    , DBF_DATA_TYPE_CHAR   , 80, 0 },
@@ -548,7 +548,7 @@ int WindowsDialog::ShowModal()
     if ( (n == wxID_OK) && (wxNOT_FOUND != m_selection) )
     {
         // ShowModal() restores previous focus, so do this later
-        wxDocViewHelpers::ActivateDocument(*GetDocument(m_selection));
+        wxTrunkDocView::ActivateDocument(GetDocument(m_selection));
     }
     return n;
 }

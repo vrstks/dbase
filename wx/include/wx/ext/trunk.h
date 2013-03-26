@@ -18,6 +18,29 @@
 typedef std::vector<wxDocument*> wxDocVector;
 #endif
 
+#ifdef _WX_DOCH__
+class wxTrunkDocView
+{
+public:
+#if (wxVERSION_NUMBER >= 2905)
+    static inline wxDocVector GetDocumentsVector(const wxDocManager& docManager)
+    {
+        return docManager.GetDocumentsVector();
+    }
+#else
+    static wxDocVector GetDocumentsVector(const wxDocManager&);
+#endif
+    static inline void ActivateDocument(wxDocument* doc)
+    {
+    #if (wxVERSION_NUMBER >= 2905)
+        doc->Activate();
+    #else
+        doc->GetFirstView()->GetFrame()->Raise();
+    #endif
+    }
+};
+#endif
+
 #if defined(_WX_ABOUTDLG_H_) && (wxVERSION_NUMBER < 2900)
 inline void wxAboutBox(const wxAboutDialogInfo& info, wxWindow* WXUNUSED(parent))
 {

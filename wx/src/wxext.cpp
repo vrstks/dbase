@@ -535,27 +535,19 @@ bool wxRecentFileList::GetFile(size_t index, wxFileName* str) const
    return ok;
 }
 
+#if (wxVERSION_NUMBER < 2905)
 // static
-void wxDocViewHelpers::ActivateDocument(const wxDocument& doc)
+wxDocVector wxTrunkDocView::GetDocumentsVector(const wxDocManager& docManager)
 {
-    doc.GetFirstView()->GetFrame()->Raise();
-}
-
-// static
-wxDocVector wxDocViewHelpers::GetDocumentsVector(const wxDocManager& docManager)
-{
-#if (wxVERSION_NUMBER >= 2905)
-    return docManager.GetDocumentsVector();
-#else
-    wxDocVector vector;
-    const wxList& docList = wxConstCast(&docManager, wxDocManager)->GetDocuments();
-    for (wxList::const_iterator it = docList.begin(); it != docList.end(); it++)
+    wxDocVector docs;
+    const wxList& list = wxConstCast(&docManager, wxDocManager)->GetDocuments();
+    for (wxList::const_iterator it = list.begin(); it != list.end(); it++)
     {
-        vector.push_back(wxStaticCast(*it, wxDocument));
+        docs.push_back(wxStaticCast(*it, wxDocument));
     }
-    return vector;
-#endif
+    return docs;
 }
+#endif
 
 // static
 wxView* wxDocViewHelpers::GetCurrentView(const wxDocument& rdoc)

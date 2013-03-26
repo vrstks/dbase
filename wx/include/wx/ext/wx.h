@@ -132,12 +132,8 @@ class WXDLLIMPEXP_FWD_CORE wxDocument;
 class wxDocViewHelpers
 {
 public:
-    static void ActivateDocument(const wxDocument&);
     static wxView* GetCurrentView(const wxDocument&);
     static void GetInfo(const wxDocument&, wxArrayString*);
-#ifdef __WX_EXT_TRUNK_H__
-    static wxDocVector GetDocumentsVector(const wxDocManager&);
-#endif
 };
 
 extern void wxFrame_SetInitialPosition(wxFrame*,

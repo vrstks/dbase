@@ -238,5 +238,5 @@ void MainFrame::OnUpdateFullscreen (wxUpdateUIEvent& event)
 
 void MainFrame::OnWindowsDialog(wxCommandEvent&)
 {
-    ::DoModal_Windows(this, wxDocViewHelpers::GetDocumentsVector(*m_docManager));
+    ::DoModal_Windows(this, wxTrunkDocView::GetDocumentsVector(*m_docManager));
 }

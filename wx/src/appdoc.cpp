@@ -1,5 +1,5 @@
 // appdoc.cpp
-// Copyright (c) 2007-2012 by Troels K. All rights reserved.
+// Copyright (c) 2007-2013 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -17,7 +17,7 @@ class DocManager : public wxDocManagerEx
    typedef wxDocManagerEx base;
 public:
    DocManager();
-   virtual wxDocument * CreateDocument(const wxString& path, long flags);
+   virtual wxDocument* CreateDocument(const wxString& path, long flags);
 protected:
    DECLARE_EVENT_TABLE()
 };
@@ -33,8 +33,18 @@ END_EVENT_TABLE()
 
 wxDocument* DocManager::CreateDocument(const wxString& path, long flags)
 {
-   wxDocument* doc = base::CreateDocument(path, flags);
-   return doc;
+#if (wxVERSION_NUMBER >= 2901)
+    return base::CreateDocument(path, flags);
+#else
+    size_t count = GetDocuments().size();
+    wxDocument* doc = base::CreateDocument(path, flags);
+
+    if (doc && (count == GetDocuments().size()))
+    {
+        wxTrunkDocView::ActivateDocument(doc); // restore if minimized mdi window
+    }
+    return doc;
+#endif
 }
 
 DocManager::DocManager() : wxDocManagerEx()
