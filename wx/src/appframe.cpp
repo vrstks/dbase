@@ -96,7 +96,7 @@ typedef struct _wxTOOLBARITEM
 
 wxToolBar* MainFrame::CreateToolBar()
 {
-   const wxArrayAccelerator& accel = DBFFrame::GetAccelerator();
+   const wxArrayAcceleratorEntry& accel = DBFFrame::GetAccelerator();
    wxToolBar* tb = base::CreateToolBar(wxTB_TEXT | wxBORDER_NONE | wxTB_HORIZONTAL | wxTB_FLAT);
    const wxSize size = tb->GetToolBitmapSize();
 

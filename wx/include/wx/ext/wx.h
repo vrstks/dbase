@@ -74,16 +74,16 @@ public:
 
 #if wxUSE_ACCEL
 class WXDLLIMPEXP_FWD_CORE wxMenuBar;
-class wxArrayAccelerator : public std::vector<wxAcceleratorEntry> {};
+class wxArrayAcceleratorEntry : public std::vector<wxAcceleratorEntry> {};
 class wxAcceleratorHelper
 {
 public:
     static wxAcceleratorEntry GetStockAccelerator(wxWindowID);
-    static void SetAccelText(wxMenuBar*, const wxArrayAccelerator&);
-    static void SetAcceleratorTable(wxWindow*, const wxArrayAccelerator&);
+    static void SetAccelText(wxMenuBar*, const wxArrayAcceleratorEntry&);
+    static void SetAcceleratorTable(wxWindow*, const wxArrayAcceleratorEntry&);
     static bool SetAccelText(wxMenuItem*, const wxString& accel, bool append);
 };
-extern wxString wxToolBarTool_MakeShortHelp(const wxString&, const wxArrayAccelerator& accel, int id);
+extern wxString wxToolBarTool_MakeShortHelp(const wxString&, const wxArrayAcceleratorEntry& accel, int id);
 #endif
 
 #define wxMessageBoxCaption      wxGetApp().GetAppDisplayName()

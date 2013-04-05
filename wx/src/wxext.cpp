@@ -301,7 +301,7 @@ wxAcceleratorEntry wxAcceleratorHelper::GetStockAccelerator(wxWindowID id)
 #endif // wxUSE_ACCEL
 
 /*static*/
-void wxAcceleratorHelper::SetAcceleratorTable(wxWindow* wnd, const wxArrayAccelerator& array)
+void wxAcceleratorHelper::SetAcceleratorTable(wxWindow* wnd, const wxArrayAcceleratorEntry& array)
 {
    size_t count = array.size();
    wxAcceleratorEntry* temp = new wxAcceleratorEntry[count];
@@ -357,9 +357,9 @@ static wxString wxGetAccelText(const wxAcceleratorEntry& accel)
 }
 
 /*static*/
-void wxAcceleratorHelper::SetAccelText(wxMenuBar* menu, const wxArrayAccelerator& array)
+void wxAcceleratorHelper::SetAccelText(wxMenuBar* menu, const wxArrayAcceleratorEntry& array)
 {
-    for (wxArrayAccelerator::const_iterator it = array.begin(); it != array.end(); it++)
+    for (wxArrayAcceleratorEntry::const_iterator it = array.begin(); it != array.end(); it++)
     {
         const wxAcceleratorEntry& entry = *it;
         wxMenuItem* item = menu->FindItem(entry.GetCommand());
@@ -371,7 +371,7 @@ void wxAcceleratorHelper::SetAccelText(wxMenuBar* menu, const wxArrayAccelerator
     }
 }
 
-wxString wxToolBarTool_MakeShortHelp(const wxString& rstr, const wxArrayAccelerator& accel, int id)
+wxString wxToolBarTool_MakeShortHelp(const wxString& rstr, const wxArrayAcceleratorEntry& accel, int id)
 {
    wxString str = rstr;
 
@@ -379,7 +379,7 @@ wxString wxToolBarTool_MakeShortHelp(const wxString& rstr, const wxArrayAccelera
    {
       wxString strAccel;
 
-      for (wxArrayAccelerator::const_iterator it = accel.begin(); it != accel.end(); it++)
+      for (wxArrayAcceleratorEntry::const_iterator it = accel.begin(); it != accel.end(); it++)
       {
          const wxAcceleratorEntry& element = *it;
 

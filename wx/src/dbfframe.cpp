@@ -1,5 +1,5 @@
 // dbfframe.cpp
-// Copyright (c) 2007-2012 by Troels K. All rights reserved.
+// Copyright (c) 2007-2013 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -44,9 +44,9 @@ wxMenuBar* DBFFrame::CreateMenuBar() const
    wxAcceleratorHelper::SetAccelText(menubar, GetAccelerator());
    return menubar;
 }
-/*static*/ const wxArrayAccelerator& DBFFrame::GetAccelerator()
+/*static*/ const wxArrayAcceleratorEntry& DBFFrame::GetAccelerator()
 {
-   static wxArrayAccelerator array;
+   static wxArrayAcceleratorEntry array;
 
    if (array.empty())
    {
