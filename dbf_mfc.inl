@@ -1,5 +1,5 @@
 // dbf_mfc.inl
-// Copyright (c) 2007-2012 by Troels K. All rights reserved.
+// Copyright (c) 2007-2013 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 inline CDbaseFile::CDbaseFile() : CObject(), CDBase()
@@ -31,10 +31,10 @@ inline int CDbaseFile::Open(const TCHAR* filename, dbf_editmode editmode, const 
 
 inline bool CDbaseFile::Create(const TCHAR* lpszFileName, 
    void* stream, struct zlib_filefunc_def_s* api, 
-   const DBF_FIELD_INFO* array, size_t array_count, 
+   const DBaseFieldVector& vector, 
    dbf_charconv charconv, void* memo)
 {
-   bool ok = base::Create(stream, api, array, array_count, charconv, memo);
+   bool ok = base::Create(stream, api, vector, charconv, memo);
 
    if (ok) m_strFileName = lpszFileName;
    return ok;
@@ -201,20 +201,17 @@ inline int CDbaseFile::PutLogicalField(const char* field, bool value)
    return PutLogicalField(GetFieldPtr(field), value) ? DBASE_SUCCESS : base::GetLastError();
 }
 
-inline const char* CDbaseFile::GetLastError(void) const
+inline int CDbaseFile::GetMemoField(size_t field, CString* buf, size_t buf_len)
 {
-   return base::GetLastErrorStr();
-}
-
-inline int CDbaseFile::GetMemoField(size_t field, char* buf, size_t buf_len)
-{
-   base::Read(GetFieldPtr(field), buf, buf_len);
-   return base::GetLastError();
+    std::string temp;
+    base::Read(GetFieldPtr(field), &temp, buf_len);
+    *buf = temp.c_str();
+    return base::GetLastError();
 }
 
 inline size_t CDbaseFile::GetMemoFieldLength(size_t field)
 {
-   size_t len = base::Read(GetFieldPtr(field), (char*)NULL, 0);
+   size_t len = base::Read(GetFieldPtr(field), (std::string*)NULL, 0);
    return len ? (len + 1) : 0;
 }
 
@@ -319,17 +316,11 @@ inline bool CDbaseFile::Read(const char* field, long* n)
 
 inline size_t CDbaseFile::Read(const DBF_FIELD* field, CString* str)
 {
-   size_t len = 512;
-#ifdef _UNICODE
-   char* temp = (char*)malloc(sizeof(char) * len);
-   len = base::Read(field, temp, len);
-   str->operator=(temp);
-   free(temp);
-#else
-   len = base::Read(field, str->GetBuffer(len), len);
-   str->ReleaseBuffer();
-#endif
-   return len;
+    size_t len = 512;
+    std::string temp;
+    len = base::Read(field, &temp, len);
+    *str = temp.c_str();
+    return len;
 }
 
 inline size_t CDbaseFile::Read(const char* field, CString* str)
@@ -395,15 +386,10 @@ inline CString CDbaseFile::GetCharField(const DBF_FIELD* field)
 
 inline bool CDbaseFile::Write(const DBF_FIELD* field, const TCHAR* str)
 {
-#ifdef _UNICODE // T2CA() gets worn down by big databases, use wcstombs
-   char sz[1024];
-   wcstombs(sz, str, _countof(sz));
-   return base::Write(field, sz);
-#else
-   return base::Write(field, str);
-#endif
-}
+    USES_CONVERSION;
 
+    return base::Write(field, std::string(T2CA(str)));
+}
 
 inline bool CDbaseFile::Write(const char* field, const TCHAR* str)
 {

@@ -32,14 +32,12 @@ static const wxChar* const MOD_aszType[] =
 };
 C_ASSERT_(1,WXSIZEOF(MOD_aszType) == DBF_DATA_TYPE_ENUMCOUNT);
 
-typedef std::vector<DBF_FIELD_INFO> FieldVector;
-
 class wxStructListView : public wxTrunkListView
 {
     typedef wxTrunkListView base;
     DECLARE_DYNAMIC_CLASS(wxStructListView)
 public:
-    FieldVector m_array;
+    DBaseFieldVector m_array;
 
     enum col
     {
@@ -276,16 +274,10 @@ bool DoModal_Structure(wxWindow* parent, wxDBase* db, const wxString& caption, c
    if (ok)
    {
        if (!caption.empty())
-       {
            dlg.SetTitle(caption);
-       }
        ok = (wxID_OK == dlg.ShowModal());
        if (ok && fileName.IsOk() && !db->IsOpen())
-       {
-           const wxStructListView* list = dlg.GetList();
-          
-           ok = db->Create(fileName, &list->m_array[0], list->m_array.size());
-       }
+           ok = db->Create(fileName, dlg.GetList()->m_array);
    }
    return ok;
 }

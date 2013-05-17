@@ -1,5 +1,5 @@
 // dbf_wx.h
-// Copyright (c) 2007-2012 by Troels K. All rights reserved.
+// Copyright (c) 2007-2013 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __DBF_WX_H__
@@ -34,13 +34,13 @@ public:
    bool Open  (const wxFileName&, dbf_editmode);
    bool Open  (const wxFileName&, dbf_editmode, const DBF_OPEN&);
    bool Open  (wxInputStream*, dbf_charconv charconv = dbf_charconv_compatible);
-   bool Create(const wxFileName&, const DBF_FIELD_INFO* array, dbf_uint array_count);
-   bool Create(const wxFileName&, const DBF_FIELD_INFO* array, dbf_uint array_count, const DBF_OPEN&);
+   bool Create(const wxFileName&, const DBaseFieldVector&);
+   bool Create(const wxFileName&, const DBaseFieldVector&, const DBF_OPEN&);
    bool Create(/*const wxString& filename, */void* stream, const struct zlib_filefunc_def_s*, 
-      const DBF_FIELD_INFO* array, dbf_uint array_count, 
+      const DBaseFieldVector&, 
       dbf_charconv charconv = dbf_charconv_compatible, void* memo = NULL);
    bool Create(wxOutputStream*, 
-      const DBF_FIELD_INFO* array, dbf_uint array_count, 
+      const DBaseFieldVector&, 
       dbf_charconv charconv = dbf_charconv_compatible, void* memo = NULL);
 
    size_t Read(const DBF_FIELD* , wxString*, size_t buf_len = 1024);
@@ -52,7 +52,7 @@ public:
    bool Read(dbf_uint field , wxDateTime*);
    
    bool Read(const DBF_FIELD* , bool*);   
-   bool Read(const char* field, bool*);   
+   bool Read(const char* field, bool*);
    bool Read(dbf_uint field , bool*);   
    
    bool Read(const DBF_FIELD* , long*);   
@@ -83,7 +83,7 @@ public:
    bool Write(const char* field, double);
    bool Write(dbf_uint field , double);
 
-   bool Write(const char* field, const char*);
+   bool Write(const char* field, const std::string&);
 
    void       GetInfo(DBF_INFO*, wxDateTime* dt = NULL) const;
 

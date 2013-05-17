@@ -26,9 +26,10 @@ bool wxDBase::Attach(wxInputStream* stream, dbf_editmode editmode, dbf_charconv 
 {
    zlib_filefunc_def_s api;
    bool ok;
+   const std::string temp = tablename.mb_str();
 
    fill_filefunc(&api, stream);
-   ok = base::Attach(stream, &api, editmode, conv, stream_memo, tablename.mb_str());
+   ok = base::Attach(stream, &api, editmode, conv, stream_memo, &temp);
    if (ok)
    {
       m_stream      = stream;

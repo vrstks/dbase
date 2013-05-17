@@ -520,7 +520,7 @@ void CDBFExplorerView::OnEditDelete()
 		else
 		{
 			// failed to delete record
-			MessageBox(A2CT(pDoc->m_dBaseFile->GetLastError()), _T("Delete Record Error"), MB_ICONSTOP);
+            MessageBox(A2CT(pDoc->m_dBaseFile->GetLastErrorStr()), _T("Delete Record Error"), MB_ICONSTOP);
 			break;
 		}
 		nIndex = GetListCtrl().GetNextItem(bShowDeletedRecords ? nIndex : -1, LVNI_ALL | LVNI_SELECTED);
@@ -574,7 +574,7 @@ void CDBFExplorerView::OnEditUndelete()
 		else
 		{
 			// failed to undelete record
-			MessageBox(A2CT(pDoc->m_dBaseFile->GetLastError()), _T("Undelete Record Error"), MB_ICONSTOP);
+			MessageBox(A2CT(pDoc->m_dBaseFile->GetLastErrorStr()), _T("Undelete Record Error"), MB_ICONSTOP);
 			break;
 		}
 		nIndex = GetListCtrl().GetNextItem(nIndex, LVNI_ALL | LVNI_SELECTED);
@@ -1036,17 +1036,13 @@ void CDBFExplorerView::EditField(int nItem, int nSubItem)
 
 		if (pItem && pDoc->m_dBaseFile->GetRecord(pItem->dwRecordIndex) == DBASE_SUCCESS)
 		{
-			char*buff;
 			int nLength = pDoc->m_dBaseFile->GetMemoFieldLength(nSubItem);
 
 			if (nLength)
 			{
 				try
 				{
-					buff = new char[nLength+1];
-					pDoc->m_dBaseFile->GetMemoField(nSubItem, buff, nLength);
-					dlg.m_strText = buff;
-					delete buff;
+					pDoc->m_dBaseFile->GetMemoField(nSubItem, &dlg.m_strText, nLength);
 				}
 				catch(...)
 				{

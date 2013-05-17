@@ -1,5 +1,5 @@
 // dbfmodel.cpp
-// Copyright (c) 2007-2011 by Troels K. All rights reserved.
+// Copyright (c) 2007-2013 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include <wx/dataview.h>
@@ -83,9 +83,7 @@ bool wxDBFModel::GetValueByRow(wxString* str, unsigned int row, unsigned int col
          bool n;
 
          if (m_database->Read(col, &n))
-         {
             str->operator=(n ? _("True") : _("False"));
-         }
          break;
       }
       case DBF_DATA_TYPE_FLOAT:
@@ -93,9 +91,7 @@ bool wxDBFModel::GetValueByRow(wxString* str, unsigned int row, unsigned int col
          double n;
 
          if (m_database->Read(col, &n))
-         {
             str->Printf(wxT("%g"), n); // date only, not time of day
-         }
          break;
       }
       case DBF_DATA_TYPE_DATE:
@@ -103,9 +99,7 @@ bool wxDBFModel::GetValueByRow(wxString* str, unsigned int row, unsigned int col
          wxDateTime n;
 
          if (m_database->Read(col, &n))
-         {
             str->operator=(n.Format(wxT("%x"))); // date only, not time of day
-         }
          break;
       }
       default:
@@ -166,17 +160,18 @@ bool wxDBFModel::AddNew(void)
 {
    const unsigned int row_count = model->GetRowCount();
    const unsigned int col_count = model->GetColumnCount();
-   DBF_FIELD_INFO* array = new DBF_FIELD_INFO[col_count];
+   DBaseFieldVector vector;
    unsigned int col;
    unsigned int row;
    wxDBase dbf;
    zlib_filefunc_def api;
    bool ok;
 
+   vector.resize(col_count);
    for (col = 0; col < col_count; col++)
    {
       ColumnInfo info;
-      DBF_FIELD_INFO* item = array + col;
+      DBF_FIELD_INFO* item = &vector[col];
 
       model->GetColumn(col, &info);      
       strncpy(item->name, info.name.mb_str(), WXSIZEOF(item->name));
@@ -185,21 +180,13 @@ bool wxDBFModel::AddNew(void)
       item->length = wxMin(info.len, 255UL);
 
       if (wxT("datetime") == info.type)
-      {
          item->type = DBF_DATA_TYPE_DATE;
-      }
       else if (wxT("double") == info.type)
-      {
          item->type = DBF_DATA_TYPE_FLOAT;
-      }
       else if (wxT("long") == info.type)
-      {
          item->type = DBF_DATA_TYPE_INTEGER;
-      }
       else if (wxT("bool") == info.type)
-      {
          item->type = DBF_DATA_TYPE_BOOLEAN;
-      }
       else //if (wxT("string") == info.type)
       {
          item->type = DBF_DATA_TYPE_CHAR;
@@ -209,7 +196,7 @@ bool wxDBFModel::AddNew(void)
 
    ::fill_filefunc(&api, stream);
 
-   ok = dbf.Create(stream, &api, array, col_count);
+   ok = dbf.Create(stream, &api, vector);
    if (ok) for (row = 0; row < row_count; row++)
    {
       dbf.AddNew();
@@ -220,17 +207,13 @@ bool wxDBFModel::AddNew(void)
          model->GetValueByRow(var, row, col);
          if (!var.IsNull())
          {
-            switch (array[col].type)
+            switch (vector[col].type)
             {
                case DBF_DATA_TYPE_DATE:
                   if (var.GetType() == wxT("long"))
-                  {
                      dbf.Write(col, wxDateTime((time_t)var.GetLong()));
-                  }
                   else
-                  {
                      dbf.Write(col, var.GetDateTime());
-                  }
                   break;
                case DBF_DATA_TYPE_FLOAT:
                   dbf.Write(col, var.GetDouble());
@@ -248,13 +231,10 @@ bool wxDBFModel::AddNew(void)
             }
          }
          else
-         {
             break;
-         }
       }
       dbf.PutRecord();
    }
-   delete [] array;
    return ok;
 }
 

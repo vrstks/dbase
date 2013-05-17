@@ -360,17 +360,15 @@ BOOL CDBFExplorerDoc::CopyBackupData(LPCTSTR lpszBackupFile)
 					// copy memo data
 					if ( (pField.type == DBF_DATA_TYPE_MEMO) && (pBackupField.type == DBF_DATA_TYPE_MEMO))
 					{
-						char* buff = NULL;
+						CString str;
 
 						const size_t nLength = backupDBF.GetMemoFieldLength(i);
 						if (nLength)
 						{
-							buff = new char[nLength+1];
-							backupDBF.GetMemoField(i, buff, nLength);
+							backupDBF.GetMemoField(i, &str, nLength);
 						}			
 						// set value
-						if (buff) m_dBaseFile->Write(m_dBaseFile->GetFieldPtr(pBackupField.name), A2CT(buff));
-						delete buff;
+                        if (!str.IsEmpty()) m_dBaseFile->Write(m_dBaseFile->GetFieldPtr(pBackupField.name), str);
 					}
 					else
 					if (pField.type == DBF_DATA_TYPE_MEMO)

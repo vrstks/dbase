@@ -1,5 +1,5 @@
 // datalist.cpp
-// Copyright (c) 2007-2012 by Troels K. All rights reserved.
+// Copyright (c) 2007-2013 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -116,7 +116,7 @@ wxListItemAttr* wxDataListCtrl::OnGetItemAttr(long item) const
     wxListItemAttr* attr = base::OnGetItemAttr(item);
     wxDataModelBase* db = wxStaticCast(this, wxDataListCtrl)->GetModel(); // unconst
 
-    if (db->IsRowDeleted(item))
+    if (db->IsRowDeleted(item) && attr)
     {
         const wxColour gray = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
         wxListItemAttr* mine = wxConstCast(&m_attr, wxListItemAttr);

@@ -126,13 +126,11 @@ bool CDbaseFile::CloneDatabase(const TCHAR* lpszCloneName, bool bCopyRecords, bo
 						   uLong dwLength = GetMemoFieldLength(i);
 						   if (dwLength)
 						   {
-							   char* buf = (char*)malloc(dwLength+1);
-							   GetMemoField(i, buf, dwLength);
-                        buf[dwLength] = 0;
+                               CString str;
+							   GetMemoField(i, &str, dwLength);
 
 							   // set value
-							   temp.Write(i, A2CT(buf));
-							   free(buf);
+							   temp.Write(i, str);
 						   }	
 						   else
 						   {

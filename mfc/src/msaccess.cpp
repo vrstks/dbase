@@ -186,13 +186,15 @@ public:
    {
       USES_CONVERSION;
       int array_count = GetFieldCount();
-      DBF_FIELD_INFO* array = new DBF_FIELD_INFO[array_count];
+      DBaseFieldVector vector;
 
-	   for (int i = 0; i < array_count; i++)
+      vector.resize(array_count);
+	  for (int i = 0; i < array_count; i++)
       {
          CDaoFieldInfo info;
-	      GetFieldInfo(i, info);
-         DBF_FIELD_INFO* item = array + i;
+         DBF_FIELD_INFO* item = &vector[i];
+	  
+         GetFieldInfo(i, info);
          strncpy(item->name, T2CA(info.m_strName), _countof(item->name));
          item->name[_countof(item->name) - 1] = 0;
          item->decimals = 0;
@@ -204,11 +206,9 @@ public:
       fill_fopen_filefunc(&api);
       void* stream = api.zopen_file(api.opaque, T2CA(file), ZLIB_FILEFUNC_MODE_CREATE | ZLIB_FILEFUNC_MODE_WRITE);
       bool ok = (NULL != stream);
+
       if (ok)
-      {
-         ok = m_dbf.Create(file, stream, &api, array, array_count);
-      }
-      delete [] array;
+         ok = m_dbf.Create(file, stream, &api, vector);
       return ok;
    }
    

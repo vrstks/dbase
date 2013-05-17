@@ -1,5 +1,5 @@
 // dbf.hpp
-// Copyright (c) 2007-2012 by Troels K. All rights reserved.
+// Copyright (c) 2007-2013 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __DBF_HPP__
@@ -8,6 +8,9 @@
 #ifndef __DBF_H__
 #include <dbf.h>
 #endif
+
+#include <string>
+#include <vector>
 
 #ifndef OPENCLOSECLASS_DEFINED
 #define OPENCLOSECLASS_DEFINED
@@ -18,6 +21,8 @@ public:
    virtual bool IsOpen(void) const = 0;
 };
 #endif
+
+typedef std::vector<DBF_FIELD_INFO> DBaseFieldVector;
 
 class CDBase : public OpenCloseClass
 {
@@ -31,16 +36,16 @@ protected:
 
 // Operations
 public:
-   bool Open(const char* filename, dbf_editmode);
-   bool Open(const char* filename, dbf_editmode, const DBF_OPEN&);
-   bool Create(const char* filename, const DBF_FIELD_INFO* array, dbf_uint array_count);
-   bool Create(const char* filename, const DBF_FIELD_INFO* array, dbf_uint array_count, const DBF_OPEN&);
-   bool Create(void* stream, const struct zlib_filefunc_def_s*, const DBF_FIELD_INFO* array, dbf_uint array_count, dbf_charconv charconv = dbf_charconv_compatible, void* memo = NULL);
-   bool CloneDatabase(const char* lpszCloneName, bool bCopyRecords = false, bool bSkipDeleted = false);
-   void GetFileAPI(struct zlib_filefunc_def_s*) const;
-   void* GetMemoFile(void);
-   bool IsEditable(void) const;
-   bool IsModified(void) const;
+    bool Open(const char* filename, dbf_editmode);
+    bool Open(const char* filename, dbf_editmode, const DBF_OPEN&);
+    bool Create(const char* filename, const DBaseFieldVector&);
+    bool Create(const char* filename, const DBaseFieldVector&, const DBF_OPEN&);
+    bool Create(void* stream, const struct zlib_filefunc_def_s*, const DBaseFieldVector&, dbf_charconv charconv = dbf_charconv_compatible, void* memo = NULL);
+    bool CloneDatabase(const char* CloneName, bool bCopyRecords = false, bool bSkipDeleted = false);
+    void GetFileAPI(struct zlib_filefunc_def_s*) const;
+    void* GetMemoFile(void);
+    bool IsEditable(void) const;
+    bool IsModified(void) const;
 
    void        GetInfo(DBF_INFO*) const;
    int         GetLastError(void) const;
@@ -68,12 +73,12 @@ public:
 
    int FindField(const char* fieldname) const;
    
-   size_t Read(const DBF_FIELD* , char* buf, size_t buf_len, dbf_data_type type = DBF_DATA_TYPE_ANY) const;
-   size_t Read(dbf_uint field   , char* buf, size_t buf_len, dbf_data_type type = DBF_DATA_TYPE_ANY) const;
-   size_t Read(const char* field, char* buf, size_t buf_len, dbf_data_type type = DBF_DATA_TYPE_ANY) const;
+   size_t Read(const DBF_FIELD* , std::string* buf, size_t buf_len, dbf_data_type type = DBF_DATA_TYPE_ANY) const;
+   size_t Read(dbf_uint field   , std::string* buf, size_t buf_len, dbf_data_type type = DBF_DATA_TYPE_ANY) const;
+   size_t Read(const char* field, std::string* buf, size_t buf_len, dbf_data_type type = DBF_DATA_TYPE_ANY) const;
    
-   int GetField_Date(dbf_uint field , char*);
-   int GetField_Date(const char* field, char*);
+   int GetField_Date(dbf_uint field , std::string*);
+   int GetField_Date(const char* field, std::string*);
    
    bool Read(const DBF_FIELD* , struct tm*, int* ms = NULL);
    bool Read(const char* field, struct tm*, int* ms = NULL);
@@ -87,8 +92,8 @@ public:
    bool Read(const char* field, long*);
    bool Read(dbf_uint field , long*);
 
-   size_t Read(const DBF_FIELD* , char* buf, size_t buf_len);
-   size_t Read(const char* field, char* buf, size_t buf_len);
+   size_t Read(const DBF_FIELD* , std::string* buf, size_t buf_len);
+   size_t Read(const char* field, std::string* buf, size_t buf_len);
 
    bool Read(const DBF_FIELD* , bool*);   
    bool Read(const char* field, bool*);   
@@ -105,25 +110,25 @@ public:
    bool Write(const char* field, const struct tm&, int ms = 0, dbf_data_type type = DBF_DATA_TYPE_ANY);
    bool Write(dbf_uint field , const struct tm&, int ms = 0, dbf_data_type type = DBF_DATA_TYPE_ANY);
 
-   bool WriteTime(const DBF_FIELD* , time_t, int ms = 0, dbf_data_type type = DBF_DATA_TYPE_ANY);
+   bool WriteTime(const DBF_FIELD*, time_t, int ms = 0, dbf_data_type type = DBF_DATA_TYPE_ANY);
    bool WriteTime(const char* field, time_t, int ms = 0, dbf_data_type type = DBF_DATA_TYPE_ANY);
-   bool WriteTime(dbf_uint field , time_t, int ms = 0, dbf_data_type type = DBF_DATA_TYPE_ANY);
+   bool WriteTime(dbf_uint field, time_t, int ms = 0, dbf_data_type type = DBF_DATA_TYPE_ANY);
 
    bool Write(const DBF_FIELD* , const bool&);
    bool Write(const char* field, const bool&);
    bool Write(dbf_uint field , const bool&);
 
-   bool Write(const char* field, const char*);
-   bool Write(const DBF_FIELD* , const char*);
-   bool Write(dbf_uint field , const char*);
+   bool Write(const char* field, const std::string&);
+   bool Write(const DBF_FIELD* , const std::string&);
+   bool Write(dbf_uint field , const std::string&);
 
-   bool Write(const char* field, long);
-   bool Write(const DBF_FIELD* , long);
-   bool Write(dbf_uint field , long);
+   bool Write(const char* field, const long&);
+   bool Write(const DBF_FIELD* , const long&);
+   bool Write(dbf_uint field , const long&);
 
-   bool Write(const char* field, double);
-   bool Write(const DBF_FIELD* , double);
-   bool Write(dbf_uint field , double);
+   bool Write(const char* field, const double&);
+   bool Write(const DBF_FIELD* , const double&);
+   bool Write(dbf_uint field , const double&);
 
    bool Copy(void* stream, void* stream_memo, const struct zlib_filefunc_def_s*, bool include_records, bool include_deleted_records);
 
@@ -135,7 +140,7 @@ public:
                      dbf_editmode editmode = dbf_editmode_editable,
                      dbf_charconv conv = dbf_charconv_compatible, 
                      void* memo = NULL,
-                     const char* tablename = NULL);
+                     const std::string* tablename = NULL);
    bool       Attach(DBF_HANDLE);
    bool       Attach(CDBase*);
    DBF_HANDLE Detach(void);
@@ -150,8 +155,8 @@ public:
    virtual bool IsOpen(void) const;
 
 public:
-   //CString GetMemoFileName(const char* filename = NULL);
-   int OpenMemoFile(const char* filename = NULL);
+   //std::string GetMemoFileName(const std::string* filename = NULL);
+   int OpenMemoFile(const std::string* filename = NULL);
    int CreateMemoFile();
    void CloseMemoFile();
    
