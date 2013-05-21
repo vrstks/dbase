@@ -1,15 +1,15 @@
 // dbflist.h - editable
-// Copyright (c) 2007-2011 by Troels K. All rights reserved.
+// Copyright (c) 2007-2013 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __DATALIST_H__
    #include "datalist.h"
 #endif
 
-class wxDBFListCtrl : public wxDataListCtrl
+class DBFListCtrl : public DataModelListCtrl
 {
 public:
-   wxDBFListCtrl() : wxDataListCtrl()
+   DBFListCtrl() : DataModelListCtrl()
    {
    }
 
@@ -18,6 +18,6 @@ public:
    bool AddNew();
 
 protected:
-   void OnDblClick         (wxCommandEvent&);
+   void OnDblClick(wxCommandEvent&);
    DECLARE_EVENT_TABLE()
 };

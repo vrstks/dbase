@@ -17,35 +17,33 @@
 /////////////////////////////////////////////////////////////////////////////
 // DBFWindow
 
-class DBFWindow : public wxDBFListCtrl
+class DBFWindow : public DBFListCtrl
 {
-   typedef wxDBFListCtrl base;
+   typedef DBFListCtrl base;
    DECLARE_CLASS(DBFWindow)
 protected:
    wxDBFModel m_datamodel;
    DBFView* m_view;
 public:
-   DBFWindow(DBFView* view) : wxDBFListCtrl(), m_datamodel(view->GetDocument()->GetDatabase()), m_view(view)
+   DBFWindow(DBFView* view) : DBFListCtrl(), m_datamodel(view->GetDocument()->GetDatabase()), m_view(view)
    {
    }
 
    bool Create(wxWindow* parent)
    {
-       bool ok = base::Create(parent, wxID_ANY, wxPoint(0,0), parent->GetClientSize(), wxLC_REPORT | wxLC_VIRTUAL | wxLC_EDIT_LABELS);
-       EnableAlternateRowColours();
+       bool ok = base::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_VIRTUAL | wxLC_EDIT_LABELS);
+       //bool ok = base::Create(parent);
+       if (ok)
+           AssociateModel(&m_datamodel);
        return ok;
    }
 
    virtual ~DBFWindow()
    {
    }
-   virtual wxDataModelBase* GetModel(void)
-   {
-      return &m_datamodel;
-   }
 };
 
-IMPLEMENT_CLASS(DBFWindow, wxDBFListCtrl)
+IMPLEMENT_CLASS(DBFWindow, DBFListCtrl)
 
 /////////////////////////////////////////////////////////////////////////////
 // DBFView
@@ -115,16 +113,15 @@ void DBFView::OnUpdateNeedEditable(wxUpdateUIEvent& event)
 
 void DBFView::OnUpdate(wxView* sender, wxObject* hint)
 {
-   switch ((long)hint)
-   {
-      case DBFDocument::hint_initialupdate:
-         GetWindow()->Init();
-         GetWindow()->SelectRow(0);
-         break;
-      default:
-         base::OnUpdate(sender, hint);
-         break;
-   }
+    if (wxDynamicCast(hint, wxInitialUpdateHint))
+    {
+        GetWindow()->InitColumns();
+    #if !USE_DATALISTVIEW
+        GetWindow()->SelectRow(0);
+    #endif
+    }
+    else
+        base::OnUpdate(sender, hint);
 }
 
 bool DBFView::OnClose(bool deleteWindow)

@@ -54,7 +54,9 @@ bool DBFDocument::DoOpenDocument(const wxString& filePath)
         if (!ok) ok = m_database->Open(fileName, dbf_editmode_readonly);
         if (ok)
         {
-            UpdateAllViews(NULL, (wxObject*)(long)hint_initialupdate);
+            wxInitialUpdateHint hint;
+
+            UpdateAllViews(NULL, &hint);
             m_tablename = fileName.GetName();
         }
         else
@@ -105,8 +107,10 @@ bool DBFDocument::OnNewDocument()
       if (ok) ok = ::DoModal_Structure(wxTheApp->GetTopWindow(), &database, _("New database structure"), GetFilename());
       if (ok && database.IsOpen())
       {
-         m_database->Attach(&database);
-         UpdateAllViews(NULL, (wxObject*)(long)hint_initialupdate);
+          wxInitialUpdateHint hint;
+
+          m_database->Attach(&database);
+          UpdateAllViews(NULL, &hint);
       }
    }
    return ok;

@@ -8,6 +8,7 @@
 #include "wx/ext/wx.h"
 
 IMPLEMENT_CLASS(wxViewEx, wxView)
+IMPLEMENT_CLASS(wxInitialUpdateHint, wxObject)
 
 bool wxRemoveFile(wxFFile* file)
 {

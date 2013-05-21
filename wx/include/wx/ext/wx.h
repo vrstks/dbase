@@ -163,6 +163,11 @@ private:
 };
 #endif
 
+class wxInitialUpdateHint : public wxObject
+{
+    DECLARE_CLASS(wxInitialUpdateHint)
+};
+
 /////////////////////////////////////////////////////////////////////////////
 // MDIWindowMenuEvtHandler
 
