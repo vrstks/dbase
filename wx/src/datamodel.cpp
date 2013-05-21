@@ -1,5 +1,5 @@
 // datamodel.cpp
-// Copyright (c) 2007-2011 by Troels K. All rights reserved.
+// Copyright (c) 2007-2013 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include <wx/wx.h>
@@ -129,7 +129,7 @@ size_t wxDataModelBase::GetRow(unsigned int row, wxArrayString* as_ptr, bool hea
       GetValueByRow(&str, row, col);
       if (header)
       {
-         ColumnInfo info;
+         wxDataModelColumnInfo info;
 
          GetColumn(col, &info);
          str.Printf(wxT("%s:\t%s"),
@@ -161,20 +161,19 @@ size_t wxDataModelBase::GetProperties(wxArrayString* as_ptr, bool header) const
       as.push_back(_("Fields:"));
       //as.push_back(wxEmptyString);
    }
-   for (unsigned int i = 0; i < GetColumnCount(); i++)
+   const wxDataModelColumnInfoVector columns = GetColumns();
+   size_t i = 0;
+   for (wxDataModelColumnInfoVector::const_iterator it = columns.begin(); it != columns.end(); it++, i++)
    {
-      ColumnInfo info;
+      const wxDataModelColumnInfo& info = *it;
       wxString str;
 
-      if (GetColumn(i, &info))
-      {
-          str.Printf(wxT("%d\t%s:\t%s\t%d"),
-             (int)i,
-             info.name.wx_str(),
-             info.type.wx_str(),
-             info.len
-             );
-      }
+      str.Printf(wxT("%d\t%s:\t%s\t%d"),
+         (int)i,
+         info.name.wx_str(),
+         info.type.wx_str(),
+         info.len
+         );
       as.push_back(str);
    }
    if (as_ptr) *as_ptr = as;

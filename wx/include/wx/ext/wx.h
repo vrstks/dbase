@@ -196,6 +196,12 @@ public:
     void SetAlternateRowColour(const wxColour& colour) { m_alternateRowColour.SetBackgroundColour(colour); }
     void EnableAlternateRowColours(bool enable = true);
     virtual wxListItemAttr* OnGetItemAttr(long row) const;
+    long AppendColumn(const wxString& heading,
+                      int format = wxLIST_FORMAT_LEFT,
+                      int width = -1)
+    {
+        return InsertColumn(GetColumnCount(), heading, format, width);
+    }
 #endif
 
     void SelectAll(bool on = true)
@@ -207,28 +213,43 @@ public:
     }
 
     long GetSelectedRow(wxString* str = NULL) const
-    { 
-       long row = InReportView() ? GetFirstSelected() : GetFocusedItem();
+    {
+        long row = InReportView() ? GetFirstSelected() : GetFocusedItem();
 
-       if (str && (wxNOT_FOUND != row)) str->operator=(GetItemText(row));
-       return row;
+        if (str && (wxNOT_FOUND != row))
+            *str = GetItemText(row);
+        return row;
     }
 
     bool SelectRow(long row, bool focus = true)
     {
-       bool ok = (row != wxNOT_FOUND) && (row < GetItemCount());
-       if (ok)
-       {
-          bool on = true;
+        bool ok = (row != wxNOT_FOUND) && (row < GetItemCount());
+        if (ok)
+        {
+            bool on = true;
 
-          SetItemState(row, on ? wxLIST_STATE_SELECTED : 0, wxLIST_STATE_SELECTED);
-          if (focus)
-          {
-             SetItemState(row, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
-             EnsureVisible(row);
-          }
-       }
-       return ok;
+            SetItemState(row, on ? wxLIST_STATE_SELECTED : 0, wxLIST_STATE_SELECTED);
+            if (focus)
+            {
+                SetItemState(row, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
+                EnsureVisible(row);
+            }
+        }
+        return ok;
+    }
+
+    bool HasSelection() const
+    {
+        long row = InReportView() ? GetFirstSelected() : GetFocusedItem();
+
+        return (row != wxNOT_FOUND);
+    }
+
+    int GetSelections( wxArrayInt& sel ) const
+    {
+        for (long index = GetFirstSelected(); index != wxNOT_FOUND; index = GetNextSelected(index))
+            sel.push_back(index);
+        return sel.size();
     }
 
 #if (wxVERSION_NUMBER < 2900)

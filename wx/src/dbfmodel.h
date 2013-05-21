@@ -1,5 +1,5 @@
 // dbfmodel.h
-// Copyright (c) 2007-2011 by Troels K. All rights reserved.
+// Copyright (c) 2007-2013 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __DBFMODEL_H__
@@ -39,7 +39,7 @@ public:
 public:
    virtual unsigned int GetRowCount(void) const;
    virtual unsigned int GetColumnCount(void) const;
-   virtual bool GetColumn( unsigned int col, ColumnInfo*) const;
+   virtual bool GetColumn( unsigned int col, wxDataModelColumnInfo*) const;
    virtual bool IsRowDeleted( unsigned int row );
    virtual int FindColumn(const wxString& colname) const;
 

@@ -76,11 +76,8 @@ void DataModelListCtrl::OnKeyDown(wxKeyEvent& event)
       case WXK_DELETE:
          if (m_id_delete)
          {
-        #if USE_DATALISTVIEW
-        #else
-            if (GetFirstSelected() != wxNOT_FOUND)
+            if (HasSelection())
                 wxPostMenuCommand(GetParent(), m_id_delete);
-        #endif
          }
          else
              event.Skip();
@@ -98,14 +95,12 @@ void DataModelListCtrl::InitColumns()
 #if USE_DATALISTVIEW
    //AssociateModel(model->GetSource());
 #endif
-   for (unsigned int i = 0, count = model->GetColumnCount();
-        i < count;
-        i++)
+   const wxDataModelColumnInfoVector columns = model->GetColumns();
+   for (wxDataModelColumnInfoVector::const_iterator it = columns.begin(); it != columns.end(); it++)
    {
       int format = wxLIST_FORMAT_LEFT;
-      wxDataModel::ColumnInfo info;
+      const wxDataModelColumnInfo& info = *it;
 
-      model->GetColumn(i, &info);
       if (   (wxT("long"  ) == info.type)
           || (wxT("double") == info.type) )
       {
@@ -121,9 +116,8 @@ void DataModelListCtrl::InitColumns()
     #if USE_DATALISTVIEW
         AppendTextColumn(info.name);
     #else
-        InsertColumn(i, info.name, format, 150);
+        AppendColumn(info.name, format, 150);
     #endif
-      //InsertColumn(i, wxString::Format(wxT("%d"), i), wxLIST_FORMAT_LEFT, 150);
    }
    Fill();
 }
@@ -184,22 +178,22 @@ bool DataModelListCtrl::DeleteRecord(unsigned int index, bool bDelete)
 bool DataModelListCtrl::IsUndeletedInSelection(void)
 {
     bool ok = false;
-#if USE_DATALISTVIEW
-#else
-    for (long index = GetFirstSelected(); (!ok) && (index != wxNOT_FOUND); index = GetNextSelected(index))
-        ok = ok || (IsRecordOk(index) && !IsRecordDeleted(index));
-#endif
+    wxArrayInt selections;
+
+    GetSelections(selections);
+    for (wxArrayInt::const_iterator it = selections.begin(); (!ok) && (it != selections.end()); it++)
+        ok = ok || (IsRecordOk(*it) && !IsRecordDeleted(*it));
     return ok;
 }
 
 bool DataModelListCtrl::IsDeletedInSelection(void)
 {
     bool ok = false;
-#if USE_DATALISTVIEW
-#else
-    for (long index = GetFirstSelected(); (!ok) && (index != wxNOT_FOUND); index = GetNextSelected(index))
-        ok = ok || (IsRecordOk(index) && IsRecordDeleted(index));
-#endif
+    wxArrayInt selections;
+
+    GetSelections(selections);
+    for (wxArrayInt::const_iterator it = selections.begin(); (!ok) && (it != selections.end()); it++)
+        ok = ok || (IsRecordOk(*it) && IsRecordDeleted(*it));
     return ok;
 }
 
@@ -216,11 +210,11 @@ bool DataModelListCtrl::IsAnyUnselected(void)
 
 void DataModelListCtrl::DeleteSelection(bool bDelete)
 {
-#if USE_DATALISTVIEW
-#else
-    for (long index = GetFirstSelected(); index != wxNOT_FOUND; index = GetNextSelected(index))
-        DeleteRecord(index, bDelete);
-#endif
+    wxArrayInt selections;
+
+    GetSelections(selections);
+    for (wxArrayInt::const_iterator it = selections.begin(); it != selections.end(); it++)
+        DeleteRecord(*it, bDelete);
     Fill();
 }
 
@@ -250,13 +244,7 @@ void DataModelListCtrl::OnUpdateNeedSel_NotDeleted(wxUpdateUIEvent& event)
 
 void DataModelListCtrl::OnUpdateNeedSel(wxUpdateUIEvent& event)
 {
-#if USE_DATALISTVIEW
-    event.Skip();
-#else
-    const int index = GetFirstSelected();
-
-    event.Enable(GetModel() && GetModel()->IsOpen() && (index != wxNOT_FOUND));
-#endif
+    event.Enable(GetModel() && GetModel()->IsOpen() && HasSelection());
 }
 
 bool DataModelListCtrl::IsEditable() const
@@ -268,20 +256,20 @@ bool DataModelListCtrl::IsEditable() const
 
 bool DataModelListCtrl::CanEditLabel(void)
 {
-   return (m_column_clicked != -1) && IsEditable();
+   return (m_column_clicked != wxNOT_FOUND) && IsEditable();
 }
 
 #if !USE_DATALISTVIEW
 void DataModelListCtrl::OnSelectionChanged(wxListEvent& event)
 {
-    if (m_id_selchange && (GetFirstSelected() != wxNOT_FOUND))
+    if (m_id_selchange && HasSelection())
         wxPostMenuCommand(GetParent(), m_id_selchange);
     event.Skip();
 }
 
 void DataModelListCtrl::OnItemActivated(wxListEvent& event)
 {
-    if (m_id_edit && (GetFirstSelected() != wxNOT_FOUND))
+    if (m_id_edit && HasSelection())
         wxPostMenuCommand(GetParent(), m_id_edit);
     event.Skip();
 }
@@ -307,7 +295,7 @@ void DataModelListCtrl::OnEndLabelEdit(wxListEvent& event)
       if (ok)
       {
          wxVariant var;
-         wxDataModel::ColumnInfo info;
+         wxDataModelColumnInfo info;
 
          ok = GetModel()->GetColumn(m_column_clicked, &info);
          if (ok && (info.type == wxT("string")) )
@@ -329,10 +317,9 @@ void DataModelListCtrl::OnEndLabelEdit(wxListEvent& event)
                 }
              }
              else
-             {
                 var = str;
-             }
-             if (ok) ok = db->SetValueByRow(var, pos, m_column_clicked);
+             if (ok)
+                 ok = db->SetValueByRow(var, pos, m_column_clicked);
          }
       }
       if (!ok)
@@ -341,7 +328,7 @@ void DataModelListCtrl::OnEndLabelEdit(wxListEvent& event)
           event.Veto();
       }
    }
-   m_column_clicked = -1;
+   m_column_clicked = wxNOT_FOUND;
 }
 #endif
 

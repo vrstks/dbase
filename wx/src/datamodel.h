@@ -1,6 +1,8 @@
 // datamodel.h
-// Copyright (c) 2007-2012 by Troels K. All rights reserved.
+// Copyright (c) 2007-201 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
+
+#include <vector>
 
 #ifdef _WX_DATAVIEW_H_BASE_
 
@@ -86,6 +88,15 @@ public:
 /////////////////////////////////////////////////////////////////////////////
 // wxDataModelBase
 
+class wxDataModelColumnInfo
+{
+public:
+    wxString name;
+    wxString type;
+    size_t len;
+};
+class wxDataModelColumnInfoVector : public std::vector<wxDataModelColumnInfo> {};
+
 class wxDataModel;
 class wxDataModelBase
 {
@@ -111,15 +122,21 @@ public:
       return false;
    }
 
-   class ColumnInfo
+   wxDataModelColumnInfoVector GetColumns() const
    {
-   public:
-      wxString name;
-      wxString type;
-      size_t len;
-   };
+       wxDataModelColumnInfoVector vector;
+       wxDataModelColumnInfo info;
 
-   virtual bool GetColumn(unsigned int col, ColumnInfo*) const = 0;
+       for (unsigned int col = 0, count = GetColumnCount();
+            col < count;
+            col++)
+       {
+            GetColumn(col, &info);
+            vector.push_back(info);
+       }
+       return vector;
+   }
+   virtual bool GetColumn(unsigned int col, wxDataModelColumnInfo*) const = 0;
    virtual bool GetValueByRow(      wxString* , unsigned int row, unsigned int col) const;
    virtual bool SetValueByRow(const wxString& , unsigned int row, unsigned int col);
    virtual void GetValueByRow(      wxVariant&, unsigned int row, unsigned int col) const = 0;
@@ -144,7 +161,7 @@ public:
 /////////////////////////////////////////////////////////////////////////////
 // wxDataModel
 
-class wxDataModel : 
+class wxDataModel :
 #if (wxVERSION_NUMBER >= 2900)
    public wxObject,
 #endif
@@ -188,7 +205,7 @@ private:
    virtual void GetValue(wxVariant&, unsigned int row, unsigned int col) const;
    virtual wxString GetColumnType(unsigned int col) const
    {
-      ColumnInfo info;
+      wxDataModelColumnInfo info;
 
       GetColumn(col, &info);
       return info.type;
@@ -210,7 +227,7 @@ private:
    }
    virtual wxString GetColType(unsigned int col)
    {
-      ColumnInfo info;
+      wxDataModelColumnInfo info;
 
       GetColumn(col, &info);
       return info.type;
@@ -252,7 +269,7 @@ public:
    virtual void GetValueByRow(      wxVariant&, unsigned int row, unsigned int col) const;
    virtual bool SetValueByRow(const wxVariant&, unsigned int row, unsigned int col);
 
-   virtual bool GetColumn(unsigned int col, ColumnInfo*) const;
+   virtual bool GetColumn(unsigned int col, wxDataModelColumnInfo*) const;
    virtual bool IsRowDeleted(unsigned int row)
    {
        return m_child->IsRowDeleted(GetArrayValue(row));
@@ -289,7 +306,7 @@ public:
 #if (wxVERSION_NUMBER >= 2900)
    virtual wxString GetColumnType(unsigned int col) const
    {
-      ColumnInfo info;
+      wxDataModelColumnInfo info;
       GetColumn(col, &info);
       return info.type;
    }
@@ -308,7 +325,7 @@ public:
 /////////////////////////////////////////////////////////////////////////////
 // wxDataModelBase
 
-inline bool wxDataModelBase::GetColumn(unsigned int WXUNUSED(col), ColumnInfo* info) const
+inline bool wxDataModelBase::GetColumn(unsigned int WXUNUSED(col), wxDataModelColumnInfo* info) const
 {
    info->type = wxT("string");
    //info->name;
@@ -400,7 +417,7 @@ inline wxDataModelSorted::wxDataModelSorted(wxDataModel*child) : wxDataViewSorte
 #endif
 }
 
-inline bool wxDataModelSorted::GetColumn(unsigned int col, ColumnInfo* info) const
+inline bool wxDataModelSorted::GetColumn(unsigned int col, wxDataModelColumnInfo* info) const
 {
    return m_child->GetColumn(col, info);
 }

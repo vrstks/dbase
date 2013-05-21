@@ -48,7 +48,7 @@ size_t wxDBFModel::GetProperties(wxArrayString* as, bool header) const
    return ::dbf_getproperties(m_database, as, header);
 }
 
-bool wxDBFModel::GetColumn( unsigned int col, ColumnInfo* info) const
+bool wxDBFModel::GetColumn( unsigned int col, wxDataModelColumnInfo* info) const
 {
    DBF_FIELD_INFO dbf_info;
    bool ok = m_database->GetFieldInfo(col, &dbf_info);
@@ -170,7 +170,7 @@ bool wxDBFModel::AddNew(void)
    vector.resize(col_count);
    for (col = 0; col < col_count; col++)
    {
-      ColumnInfo info;
+      wxDataModelColumnInfo info;
       DBF_FIELD_INFO* item = &vector[col];
 
       model->GetColumn(col, &info);      

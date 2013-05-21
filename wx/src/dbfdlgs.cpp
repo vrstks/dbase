@@ -83,7 +83,7 @@ void wxStructListView::Init(wxDBase* db)
 
    for (i = 0; i < WXSIZEOF(aszType); i++)
    {
-      InsertColumn((long)i, aszType[i], (i == col_length) ? wxLIST_FORMAT_RIGHT : wxLIST_FORMAT_LEFT, 80);
+      AppendColumn(aszType[i], (i == col_length) ? wxLIST_FORMAT_RIGHT : wxLIST_FORMAT_LEFT, 80);
    }
 
    size_t count = (db && db->IsOpen()) ? db->GetFieldCount() : 0;
@@ -227,7 +227,7 @@ void wxDBFStructDialog::OnAdd(wxCommandEvent&)
 
 void wxDBFStructDialog::OnEdit(wxCommandEvent&)
 {
-   const int item = m_list->GetFirstSelected();
+   const int item = m_list->GetSelectedRow();
    DBF_FIELD_INFO info = m_list->m_array[item];
 
    if (::DoModal_FieldEdit(/*wxTheApp->GetTopWindow()*/this, &info, _("Edit Field")))
@@ -239,7 +239,7 @@ void wxDBFStructDialog::OnEdit(wxCommandEvent&)
 
 void wxDBFStructDialog::OnDelete(wxCommandEvent&)
 {
-    const int item = m_list->GetFirstSelected();
+    const int item = m_list->GetSelectedRow();
 
     m_list->m_array.erase(m_list->m_array.begin() + item);
     m_list->Fill();
@@ -263,7 +263,7 @@ void wxDBFStructDialog::OnCalendar(wxCommandEvent&)
 
 void wxDBFStructDialog::OnUpdateNeedSel(wxUpdateUIEvent& event)
 {
-   event.Enable(m_list->GetFirstSelected() != wxNOT_FOUND);
+   event.Enable(m_list->HasSelection());
 }
 
 bool DoModal_Structure(wxWindow* parent, wxDBase* db, const wxString& caption, const wxFileName& fileName)

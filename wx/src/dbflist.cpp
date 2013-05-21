@@ -82,7 +82,7 @@ bool DBFListCtrl::Edit()
     return false;
 #else
     ScrollList(-GetScrollPos(wxHORIZONTAL), 0);
-    return Edit((size_t)GetFirstSelected(), 0);
+    return Edit((size_t)GetSelectedRow(), 0);
 #endif
 }
 
@@ -91,21 +91,23 @@ void DBFListCtrl::OnDblClick(wxCommandEvent& event)
 #if USE_DATALISTVIEW
     event.Skip();
 #else
+    wxUnusedVar(event);
     if (!IsEditable()) return;
 
-   if (GetEditWindowID())
-   {
-      if (GetFirstSelected() != wxNOT_FOUND) wxPostMenuCommand(GetParent(), GetEditWindowID());
-   }
-   else
-   {
-      wxPoint pt = ScreenToClient(::wxGetMousePosition());
-      long col;
-      long row = HitTest(pt, NULL, &col);
+    if (GetEditWindowID())
+    {
+        if (HasSelection())
+            wxPostMenuCommand(GetParent(), GetEditWindowID());
+    }
+    else
+    {
+        wxPoint pt = ScreenToClient(::wxGetMousePosition());
+        long col;
+        long row = HitTest(pt, NULL, &col);
 
-      if (row != wxNOT_FOUND)
-         Edit((size_t)row, col);
-   }
+        if (row != wxNOT_FOUND)
+            Edit((size_t)row, col);
+    }
 #endif
 }
 

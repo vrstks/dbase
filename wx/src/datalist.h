@@ -61,6 +61,7 @@ public:
 protected:
     bool CanEditLabel(void);
 
+
 // Implementation
 public:
     virtual ~DataModelListCtrl();
@@ -95,14 +96,13 @@ public:
    DECLARE_EVENT_TABLE()
 
 protected:
-   int m_column_clicked;
+    int m_column_clicked;
+    int m_id_edit;
+    int m_id_selchange;
+    int m_id_delete;
 private:
-   wxDataModelBase* m_model;
-   wxListItemAttr m_attr;
-   
-   int m_id_edit;
-   int m_id_selchange;
-   int m_id_delete;
+    wxDataModelBase* m_model;
+    wxListItemAttr m_attr;
 };
 
 /////////////////////////////////////////////////////////////////////////////
