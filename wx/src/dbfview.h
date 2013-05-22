@@ -1,5 +1,5 @@
 // dbfview.h
-// Copyright (c) 2007-2012 by Troels K. All rights reserved.
+// Copyright (c) 2007-2013 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __DBFVIEW_H__
@@ -43,6 +43,7 @@ protected:
    void OnDelete        (wxCommandEvent&);
    void OnUpdateNeedSel_NotDeleted(wxUpdateUIEvent&);
    void OnDeleteAll     (wxCommandEvent&);
+   void OnGoto          (wxCommandEvent&);
    DECLARE_EVENT_TABLE()
 
    friend class DBFWindow;

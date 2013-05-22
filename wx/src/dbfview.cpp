@@ -4,6 +4,8 @@
 
 #include "precomp.h"
 
+#include <wx/numdlg.h>
+
 #include "wx/ext/trunk.h"
 #include "wx/ext/wx.h"
 #include "dbfview.h"
@@ -78,6 +80,7 @@ BEGIN_EVENT_TABLE(DBFView, wxViewEx)
    EVT_MENU(XRCID("edit")        , DBFView::OnEdit)
    EVT_UPDATE_UI(XRCID("edit")   , DBFView::OnUpdateNeedSel)
 
+   EVT_MENU(XRCID("goto")        , DBFView::OnGoto)
 END_EVENT_TABLE()
 
 bool DBFView::OnCreate(wxDocument* doc, long flags)
@@ -226,4 +229,21 @@ void DBFView::OnAdd(wxCommandEvent&)
 void DBFView::OnEdit(wxCommandEvent&)
 {
    GetWindow()->Edit();
+}
+
+void DBFView::OnGoto(wxCommandEvent&)
+{
+    DBFWindow* wnd = GetWindow();
+    int rowcount = wnd->GetItemCount();
+    long row = wnd->GetSelectedRow();
+    wxString msg = wxString::Format(_("Row number : 1...%d"), rowcount);
+
+    row = wxGetNumberFromUser(msg, wxEmptyString, _("Goto row"),
+                                    row+1, 1, rowcount, GetModalParent());
+
+    if (row > 0)
+    {
+        wnd->SelectNone();
+        wnd->SelectRow(row-1);
+    }
 }

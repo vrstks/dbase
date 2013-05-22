@@ -204,17 +204,25 @@ public:
     }
 #endif
 
-    void SelectAll(bool on = true)
+    void SelectAll()
     {
-       for (int i = 0; i < GetItemCount(); i++)
-       {
-          SetItemState(i, on ? wxLIST_STATE_SELECTED : 0, wxLIST_STATE_SELECTED);
-       }
+        for (int i = 0; i < GetItemCount(); i++)
+        {
+            SetItemState(i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+        }
+    }
+
+    void SelectNone()
+    {
+        for (int i = 0; i < GetItemCount(); i++)
+        {
+            SetItemState(i, 0, wxLIST_STATE_SELECTED);
+        }
     }
 
     long GetSelectedRow(wxString* str = NULL) const
     {
-        long row = InReportView() ? GetFirstSelected() : GetFocusedItem();
+        long row = GetFirstSelected();
 
         if (str && (wxNOT_FOUND != row))
             *str = GetItemText(row);
@@ -240,9 +248,7 @@ public:
 
     bool HasSelection() const
     {
-        long row = InReportView() ? GetFirstSelected() : GetFocusedItem();
-
-        return (row != wxNOT_FOUND);
+        return (GetFirstSelected() != wxNOT_FOUND);
     }
 
     int GetSelections( wxArrayInt& sel ) const

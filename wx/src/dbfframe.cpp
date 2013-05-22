@@ -76,6 +76,7 @@ wxMenuBar* DBFFrame::CreateMenuBar() const
       array.push_back(wxAcceleratorEntry(wxACCEL_CTRL, 'X', XRCID("export")));
       array.push_back(wxAcceleratorEntry(wxACCEL_CTRL, 'D', XRCID("pack")));
       array.push_back(wxAcceleratorEntry(wxACCEL_CTRL, 'M', XRCID("struct")));
+      array.push_back(wxAcceleratorEntry(wxACCEL_CTRL, 'G', XRCID("goto")));
 
       array.push_back(wxAcceleratorEntry(wxACCEL_CMD | wxACCEL_SHIFT, 'S', wxID_SAVEAS));
    }

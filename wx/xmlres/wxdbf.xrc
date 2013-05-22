@@ -142,6 +142,12 @@
                 <label>&amp;Replace...</label>
                 <help>Undelete the selection</help>
             </object>
+            <object class="separator">
+            </object>
+            <object class="wxMenuItem" name="goto">
+                <label>Go To...</label>
+                <help>Find next</help>
+            </object>
         </object>
         <object class="wxMenu">
             <label>&amp;View</label>

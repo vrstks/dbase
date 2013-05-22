@@ -122,7 +122,7 @@ bool DBFListCtrl::AddNew()
     if (ok)
     {
         Fill();
-        SelectAll(false);
+        SelectNone();
         SelectRow(GetItemCount()-1);
         Edit();
     }
