@@ -1,5 +1,5 @@
 // appframe.h
-// Copyright (c) 2007-2012 by Troels K. All rights reserved.
+// Copyright (c) 2007-2013 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __APPFRAME_H__
@@ -20,7 +20,7 @@ protected:
 public:
    MainFrame(void);
 
-   bool Create(wxDocManager*, const wxString& title);
+   bool Create(wxDocManager*, const wxString& title, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize);
 
    virtual void SetMenuBar(wxMenuBar*);
    virtual ~MainFrame();

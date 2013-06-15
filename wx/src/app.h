@@ -30,7 +30,7 @@ class App : public wxAppEx
 protected:
    CommandLine       m_cmdline;
    wxRecentFileList* m_mru;
-   wxLocale          m_locale;
+   wxLocaleEx        m_locale;
    DBFResource*      m_res;
 public:
    App(void);

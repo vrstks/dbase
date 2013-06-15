@@ -207,17 +207,13 @@ public:
     void SelectAll()
     {
         for (int i = 0; i < GetItemCount(); i++)
-        {
             SetItemState(i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-        }
     }
 
     void SelectNone()
     {
         for (int i = 0; i < GetItemCount(); i++)
-        {
             SetItemState(i, 0, wxLIST_STATE_SELECTED);
-        }
     }
 
     long GetSelectedRow(wxString* str = NULL) const
@@ -267,8 +263,8 @@ public:
     bool RefreshSubItem(long row, long col, bool eraseBackground = true)
     {
         wxRect rect;
-
         bool ok = GetSubItemRect(row, col, rect);
+
         if (ok)
         {
             rect.x+=1, rect.width-=2;
@@ -287,9 +283,7 @@ public:
        info.m_col = col;
        info.m_mask = wxLIST_MASK_TEXT;
        if (GetItem(info))
-       {
           str = info.m_text;
-       }
        return str;
     }
 #endif
@@ -299,5 +293,18 @@ private:
     // user defined color to draw row lines, may be invalid
     wxListItemAttr m_alternateRowColour;
 #endif
+};
+#endif
+
+#ifdef _WX_INTL_H_
+class wxLocaleEx : public wxLocale
+{
+public:
+    bool Init(wxLanguage lang = wxLANGUAGE_DEFAULT, int flags = wxLOCALE_LOAD_DEFAULT)
+    {
+        if (lang == wxLANGUAGE_DEFAULT) // work around bizarre default behaviour of wxLocale::Init(wxLANGUAGE_DEFAULT)
+            lang = (wxLanguage)GetSystemLanguage();
+        return wxLocale::Init(lang, flags);
+    }
 };
 #endif
