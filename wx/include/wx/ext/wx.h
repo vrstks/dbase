@@ -197,7 +197,7 @@ public:
     void EnableAlternateRowColours(bool enable = true);
     virtual wxListItemAttr* OnGetItemAttr(long row) const;
     long AppendColumn(const wxString& heading,
-                      int format = wxLIST_FORMAT_LEFT,
+                      wxListColumnFormat format = wxLIST_FORMAT_LEFT,
                       int width = -1)
     {
         return InsertColumn(GetColumnCount(), heading, format, width);
@@ -302,8 +302,10 @@ class wxLocaleEx : public wxLocale
 public:
     bool Init(wxLanguage lang = wxLANGUAGE_DEFAULT, int flags = wxLOCALE_LOAD_DEFAULT)
     {
-        if (lang == wxLANGUAGE_DEFAULT) // work around bizarre default behaviour of wxLocale::Init(wxLANGUAGE_DEFAULT)
+    #if (wxVERSION_NUMBER >= 2900) // trac.wxwidgets.org/ticket/15257
+        if (lang == wxLANGUAGE_DEFAULT)
             lang = (wxLanguage)GetSystemLanguage();
+    #endif
         return wxLocale::Init(lang, flags);
     }
 };

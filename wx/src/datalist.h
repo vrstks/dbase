@@ -25,42 +25,40 @@ class wxDataModelBase;
 #if USE_DATALISTVIEW
 class DataModelListCtrl : public wxDataViewListCtrl
 {
-   typedef wxDataViewListCtrl base;
+    typedef wxDataViewListCtrl base;
 #else
 class DataModelListCtrl : public wxTrunkListView
 {
-   typedef wxTrunkListView base;
+    typedef wxTrunkListView base;
 #endif
-   DECLARE_CLASS(DataModelListCtrl)
-// Attributes
+    DECLARE_CLASS(DataModelListCtrl)
 public:
-   DataModelListCtrl();
+    DataModelListCtrl();
 
-   void InitColumns();
+   void InitColumns(int col_width = 150);
 
-   bool IsAnyUnselected(void);
-   bool IsUndeletedInSelection(void);
-   bool IsDeletedInSelection(void);
-   void DeleteSelection(bool bDelete);
-   void DeleteAll(bool bDelete);
-   bool IsOpen() const;
-   int GetEditWindowID() const
-   {
-      return m_id_edit;
-   }
-   bool IsEditable() const;
+    bool IsAnyUnselected(void);
+    bool IsUndeletedInSelection(void);
+    bool IsDeletedInSelection(void);
+    void DeleteSelection(bool bDelete);
+    void DeleteAll(bool bDelete);
+    bool IsOpen() const;
+    int GetEditWindowID() const
+    {
+        return m_id_edit;
+    }
+    bool IsEditable() const;
 
-   bool Create(wxWindow *parent,
-               wxWindowID id = wxID_ANY,
-               const wxPoint& pos = wxDefaultPosition,
-               const wxSize& size = wxDefaultSize,
-               long style = wxLC_REPORT | wxLC_VIRTUAL,
-               const wxValidator& validator = wxDefaultValidator,
-               const wxString& name = wxListCtrlNameStr);
+    bool Create(wxWindow *parent,
+                wxWindowID id = wxID_ANY,
+                const wxPoint& pos = wxDefaultPosition,
+                const wxSize& size = wxDefaultSize,
+                long style = wxLC_REPORT | wxLC_VIRTUAL,
+                const wxValidator& validator = wxDefaultValidator,
+                const wxString& name = wxListCtrlNameStr);
 
 protected:
     bool CanEditLabel(void);
-
 
 // Implementation
 public:
@@ -88,12 +86,12 @@ public:
 
 #if USE_DATALISTVIEW
 #else
-   void OnBeginLabelEdit   (wxListEvent&);
-   void OnEndLabelEdit     (wxListEvent&);
-   void OnSelectionChanged(wxListEvent&);
-   void OnItemActivated(wxListEvent&);
+    void OnBeginLabelEdit   (wxListEvent&);
+    void OnEndLabelEdit     (wxListEvent&);
+    void OnSelectionChanged(wxListEvent&);
+    void OnItemActivated(wxListEvent&);
 #endif
-   DECLARE_EVENT_TABLE()
+    DECLARE_EVENT_TABLE()
 
 protected:
     int m_column_clicked;
