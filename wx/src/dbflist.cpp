@@ -19,7 +19,8 @@
 #include "datamodel.h"
 
 BEGIN_EVENT_TABLE(DBFListCtrl, DataModelListCtrl)
-   EVT_COMMAND_LEFT_DCLICK(wxID_ANY, DBFListCtrl::OnDblClick)
+    //EVT_COMMAND_LEFT_DCLICK(wxID_ANY, DBFListCtrl::OnDblClick)
+    EVT_LIST_CELL_DCLICK(wxID_ANY, DBFListCtrl::OnDblClick)
 END_EVENT_TABLE()
 
 class FieldEdit : public wxTextCtrl
@@ -86,7 +87,7 @@ bool DBFListCtrl::Edit()
 #endif
 }
 
-void DBFListCtrl::OnDblClick(wxCommandEvent& event)
+void DBFListCtrl::OnDblClick(wxListCellEvent& event)
 {
 #if USE_DATALISTVIEW
     event.Skip();
@@ -100,14 +101,7 @@ void DBFListCtrl::OnDblClick(wxCommandEvent& event)
             wxPostMenuCommand(GetParent(), GetEditWindowID());
     }
     else
-    {
-        wxPoint pt = ScreenToClient(::wxGetMousePosition());
-        long col;
-        long row = HitTest(pt, NULL, &col);
-
-        if (row != wxNOT_FOUND)
-            Edit((size_t)row, col);
-    }
+        Edit((size_t)event.GetRow(), event.GetColumn());
 #endif
 }
 

@@ -35,7 +35,7 @@ class DataModelListCtrl : public wxTrunkListView
 public:
     DataModelListCtrl();
 
-   void InitColumns(int col_width = 150);
+    void InitColumns(int col_width = 150);
 
     bool IsAnyUnselected(void);
     bool IsUndeletedInSelection(void);
@@ -77,12 +77,17 @@ public:
           wxDataModelBase* GetModel()       { return m_model; }
     const wxDataModelBase* GetModel() const { return m_model; }
     //virtual wxString Format(long col, const wxVariant&) const;
-public:
+
+    bool SendEvent( const wxEventType type, int row, int col);
+
     void OnUpdateSelectAll  (wxUpdateUIEvent&);
     void OnUpdateNeedSel_Deleted(wxUpdateUIEvent&);
     void OnUpdateNeedSel_NotDeleted(wxUpdateUIEvent&);
     void OnUpdateNeedSel    (wxUpdateUIEvent&);
     void OnKeyDown(wxKeyEvent&);
+
+    void OnClick(wxCommandEvent&);
+    void OnDblClick(wxCommandEvent&);
 
 #if USE_DATALISTVIEW
 #else
@@ -102,6 +107,34 @@ private:
     wxDataModelBase* m_model;
     wxListItemAttr m_attr;
 };
+
+
+extern const wxEventType wxEVT_LIST_CELL_CLICK;
+extern const wxEventType wxEVT_LIST_CELL_DCLICK;
+
+class wxListCellEvent : public wxListEvent
+{
+public:
+    wxListCellEvent(wxEventType commandType = wxEVT_NULL, wxWindowID winid = 0) : wxListEvent(commandType, winid) {}//, Row(0), Col(0) {}
+    wxListCellEvent(const wxListCellEvent& src) : wxListEvent(src) {}
+    virtual wxEvent *Clone() const
+    {
+        wxListCellEvent* evt = new wxListCellEvent(*this);
+        return evt;
+    }
+    long GetRow() const { return GetIndex(); }
+};
+
+typedef void (wxEvtHandler::*wxListCellEventFunction)(wxListCellEvent&);
+
+#define wxListCellEventHandler(func) \
+    (wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxListCellEventFunction, &func)
+
+#define wx__DECLARE_LISTCELLEVT(evt, id, fn) \
+    wx__DECLARE_EVT1(wxEVT_LIST_CELL_ ## evt, id, wxListCellEventHandler(fn))
+
+#define EVT_LIST_CELL_CLICK(id, fn)  wx__DECLARE_LISTCELLEVT(CLICK, id, fn)
+#define EVT_LIST_CELL_DCLICK(id, fn) wx__DECLARE_LISTCELLEVT(DCLICK, id, fn)
 
 /////////////////////////////////////////////////////////////////////////////
 

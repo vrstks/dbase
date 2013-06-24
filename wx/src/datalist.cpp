@@ -8,6 +8,9 @@
 #include "datalist.h"
 #include "datamodel.h"
 
+const wxEventType wxEVT_LIST_CELL_CLICK = wxNewEventType();
+const wxEventType wxEVT_LIST_CELL_DCLICK = wxNewEventType();
+
 #if USE_DATALISTVIEW
 IMPLEMENT_CLASS(DataModelListCtrl, wxDataViewListCtrl)
 #else
@@ -25,6 +28,8 @@ BEGIN_EVENT_TABLE(DataModelListCtrl, wxTrunkListView)
     EVT_LIST_ITEM_ACTIVATED(wxID_ANY, DataModelListCtrl::OnItemActivated)
     EVT_LIST_BEGIN_LABEL_EDIT(wxID_ANY, DataModelListCtrl::OnBeginLabelEdit)
     EVT_LIST_END_LABEL_EDIT(wxID_ANY, DataModelListCtrl::OnEndLabelEdit)
+    EVT_COMMAND_LEFT_CLICK(wxID_ANY, DataModelListCtrl::OnClick)
+    EVT_COMMAND_LEFT_DCLICK(wxID_ANY, DataModelListCtrl::OnDblClick)
 END_EVENT_TABLE()
 #endif
 
@@ -58,6 +63,41 @@ bool DataModelListCtrl::Create(wxWindow *parent, wxWindowID id,
        EnableAlternateRowColours();
 #endif
     return ok;
+}
+
+bool DataModelListCtrl::SendEvent( const wxEventType type, int row, int col)
+{
+    wxListCellEvent evt(type, GetId());
+
+    evt.SetEventObject( this );
+    evt.m_itemIndex = row;
+    evt.m_col = col;
+    evt.m_item.m_itemId = row;
+    evt.m_item.m_col = col;
+    GetItem(evt.m_item);
+    return GetEventHandler()->ProcessEvent(evt);
+}
+
+void DataModelListCtrl::OnClick(wxCommandEvent& event)
+{
+    const wxPoint pt = ScreenToClient(::wxGetMousePosition());
+    long col;
+    long row = HitTest(pt, NULL, &col);
+
+    if (row != wxNOT_FOUND)
+        SendEvent(wxEVT_LIST_CELL_CLICK, row, col);
+    event.Skip();
+}
+
+void DataModelListCtrl::OnDblClick(wxCommandEvent& event)
+{
+    const wxPoint pt = ScreenToClient(::wxGetMousePosition());
+    long col;
+    long row = HitTest(pt, NULL, &col);
+
+    if (row != wxNOT_FOUND)
+        SendEvent(wxEVT_LIST_CELL_DCLICK, row, col);
+    event.Skip();
 }
 
 void DataModelListCtrl::OnKeyDown(wxKeyEvent& event)

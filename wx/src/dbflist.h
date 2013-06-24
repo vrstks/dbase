@@ -9,15 +9,15 @@
 class DBFListCtrl : public DataModelListCtrl
 {
 public:
-   DBFListCtrl() : DataModelListCtrl()
-   {
-   }
+    DBFListCtrl() : DataModelListCtrl()
+    {
+    }
 
-   bool Edit(long row, long col);
-   bool Edit();
-   bool AddNew();
+    bool Edit(long row, long col);
+    bool Edit();
+    bool AddNew();
 
 protected:
-   void OnDblClick(wxCommandEvent&);
-   DECLARE_EVENT_TABLE()
+    void OnDblClick(wxListCellEvent&);
+    DECLARE_EVENT_TABLE()
 };
