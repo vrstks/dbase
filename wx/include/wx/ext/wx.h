@@ -163,9 +163,9 @@ private:
 };
 #endif
 
-class wxInitialUpdateHint : public wxObject
+class wxFileLoadedHint : public wxObject
 {
-    DECLARE_CLASS(wxInitialUpdateHint)
+    DECLARE_CLASS(wxFileLoadedHint)
 };
 
 /////////////////////////////////////////////////////////////////////////////

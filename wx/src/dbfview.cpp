@@ -116,7 +116,7 @@ void DBFView::OnUpdateNeedEditable(wxUpdateUIEvent& event)
 
 void DBFView::OnUpdate(wxView* sender, wxObject* hint)
 {
-    if (wxDynamicCast(hint, wxInitialUpdateHint))
+    if (wxDynamicCast(hint, wxFileLoadedHint))
     {
         GetWindow()->InitColumns();
     #if !USE_DATALISTVIEW

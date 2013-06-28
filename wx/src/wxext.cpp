@@ -8,7 +8,7 @@
 #include "wx/ext/wx.h"
 
 IMPLEMENT_CLASS(wxViewEx, wxView)
-IMPLEMENT_CLASS(wxInitialUpdateHint, wxObject)
+IMPLEMENT_CLASS(wxFileLoadedHint, wxObject)
 
 bool wxRemoveFile(wxFFile* file)
 {
@@ -32,13 +32,9 @@ bool wxWindow_Toggle(wxWindow* wnd)
 
    wnd->Show(show);
    if (wxIS_KIND_OF(parent, wxFrame))
-   {
       wxStaticCast(parent, wxFrame)->SendSizeEvent(); // needed when mdi
-   }
    else
-   {
       parent->Layout(); // needed when non-mdi
-   }
    return show;
 }
 
@@ -110,13 +106,9 @@ bool wxXmlResourceHelper::LoadFromMemory(const void* buf, size_t buf_len, const 
     filename.AppendDir(filename.GetName()); // subfolder named after file title
     ok = filename.DirExists() || filename.Mkdir();
     if (ok)
-    {
         ok = wxCreateFileFromMemory(buf, buf_len, filename, file_ptr);
-    }
     if (ok)
-    {
         ok = LoadFromFile(filename);
-    }
     return ok;
 }
 
@@ -308,12 +300,11 @@ void wxAcceleratorHelper::SetAcceleratorTable(wxWindow* wnd, const wxArrayAccele
    wxAcceleratorEntry* temp = new wxAcceleratorEntry[count];
 
    for (size_t i = 0; i < count; i++)
-   {
       temp[i] = array.at(i);
-   }
+
    wxAcceleratorTable accel((int)count, temp);
    wnd->SetAcceleratorTable(accel);
-   wxDELETEA(temp);
+   delete [] temp;
 }
 
 wxString wxMenuItem_GetText(const wxMenuItem* item)
@@ -366,9 +357,7 @@ void wxAcceleratorHelper::SetAccelText(wxMenuBar* menu, const wxArrayAccelerator
         wxMenuItem* item = menu->FindItem(entry.GetCommand());
 
         if (item)
-        {
             wxAcceleratorHelper::SetAccelText(item, wxGetAccelText(entry), true);
-        }
     }
 }
 
@@ -391,9 +380,7 @@ wxString wxToolBarTool_MakeShortHelp(const wxString& rstr, const wxArrayAccelera
          }
       }
       if (!strAccel.empty())
-      {
          str+=wxString::Format(wxT(" (%s)"), strAccel.wx_str());
-      }
    }
    return str;
 }
@@ -530,9 +517,7 @@ bool wxRecentFileList::GetFile(size_t index, wxFileName* str) const
    bool ok = (index < impl->GetCount());
 
    if (ok)
-   {
       str->operator=(impl->GetHistoryFile(index));
-   }
    return ok;
 }
 
@@ -542,10 +527,9 @@ wxDocVector wxTrunkDocView::GetDocumentsVector(const wxDocManager& docManager)
 {
     wxDocVector docs;
     const wxList& list = wxConstCast(&docManager, wxDocManager)->GetDocuments();
+
     for (wxList::const_iterator it = list.begin(); it != list.end(); it++)
-    {
         docs.push_back(wxStaticCast(*it, wxDocument));
-    }
     return docs;
 }
 #endif
@@ -569,14 +553,10 @@ void wxDocViewHelpers::GetInfo(const wxDocument& doc, wxArrayString* as)
 
    as->push_back(wxString::Format(fmt, wxT("Doc class"), doc.GetClassInfo()->GetClassName()));
    if (view)
-   {
       as->push_back(wxString::Format(fmt, wxT("View class"), view->GetClassInfo()->GetClassName()));
-   }
    as->push_back(wxString::Format(fmt, wxT("Frame class"), frame ? frame->GetClassInfo()->GetClassName() : wxEmptyString));
    if (frame)
-   {
       as->push_back(wxString::Format(fmt, wxT("Frame label"), frame->GetLabel().wx_str()));
-   }
    as->push_back(wxString::Format(fmt, wxT("GetFilename"), doc.GetFilename().wx_str()));
    as->push_back(wxString::Format(fmt, wxT("GetTitle"), doc.GetTitle().wx_str()));
    as->push_back(wxString::Format(fmt, wxT("GetUserReadableName"), doc.GetUserReadableName().wx_str()));
@@ -597,9 +577,7 @@ void wxFrame_SetInitialPosition(wxFrame* wnd, const wxPoint& pos, const wxSize& 
       wnd->SetSize(size);
    }
    if (pos == wxDefaultPosition)
-   {
       wnd->Center();
-   }
 }
 
 void wxJoin(wxArrayString* dst, const wxArrayString& src)
@@ -628,9 +606,7 @@ void wxJoin(wxArrayString* dst, const wxArrayString& src)
             clipboard->UsePrimarySelection(false);
             ok = clipboard->SetData(def);
             if (ok)
-            {
                 def = NULL;
-            }
         }
     #ifndef __WXMSW__
         if (primary)
@@ -639,15 +615,11 @@ void wxJoin(wxArrayString* dst, const wxArrayString& src)
             ok = clipboard->SetData(primary);
             clipboard->UsePrimarySelection(false);
             if (ok)
-            {
                 primary = NULL;
-            }
         }
     #endif // __WXMSW__
         if (!was_open)
-        {
             clipboard->Close();
-        }
         //clipboard->Flush(); // else emu and wxc is freezing
     }
     delete def;
@@ -744,9 +716,7 @@ wxStdDialogButtonSizer* wxCreateStdDialogButtonSizer(wxWindow* parent, long flag
         buttonpane->GetCancelButton()->SetDefault();
     }
     if (flags & wxAPPLY)
-    {
         buttonpane->AddButton(new wxButton(parent, wxID_APPLY, _("&Apply")));
-    }
     buttonpane->Realize();
 
     //parent->GetSizer()->Add(new wxStaticLine(parent), 0, wxEXPAND | wxALL, 5); // separator

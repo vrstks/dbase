@@ -51,23 +51,19 @@ bool DBFDocument::DoOpenDocument(const wxString& filePath)
     if (ok)
     {
         ok = m_database->Open(fileName, dbf_editmode_editable);
-        if (!ok) ok = m_database->Open(fileName, dbf_editmode_readonly);
+        if (!ok)
+            ok = m_database->Open(fileName, dbf_editmode_readonly);
         if (ok)
         {
-            wxInitialUpdateHint hint;
-
-            UpdateAllViews(NULL, &hint);
             m_tablename = fileName.GetName();
+            wxFileLoadedHint hint;
+            UpdateAllViews(NULL, &hint);
         }
         else
-        {
             wxLogError(_("Bad file format in file \"%s\"."), fileName.GetFullPath().wx_str());
-        }
     }
     else
-    {
         wxLogError(_("Failed to open the file \"%s\" for reading."), fileName.GetFullPath().wx_str());
-    }
     return ok;
 }
 
@@ -86,7 +82,8 @@ bool DBFDocument::OnCloseDocument()
 {
    bool ok = base::OnCloseDocument();
 
-   if (m_database->IsOpen()) m_database->Close();
+   if (m_database->IsOpen())
+       m_database->Close();
    return ok;
 }
 
@@ -104,12 +101,12 @@ bool DBFDocument::OnNewDocument()
       wxDBase database;
 
       ok = Save();
-      if (ok) ok = ::DoModal_Structure(wxTheApp->GetTopWindow(), &database, _("New database structure"), GetFilename());
+      if (ok)
+          ok = ::DoModal_Structure(wxTheApp->GetTopWindow(), &database, _("New database structure"), GetFilename());
       if (ok && database.IsOpen())
       {
-          wxInitialUpdateHint hint;
-
           m_database->Attach(&database);
+          wxFileLoadedHint hint;
           UpdateAllViews(NULL, &hint);
       }
    }
@@ -164,13 +161,9 @@ wxFrame* DatabaseDocTemplate::CreateViewFrame(wxView* view)
     DBFFrame* subframe = wxStaticCast(m_frameClassInfo->CreateObject(), DBFFrame);
 
     if (subframe->Create(view->GetDocument(), wxStaticCast(wxTheApp->GetTopWindow(), wxMDIParentFrame), m_mru))
-    {
         subframe->SetIcon(GetIcon());
-    }
     else
-    {
         wxDELETE(subframe);
-    }
     return subframe;
 }
 
