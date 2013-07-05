@@ -118,6 +118,7 @@ void DBFView::OnUpdate(wxView* sender, wxObject* hint)
 {
     if (wxDynamicCast(hint, wxFileLoadedHint))
     {
+        //GetWindow()->InitColumns(150, true);
         GetWindow()->InitColumns();
     #if !USE_DATALISTVIEW
         GetWindow()->SelectRow(0);

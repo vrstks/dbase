@@ -35,6 +35,7 @@ END_EVENT_TABLE()
 
 DataModelListCtrl::DataModelListCtrl()
 {
+    m_row_column = false;
     m_model = NULL;
     m_column_clicked = wxNOT_FOUND;
     m_id_edit = m_id_selchange = m_id_delete = 0;
@@ -69,6 +70,8 @@ bool DataModelListCtrl::SendEvent( const wxEventType type, int row, int col)
 {
     wxListCellEvent evt(type, GetId());
 
+    if (m_row_column && (col > 0) )
+        col--;
     evt.SetEventObject( this );
     evt.m_itemIndex = row;
     evt.m_col = col;
@@ -119,13 +122,17 @@ void DataModelListCtrl::OnKeyDown(wxKeyEvent& event)
    }
 }
 
-void DataModelListCtrl::InitColumns(int col_width)
+void DataModelListCtrl::InitColumns(int col_width, bool row_column)
 {
     wxDataModelBase* model = GetModel();
+    m_row_column = row_column;
 
 #if USE_DATALISTVIEW
     //AssociateModel(model->GetSource());
 #endif
+    if (m_row_column)
+        AppendColumn(wxEmptyString, wxLIST_FORMAT_LEFT, wxMin(col_width, 75));
+
     const wxDataModelColumnInfoVector columns = model->GetColumns();
     for (wxDataModelColumnInfoVector::const_iterator it = columns.begin(); it != columns.end(); it++)
     {
@@ -162,23 +169,30 @@ void DataModelListCtrl::Fill()
 #endif
 }
 
-wxString DataModelListCtrl::OnGetItemText(long item, long col) const
+wxString DataModelListCtrl::OnGetItemText(long row, long col) const
 {
     DataModelListCtrl* pThis = wxStaticCast(this, DataModelListCtrl);
     wxDataModelBase* db = pThis->GetModel(); // unconst
     wxString str;
 
-    db->GetValueByRow(&str, item, col);
+    if (m_row_column && (col == 0))
+        str.Printf(wxT("%d"), row + 1);
+    else
+    {
+        if (m_row_column)
+            col--;
+        db->GetValueByRow(&str, row, col);
+    }
     return str;
 }
 
 #if !USE_DATALISTVIEW
-wxListItemAttr* DataModelListCtrl::OnGetItemAttr(long item) const
+wxListItemAttr* DataModelListCtrl::OnGetItemAttr(long row) const
 {
-    wxListItemAttr* attr = base::OnGetItemAttr(item);
+    wxListItemAttr* attr = base::OnGetItemAttr(row);
     wxDataModelBase* db = wxStaticCast(this, DataModelListCtrl)->GetModel(); // unconst
 
-    if (db->IsRowDeleted(item) && attr)
+    if (db->IsRowDeleted(row) && attr)
     {
         const wxColour gray = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
         wxListItemAttr* mine = wxConstCast(&m_attr, wxListItemAttr);

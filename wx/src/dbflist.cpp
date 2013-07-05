@@ -69,6 +69,7 @@ bool DBFListCtrl::Edit(long row, long col)
       if (ok)
       {
          edit->SetValue(GetItemText(row, col));
+         edit->SelectAll();
          rect.height+=3;
          edit->Fixate(rect);
       }

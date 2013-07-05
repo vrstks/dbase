@@ -35,7 +35,7 @@ class DataModelListCtrl : public wxTrunkListView
 public:
     DataModelListCtrl();
 
-    void InitColumns(int col_width = 150);
+    void InitColumns(int col_width = 150, bool row_column = false);
 
     bool IsAnyUnselected(void);
     bool IsUndeletedInSelection(void);
@@ -63,10 +63,10 @@ protected:
 // Implementation
 public:
     virtual ~DataModelListCtrl();
-    virtual wxString OnGetItemText(long item, long col) const;
+    virtual wxString OnGetItemText(long row, long col) const;
 #if USE_DATALISTVIEW
 #else
-    virtual wxListItemAttr* OnGetItemAttr(long item) const;
+    virtual wxListItemAttr* OnGetItemAttr(long row) const;
 #endif
     virtual bool DeleteRecord(unsigned int index, bool bDelete);
     virtual bool IsRecordDeleted(unsigned int index);
@@ -89,6 +89,16 @@ public:
     void OnClick(wxCommandEvent&);
     void OnDblClick(wxCommandEvent&);
 
+    bool GetSubItemRect( long row, long col, wxRect& rect, int code = wxLIST_RECT_BOUNDS) const
+    {
+        return base::GetSubItemRect(row, col + (m_row_column ? 1 : 0), rect, code);
+    }
+    wxString GetItemText(long row, long col = 0) const
+    {
+        return base::GetItemText(row, col + (m_row_column ? 1 : 0));
+    }
+    bool HasRowColumn() const { return m_row_column; }
+
 #if USE_DATALISTVIEW
 #else
     void OnBeginLabelEdit   (wxListEvent&);
@@ -105,7 +115,8 @@ protected:
     int m_id_delete;
 private:
     wxDataModelBase* m_model;
-    wxListItemAttr m_attr;
+    wxListItemAttr  m_attr;
+    bool            m_row_column;
 };
 
 
