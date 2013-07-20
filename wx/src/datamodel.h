@@ -90,6 +90,8 @@ public:
 class wxDataModelColumnInfo
 {
 public:
+    wxDataModelColumnInfo() : len(0) {}
+
     wxString name;
     wxString type;
     size_t len;
@@ -116,25 +118,17 @@ public:
     virtual bool IsOpen(void) const;
     virtual bool IsEditable(void) const;
     virtual bool AddNew(void);
-    virtual bool IsRowDeleted(unsigned int WXUNUSED(row))
-    {
-        return false;
-    }
 
     wxDataModelColumnInfoVector GetColumns() const
     {
-        wxDataModelColumnInfoVector vector;
+        wxDataModelColumnInfoVector vec;
+        vec.resize(GetColumnCount());
 
-        for (unsigned int col = 0, count = GetColumnCount();
-             col < count;
-             col++)
-        {
-            wxDataModelColumnInfo info;
-            GetColumn(col, &info);
-            vector.push_back(info);
-        }
-        return vector;
+        for (size_t col = 0; col < vec.size(); col++)
+            GetColumn(col, &vec[col]);
+        return vec;
     }
+
     virtual bool GetColumn(unsigned int col, wxDataModelColumnInfo*) const = 0;
     virtual bool GetValueByRow(      wxString* , unsigned int row, unsigned int col) const;
     virtual bool SetValueByRow(const wxString& , unsigned int row, unsigned int col);
@@ -269,10 +263,6 @@ public:
     virtual bool SetValueByRow(const wxVariant&, unsigned int row, unsigned int col);
 
     virtual bool GetColumn(unsigned int col, wxDataModelColumnInfo*) const;
-    virtual bool IsRowDeleted(unsigned int row)
-    {
-        return m_child->IsRowDeleted(GetArrayValue(row));
-    }
 
     //virtual unsigned int GetRowCount() { return m_child->wxDataViewListModelEx::GetNumberOfRows(); }
     virtual unsigned int GetRowCount() const

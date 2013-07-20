@@ -11,7 +11,7 @@
 
 class wxDBase;
 class wxOutputStream;
-class wxDBFModel : public wxDataModel
+class DBFModel : public wxDataModel
 {
    typedef wxDataModel base;
 
@@ -22,7 +22,7 @@ public:
    bool m_delete_on_exit;
    static const wxChar* m_fileext;
 
-   wxDBFModel(wxDBase*);
+   DBFModel(wxDBase*);
 
 // Operations
 public:
@@ -33,21 +33,19 @@ public:
 
 // Implementation
 public:
-   virtual ~wxDBFModel(void);
+   virtual ~DBFModel(void);
 
 // wxDataViewListModel implementation
 public:
    virtual unsigned int GetRowCount(void) const;
    virtual unsigned int GetColumnCount(void) const;
    virtual bool GetColumn( unsigned int col, wxDataModelColumnInfo*) const;
-   virtual bool IsRowDeleted( unsigned int row );
    virtual int FindColumn(const wxString& colname) const;
 
 // wxDataModel implementation
 public:
    virtual void GetValueByRow(      wxVariant&, unsigned int row, unsigned int col) const;
    virtual bool SetValueByRow(const wxVariant&, unsigned int row, unsigned int col);
-   virtual bool DeleteRow(unsigned int row, bool bDelete = true);
    virtual bool GetValueByRow(      wxString*, unsigned int row, unsigned int col) const;
    virtual bool SetValueByRow(const wxString&, unsigned int row, unsigned int col);
    virtual size_t GetProperties(wxArrayString*, bool header) const;
@@ -56,6 +54,10 @@ public:
    virtual bool AddNew(void);
    virtual wxString GetDataModelName(void) const;
    virtual wxString GetTableName(void) const;
+
+    // new virtuals
+    virtual bool IsRowDeleted( unsigned int row );
+    virtual bool DeleteRow(unsigned int row, bool bDelete = true);
 };
 
 #endif // __DBFMODEL_H__

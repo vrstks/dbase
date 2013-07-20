@@ -12,9 +12,9 @@ const wxEventType wxEVT_LIST_CELL_CLICK = wxNewEventType();
 const wxEventType wxEVT_LIST_CELL_DCLICK = wxNewEventType();
 
 #if USE_DATALISTVIEW
-IMPLEMENT_CLASS(DataModelListCtrl, wxDataViewListCtrl)
+IMPLEMENT_DYNAMIC_CLASS(DataModelListCtrl, wxDataViewListCtrl)
 #else
-IMPLEMENT_CLASS(DataModelListCtrl, wxTrunkListView)
+IMPLEMENT_DYNAMIC_CLASS(DataModelListCtrl, wxTrunkListView)
 #endif
 
 #if USE_DATALISTVIEW
@@ -122,7 +122,7 @@ void DataModelListCtrl::OnKeyDown(wxKeyEvent& event)
    }
 }
 
-void DataModelListCtrl::InitColumns(int col_width, bool row_column)
+void DataModelListCtrl::InitColumns(const std::vector<int>& col_width, bool row_column)
 {
     wxDataModelBase* model = GetModel();
     m_row_column = row_column;
@@ -131,9 +131,10 @@ void DataModelListCtrl::InitColumns(int col_width, bool row_column)
     //AssociateModel(model->GetSource());
 #endif
     if (m_row_column)
-        AppendColumn(wxEmptyString, wxLIST_FORMAT_LEFT, wxMin(col_width, 75));
+        AppendColumn(wxEmptyString, wxLIST_FORMAT_LEFT, 75);
 
     const wxDataModelColumnInfoVector columns = model->GetColumns();
+    wxASSERT(col_width.empty() || (col_width.size() == columns.size()) );
     for (wxDataModelColumnInfoVector::const_iterator it = columns.begin(); it != columns.end(); it++)
     {
         wxListColumnFormat format = wxLIST_FORMAT_LEFT;
@@ -154,7 +155,7 @@ void DataModelListCtrl::InitColumns(int col_width, bool row_column)
     #if USE_DATALISTVIEW
         AppendTextColumn(info.name);
     #else
-        AppendColumn(info.name, format, col_width);
+        AppendColumn(info.name, format, col_width.empty() ? 150 : col_width[it - columns.begin()]);
     #endif
     }
     Fill();
@@ -164,7 +165,7 @@ void DataModelListCtrl::Fill()
 {
 #if USE_DATALISTVIEW
 #else
-    SetItemCount(GetModel()->GetRowCount());
+    SetItemCount(GetModel() ? GetModel()->GetRowCount() : 0);
     Refresh();
 #endif
 }
@@ -176,7 +177,7 @@ wxString DataModelListCtrl::OnGetItemText(long row, long col) const
     wxString str;
 
     if (m_row_column && (col == 0))
-        str.Printf(wxT("%d"), row + 1);
+        str.Printf(wxT("%d"), (int)row + 1);
     else
     {
         if (m_row_column)
@@ -186,60 +187,9 @@ wxString DataModelListCtrl::OnGetItemText(long row, long col) const
     return str;
 }
 
-#if !USE_DATALISTVIEW
-wxListItemAttr* DataModelListCtrl::OnGetItemAttr(long row) const
-{
-    wxListItemAttr* attr = base::OnGetItemAttr(row);
-    wxDataModelBase* db = wxStaticCast(this, DataModelListCtrl)->GetModel(); // unconst
-
-    if (db->IsRowDeleted(row) && attr)
-    {
-        const wxColour gray = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
-        wxListItemAttr* mine = wxConstCast(&m_attr, wxListItemAttr);
-
-        mine->AssignFrom(*attr);
-        mine->SetTextColour(gray);
-        attr = mine;
-    }
-    return attr;
-}
-#endif
-
 bool DataModelListCtrl::IsRecordOk(unsigned int index)
-{ 
+{
     return index < GetModel()->GetRowCount();
-}
-
-bool DataModelListCtrl::IsRecordDeleted(unsigned int index)
-{
-    return GetModel()->IsRowDeleted(index);
-}
-
-bool DataModelListCtrl::DeleteRecord(unsigned int index, bool bDelete)
-{
-    return GetModel()->DeleteRow(index, bDelete);
-}
-
-bool DataModelListCtrl::IsUndeletedInSelection(void)
-{
-    bool ok = false;
-    wxArrayInt selections;
-
-    GetSelections(selections);
-    for (wxArrayInt::const_iterator it = selections.begin(); (!ok) && (it != selections.end()); it++)
-        ok = ok || (IsRecordOk(*it) && !IsRecordDeleted(*it));
-    return ok;
-}
-
-bool DataModelListCtrl::IsDeletedInSelection(void)
-{
-    bool ok = false;
-    wxArrayInt selections;
-
-    GetSelections(selections);
-    for (wxArrayInt::const_iterator it = selections.begin(); (!ok) && (it != selections.end()); it++)
-        ok = ok || (IsRecordOk(*it) && IsRecordDeleted(*it));
-    return ok;
 }
 
 bool DataModelListCtrl::IsAnyUnselected(void)
@@ -253,36 +203,9 @@ bool DataModelListCtrl::IsAnyUnselected(void)
     return ok;
 }
 
-void DataModelListCtrl::DeleteSelection(bool bDelete)
-{
-    wxArrayInt selections;
-
-    GetSelections(selections);
-    for (wxArrayInt::const_iterator it = selections.begin(); it != selections.end(); it++)
-        DeleteRecord(*it, bDelete);
-    Fill();
-}
-
-void DataModelListCtrl::DeleteAll(bool bDelete)
-{
-    for (unsigned int index = 0; index < (unsigned int)GetItemCount(); index++)
-        DeleteRecord(index, bDelete);
-    Fill();
-}
-
 void DataModelListCtrl::OnUpdateSelectAll(wxUpdateUIEvent& event)
 {
     event.Enable(GetModel() && GetModel()->IsOpen() && IsAnyUnselected());
-}
-
-void DataModelListCtrl::OnUpdateNeedSel_Deleted(wxUpdateUIEvent& event)
-{
-    event.Enable(GetModel() && GetModel()->IsOpen() && IsDeletedInSelection());
-}
-
-void DataModelListCtrl::OnUpdateNeedSel_NotDeleted(wxUpdateUIEvent& event)
-{
-    event.Enable(GetModel() && GetModel()->IsOpen() && IsUndeletedInSelection());
 }
 
 void DataModelListCtrl::OnUpdateNeedSel(wxUpdateUIEvent& event)
@@ -293,7 +216,7 @@ void DataModelListCtrl::OnUpdateNeedSel(wxUpdateUIEvent& event)
 bool DataModelListCtrl::IsEditable() const
 {
     const wxDataModelBase* db = ((DataModelListCtrl*)this)->GetModel();
-    
+
     return (GetWindowStyleFlag() & wxLC_EDIT_LABELS) && db->IsEditable();
 }
 

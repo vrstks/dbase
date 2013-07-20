@@ -18,13 +18,13 @@
 #include "dbfutil.h"
 #include "wxstreamc.h"
 
-/*static*/ const wxChar* wxDBFModel::m_fileext = wxT(DBF_FILEEXT);
+/*static*/ const wxChar* DBFModel::m_fileext = wxT(DBF_FILEEXT);
 
-wxDBFModel::wxDBFModel(wxDBase* database) : wxDataModel(), m_database(database), m_delete_on_exit(false)
+DBFModel::DBFModel(wxDBase* database) : wxDataModel(), m_database(database), m_delete_on_exit(false)
 {
 }
 
-wxDBFModel::~wxDBFModel(void)
+DBFModel::~DBFModel(void)
 {
    if (m_delete_on_exit)
    {
@@ -38,17 +38,17 @@ wxDBFModel::~wxDBFModel(void)
    }
 }
 
-int wxDBFModel::FindColumn(const wxString& colname) const
+int DBFModel::FindColumn(const wxString& colname) const
 {
    return m_database->FindField(colname.mb_str());
 }
 
-size_t wxDBFModel::GetProperties(wxArrayString* as, bool header) const
+size_t DBFModel::GetProperties(wxArrayString* as, bool header) const
 {
    return ::dbf_getproperties(m_database, as, header);
 }
 
-bool wxDBFModel::GetColumn( unsigned int col, wxDataModelColumnInfo* info) const
+bool DBFModel::GetColumn( unsigned int col, wxDataModelColumnInfo* info) const
 {
    DBF_FIELD_INFO dbf_info;
    bool ok = m_database->GetFieldInfo(col, &dbf_info);
@@ -62,17 +62,17 @@ bool wxDBFModel::GetColumn( unsigned int col, wxDataModelColumnInfo* info) const
    return ok;
 }
 
-unsigned int wxDBFModel::GetRowCount() const
+unsigned int DBFModel::GetRowCount() const
 {    
    return m_database->GetRecordCount();
 }
 
-unsigned int wxDBFModel::GetColumnCount() const
+unsigned int DBFModel::GetColumnCount() const
 {
    return m_database->GetFieldCount();
 }
 
-bool wxDBFModel::GetValueByRow(wxString* str, unsigned int row, unsigned int col) const
+bool DBFModel::GetValueByRow(wxString* str, unsigned int row, unsigned int col) const
 {
    bool ok = m_database->SetPosition(row);
 
@@ -109,12 +109,12 @@ bool wxDBFModel::GetValueByRow(wxString* str, unsigned int row, unsigned int col
    return ok;
 }
 
-void wxDBFModel::GetValueByRow(wxVariant& var, unsigned int row, unsigned int col) const
+void DBFModel::GetValueByRow(wxVariant& var, unsigned int row, unsigned int col) const
 {
    m_database->GetValueByRow(&var, row, col);
 }
 
-bool wxDBFModel::SetValueByRow(const wxString& value, unsigned int row, unsigned int col)
+bool DBFModel::SetValueByRow(const wxString& value, unsigned int row, unsigned int col)
 {
    bool ok = true;
 
@@ -124,39 +124,39 @@ bool wxDBFModel::SetValueByRow(const wxString& value, unsigned int row, unsigned
    return ok;
 }
 
-bool wxDBFModel::SetValueByRow(const wxVariant& var, unsigned int row, unsigned int col)
+bool DBFModel::SetValueByRow(const wxVariant& var, unsigned int row, unsigned int col)
 {
    return m_database->SetValueByRow(var, row, col);
 }
 
-bool wxDBFModel::IsRowDeleted( unsigned int row )
+bool DBFModel::IsRowDeleted( unsigned int row )
 {
    m_database->SetPosition(row);
    return m_database->IsRecordDeleted();
 }
 
-bool wxDBFModel::DeleteRow(unsigned int row, bool bDelete)
+bool DBFModel::DeleteRow(unsigned int row, bool bDelete)
 {
    m_database->SetPosition(row);
    return m_database->DeleteRecord(bDelete);
 }
 
-bool wxDBFModel::IsOpen(void) const
+bool DBFModel::IsOpen(void) const
 {
    return m_database && m_database->IsOpen();
 }
 
-bool wxDBFModel::IsEditable(void) const
+bool DBFModel::IsEditable(void) const
 {
    return m_database && m_database->IsEditable();
 }
 
-bool wxDBFModel::AddNew(void)
+bool DBFModel::AddNew(void)
 {
    return m_database->AddNew();
 }
 
-/*static*/ bool wxDBFModel::SaveAs(wxDataModel* model, wxOutputStream* stream)
+/*static*/ bool DBFModel::SaveAs(wxDataModel* model, wxOutputStream* stream)
 {
    const unsigned int row_count = model->GetRowCount();
    const unsigned int col_count = model->GetColumnCount();
@@ -238,12 +238,12 @@ bool wxDBFModel::AddNew(void)
    return ok;
 }
 
-wxString wxDBFModel::GetDataModelName(void) const
+wxString DBFModel::GetDataModelName(void) const
 {
    return wxT(DBF_FORMAT_NAME);
 }
 
-wxString wxDBFModel::GetTableName(void) const
+wxString DBFModel::GetTableName(void) const
 {
    DBF_INFO info;
 

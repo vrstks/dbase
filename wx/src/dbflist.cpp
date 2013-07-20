@@ -15,8 +15,9 @@
 #include "wx/ext/trunk.h"
 #include "wx/ext/wx.h"
 #include "datalist.h"
-#include "dbflist.h"
 #include "datamodel.h"
+#include "dbfmodel.h"
+#include "dbflist.h"
 
 BEGIN_EVENT_TABLE(DBFListCtrl, DataModelListCtrl)
     //EVT_COMMAND_LEFT_DCLICK(wxID_ANY, DBFListCtrl::OnDblClick)
@@ -124,3 +125,83 @@ bool DBFListCtrl::AddNew()
     return ok;
 #endif
 }
+
+bool DBFListCtrl::IsUndeletedInSelection(void)
+{
+    bool ok = false;
+    wxArrayInt selections;
+
+    GetSelections(selections);
+    for (wxArrayInt::const_iterator it = selections.begin(); (!ok) && (it != selections.end()); it++)
+        ok = ok || (IsRecordOk(*it) && !IsRecordDeleted(*it));
+    return ok;
+}
+
+bool DBFListCtrl::IsDeletedInSelection(void)
+{
+    bool ok = false;
+    wxArrayInt selections;
+
+    GetSelections(selections);
+    for (wxArrayInt::const_iterator it = selections.begin(); (!ok) && (it != selections.end()); it++)
+        ok = ok || (IsRecordOk(*it) && IsRecordDeleted(*it));
+    return ok;
+}
+
+void DBFListCtrl::OnUpdateNeedSel_Deleted(wxUpdateUIEvent& event)
+{
+    event.Enable(GetModel() && GetModel()->IsOpen() && IsDeletedInSelection());
+}
+
+void DBFListCtrl::OnUpdateNeedSel_NotDeleted(wxUpdateUIEvent& event)
+{
+    event.Enable(GetModel() && GetModel()->IsOpen() && IsUndeletedInSelection());
+}
+
+#if !USE_DATALISTVIEW
+wxListItemAttr* DBFListCtrl::OnGetItemAttr(long row) const
+{
+    wxListItemAttr* attr = base::OnGetItemAttr(row);
+    DBFModel* db = const_cast<DBFModel*>(GetModel()); // unconst
+
+    if (db->IsRowDeleted(row))
+    {
+        const wxColour gray = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
+        wxListItemAttr* mine = wxConstCast(&m_attr, wxListItemAttr);
+
+        if (attr)
+            mine->AssignFrom(*attr);
+        mine->SetTextColour(gray);
+        attr = mine;
+    }
+    return attr;
+}
+#endif
+
+bool DBFListCtrl::IsRecordDeleted(unsigned int index)
+{
+    return GetModel()->IsRowDeleted(index);
+}
+
+bool DBFListCtrl::DeleteRecord(unsigned int index, bool bDelete)
+{
+    return GetModel()->DeleteRow(index, bDelete);
+}
+
+void DBFListCtrl::DeleteSelection(bool bDelete)
+{
+    wxArrayInt selections;
+
+    GetSelections(selections);
+    for (wxArrayInt::const_iterator it = selections.begin(); it != selections.end(); it++)
+        DeleteRecord(*it, bDelete);
+    Fill();
+}
+
+void DBFListCtrl::DeleteAll(bool bDelete)
+{
+    for (unsigned int index = 0; index < (unsigned int)GetItemCount(); index++)
+        DeleteRecord(index, bDelete);
+    Fill();
+}
+

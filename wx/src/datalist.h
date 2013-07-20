@@ -31,17 +31,14 @@ class DataModelListCtrl : public wxTrunkListView
 {
     typedef wxTrunkListView base;
 #endif
-    DECLARE_CLASS(DataModelListCtrl)
+    DECLARE_DYNAMIC_CLASS(DataModelListCtrl)
 public:
     DataModelListCtrl();
 
-    void InitColumns(int col_width = 150, bool row_column = false);
+    void InitColumns(bool row_column = false) { InitColumns(std::vector<int>(), row_column); }
+    void InitColumns(const std::vector<int>& col_width, bool row_column = false);
 
     bool IsAnyUnselected(void);
-    bool IsUndeletedInSelection(void);
-    bool IsDeletedInSelection(void);
-    void DeleteSelection(bool bDelete);
-    void DeleteAll(bool bDelete);
     bool IsOpen() const;
     int GetEditWindowID() const
     {
@@ -64,12 +61,6 @@ protected:
 public:
     virtual ~DataModelListCtrl();
     virtual wxString OnGetItemText(long row, long col) const;
-#if USE_DATALISTVIEW
-#else
-    virtual wxListItemAttr* OnGetItemAttr(long row) const;
-#endif
-    virtual bool DeleteRecord(unsigned int index, bool bDelete);
-    virtual bool IsRecordDeleted(unsigned int index);
     virtual bool IsRecordOk(unsigned int index);
     virtual void Fill();
 
@@ -78,11 +69,15 @@ public:
     const wxDataModelBase* GetModel() const { return m_model; }
     //virtual wxString Format(long col, const wxVariant&) const;
 
+    void Clear()
+    {
+        AssociateModel(NULL);
+        Fill();
+    }
+
     bool SendEvent( const wxEventType type, int row, int col);
 
     void OnUpdateSelectAll  (wxUpdateUIEvent&);
-    void OnUpdateNeedSel_Deleted(wxUpdateUIEvent&);
-    void OnUpdateNeedSel_NotDeleted(wxUpdateUIEvent&);
     void OnUpdateNeedSel    (wxUpdateUIEvent&);
     void OnKeyDown(wxKeyEvent&);
 
@@ -115,7 +110,6 @@ protected:
     int m_id_delete;
 private:
     wxDataModelBase* m_model;
-    wxListItemAttr  m_attr;
     bool            m_row_column;
 };
 

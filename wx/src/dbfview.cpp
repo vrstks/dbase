@@ -12,9 +12,9 @@
 #include "dbfdoc.h"
 #include "dbfdlgs.h"
 #include "datalist.h"
-#include "dbflist.h"
 #include "dbfutil.h"
 #include "dbfmodel.h"
+#include "dbflist.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // DBFWindow
@@ -24,7 +24,7 @@ class DBFWindow : public DBFListCtrl
    typedef DBFListCtrl base;
    DECLARE_CLASS(DBFWindow)
 protected:
-   wxDBFModel m_datamodel;
+   DBFModel m_datamodel;
    DBFView* m_view;
 public:
    DBFWindow(DBFView* view) : DBFListCtrl(), m_datamodel(view->GetDocument()->GetDatabase()), m_view(view)
@@ -165,7 +165,7 @@ void DBFView::OnProperties(wxCommandEvent&)
 
     wxDocViewHelpers::GetInfo(*doc, &as);
 
-    wxDBFModel datamodel(doc->GetDatabase());
+    DBFModel datamodel(doc->GetDatabase());
     datamodel.GetProperties(&as, true);
 
     wxString str = ::wxJoin(as, wxT('\n'), 0);
