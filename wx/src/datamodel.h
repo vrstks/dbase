@@ -350,8 +350,12 @@ inline bool wxDataModelBase::IsOpen(void) const
 inline bool wxDataModelBase::GetValueByRow(wxString* str, unsigned int row, unsigned int col) const
 {
     wxVariant var;
-    GetValueByRow(var, row, col);
-    str->operator=(var.GetString());
+
+    GetValueByRow(var, row, col);    
+    if (var.GetType() == wxT("bool"))
+        *str = var.GetBool() ? _("true") : _("false");
+    else
+        *str = var.GetString();
     return true;
 }
 
