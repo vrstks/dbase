@@ -13,17 +13,13 @@
 
 In wx2.8, the wxDataViewListModel class may be used as a universal data model, to represent
 any kind of flat (row,col) database type, ready to hook up for (row,col) viewing (wxListCtrl).
-This worked very well but requires ticket 11515 to be applied (trac.wxwidgets.org/ticket/11515)
 
 In wx2.9, the wxDataView[Index]ListModel class was changed to dynamically handle several 'dimensions',
 the (row,col) perspective no longer applies: the GetRowCount() member function no longer exists.
 
-Here we [re]introduce the wx2.8 (row,col) sorted model class in wx2.9, wxDataViewSortedListModel.
-
 */
 
 #if (wxVERSION_NUMBER >= 2900)
-
 class wxDataViewListModelEx : public wxDataViewIndexListModel
 {
 public:
@@ -32,54 +28,6 @@ public:
     }
     virtual unsigned int GetRowCount() const = 0;
 };
-
-WX_DEFINE_SORTED_ARRAY_SIZE_T(unsigned int, wxDataViewSortedIndexArray);
-
-class wxDataViewSortedListModel : public wxDataViewListModelEx
-{
-private:
-    wxDataViewListModelEx* m_child;
-    wxDataViewSortedIndexArray m_array;
-    bool m_ascending;
-public:
-    wxDataViewSortedListModel( wxDataViewListModelEx *child ) : wxDataViewListModelEx(),
-      m_child(child), m_array(NULL), m_ascending(true)
-    {
-    }
-
-    void SetSortOrder( bool ascending ) { m_ascending = ascending; }
-    bool IsSortOrderAscending() const { return m_ascending; }
-
-    void SetSortArray(const wxDataViewSortedIndexArray& data) { m_array = data; }
-    unsigned int GetArrayValue(unsigned int index) const { return m_array[index]; }
-    wxDataViewListModelEx* GetChild() { return m_child; }
-
-    virtual unsigned int GetRowCount() const
-    {
-        return m_array.size();
-    }
-
-    virtual unsigned int GetColumnCount() const
-    {
-        return m_child->GetColumnCount();
-    }
-
-    virtual void GetValueByRow(wxVariant& variant, unsigned int row, unsigned int col) const
-    {
-        m_child->GetValueByRow(variant, m_array[row], col);
-    }
-
-    virtual bool SetValueByRow(const wxVariant &variant, unsigned int row, unsigned int col)
-    {
-        bool ret = m_child->SetValueByRow(variant, m_array[row], col);
-
-        // Do nothing here as the change in the
-        // child model will be reported back.
-
-        return ret;
-    }
-};
-
 #else
 #define wxDataViewListModelEx wxDataViewListModel
 #endif // wx2.9
@@ -118,6 +66,7 @@ public:
     virtual bool IsOpen(void) const;
     virtual bool IsEditable(void) const;
     virtual bool AddNew(void);
+    virtual wxDataModel* GetChild() { return NULL; }
 
     wxDataModelColumnInfoVector GetColumns() const
     {
@@ -168,6 +117,8 @@ public:
     virtual void GetValueByRow(      wxVariant&, unsigned int row, unsigned int col) const = 0;
     virtual bool SetValueByRow(const wxVariant&, unsigned int row, unsigned int col) = 0;
     virtual wxString GetDataModelName(void) const = 0;
+    virtual int Compare(unsigned int row1, unsigned int row2, unsigned int column, bool ascending);
+
 #if (wxVERSION_NUMBER >= 2900)
     virtual unsigned int GetRowCount() const = 0;
     virtual unsigned int GetColumnCount() const = 0;
@@ -231,25 +182,27 @@ private:
 /////////////////////////////////////////////////////////////////////////////
 // wxDataModelSorted
 
-class wxDataModelSorted : public wxDataViewSortedListModel, public wxDataModelBase
+class wxDataModelSorted : public wxDataModel
 {
-    typedef wxDataViewSortedListModel base;
-protected:
-    int m_sort_column;
-    wxDataModel* m_child;
+    typedef wxDataModel base;
 public:
     wxDataModelSorted(wxDataModel* child);
 
     int GetSortColumn() const { return m_sort_column; }
-    wxDataModel* GetChild() { return m_child; }
+    virtual wxDataModel* GetChild() { return m_child; }
+    void SetChild(wxDataModel* child) { m_child = child; }
     void Resort(const wxArrayInt* row_array);
 
-    virtual ~wxDataModelSorted() {}
+    virtual ~wxDataModelSorted() { delete m_child; }
 
     virtual size_t GetProperties(wxArrayString*, bool header) const;
     virtual void Resort()
     {
         Resort(NULL);
+    }
+    virtual wxString GetDataModelName(void) const
+    {
+        return m_child->GetDataModelName();
     }
 
     virtual bool DeleteRow(unsigned int row, bool bDelete = true );
@@ -264,35 +217,21 @@ public:
 
     virtual bool GetColumn(unsigned int col, wxDataModelColumnInfo*) const;
 
-    //virtual unsigned int GetRowCount() { return m_child->wxDataViewListModelEx::GetNumberOfRows(); }
     virtual unsigned int GetRowCount() const
     {
-   #if (wxVERSION_NUMBER >= 2900)
-        return base::GetRowCount(); // eh
-   #else
-        return ((wxDataModelSorted*)this)->base::GetNumberOfRows();
-   #endif
+        return m_array.GetCount();
     }
     virtual unsigned int GetColumnCount() const
     {
-   #if (wxVERSION_NUMBER >= 2900)
-        return base::GetColumnCount();
-   #else
-        return ((wxDataModelSorted*)this)->GetNumberOfCols(); // unconst
-   #endif
+        return m_child->GetColumnCount();
     }
-    //size_t GetArrayValue(size_t array_index) const { return m_array[array_index]; }
 
     void SetSortOrder(bool ascending, int sort_column)
     {
-   #if (wxVERSION_NUMBER >= 2900)
-        base::SetSortOrder(ascending);
-   #else
-        base::SetAscending(ascending);
-   #endif
+        SetSortOrder(ascending);
         m_sort_column = sort_column;
     }
-#if (wxVERSION_NUMBER >= 2900)
+/*
     virtual wxString GetColumnType(unsigned int col) const
     {
         wxDataModelColumnInfo info;
@@ -303,12 +242,16 @@ public:
     {
         return GetRowCount();
     }
-#else
-    bool IsSortOrderAscending() /*const*/
-    {
-        return GetAscending();
-    }
-#endif
+*/
+    void SetSortOrder( bool ascending ) { m_ascending = ascending; }
+    bool IsSortOrderAscending() const { return m_ascending; }
+    void SetSortArray(const wxArrayInt& data) { m_array = data; }
+    unsigned int GetArrayValue(unsigned int index) const { return m_array[index]; }
+protected:
+    int m_sort_column;
+    wxDataModel* m_child;
+    bool m_ascending;
+    wxArrayInt m_array;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -350,12 +293,8 @@ inline bool wxDataModelBase::IsOpen(void) const
 inline bool wxDataModelBase::GetValueByRow(wxString* str, unsigned int row, unsigned int col) const
 {
     wxVariant var;
-
-    GetValueByRow(var, row, col);    
-    if (var.GetType() == wxT("bool"))
-        *str = var.GetBool() ? _("true") : _("false");
-    else
-        *str = var.GetString();
+    GetValueByRow(var, row, col);
+    str->operator=(var.GetString());
     return true;
 }
 
@@ -402,12 +341,10 @@ inline bool wxDataModel::SetValue(wxVariant& var, unsigned int col, unsigned int
 /////////////////////////////////////////////////////////////////////////////
 // wxDataModelSorted
 
-inline wxDataModelSorted::wxDataModelSorted(wxDataModel*child) : wxDataViewSortedListModel(child),
-   wxDataModelBase(this), m_sort_column(0), m_child(child)
+inline wxDataModelSorted::wxDataModelSorted(wxDataModel*child) : //wxDataViewSortedListModel(child),
+   wxDataModel(), m_sort_column(wxNOT_FOUND), m_child(child), m_ascending(true)
 {
-#if (wxVERSION_NUMBER >= 2900)
-    //Resort();
-#endif
+    Resort();
 }
 
 inline bool wxDataModelSorted::GetColumn(unsigned int col, wxDataModelColumnInfo* info) const
@@ -432,12 +369,12 @@ inline bool wxDataModelSorted::SetValueByRow(const wxString& str, unsigned int r
 
 inline void wxDataModelSorted::GetValueByRow(wxVariant& var, unsigned int row, unsigned int col) const
 {
-    base::GetValueByRow(var, row, col);
+    m_child->GetValueByRow( var, GetArrayValue(row), col);
 }
 
 inline bool wxDataModelSorted::SetValueByRow(const wxVariant& var, unsigned int row, unsigned int col)
 {
-    return base::SetValueByRow(var, row, col);
+    return m_child->SetValueByRow( var, GetArrayValue(row), col);
 }
 
 inline size_t wxDataModelSorted::GetProperties(wxArrayString* as, bool header) const

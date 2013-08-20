@@ -8,8 +8,7 @@
 
 #include "datamodel.h"
 
-int wxCALLBACK wxDataViewListModelSortedDefaultCompare
-      (unsigned int row1, unsigned int row2, unsigned int col, wxDataModelBase* model )
+int wxDataModel::Compare(unsigned int row1, unsigned int row2, unsigned int column, bool ascending)
 {
 //  static const long hash_string   = wxHashTableBase::MakeKey(wxT("string")); not needed
     static const long hash_long     = wxHashTableBase::MakeKey(wxT("long"));
@@ -17,9 +16,9 @@ int wxCALLBACK wxDataViewListModelSortedDefaultCompare
     static const long hash_datetime = wxHashTableBase::MakeKey(wxT("datetime"));
 
 #if (wxVERSION_NUMBER >= 2900)
-    const long hash          = wxHashTableBase::MakeKey(model->GetSource()->GetColumnType(col));
+    const long hash = wxHashTableBase::MakeKey(GetSource()->GetColumnType(column));
 #else
-    const long hash          = wxHashTableBase::MakeKey(model->GetSource()->GetColType(col));
+    const long hash = wxHashTableBase::MakeKey(GetSource()->GetColType(column));
 #endif
     int result;
 
@@ -30,8 +29,8 @@ int wxCALLBACK wxDataViewListModelSortedDefaultCompare
     {
         wxVariant value1,value2;
 
-        model->GetValueByRow(value1, row1, col);
-        model->GetValueByRow(value2, row2, col);
+        GetValueByRow(value1, row1, column);
+        GetValueByRow(value2, row2, column);
 
         if (hash == hash_long) // long
         {
@@ -45,75 +44,73 @@ int wxCALLBACK wxDataViewListModelSortedDefaultCompare
             const double d1 = value1.GetDouble();
             const double d2 = value2.GetDouble();
 
-            if (d1 == d2) result = 0;
-            else if (d1 < d2) result = 1;
-            else result = -1;
+            if (d1 == d2)
+                result = 0;
+            else if (d1 < d2)
+                result = 1;
+            else
+                result = -1;
         }
         else // datetime
         {
             const wxDateTime dt1 = value1.GetDateTime();
             const wxDateTime dt2 = value2.GetDateTime();
 
-            if (dt1.IsEqualTo(dt2)) result = 0;
-            else result = dt1.IsEarlierThan(dt2) ? -1 : +1;
+            if (dt1.IsEqualTo(dt2))
+                result = 0;
+            else
+                result = dt1.IsEarlierThan(dt2) ? -1 : +1;
         }
     }
     else // string or unknown
     {
         wxString str[2];
 
-        model->GetValueByRow( str + 0, row1, col);
-        model->GetValueByRow( str + 1, row2, col);
+        GetValueByRow( str + 0, row1, column);
+        GetValueByRow( str + 1, row2, column);
       #ifdef atoi_tcscmpx
         result = atoi_tcscmpx(str[0], str[1], FALSE);
       #else
         result = str[0].CmpNoCase( str[1] );
       #endif
     }
-    if ((result == 0) && (col != 0))
-    {
-       result = wxDataViewListModelSortedDefaultCompare(row1, row2, 0, model);
-    }
+    if ((result == 0) && (column != 0))
+        result = Compare(row1, row2, 0, ascending);
+    else
+        result *= ascending ? +1 : -1;
     return result;
 }
 
-static wxDataModelBase             *s_CmpModel = NULL;
-static unsigned int                 s_CmpCol = 0;
+static wxDataModel* s_CmpModel = NULL;
+static unsigned int s_CmpCol = 0;
 
-static int wxDataViewIntermediateCmpAscend( unsigned int row1, unsigned int row2 )
+static int wxDataViewIntermediateCmpAscend( int* row1, int* row2 )
 {
-    return wxDataViewListModelSortedDefaultCompare( row1, row2, s_CmpCol, s_CmpModel );
+    return s_CmpModel->Compare( *row1, *row2, s_CmpCol, true);
 }
 
-static int wxDataViewIntermediateCmpDescend( unsigned int row1, unsigned int row2 )
+static int wxDataViewIntermediateCmpDescend( int* row1, int* row2 )
 {
-    return wxDataViewListModelSortedDefaultCompare( row2, row1, s_CmpCol, s_CmpModel );
+    return s_CmpModel->Compare( *row1, *row2, s_CmpCol, false);
 }
 
 void wxDataModelSorted::Resort(const wxArrayInt* row_array)
 {
-    s_CmpModel = m_child;
-    s_CmpCol = m_sort_column;
-
-    wxDataViewSortedIndexArray sorted_array(IsSortOrderAscending() ? wxDataViewIntermediateCmpAscend : wxDataViewIntermediateCmpDescend);
+    wxArrayInt sorted_array;
 
     if (row_array)
-    {
-        for (wxArrayInt::const_iterator it = row_array->begin();
-             it != row_array->end();
-             it++)
-        {
-            sorted_array.Add(*it);
-        }
-    }
+        sorted_array = *row_array;
     else
     {
-        const unsigned int n = m_child->GetRowCount();
-
-        for (unsigned int row = 0; row < n; row++)
-        {
-            sorted_array.Add(row);
-        }
+        sorted_array.resize(m_child->GetRowCount());
+        for (unsigned int row = 0; row < sorted_array.size(); row++)
+            sorted_array[row] = row;
+    }
+    if (m_sort_column != wxNOT_FOUND)
+    {
+        s_CmpModel = m_child;
+        s_CmpCol = m_sort_column;
+        sorted_array.Sort(IsSortOrderAscending() ? wxDataViewIntermediateCmpAscend : wxDataViewIntermediateCmpDescend);
     }
     SetSortArray(sorted_array);
 }
@@ -138,7 +135,8 @@ size_t wxDataModelBase::GetRow(unsigned int row, wxArrayString* as_ptr, bool hea
       }
       as.push_back(str);
    }
-   if (as_ptr) as_ptr->operator=(as);
+   if (as_ptr)
+       as_ptr->operator=(as);
    return as.size();
 }
 
