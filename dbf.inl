@@ -54,19 +54,19 @@ inline bool CDBase::Open(const char* filename, dbf_editmode editmode, const DBF_
 
 inline bool CDBase::Create(void* stream, const struct zlib_filefunc_def_s* api, const DBaseFieldVector& vector, dbf_charconv charconv, void* memo)
 {
-    m_handle = ::dbf_create_attach(stream, api, &vector[0], vector.size(), charconv, memo);
+    m_handle = ::dbf_create_attach(stream, api, &vector[0], (dbf_uint)vector.size(), charconv, memo);
     return (m_handle != NULL);
 }
 
 inline bool CDBase::Create(const char* filename, const DBaseFieldVector& vector)
 {
-    m_handle = ::dbf_create(filename, &vector[0], vector.size(), NULL);
+    m_handle = ::dbf_create(filename, &vector[0], (dbf_uint)vector.size(), NULL);
     return (m_handle != NULL);
 }
 
 inline bool CDBase::Create(const char* filename, const DBaseFieldVector& vector, const DBF_OPEN& parm)
 {
-    m_handle = ::dbf_create(filename, &vector[0], vector.size(), &parm);
+    m_handle = ::dbf_create(filename, &vector[0], (dbf_uint)vector.size(), &parm);
     return (m_handle != NULL);
 }
 

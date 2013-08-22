@@ -73,7 +73,7 @@ public:
         wxDataModelColumnInfoVector vec;
         vec.resize(GetColumnCount());
 
-        for (size_t col = 0; col < vec.size(); col++)
+        for (unsigned int col = 0; col < vec.size(); col++)
             GetColumn(col, &vec[col]);
         return vec;
     }
@@ -219,7 +219,7 @@ public:
 
     virtual unsigned int GetRowCount() const
     {
-        return m_array.GetCount();
+        return (unsigned int)m_array.GetCount();
     }
     virtual unsigned int GetColumnCount() const
     {
