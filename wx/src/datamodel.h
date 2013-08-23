@@ -181,6 +181,7 @@ private:
 
 /////////////////////////////////////////////////////////////////////////////
 // wxDataModelSorted
+// Cloned from wxDataViewSortedListModel in wx28; removed in wx29
 
 class wxDataModelSorted : public wxDataModel
 {

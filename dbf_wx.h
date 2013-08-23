@@ -19,21 +19,15 @@ class wxFileName;
 class wxDBase : public wxObject, public CDBase
 {
    typedef CDBase base;
-
-// Attributes
-public:
-   wxInputStream* m_stream;
-   wxInputStream* m_stream_memo;
-
-// Construction
 public:
 	wxDBase();           
+
+    static const wxString FileExt;
 
 // Operations
 public:	
    bool Open  (const wxFileName&, dbf_editmode);
    bool Open  (const wxFileName&, dbf_editmode, const DBF_OPEN&);
-   bool Open  (wxInputStream*, dbf_charconv charconv = dbf_charconv_compatible);
    bool Create(const wxFileName&, const DBaseFieldVector&);
    bool Create(const wxFileName&, const DBaseFieldVector&, const DBF_OPEN&);
    bool Create(/*const wxString& filename, */void* stream, const struct zlib_filefunc_def_s*, 
@@ -125,6 +119,9 @@ public:
    void Fixups(void);
    bool Update(/*int index*/);
    static bool ParseDate(const wxString&, wxDateTime::Tm*, dbf_data_type);
+private:
+    wxInputStream* m_stream;
+    wxInputStream* m_stream_memo;
 };
 
 #endif // __DBF_WX_H__

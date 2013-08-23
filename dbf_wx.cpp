@@ -23,6 +23,9 @@
 #include "dbf_wx.inl"
 #include "wx/src/wxstreamc.h"
 
+//static
+const wxString wxDBase::FileExt = wxT(DBF_FILEEXT);
+
 bool wxDBase::Attach(wxInputStream* stream, dbf_editmode editmode, dbf_charconv conv, wxInputStream* stream_memo, const wxString& tablename)
 {
    zlib_filefunc_def_s api;
