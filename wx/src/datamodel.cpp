@@ -16,11 +16,13 @@ int wxDataModel::Compare(unsigned int row1, unsigned int row2, unsigned int colu
     static const long hash_datetime = wxHashTableBase::MakeKey(wxT("datetime"));
 
 #if (wxVERSION_NUMBER >= 2900)
-    const long hash = wxHashTableBase::MakeKey(GetSource()->GetColumnType(column));
+    const wxString colType = GetSource()->GetColumnType(column);
 #else
-    const long hash = wxHashTableBase::MakeKey(GetSource()->GetColType(column));
+    const wxString colType = GetSource()->GetColType(column);
 #endif
-    int result;
+    const long hash = wxHashTableBase::MakeKey(colType);
+    int result = 0;
+    bool processed = false;
 
     if (   (hash == hash_long)
         || (hash == hash_double)
@@ -38,6 +40,7 @@ int wxDataModel::Compare(unsigned int row1, unsigned int row2, unsigned int colu
             const long l2 = value2.GetLong();
 
             result = l1-l2;
+            processed = true;
         }
         else if (hash == hash_double) // double
         {
@@ -50,19 +53,24 @@ int wxDataModel::Compare(unsigned int row1, unsigned int row2, unsigned int colu
                 result = 1;
             else
                 result = -1;
+            processed = true;
         }
         else // datetime
         {
             const wxDateTime dt1 = value1.GetDateTime();
             const wxDateTime dt2 = value2.GetDateTime();
 
-            if (dt1.IsEqualTo(dt2))
-                result = 0;
-            else
-                result = dt1.IsEarlierThan(dt2) ? -1 : +1;
+            if (dt1.IsValid() && dt2.IsValid())
+            {
+                if (dt1.IsEqualTo(dt2))
+                    result = 0;
+                else
+                    result = dt1.IsEarlierThan(dt2) ? -1 : +1;
+                processed = true;
+            }
         }
     }
-    else // string or unknown
+    if (!processed)
     {
         wxString str[2];
 
