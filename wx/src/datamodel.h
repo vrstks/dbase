@@ -187,12 +187,13 @@ class wxDataModelSorted : public wxDataModel
 {
     typedef wxDataModel base;
 public:
-    wxDataModelSorted(wxDataModel* child);
+    wxDataModelSorted(wxDataModel* child, bool row_column = false);
 
     int GetSortColumn() const { return m_sort_column; }
     virtual wxDataModel* GetChild() { return m_child; }
     void SetChild(wxDataModel* child) { m_child = child; }
     void Resort(const wxArrayInt* row_array);
+    bool HasRowColumn() const { return m_row_column; }
 
     virtual ~wxDataModelSorted() { delete m_child; }
 
@@ -220,11 +221,11 @@ public:
 
     virtual unsigned int GetRowCount() const
     {
-        return (unsigned int)m_array.GetCount();
+        return (unsigned int)m_array.size();
     }
     virtual unsigned int GetColumnCount() const
     {
-        return m_child->GetColumnCount();
+        return m_child->GetColumnCount() + (m_row_column ? 1 : 0);
     }
 
     void SetSortOrder(bool ascending, int sort_column)
@@ -250,6 +251,7 @@ public:
     unsigned int GetArrayValue(unsigned int index) const { return m_array[index]; }
 protected:
     int m_sort_column;
+    bool m_row_column;
     wxDataModel* m_child;
     bool m_ascending;
     wxArrayInt m_array;
@@ -342,40 +344,57 @@ inline bool wxDataModel::SetValue(wxVariant& var, unsigned int col, unsigned int
 /////////////////////////////////////////////////////////////////////////////
 // wxDataModelSorted
 
-inline wxDataModelSorted::wxDataModelSorted(wxDataModel*child) : //wxDataViewSortedListModel(child),
-   wxDataModel(), m_sort_column(wxNOT_FOUND), m_child(child), m_ascending(true)
+inline wxDataModelSorted::wxDataModelSorted(wxDataModel*child, bool row_column) : //wxDataViewSortedListModel(child),
+   wxDataModel(), m_sort_column(wxNOT_FOUND), m_row_column(row_column), m_child(child), m_ascending(true)
 {
     Resort();
 }
 
 inline bool wxDataModelSorted::GetColumn(unsigned int col, wxDataModelColumnInfo* info) const
 {
-    return m_child->GetColumn(col, info);
+    if ( (col == 0) && m_row_column)
+    {
+        info->type = wxT("long");
+        info->name = wxEmptyString;
+        return true;
+    }
+    else
+        return m_child->GetColumn(col - (m_row_column ? 1 : 0), info);
 }
 
 inline bool wxDataModelSorted::GetValueByRow(wxString* str, unsigned int row, unsigned int col) const
 {
-    return m_child->GetValueByRow( str, GetArrayValue(row), col);
+    if ( (col == 0) && m_row_column)
+    {
+        str->Printf(wxT("%d"), m_array[row] + 1);
+        return true;
+    }
+    else
+        return m_child->GetValueByRow( str, GetArrayValue(row), col - (m_row_column ? 1 : 0));
 }
 
 inline bool wxDataModelSorted::SetValueByRow(const wxString& str, unsigned int row, unsigned int col)
 {
-    bool ret = m_child->SetValueByRow(str, GetArrayValue(row), col);
-
-    // Do nothing here as the change in the
-    // child model will be reported back.
-
-    return ret;
+    if ( (col == 0) && m_row_column)
+        return false;
+    else
+        return m_child->SetValueByRow(str, GetArrayValue(row), col - (m_row_column ? 1 : 0));
 }
 
 inline void wxDataModelSorted::GetValueByRow(wxVariant& var, unsigned int row, unsigned int col) const
 {
-    m_child->GetValueByRow( var, GetArrayValue(row), col);
+    if ( (col == 0) && m_row_column)
+        var = (long)(m_array[row] + 1);
+    else
+        m_child->GetValueByRow( var, GetArrayValue(row), col - (m_row_column ? 1 : 0));
 }
 
 inline bool wxDataModelSorted::SetValueByRow(const wxVariant& var, unsigned int row, unsigned int col)
 {
-    return m_child->SetValueByRow( var, GetArrayValue(row), col);
+    if ( (col == 0) && m_row_column)
+        return false;
+    else
+        return m_child->SetValueByRow( var, GetArrayValue(row), col - (m_row_column ? 1 : 0));
 }
 
 inline size_t wxDataModelSorted::GetProperties(wxArrayString* as, bool header) const
