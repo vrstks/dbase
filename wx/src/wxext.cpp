@@ -1,5 +1,5 @@
 // wxext.cpp
-// Copyright (c) 2007-2013 by Troels K. All rights reserved.
+// Copyright (c) 2007-2014 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -293,20 +293,6 @@ wxAcceleratorEntry wxAcceleratorHelper::GetStockAccelerator(wxWindowID id)
 
 #endif // wxUSE_ACCEL
 
-/*static*/
-void wxAcceleratorHelper::SetAcceleratorTable(wxWindow* wnd, const wxArrayAcceleratorEntry& array)
-{
-   size_t count = array.size();
-   wxAcceleratorEntry* temp = new wxAcceleratorEntry[count];
-
-   for (size_t i = 0; i < count; i++)
-      temp[i] = array.at(i);
-
-   wxAcceleratorTable accel((int)count, temp);
-   wnd->SetAcceleratorTable(accel);
-   delete [] temp;
-}
-
 wxString wxMenuItem_GetText(const wxMenuItem* item)
 {
    wxString str = item->GetItemLabel();
@@ -329,13 +315,9 @@ bool wxAcceleratorHelper::SetAccelText(wxMenuItem* item, const wxString& accel, 
    {
    }
    else if (append)
-   {
       ch_sep = wxT(ACCELSTR_SEP);
-   }
    else
-   {
       str.Truncate(sep);
-   }
    item->SetItemLabel(wxString::Format(wxT("%s%s%s"),
       str.wx_str(),
       ch_sep.wx_str(),
@@ -349,9 +331,9 @@ static wxString wxGetAccelText(const wxAcceleratorEntry& accel)
 }
 
 /*static*/
-void wxAcceleratorHelper::SetAccelText(wxMenuBar* menu, const wxArrayAcceleratorEntry& array)
+void wxAcceleratorHelper::SetAccelText(wxMenuBar* menu, const wxAcceleratorVector& array)
 {
-    for (wxArrayAcceleratorEntry::const_iterator it = array.begin(); it != array.end(); it++)
+    for (wxAcceleratorVector::const_iterator it = array.begin(); it != array.end(); it++)
     {
         const wxAcceleratorEntry& entry = *it;
         wxMenuItem* item = menu->FindItem(entry.GetCommand());
@@ -361,7 +343,7 @@ void wxAcceleratorHelper::SetAccelText(wxMenuBar* menu, const wxArrayAccelerator
     }
 }
 
-wxString wxToolBarTool_MakeShortHelp(const wxString& rstr, const wxArrayAcceleratorEntry& accel, int id)
+wxString wxToolBarTool_MakeShortHelp(const wxString& rstr, const wxAcceleratorVector& accel, int id)
 {
    wxString str = rstr;
 
@@ -369,13 +351,14 @@ wxString wxToolBarTool_MakeShortHelp(const wxString& rstr, const wxArrayAccelera
    {
       wxString strAccel;
 
-      for (wxArrayAcceleratorEntry::const_iterator it = accel.begin(); it != accel.end(); it++)
+      for (wxAcceleratorVector::const_iterator it = accel.begin(); it != accel.end(); it++)
       {
          const wxAcceleratorEntry& element = *it;
 
          if (element.GetCommand() == id)
          {
-            if (!strAccel.empty()) strAccel+=wxT(ACCELSTR_SEP);
+            if (!strAccel.empty())
+                strAccel+=wxT(ACCELSTR_SEP);
             strAccel+=wxGetAccelText(element);
          }
       }
@@ -660,9 +643,7 @@ MDIWindowMenuEvtHandler::MDIWindowMenuEvtHandler(wxMDIParentFrame* wnd) : wxEvtH
 MDIWindowMenuEvtHandler::~MDIWindowMenuEvtHandler()
 {
     if (m_target_wnd)
-    {
         m_target_wnd->RemoveEventHandler(this);
-    }
 }
 
 BEGIN_EVENT_TABLE(MDIWindowMenuEvtHandler, wxEvtHandler)
@@ -821,9 +802,7 @@ bool wxTrunkListView::GetSubItemRect( long row, long col, wxRect& rect, int code
          const int width = GetColumnWidth(i);
 
          if (i < col)
-         {
             rect.x+=width;
-         }
          else if (i == col)
          {
             rect.width = width;
@@ -883,13 +862,9 @@ bool wxTrunkListView::EndEditLabel(bool cancel)
          }
       #endif
          if (::IsWindowVisible(hwnd))
-         {
             ::SendMessage(hwnd, WM_KEYDOWN, cancel ? VK_ESCAPE : VK_RETURN, 0);
-         }
          else
-         {
             ::SendMessage(hwnd, WM_CLOSE, 0, 0);
-         }
       }
       return ok;
     #endif

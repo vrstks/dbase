@@ -1,5 +1,5 @@
 // wx/ext/wx.h
-// Copyright (c) 2007-2013 by Troels K. All rights reserved.
+// Copyright (c) 2007-2014 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #define WXK_HELP       WXK_F1
@@ -74,16 +74,24 @@ public:
 
 #if wxUSE_ACCEL
 class WXDLLIMPEXP_FWD_CORE wxMenuBar;
-class wxArrayAcceleratorEntry : public std::vector<wxAcceleratorEntry> {};
+
+class wxAcceleratorVector : public std::vector<wxAcceleratorEntry> // inline class, not exported
+{
+public:
+    wxAcceleratorTable ToArray() const
+    {
+        return wxAcceleratorTable(size(), &at(0));
+    }
+};
+
 class wxAcceleratorHelper
 {
 public:
     static wxAcceleratorEntry GetStockAccelerator(wxWindowID);
-    static void SetAccelText(wxMenuBar*, const wxArrayAcceleratorEntry&);
-    static void SetAcceleratorTable(wxWindow*, const wxArrayAcceleratorEntry&);
+    static void SetAccelText(wxMenuBar*, const wxAcceleratorVector&);
     static bool SetAccelText(wxMenuItem*, const wxString& accel, bool append);
 };
-extern wxString wxToolBarTool_MakeShortHelp(const wxString&, const wxArrayAcceleratorEntry& accel, int id);
+extern wxString wxToolBarTool_MakeShortHelp(const wxString&, const wxAcceleratorVector& accel, int id);
 #endif
 
 #define wxMessageBoxCaption      wxGetApp().GetAppDisplayName()

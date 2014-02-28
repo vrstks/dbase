@@ -1,5 +1,5 @@
 // dbfframe.cpp
-// Copyright (c) 2007-2013 by Troels K. All rights reserved.
+// Copyright (c) 2007-2014 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -16,7 +16,8 @@ DBFFrame::DBFFrame() : wxDocMDIChildFrame(), m_mru(NULL)
 
 DBFFrame::~DBFFrame()
 {
-   if (m_mru) m_mru->Detach(this);
+   if (m_mru)
+       m_mru->Detach(this);
 }
 
 BEGIN_EVENT_TABLE(DBFFrame, wxDocMDIChildFrame)
@@ -44,9 +45,9 @@ wxMenuBar* DBFFrame::CreateMenuBar() const
    wxAcceleratorHelper::SetAccelText(menubar, GetAccelerator());
    return menubar;
 }
-/*static*/ const wxArrayAcceleratorEntry& DBFFrame::GetAccelerator()
+/*static*/ const wxAcceleratorVector& DBFFrame::GetAccelerator()
 {
-   static wxArrayAcceleratorEntry array;
+   static wxAcceleratorVector array;
 
    if (array.empty())
    {
@@ -87,7 +88,8 @@ wxMenuBar* DBFFrame::CreateMenuBar() const
 void DBFFrame::SetMenuBar(wxMenuBar* menubar)
 {
     base::SetMenuBar(menubar);
-    if (m_mru) m_mru->Attach(menubar);
+    if (m_mru)
+        m_mru->Attach(menubar);
 }
 
 #if (wxVERSION_NUMBER < 2900) // trac.wxwidgets.org/ticket/11442
@@ -118,9 +120,7 @@ void DBFFrame::Raise()
     base::Raise();
 #else
     if (IsIconized())
-    {
         Restore();
-    }
     Activate();
 #endif
 }

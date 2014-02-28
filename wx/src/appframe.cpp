@@ -1,5 +1,5 @@
 // appframe.cpp
-// Copyright (c) 2007-2013 by Troels K. All rights reserved.
+// Copyright (c) 2007-2014 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -49,10 +49,10 @@ bool MainFrame::Create(wxDocManager* manager, const wxString& title, const wxPoi
     if (ok)
     {
         CreateStatusBar()->PushStatusText(_("Ready"));
-        SetToolBar(CreateToolBar());
         SetIcon(wxICON(app));
         SetMenuBar(CreateMenuBar());
-        wxAcceleratorHelper::SetAcceleratorTable(this, DBFFrame::GetAccelerator());
+        SetToolBar(CreateToolBar());
+        SetAcceleratorTable(DBFFrame::GetAccelerator().ToArray());
         ::wxFrame_SetInitialPosition(this, pos, size);
         m_windowMenuEvtHandler = new MDIWindowMenuEvtHandler(this);
 
@@ -96,8 +96,9 @@ typedef struct _wxTOOLBARITEM
 
 wxToolBar* MainFrame::CreateToolBar()
 {
-   const wxArrayAcceleratorEntry& accel = DBFFrame::GetAccelerator();
+   const wxAcceleratorVector& accel = DBFFrame::GetAccelerator();
    wxToolBar* tb = base::CreateToolBar(wxTB_TEXT | wxBORDER_NONE | wxTB_HORIZONTAL | wxTB_FLAT);
+
    const wxSize size = tb->GetToolBitmapSize();
 
    const wxTOOLBARITEM aID[] =
@@ -122,7 +123,6 @@ wxToolBar* MainFrame::CreateToolBar()
       { wxID_EXIT          , NULL               , wxEmptyString, wxEmptyString },
       { wxID_SEPARATOR     , NULL               , wxEmptyString, wxEmptyString },
    };
-
    for (size_t i = 0; i < WXSIZEOF(aID); i++)
    {
       const wxTOOLBARITEM& element = aID[i];
@@ -197,9 +197,7 @@ bool MainFrame::MSWTranslateMessage(WXMSG* msg)
 #endif
 
     if (!processed)
-    {
          processed = base::MSWTranslateMessage(msg);
-    }
     return processed;
 }
 #endif

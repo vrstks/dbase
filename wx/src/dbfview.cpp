@@ -1,5 +1,5 @@
 // dbfview.cpp
-// Copyright (c) 2007-2013 by Troels K. All rights reserved.
+// Copyright (c) 2007-2014 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -95,6 +95,7 @@ bool DBFView::OnCreate(wxDocument* doc, long flags)
       wxASSERT(frame == GetFrame());
       wnd->Create(frame);
       SetWindow(wnd);
+      frame->Show();
    }
    return ok;
 }
@@ -191,35 +192,34 @@ void DBFView::OnUpdateSelectAll(wxUpdateUIEvent& event)
 void DBFView::OnUpdateNeedSel_Deleted(wxUpdateUIEvent& event)
 {
    GetWindow()->OnUpdateNeedSel_Deleted(event);
-   if (!GetDocument()->IsEditable()) event.Enable(false);
+   if (!GetDocument()->IsEditable())
+       event.Enable(false);
 }
 
 void DBFView::OnUpdateNeedSel_NotDeleted(wxUpdateUIEvent& event)
 {
    GetWindow()->OnUpdateNeedSel_NotDeleted(event);
-   if (!GetDocument()->IsEditable()) event.Enable(false);
+   if (!GetDocument()->IsEditable())
+       event.Enable(false);
 }
 
 void DBFView::OnUpdateNeedSel(wxUpdateUIEvent& event)
 {
    GetWindow()->OnUpdateNeedSel(event);
-   if (!GetDocument()->IsEditable()) event.Enable(false);
+   if (!GetDocument()->IsEditable())
+       event.Enable(false);
 }
 
 void DBFView::OnDeleteAll(wxCommandEvent&)
 {
    if (wxOK == wxMessageBox(_("Delete all?"), wxMessageBoxCaptionStr, wxOK | wxCANCEL | wxICON_QUESTION, GetModalParent()))
-   {
       GetWindow()->DeleteAll(true);
-   }
 }
 
 void DBFView::OnDelete(wxCommandEvent&)
 {
    if (wxOK == wxMessageBox(_("Delete selection?"), wxMessageBoxCaptionStr, wxOK | wxCANCEL | wxICON_QUESTION, GetModalParent()))
-   {
       GetWindow()->DeleteSelection(true);
-   }
 }
 
 void DBFView::OnAdd(wxCommandEvent&)
