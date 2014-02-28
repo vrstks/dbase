@@ -120,7 +120,7 @@ void wxDataModelSorted::Resort(const wxArrayInt* row_array)
         if ((m_sort_column == 0) && m_row_column)
         {
             for (unsigned int row = 0; row < sorted_array.size(); row++)
-                sorted_array[row] = IsSortOrderAscending() ? row : (sorted_array.size() - row - 1);
+                sorted_array[row] = (int)(IsSortOrderAscending() ? row : (sorted_array.size() - row - 1));
         }
         else
         {

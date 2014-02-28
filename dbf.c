@@ -1,5 +1,5 @@
 /* dbf.c */
-/* Copyright (c) 2007-2012 by Troels K. All rights reserved. */
+/* Copyright (c) 2007-2014 by Troels K. All rights reserved. */
 /* License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt */
 /* Partially based on MFC source code by www.pablosoftwaresolutions.com 2002   */
 /* Partially based on Turbo C source code by Mark Sadler.      */
@@ -10,7 +10,6 @@
 #include <time.h>
 #include <locale.h>
 #include <ctype.h>
-#include <limits.h>
 #include <math.h>
 #ifdef __BORLANDC__
     #include <ctime>
@@ -1651,7 +1650,7 @@ DBF_HANDLE dbf_create_attach(void* stream, const zlib_filefunc_def* api,
    {
       const DBF_FIELD_INFO* src = array + i;
             DBF_FIELD     * dst = fieldarray + i;
-      const size_t len = min(src->length, UCHAR_MAX);
+      const size_t len = min(src->length, UINT8_MAX);
 
       //dst->index = i;
       strncpy(dst->m_Name, src->name, sizeof(dst->m_Name));

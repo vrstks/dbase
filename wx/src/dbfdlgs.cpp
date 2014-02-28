@@ -102,7 +102,7 @@ void wxStructListView::Init(wxDBase* db)
 
 void wxStructListView::Fill()
 {
-    SetItemCount(m_array.size());
+    SetItemCount((long)m_array.size());
     Refresh();
 }
 
@@ -110,7 +110,7 @@ void wxStructListView::Add(const DBF_FIELD_INFO& info)
 {
     m_array.push_back(info);
     Fill();
-    SelectRow(m_array.size() - 1);
+    SelectRow((long)(m_array.size() - 1));
 }
 
 wxString wxStructListView::OnGetItemText(long item, long col) const
