@@ -147,7 +147,7 @@ size_t wxDataModelBase::GetRow(unsigned int row, wxArrayString* as_ptr, bool hea
 
          GetColumn(col, &info);
          str.Printf(wxT("%s:\t%s"),
-             info.name.wx_str(),
+             info.Name.wx_str(),
              str.wx_str());
       }
       as.push_back(str);
@@ -180,14 +180,13 @@ size_t wxDataModelBase::GetProperties(wxArrayString* as_ptr, bool header) const
    size_t i = 0;
    for (wxDataModelColumnInfoVector::const_iterator it = columns.begin(); it != columns.end(); it++, i++)
    {
-      const wxDataModelColumnInfo& info = *it;
       wxString str;
 
       str.Printf(wxT("%d\t%s:\t%s\t%d"),
          (int)i,
-         info.name.wx_str(),
-         info.type.wx_str(),
-         info.len
+         it->Name.wx_str(),
+         it->VariantType.wx_str(),
+         it->Length
          );
       as.push_back(str);
    }

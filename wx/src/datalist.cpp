@@ -140,8 +140,8 @@ void DataModelListCtrl::InitColumns(const std::vector<int>& col_width, bool row_
         wxListColumnFormat format = wxLIST_FORMAT_LEFT;
         const wxDataModelColumnInfo& info = *it;
 
-        if (   (wxT("long"  ) == info.type)
-            || (wxT("double") == info.type) )
+        if (   (wxT("long"  ) == info.VariantType)
+            || (wxT("double") == info.VariantType) )
         {
             format = wxLIST_FORMAT_RIGHT;
         }
@@ -153,9 +153,9 @@ void DataModelListCtrl::InitColumns(const std::vector<int>& col_width, bool row_
         }
 */
     #if USE_DATALISTVIEW
-        AppendTextColumn(info.name);
+        AppendTextColumn(info.Name);
     #else
-        AppendColumn(info.name, format, col_width.empty() ? 150 : col_width[it - columns.begin()]);
+        AppendColumn(info.Name, format, col_width.empty() ? 150 : col_width[it - columns.begin()]);
     #endif
     }
     Fill();
@@ -264,15 +264,15 @@ void DataModelListCtrl::OnEndLabelEdit(wxListEvent& event)
             wxDataModelColumnInfo info;
 
             ok = GetModel()->GetColumn(m_column_clicked, &info);
-            if (ok && (info.type == wxT("string")) )
+            if (ok && (info.VariantType == wxT("string")) )
             {
-                ok = (str.length() <= info.len);
+                ok = (str.length() <= info.Length);
                 if (!ok)
                     errorMsg = _("Text too long");
             }
             if (ok)
             {
-                if (info.type == wxT("datetime"))
+                if (info.VariantType == wxT("datetime"))
                 {
                     wxDateTime date;
 

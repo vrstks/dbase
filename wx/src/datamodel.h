@@ -1,5 +1,5 @@
 // datamodel.h
-// Copyright (c) 2007-2013 by Troels K. All rights reserved.
+// Copyright (c) 2007-2014 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include <vector>
@@ -38,11 +38,13 @@ public:
 class wxDataModelColumnInfo
 {
 public:
-    wxDataModelColumnInfo() : len(0) {}
+    wxDataModelColumnInfo() : Length(0) {}
+    wxDataModelColumnInfo(const wxString& name, const wxString& varianttype, size_t length)
+        : Name(name), VariantType(varianttype), Length(length) {}
 
-    wxString name;
-    wxString type;
-    size_t len;
+    wxString Name;
+    wxString VariantType;
+    size_t   Length;
 };
 class wxDataModelColumnInfoVector : public std::vector<wxDataModelColumnInfo> {};
 
@@ -104,9 +106,6 @@ public:
 // wxDataModel
 
 class wxDataModel :
-#if (wxVERSION_NUMBER >= 2900)
-    public wxObject,
-#endif
     public wxDataViewListModelEx, public wxDataModelBase
 {
 public:
@@ -152,7 +151,7 @@ private:
         wxDataModelColumnInfo info;
 
         GetColumn(col, &info);
-        return info.type;
+        return info.VariantType;
     }
     virtual unsigned int GetCount() const
     {
@@ -174,7 +173,7 @@ private:
         wxDataModelColumnInfo info;
 
         GetColumn(col, &info);
-        return info.type;
+        return info.VariantType;
     }
 #endif
 };
@@ -262,9 +261,9 @@ protected:
 
 inline bool wxDataModelBase::GetColumn(unsigned int WXUNUSED(col), wxDataModelColumnInfo* info) const
 {
-    info->type = wxT("string");
+    info->VariantType = wxT("string");
     //info->name;
-    info->len = 255;
+    info->Length = 255;
     return true;
 }
 
@@ -354,8 +353,8 @@ inline bool wxDataModelSorted::GetColumn(unsigned int col, wxDataModelColumnInfo
 {
     if ( (col == 0) && m_row_column)
     {
-        info->type = wxT("long");
-        info->name = wxEmptyString;
+        info->VariantType = wxT("long");
+        info->Name = wxEmptyString;
         return true;
     }
     else

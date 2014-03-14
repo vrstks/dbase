@@ -55,9 +55,9 @@ bool DBFModel::GetColumn( unsigned int col, wxDataModelColumnInfo* info) const
 
    if (ok)
    {
-      info->name = wxConvertMB2WX(dbf_info.name);
-      info->len = dbf_info.length;
-      info->type = m_database->GetColType(col);
+      info->Name        = wxConvertMB2WX(dbf_info.name);
+      info->Length      = dbf_info.length;
+      info->VariantType = m_database->GetColType(col);
    }
    return ok;
 }
@@ -174,23 +174,24 @@ bool DBFModel::AddNew(void)
       DBF_FIELD_INFO* item = &vector[col];
 
       model->GetColumn(col, &info);      
-      strncpy(item->name, info.name.mb_str(), WXSIZEOF(item->name));
+      strncpy(item->name, info.Name.mb_str(), WXSIZEOF(item->name));
       item->name[WXSIZEOF(item->name) - 1] = 0;
       item->decimals = 0;
-      item->length = wxMin(info.len, 255UL);
+      item->length = wxMin(info.Length, 255UL);
 
-      if (wxT("datetime") == info.type)
+      if (wxT("datetime") == info.VariantType)
          item->type = DBF_DATA_TYPE_DATE;
-      else if (wxT("double") == info.type)
+      else if (wxT("double") == info.VariantType)
          item->type = DBF_DATA_TYPE_FLOAT;
-      else if (wxT("long") == info.type)
+      else if (wxT("long") == info.VariantType)
          item->type = DBF_DATA_TYPE_INTEGER;
-      else if (wxT("bool") == info.type)
+      else if (wxT("bool") == info.VariantType)
          item->type = DBF_DATA_TYPE_BOOLEAN;
-      else //if (wxT("string") == info.type)
+      else //if (wxT("string") == info.VariantType)
       {
          item->type = DBF_DATA_TYPE_CHAR;
-         if (0 == item->length) item->length = 80;
+         if (0 == item->length)
+             item->length = 80;
       }
    }
 
