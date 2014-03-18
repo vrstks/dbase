@@ -1,27 +1,23 @@
 // datalist.cpp
-// Copyright (c) 2007-2013 by Troels K. All rights reserved.
+// Copyright (c) 2007-2014 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
 
 #include "wx/ext/wx.h"
-#include "datalist.h"
 #include "datamodel.h"
+#include "datalist.h"
 
 const wxEventType wxEVT_LIST_CELL_CLICK = wxNewEventType();
 const wxEventType wxEVT_LIST_CELL_DCLICK = wxNewEventType();
 
 #if USE_DATALISTVIEW
-IMPLEMENT_DYNAMIC_CLASS(DataModelListCtrl, wxDataViewListCtrl)
-#else
-IMPLEMENT_DYNAMIC_CLASS(DataModelListCtrl, wxTrunkListView)
-#endif
-
-#if USE_DATALISTVIEW
-BEGIN_EVENT_TABLE(DataModelListCtrl, wxDataViewListCtrl)
-    EVT_KEY_DOWN(DataModelListCtrl::OnKeyDown)
+IMPLEMENT_DYNAMIC_CLASS(DataModelListCtrl, wxDataViewCtrl)
+BEGIN_EVENT_TABLE(DataModelListCtrl, wxDataViewCtrl)
+    //EVT_KEY_DOWN(DataModelListCtrl::OnKeyDown)
 END_EVENT_TABLE()
 #else
+IMPLEMENT_DYNAMIC_CLASS(DataModelListCtrl, wxTrunkListView)
 BEGIN_EVENT_TABLE(DataModelListCtrl, wxTrunkListView)
     EVT_KEY_DOWN(DataModelListCtrl::OnKeyDown)
     EVT_LIST_ITEM_SELECTED(wxID_ANY, DataModelListCtrl::OnSelectionChanged)
@@ -36,36 +32,80 @@ END_EVENT_TABLE()
 DataModelListCtrl::DataModelListCtrl()
 {
     m_row_column = false;
+#if !USE_DATALISTVIEW
     m_model = NULL;
     m_column_clicked = wxNOT_FOUND;
     m_id_edit = m_id_selchange = m_id_delete = 0;
+#endif
 }
 
 DataModelListCtrl::~DataModelListCtrl()
 {
+    AssociateModel(NULL);
 }
 
 bool DataModelListCtrl::Create(wxWindow *parent, wxWindowID id,
            const wxPoint& pos, const wxSize& size,
            long style,
-           const wxValidator& validator,
-           const wxString& name)
+           const wxValidator& validator)
 {
 #if USE_DATALISTVIEW
-    style = wxDV_ROW_LINES;
     bool ok = base::Create(parent, id, pos, size, style);
     if (ok)
-    {
         SetValidator(validator);
-    }
 #else
-    bool ok = base::Create(parent, id, pos, size, style, validator, name);
+    bool ok = base::Create(parent, id, pos, size, style, validator);
     if (ok)
        EnableAlternateRowColours();
 #endif
     return ok;
 }
 
+#if USE_DATALISTVIEW
+void DataModelListCtrl::InitColumns(const std::vector<int>& col_width, bool row_column)
+{
+    wxDataModelBase* model = GetModel();
+    wxDataViewColumn* column;
+    wxDataViewRenderer* tr;
+    size_t col = 0;
+    
+    m_row_column = row_column;
+    if (m_row_column)
+    {
+        tr = new wxDataViewTextRenderer(wxT("long"), wxDATAVIEW_CELL_INERT);
+        column = new wxDataViewColumn(wxEmptyString, tr, col++, 75, wxALIGN_LEFT);
+        AppendColumn(column);
+    }
+
+    const wxDataModelColumnInfoVector columns = model->GetColumns();
+    wxASSERT(col_width.empty() || (col_width.size() == columns.size()) );
+    for (wxDataModelColumnInfoVector::const_iterator it = columns.begin(); it != columns.end(); it++)
+    {
+        wxAlignment align = wxALIGN_LEFT;
+        const wxDataModelColumnInfo& info = *it;
+
+        if (   (wxT("long"  ) == info.VariantType)
+            || (wxT("double") == info.VariantType) )
+        {
+            align = wxALIGN_RIGHT;
+        }
+        else if (   (wxT("datetime") == info.VariantType)
+                 || (wxT("bool"    ) == info.VariantType) )
+        {
+            align = wxALIGN_CENTER;
+        }
+
+        if (wxT("bool") == info.VariantType)
+            tr = new wxDataViewToggleRenderer(info.VariantType, wxDATAVIEW_CELL_ACTIVATABLE);
+        else
+            tr = new wxDataViewTextRenderer(info.VariantType, wxDATAVIEW_CELL_INERT);
+        column = new wxDataViewColumn(info.Name, tr, col++, col_width.empty() ? 150 : col_width[it - columns.begin()], align);
+        AppendColumn(column);
+    //AppendColumn(info.Name, format, col_width.empty() ? 150 : col_width[it - columns.begin()]);
+    }
+    Fill();
+}
+#else // !USE_DATALISTVIEW
 bool DataModelListCtrl::SendEvent( const wxEventType type, int row, int col)
 {
     wxListCellEvent evt(type, GetId());
@@ -163,11 +203,8 @@ void DataModelListCtrl::InitColumns(const std::vector<int>& col_width, bool row_
 
 void DataModelListCtrl::Fill()
 {
-#if USE_DATALISTVIEW
-#else
     SetItemCount(GetModel() ? GetModel()->GetRowCount() : 0);
     Refresh();
-#endif
 }
 
 wxString DataModelListCtrl::OnGetItemText(long row, long col) const
@@ -225,7 +262,6 @@ bool DataModelListCtrl::CanEditLabel(void)
     return (m_column_clicked != wxNOT_FOUND) && IsEditable();
 }
 
-#if !USE_DATALISTVIEW
 void DataModelListCtrl::OnSelectionChanged(wxListEvent& event)
 {
     if (m_id_selchange && HasSelection())

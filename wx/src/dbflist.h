@@ -1,5 +1,5 @@
 // dbflist.h - editable
-// Copyright (c) 2007-2013 by Troels K. All rights reserved.
+// Copyright (c) 2007-2014 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __DATALIST_H__
@@ -22,12 +22,6 @@ public:
     bool Edit();
     bool AddNew();
 
-    void EnsureVisible(long row)
-    {
-        bool visible = (row >= GetTopItem()) && (row < (GetTopItem() + GetCountPerPage()));
-        if (!visible)
-            base::EnsureVisible(row);
-    }
     bool IsUndeletedInSelection(void);
     bool IsDeletedInSelection(void);
     void OnUpdateNeedSel_Deleted(wxUpdateUIEvent&);

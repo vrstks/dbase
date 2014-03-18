@@ -11,6 +11,7 @@
 #include "dbfview.h"
 #include "dbfdoc.h"
 #include "dbfdlgs.h"
+#include "datamodel.h"
 #include "datalist.h"
 #include "dbfutil.h"
 #include "dbfmodel.h"
@@ -120,10 +121,9 @@ void DBFView::OnUpdate(wxView* sender, wxObject* hint)
     if (wxDynamicCast(hint, wxFileLoadedHint))
     {
         //GetWindow()->InitColumns(150, true);
+        GetWindow()->GetModel()->Reset();
         GetWindow()->InitColumns();
-    #if !USE_DATALISTVIEW
         GetWindow()->SelectRow(0);
-    #endif
     }
     else
         base::OnUpdate(sender, hint);
@@ -186,7 +186,9 @@ void DBFView::OnUndelete(wxCommandEvent&)
 
 void DBFView::OnUpdateSelectAll(wxUpdateUIEvent& event)
 {
-   GetWindow()->OnUpdateSelectAll(event);
+#if !USE_DATALISTVIEW
+    GetWindow()->OnUpdateSelectAll(event);
+#endif
 }
 
 void DBFView::OnUpdateNeedSel_Deleted(wxUpdateUIEvent& event)
@@ -205,7 +207,9 @@ void DBFView::OnUpdateNeedSel_NotDeleted(wxUpdateUIEvent& event)
 
 void DBFView::OnUpdateNeedSel(wxUpdateUIEvent& event)
 {
+#if !USE_DATALISTVIEW
    GetWindow()->OnUpdateNeedSel(event);
+#endif
    if (!GetDocument()->IsEditable())
        event.Enable(false);
 }

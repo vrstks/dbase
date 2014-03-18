@@ -1,5 +1,5 @@
 // dbfdoc.cpp
-// Copyright (c) 2007-2013 by Troels K. All rights reserved.
+// Copyright (c) 2007-2014 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -56,6 +56,7 @@ bool DBFDocument::DoOpenDocument(const wxString& filePath)
         if (ok)
         {
             m_tablename = fileName.GetName();
+            SetTitle(fileName.GetFullPath());
             wxFileLoadedHint hint;
             UpdateAllViews(NULL, &hint);
         }

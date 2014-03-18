@@ -1,5 +1,5 @@
 // dbflist.cpp
-// Copyright (c) 2007-2013 by Troels K. All rights reserved.
+// Copyright (c) 2007-2014 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -14,8 +14,8 @@
 
 #include "wx/ext/trunk.h"
 #include "wx/ext/wx.h"
-#include "datalist.h"
 #include "datamodel.h"
+#include "datalist.h"
 #include "dbfmodel.h"
 #include "dbflist.h"
 
@@ -131,9 +131,11 @@ bool DBFListCtrl::IsUndeletedInSelection(void)
     bool ok = false;
     wxArrayInt selections;
 
+#if !USE_DATALISTVIEW
     GetSelections(selections);
     for (wxArrayInt::const_iterator it = selections.begin(); (!ok) && (it != selections.end()); it++)
         ok = ok || (IsRecordOk(*it) && !IsRecordDeleted(*it));
+#endif
     return ok;
 }
 
@@ -142,9 +144,11 @@ bool DBFListCtrl::IsDeletedInSelection(void)
     bool ok = false;
     wxArrayInt selections;
 
+#if !USE_DATALISTVIEW
     GetSelections(selections);
     for (wxArrayInt::const_iterator it = selections.begin(); (!ok) && (it != selections.end()); it++)
         ok = ok || (IsRecordOk(*it) && IsRecordDeleted(*it));
+#endif
     return ok;
 }
 
@@ -192,9 +196,11 @@ void DBFListCtrl::DeleteSelection(bool bDelete)
 {
     wxArrayInt selections;
 
+#if !USE_DATALISTVIEW
     GetSelections(selections);
     for (wxArrayInt::const_iterator it = selections.begin(); it != selections.end(); it++)
         DeleteRecord(*it, bDelete);
+#endif
     Fill();
 }
 
