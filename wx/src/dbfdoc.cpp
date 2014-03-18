@@ -16,10 +16,11 @@
 #include "wx/ext/wx.h"
 #include "wx/ext/trunk.h"
 #include "dbfdlgs.h"
+#include "wxstreamc.h"
 
 IMPLEMENT_DYNAMIC_CLASS(DBFDocument, wxDocument)
 
-DBFDocument::DBFDocument(void) : wxDocument(), m_database(new wxDBase())
+DBFDocument::DBFDocument(void) : wxDocument(), m_database(new wxDBase()), m_stream(NULL)
 {
 }
 
@@ -39,6 +40,37 @@ bool DBFDocument::DoSaveDocument(const wxString& WXUNUSED(filename))
         */
     Modify(false);
     return true;
+}
+
+bool DBFDocument::AttachStream(wxInputStream& stream, const wxString& filePath)
+{
+    const wxFileName fileName(filePath);
+    struct zlib_filefunc_def_s api;
+    bool ok;
+    const wxString tablename = fileName.GetName();
+
+    ::fill_filefunc(&api, &stream);
+
+    ok = m_database->Attach(&stream, &api, dbf_editmode_readonly, dbf_charconv_default, NULL, tablename);
+    if (ok)
+    {
+        m_tablename = tablename;
+        m_stream = &stream;
+        SetTitle(fileName.GetFullPath());
+        SetFilename(filePath, true);
+        wxFileLoadedHint hint;
+        UpdateAllViews(NULL, &hint);
+    }
+    else
+        wxLogError(_("Bad file format in file \"%s\"."), fileName.GetFullPath().wx_str());
+    return ok;
+}
+
+bool DBFDocument::DeleteContents()
+{
+    bool ok = base::DeleteContents();
+    wxDELETE(m_stream);
+    return ok;
 }
 
 bool DBFDocument::DoOpenDocument(const wxString& filePath)

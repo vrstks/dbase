@@ -82,7 +82,8 @@ public:
    void       GetInfo(DBF_INFO*, wxDateTime* dt = NULL) const;
 
    bool       Attach(/*const wxString& filename, */void* stream, const struct zlib_filefunc_def_s*, 
-                     dbf_editmode editmode = dbf_editmode_editable, dbf_charconv conv = dbf_charconv_compatible, void* memo = NULL);
+                     dbf_editmode editmode = dbf_editmode_editable, dbf_charconv conv = dbf_charconv_compatible, void* memo = NULL,
+                     const wxString& tablename = wxEmptyString);
    bool       Attach(DBF_HANDLE/*, const wxString& filename*/);
    bool       Attach(wxDBase*);
    bool       Attach(wxInputStream*, dbf_editmode editmode = dbf_editmode_editable, dbf_charconv conv = dbf_charconv_compatible, 

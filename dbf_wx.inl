@@ -55,10 +55,11 @@ inline bool wxDBase::Create(void* stream, const struct zlib_filefunc_def_s* api,
 }
 
 inline bool wxDBase::Attach(void* stream, const struct zlib_filefunc_def_s* api,
-                            dbf_editmode editmode, dbf_charconv conv, void* memo)
+                            dbf_editmode editmode, dbf_charconv conv, void* memo,
+                            const wxString& tablename)
 {
    wxASSERT(!IsOpen());
-   bool ok = base::Attach(stream, api, editmode, conv, memo);
+   bool ok = base::Attach(stream, api, editmode, conv, memo, tablename.mb_str());
 
    return ok;
 }

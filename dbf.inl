@@ -1,5 +1,5 @@
 // dbf.inl
-// Copyright (c) 2007-2013 by Troels K. All rights reserved.
+// Copyright (c) 2007-2014 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 inline CDBase::CDBase() : m_handle(NULL)
@@ -16,9 +16,9 @@ inline bool CDBase::IsOpen(void) const
    return (m_handle != NULL);
 }
 
-inline bool CDBase::Attach(void* stream, const struct zlib_filefunc_def_s* api, dbf_editmode editmode, dbf_charconv conv, void* memo, const std::string* tablename)
+inline bool CDBase::Attach(void* stream, const struct zlib_filefunc_def_s* api, dbf_editmode editmode, dbf_charconv conv, void* memo, const char* tablename)
 {
-    m_handle = ::dbf_attach(stream, api, editmode, conv, memo, tablename ? tablename->c_str() : NULL);
+    m_handle = ::dbf_attach(stream, api, editmode, conv, memo, tablename);
     return (m_handle != NULL);
 }
 

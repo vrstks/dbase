@@ -1,5 +1,5 @@
 // dbf.hpp
-// Copyright (c) 2007-2013 by Troels K. All rights reserved.
+// Copyright (c) 2007-2014 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __DBF_HPP__
@@ -140,7 +140,7 @@ public:
                      dbf_editmode editmode = dbf_editmode_editable,
                      dbf_charconv conv = dbf_charconv_compatible, 
                      void* memo = NULL,
-                     const std::string* tablename = NULL);
+                     const char* tablename = NULL);
    bool       Attach(DBF_HANDLE);
    bool       Attach(CDBase*);
    DBF_HANDLE Detach(void);
