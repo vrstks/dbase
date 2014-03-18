@@ -106,7 +106,7 @@ public:
                 wxWindowID id = wxID_ANY,
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
-                long style = wxLC_REPORT | wxLC_VIRTUAL,
+                long style = wxLC_REPORT | wxLC_VIRTUAL | wxLC_EDIT_LABELS,
                 const wxValidator& validator = wxDefaultValidator);
 
 protected:

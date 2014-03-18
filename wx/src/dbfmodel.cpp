@@ -63,7 +63,7 @@ bool DBFModel::GetColumn( unsigned int col, wxDataModelColumnInfo* info) const
 }
 
 unsigned int DBFModel::GetRowCount() const
-{    
+{
    return m_database->GetRecordCount();
 }
 
@@ -83,7 +83,7 @@ bool DBFModel::GetValueByRow(wxString* str, unsigned int row, unsigned int col) 
          bool n;
 
          if (m_database->Read(col, &n))
-            str->operator=(n ? _("True") : _("False"));
+            str->operator=(n ? _("true") : _("false"));
          break;
       }
       case DBF_DATA_TYPE_FLOAT:
@@ -173,7 +173,7 @@ bool DBFModel::AddNew(void)
       wxDataModelColumnInfo info;
       DBF_FIELD_INFO* item = &vector[col];
 
-      model->GetColumn(col, &info);      
+      model->GetColumn(col, &info);
       strncpy(item->name, info.Name.mb_str(), WXSIZEOF(item->name));
       item->name[WXSIZEOF(item->name) - 1] = 0;
       item->decimals = 0;
@@ -204,7 +204,7 @@ bool DBFModel::AddNew(void)
       for (col = 0; col < col_count; col++)
       {
          wxVariant var;
-         
+
          model->GetValueByRow(var, row, col);
          if (!var.IsNull())
          {
@@ -251,3 +251,16 @@ wxString DBFModel::GetTableName(void) const
    m_database->GetInfo(&info);
    return wxConvertMB2WX(info.tablename);
 }
+
+#if (wxVERSION_NUMBER >= 2902)
+bool DBFModel::GetAttrByRow(unsigned int row, unsigned int col, wxDataViewItemAttr& attr) const
+{
+    if (((DBFModel*)this)->IsRowDeleted(row))
+    {
+        attr.SetColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
+        return true;
+    }
+    else
+        return base::GetAttrByRow(row, col, attr); // returns false
+}
+#endif

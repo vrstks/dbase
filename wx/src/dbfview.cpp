@@ -34,7 +34,7 @@ public:
 
    bool Create(wxWindow* parent)
    {
-       bool ok = base::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_VIRTUAL | wxLC_EDIT_LABELS);
+       bool ok = base::Create(parent, wxID_ANY);
        //bool ok = base::Create(parent);
        if (ok)
            AssociateModel(&m_datamodel);
@@ -43,6 +43,7 @@ public:
 
    virtual ~DBFWindow()
    {
+        //AssociateModel(NULL);
    }
 };
 
@@ -131,17 +132,18 @@ void DBFView::OnUpdate(wxView* sender, wxObject* hint)
 
 bool DBFView::OnClose(bool deleteWindow)
 {
-   bool ok = base::OnClose(deleteWindow);
-   if (ok)
-   {
-      Activate(false);
-      if (deleteWindow && GetFrame())
-      {
-         GetFrame()->Destroy();
-         SetFrame(NULL);
-      }
-   }
-   return ok;
+    bool ok = base::OnClose(deleteWindow);
+    if (ok)
+    {
+        Activate(false);
+        GetWindow()->AssociateModel(NULL);
+        if (deleteWindow && GetFrame())
+        {
+            GetFrame()->Destroy();
+            SetFrame(NULL);
+        }
+    }
+    return ok;
 }
 
 DBFDocument* DBFView::GetDocument() const

@@ -1,5 +1,5 @@
 // dbf_wx.cpp
-// Copyright (c) 2007-2013 by Troels K. All rights reserved.
+// Copyright (c) 2007-2014 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include <vector>
@@ -90,7 +90,8 @@ bool wxDBase::GetValueByRow(wxVariant* var, unsigned int row, unsigned int col)
          long n;
 
          ok = Read(col, &n);
-         if (ok) var->operator=(n);
+         if (ok)
+             var->operator=(n);
          break;
       }
       case DBF_DATA_TYPE_FLOAT  :
@@ -98,7 +99,8 @@ bool wxDBase::GetValueByRow(wxVariant* var, unsigned int row, unsigned int col)
          double n;
 
          ok = Read(col, &n);
-         if (ok) var->operator=(n);
+         if (ok)
+             var->operator=(n);
          break;
       }
       case DBF_DATA_TYPE_DATE   :
@@ -106,7 +108,8 @@ bool wxDBase::GetValueByRow(wxVariant* var, unsigned int row, unsigned int col)
          wxDateTime n;
 
          ok = Read(col, &n);
-         if (ok) var->operator=(n);
+         if (ok)
+             var->operator=(n);
          break;
       }
       case DBF_DATA_TYPE_BOOLEAN:
@@ -114,7 +117,8 @@ bool wxDBase::GetValueByRow(wxVariant* var, unsigned int row, unsigned int col)
          bool n;
 
          ok = Read(col, &n);
-         if (ok) var->operator=(n);
+         if (ok)
+             var->operator=(n);
          break;
       }
       case DBF_DATA_TYPE_MEMO   :
@@ -124,9 +128,7 @@ bool wxDBase::GetValueByRow(wxVariant* var, unsigned int row, unsigned int col)
 
          /*ok = */Read(col, &str);
          if (ok)
-         {
             var->operator=(str);
-         }
          break;
       }
       case DBF_DATA_TYPE_UNKNOWN:
@@ -142,19 +144,14 @@ bool wxDBase::SetValueByRow(const wxVariant& var, unsigned int row, unsigned int
 {
    bool ok = true;
 
-   if (ok) ok = SetPosition(row);
-   if (var.IsType(wxT("datetime")))
-   {
-      ok = Write(col, var.GetDateTime());
-   }
-   else
-   {
-      ok = Write(col, var.MakeString());
-   }
    if (ok)
-   {
+       ok = SetPosition(row);
+   if (var.IsType(wxT("datetime")))
+      ok = Write(col, var.GetDateTime());
+   else
+      ok = Write(col, var.MakeString());
+   if (ok)
       ok = PutRecord(row);
-   }
    return ok;
 }
 
@@ -163,7 +160,7 @@ bool wxDBase::SetValueByRow(const wxVariant& var, unsigned int row, unsigned int
 {
    return wxVersionInfo(wxT(DBF_LIB_NAME), DBF_MAJOR_VERSION, DBF_MINOR_VERSION, DBF_SVN_VERSION,
        wxT("dbase interface library"),
-       wxT("Copyright (c) 2007-2012 by Troels K")
+       wxT("Copyright (c) 2007-2014 by Troels K")
        );
 }
 #endif

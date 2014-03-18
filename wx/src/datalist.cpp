@@ -41,7 +41,7 @@ DataModelListCtrl::DataModelListCtrl()
 
 DataModelListCtrl::~DataModelListCtrl()
 {
-    AssociateModel(NULL);
+    //AssociateModel(NULL); // this is too late to do it for some reason
 }
 
 bool DataModelListCtrl::Create(wxWindow *parent, wxWindowID id,
@@ -98,7 +98,7 @@ void DataModelListCtrl::InitColumns(const std::vector<int>& col_width, bool row_
         if (wxT("bool") == info.VariantType)
             tr = new wxDataViewToggleRenderer(info.VariantType, wxDATAVIEW_CELL_ACTIVATABLE);
         else
-            tr = new wxDataViewTextRenderer(info.VariantType, wxDATAVIEW_CELL_INERT);
+            tr = new wxDataViewTextRenderer(info.VariantType, wxDATAVIEW_CELL_EDITABLE);
         column = new wxDataViewColumn(info.Name, tr, col++, col_width.empty() ? 150 : col_width[it - columns.begin()], align);
         AppendColumn(column);
     //AppendColumn(info.Name, format, col_width.empty() ? 150 : col_width[it - columns.begin()]);

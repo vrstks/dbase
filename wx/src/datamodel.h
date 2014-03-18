@@ -106,6 +106,9 @@ public:
 // wxDataModel
 
 class wxDataModel :
+#if (wxVERSION_NUMBER >= 2900)
+    public wxObject,
+#endif
     public wxDataViewListModelEx, public wxDataModelBase
 {
 public:

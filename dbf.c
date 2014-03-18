@@ -1031,11 +1031,17 @@ BOOL dbf_putfield(DBF_HANDLE handle, const DBF_FIELD* field, const char* buf)
             if (strchr("YyNnFfTt?", *dup))
             {
             }
-            else
+            else switch (*dup)
             {
-               strncpy(handle->lasterrormsg, "Invalid type (not a LOGICAL)", _countof(handle->lasterrormsg));
-               handle->lasterror = DBASE_INVALID_DATA;
-               ok = FALSE;
+                case '0':
+                    *dup = 'F'; break;
+                case '1':
+                    *dup = 'T'; break;
+                default:
+                    strncpy(handle->lasterrormsg, "Invalid type (not a LOGICAL)", _countof(handle->lasterrormsg));
+                    handle->lasterror = DBASE_INVALID_DATA;
+                    ok = FALSE;
+                    break;
             }
             break;
          default:
@@ -1374,7 +1380,8 @@ BOOL dbf_getfield_bool(DBF_HANDLE handle, const DBF_FIELD* field, BOOL* b)
 
    if (ok)
    {
-      if(b) *b = (strchr("YyTt", buf) != NULL);
+      if(b)
+          *b = (strchr("YyTt", buf) != NULL);
    }
    else
    {
