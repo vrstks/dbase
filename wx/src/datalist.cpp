@@ -296,7 +296,6 @@ void DataModelListCtrl::OnEndLabelEdit(wxListEvent& event)
 
         if (ok)
         {
-            wxVariant var;
             wxDataModelColumnInfo info;
 
             ok = GetModel()->GetColumn(m_column_clicked, &info);
@@ -308,19 +307,7 @@ void DataModelListCtrl::OnEndLabelEdit(wxListEvent& event)
             }
             if (ok)
             {
-                if (info.VariantType == wxT("datetime"))
-                {
-                    wxDateTime date;
-
-                    ok = (NULL != date.ParseFormat(str, wxT("%x")));
-                    if (ok)
-                    {
-                        wxASSERT(date.IsValid());
-                        var = date;
-                    }
-                }
-                else
-                    var = str;
+                wxVariant var = str;
                 if (ok)
                     ok = db->SetValueByRow(var, pos, m_column_clicked);
             }

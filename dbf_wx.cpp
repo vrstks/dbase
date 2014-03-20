@@ -148,6 +148,16 @@ bool wxDBase::SetValueByRow(const wxVariant& var, unsigned int row, unsigned int
        ok = SetPosition(row);
    if (var.IsType(wxT("datetime")))
       ok = Write(col, var.GetDateTime());
+   else if (   var.IsType(wxT("string"))
+            && (DBF_DATA_TYPE_DATE == GetFieldType(GetFieldPtr(col)))
+           )
+   {
+       wxDateTime dt;
+
+       ok = (NULL != dt.ParseFormat(var.MakeString(), wxT("%x")));
+       if (ok)
+          ok = Write(col, dt);
+   }
    else
       ok = Write(col, var.MakeString());
    if (ok)
