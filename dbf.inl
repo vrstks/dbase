@@ -8,7 +8,8 @@ inline CDBase::CDBase() : m_handle(NULL)
 
 inline CDBase::~CDBase()
 {
-	if (m_handle) Close();
+    if (IsOpen())
+        Close();
 }
 
 inline bool CDBase::IsOpen(void) const
@@ -130,30 +131,34 @@ inline size_t CDBase::Read(const char* field, std::string* buf, size_t buf_len)
 
 inline bool CDBase::GetFirstRecord()
 {
-   bool ok = ::dbf_move_prepare(m_handle) ? true : false;
-	if (ok) ok = SetPosition(0);
-   return ok;
+    bool ok = ::dbf_move_prepare(m_handle) ? true : false;
+    if (ok)
+        ok = SetPosition(0);
+    return ok;
 }
 
 inline bool CDBase::GetLastRecord()
 {
-   bool ok = ::dbf_move_prepare(m_handle) ? true : false;
-	if (ok) ok = SetPosition(GetRecordCount()-1);
-   return ok;
+    bool ok = ::dbf_move_prepare(m_handle) ? true : false;
+    if (ok)
+        ok = SetPosition(GetRecordCount()-1);
+    return ok;
 }
 
 inline bool CDBase::GetNextRecord()
 {
-   bool ok = ::dbf_move_prepare(m_handle) ? true : false;
-   if (ok) ok = SetPosition(GetPosition() + 1);
-   return ok;
+    bool ok = ::dbf_move_prepare(m_handle) ? true : false;
+    if (ok)
+        ok = SetPosition(GetPosition() + 1);
+    return ok;
 }
 
 inline bool CDBase::GetPrevRecord()
 {
-   bool ok = ::dbf_move_prepare(m_handle) ? true : false;
-   if (ok) ok = SetPosition(GetPosition() - 1);
-   return ok;
+    bool ok = ::dbf_move_prepare(m_handle) ? true : false;
+    if (ok)
+        ok = SetPosition(GetPosition() - 1);
+    return ok;
 }
 
 inline bool CDBase::Read(const DBF_FIELD* field, struct tm* tm, int* ms)
@@ -237,7 +242,8 @@ inline bool CDBase::Read(const DBF_FIELD* field, bool* b)
 {
    BOOL temp;
    bool ok = ::dbf_getfield_bool(m_handle, field, &temp) ? true : false;
-   if (ok) *b = temp ? true : false;
+   if (ok)
+       *b = temp ? true : false;
    return ok;
 }
 

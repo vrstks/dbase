@@ -14,7 +14,7 @@ const wxEventType wxEVT_LIST_CELL_DCLICK = wxNewEventType();
 #if USE_DATALISTVIEW
 IMPLEMENT_DYNAMIC_CLASS(DataModelListCtrl, wxDataViewCtrl)
 BEGIN_EVENT_TABLE(DataModelListCtrl, wxDataViewCtrl)
-    //EVT_KEY_DOWN(DataModelListCtrl::OnKeyDown)
+    EVT_DATAVIEW_ITEM_ACTIVATED(wxID_ANY, DataModelListCtrl::OnDoubleClick)
 END_EVENT_TABLE()
 #else
 IMPLEMENT_DYNAMIC_CLASS(DataModelListCtrl, wxTrunkListView)
@@ -25,7 +25,7 @@ BEGIN_EVENT_TABLE(DataModelListCtrl, wxTrunkListView)
     EVT_LIST_BEGIN_LABEL_EDIT(wxID_ANY, DataModelListCtrl::OnBeginLabelEdit)
     EVT_LIST_END_LABEL_EDIT(wxID_ANY, DataModelListCtrl::OnEndLabelEdit)
     EVT_COMMAND_LEFT_CLICK(wxID_ANY, DataModelListCtrl::OnClick)
-    EVT_COMMAND_LEFT_DCLICK(wxID_ANY, DataModelListCtrl::OnDblClick)
+    EVT_COMMAND_LEFT_DCLICK(wxID_ANY, DataModelListCtrl::OnDoubleClick)
 END_EVENT_TABLE()
 #endif
 
@@ -62,6 +62,26 @@ bool DataModelListCtrl::Create(wxWindow *parent, wxWindowID id,
 }
 
 #if USE_DATALISTVIEW
+
+class MyDataViewToggleRenderer : public wxDataViewToggleRenderer
+{
+    typedef wxDataViewToggleRenderer base;
+public:
+    MyDataViewToggleRenderer(const wxString &varianttype = wxT("bool"),
+                              wxDataViewCellMode mode = wxDATAVIEW_CELL_INERT)
+                              : wxDataViewToggleRenderer(varianttype, mode)
+    {
+    }
+    virtual bool SetValue(const wxVariant& value)
+    {
+        if (!value.IsNull())
+            return base::SetValue(value);
+        else
+            return base::SetValue(wxVariant((bool)false));
+    }
+
+};
+
 void DataModelListCtrl::InitColumns(const std::vector<int>& col_width, bool row_column)
 {
     wxDataModelBase* model = GetModel();
@@ -82,29 +102,39 @@ void DataModelListCtrl::InitColumns(const std::vector<int>& col_width, bool row_
     for (wxDataModelColumnInfoVector::const_iterator it = columns.begin(); it != columns.end(); it++)
     {
         wxAlignment align = wxALIGN_LEFT;
-        const wxDataModelColumnInfo& info = *it;
 
-        if (   (wxT("long"  ) == info.VariantType)
-            || (wxT("double") == info.VariantType) )
+        if (   (wxT("long"  ) == it->VariantType)
+            || (wxT("double") == it->VariantType) )
         {
-            align = wxALIGN_RIGHT;
+            if ( (it + 1) != columns.end()) // last column expands to the right
+                align = wxALIGN_RIGHT;
         }
-        else if (   (wxT("datetime") == info.VariantType)
-                 || (wxT("bool"    ) == info.VariantType) )
+        else if (   (wxT("datetime") == it->VariantType)
+                 || (wxT("bool"    ) == it->VariantType) )
         {
             align = wxALIGN_CENTER;
         }
 
-        if (wxT("bool") == info.VariantType)
-            tr = new wxDataViewToggleRenderer(info.VariantType, wxDATAVIEW_CELL_ACTIVATABLE);
+        if (wxT("bool") == it->VariantType)
+            tr = new MyDataViewToggleRenderer(it->VariantType, wxDATAVIEW_CELL_ACTIVATABLE);
         else
-            tr = new wxDataViewTextRenderer(info.VariantType, wxDATAVIEW_CELL_EDITABLE);
-        column = new wxDataViewColumn(info.Name, tr, col++, col_width.empty() ? 150 : col_width[it - columns.begin()], align);
+            tr = new wxDataViewTextRenderer(it->VariantType, wxDATAVIEW_CELL_EDITABLE);
+
+        wxString colName = it->Name;
+    #ifdef x_DEBUG
+        colName += wxString::Format(wxT(" %d"), col);
+    #endif
+        column = new wxDataViewColumn(colName, tr, col++, col_width.empty() ? 150 : col_width[it - columns.begin()], align);
         AppendColumn(column);
-    //AppendColumn(info.Name, format, col_width.empty() ? 150 : col_width[it - columns.begin()]);
     }
     Fill();
 }
+
+void DataModelListCtrl::OnDoubleClick(wxDataViewEvent& event)
+{
+    EditItem(event.GetItem(), event.GetDataViewColumn());
+}
+
 #else // !USE_DATALISTVIEW
 bool DataModelListCtrl::SendEvent( const wxEventType type, int row, int col)
 {
@@ -132,7 +162,7 @@ void DataModelListCtrl::OnClick(wxCommandEvent& event)
     event.Skip();
 }
 
-void DataModelListCtrl::OnDblClick(wxCommandEvent& event)
+void DataModelListCtrl::OnDoubleClick(wxCommandEvent& event)
 {
     const wxPoint pt = ScreenToClient(::wxGetMousePosition());
     long col;
@@ -167,9 +197,6 @@ void DataModelListCtrl::InitColumns(const std::vector<int>& col_width, bool row_
     wxDataModelBase* model = GetModel();
     m_row_column = row_column;
 
-#if USE_DATALISTVIEW
-    //AssociateModel(model->GetSource());
-#endif
     if (m_row_column)
         AppendColumn(wxEmptyString, wxLIST_FORMAT_LEFT, 75);
 
@@ -192,11 +219,7 @@ void DataModelListCtrl::InitColumns(const std::vector<int>& col_width, bool row_
             format = wxLIST_FORMAT_CENTER;
         }
 */
-    #if USE_DATALISTVIEW
-        AppendTextColumn(info.Name);
-    #else
         AppendColumn(info.Name, format, col_width.empty() ? 150 : col_width[it - columns.begin()]);
-    #endif
     }
     Fill();
 }

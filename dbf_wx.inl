@@ -1,5 +1,5 @@
 // dbf_wx.inl
-// Copyright (c) 2007-2013 by Troels K. All rights reserved.
+// Copyright (c) 2007-2014 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 inline wxDBase::wxDBase() : wxObject(), CDBase(), m_stream(NULL), m_stream_memo(NULL)
@@ -9,9 +9,7 @@ inline wxDBase::wxDBase() : wxObject(), CDBase(), m_stream(NULL), m_stream_memo(
 inline wxDBase::~wxDBase()
 {
    if (IsOpen())
-   {
       Close();
-   }
    wxASSERT(m_stream == NULL);
    wxASSERT(m_stream_memo == NULL);
 }
@@ -50,7 +48,6 @@ inline bool wxDBase::Create(void* stream, const struct zlib_filefunc_def_s* api,
 {
    wxASSERT(!IsOpen());
    bool ok = base::Create(stream, api, vector, charconv, memo);
-
    return ok;
 }
 
@@ -83,7 +80,8 @@ inline size_t wxDBase::Read(const DBF_FIELD* field, wxString* str, size_t buf_le
     std::string temp;
     size_t ret = base::Read(field, &temp, buf_len);
 
-    if (str) *str = wxConvertMB2WX(temp.c_str());
+    if (str)
+        *str = wxConvertMB2WX(temp.c_str());
     return ret;
 }
 
@@ -124,7 +122,7 @@ inline bool wxDBase::Read(const DBF_FIELD* field, wxDateTime* dt)
 
       Tm.msec = ms;
       dt->Set(Tm); // don't use tm ctor, we want ms and years < 1970
-      if (ms) dt->SetMillisecond(ms);
+      dt->SetMillisecond(ms);
    }
    return ok;
 }
@@ -180,7 +178,8 @@ inline void wxDBase::DoDataExchange(bool WXUNUSED(bSaveAndValidate))
 inline bool wxDBase::SetPosition(dbf_uint index)
 {
    bool ok = base::SetPosition(index);
-   if (ok) Fixups();
+   if (ok)
+       Fixups();
    return ok;
 }
 
@@ -300,9 +299,7 @@ inline void wxDBase::GetInfo(DBF_INFO* info, wxDateTime* dt) const
       const struct tm* ptm = localtime(&info->lastupdate);
 
       if (ptm)
-      {
          dt->Set(*ptm);
-      }
    }
 }
 

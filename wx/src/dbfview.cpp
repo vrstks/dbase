@@ -87,19 +87,21 @@ END_EVENT_TABLE()
 
 bool DBFView::OnCreate(wxDocument* doc, long flags)
 {
-   bool ok = base::OnCreate(doc, flags);
+    bool ok = base::OnCreate(doc, flags);
 
-   if (ok)
-   {
-      wxFrame* frame = wxStaticCast(doc->GetDocumentTemplate(), DatabaseDocTemplate)->CreateViewFrame(this);
-      DBFWindow* wnd = new DBFWindow(this);
+    if (ok)
+    {
+        wxFrame* frame = wxStaticCast(doc->GetDocumentTemplate(), DatabaseDocTemplate)->CreateViewFrame(this);
+        DBFWindow* wnd = new DBFWindow(this);
 
-      wxASSERT(frame == GetFrame());
-      wnd->Create(frame);
-      SetWindow(wnd);
-      frame->Show();
-   }
-   return ok;
+        wxASSERT(frame == GetFrame());
+        if (wnd->Create(frame))
+            SetWindow(wnd);
+        else
+            delete wnd;
+        frame->Show();
+    }
+    return ok;
 }
 
 DBFWindow* DBFView::GetWindow() const
@@ -122,9 +124,14 @@ void DBFView::OnUpdate(wxView* sender, wxObject* hint)
     if (wxDynamicCast(hint, wxFileLoadedHint))
     {
         //GetWindow()->InitColumns(150, true);
-        GetWindow()->GetModel()->Reset();
-        GetWindow()->InitColumns();
-        GetWindow()->SelectRow(0);
+        DBFWindow* wnd = GetWindow();
+
+        wxBusyCursor busy;
+        wnd->Freeze();
+        wnd->GetModel()->Reset();
+        wnd->InitColumns();
+        wnd->SelectRow(0);
+        wnd->Thaw();
     }
     else
         base::OnUpdate(sender, hint);

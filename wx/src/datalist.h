@@ -33,8 +33,13 @@ public:
     int GetSelectedRow() const
         { return ItemToRow(GetSelection()); }
 
-    void SelectRow(unsigned row)
-        { Select(RowToItem(row)); }
+    void SelectRow(unsigned row, bool focus = true)
+        { 
+            wxDataViewItem item = RowToItem(row);
+            Select(item);
+            if (focus)
+                EnsureVisible(item);
+        }
 
     unsigned int GetItemCount() const
         { return GetStore()->GetCount(); }
@@ -79,6 +84,7 @@ public:
     void InitColumns(const std::vector<int>& col_width, bool row_column = false);
 
 protected:
+    void OnDoubleClick(wxDataViewEvent&);
     DECLARE_EVENT_TABLE()
 private:
     bool m_row_column;
@@ -137,7 +143,7 @@ public:
     void OnKeyDown(wxKeyEvent&);
 
     void OnClick(wxCommandEvent&);
-    void OnDblClick(wxCommandEvent&);
+    void OnDoubleClick(wxCommandEvent&);
 
     bool GetSubItemRect( long row, long col, wxRect& rect, int code = wxLIST_RECT_BOUNDS) const
     {

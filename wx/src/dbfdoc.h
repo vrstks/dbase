@@ -31,9 +31,9 @@ public:
     virtual void Modify(bool mod);
     virtual bool OnCloseDocument();
 
-    virtual bool AttachStream(wxInputStream&, const wxString& filePath);
     virtual bool DeleteContents();
 
+    bool AttachStream(wxInputStream&, const wxString& filePath);
 protected:
     virtual bool DoSaveDocument(const wxString& filePath);
     virtual bool DoOpenDocument(const wxString& filePath);

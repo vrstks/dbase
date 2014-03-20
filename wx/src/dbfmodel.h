@@ -61,12 +61,7 @@ public:
 
 #if (wxVERSION_NUMBER >= 2902)
     virtual bool GetAttrByRow(unsigned int row, unsigned int col, wxDataViewItemAttr&) const;
-    virtual void GetValue(wxVariant& var, const wxDataViewItem& item, unsigned int col) const
-    {
-        wxString str;
-        if (GetValueByRow(&str, wxDataViewIndexListModel::GetRow(item), col))
-            var = str;
-    }
+    virtual void GetValue(wxVariant&, const wxDataViewItem&, unsigned int col) const;
 #endif
 };
 

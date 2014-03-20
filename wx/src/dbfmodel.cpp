@@ -82,7 +82,8 @@ bool DBFModel::GetValueByRow(wxString* str, unsigned int row, unsigned int col) 
       {
          bool n;
 
-         if (m_database->Read(col, &n))
+         ok = m_database->Read(col, &n);
+         if (ok)
             str->operator=(n ? _("true") : _("false"));
          break;
       }
@@ -90,7 +91,8 @@ bool DBFModel::GetValueByRow(wxString* str, unsigned int row, unsigned int col) 
       {
          double n;
 
-         if (m_database->Read(col, &n))
+         ok = m_database->Read(col, &n);
+         if (ok)
             str->Printf(wxT("%g"), n); // date only, not time of day
          break;
       }
@@ -98,7 +100,8 @@ bool DBFModel::GetValueByRow(wxString* str, unsigned int row, unsigned int col) 
       {
          wxDateTime n;
 
-         if (m_database->Read(col, &n))
+         ok = m_database->Read(col, &n);
+         if (ok)
             str->operator=(n.Format(wxT("%x"))); // date only, not time of day
          break;
       }
@@ -255,12 +258,23 @@ wxString DBFModel::GetTableName(void) const
 #if (wxVERSION_NUMBER >= 2902)
 bool DBFModel::GetAttrByRow(unsigned int row, unsigned int col, wxDataViewItemAttr& attr) const
 {
+    wxString str;
+
     if (((DBFModel*)this)->IsRowDeleted(row))
-    {
         attr.SetColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
-        return true;
-    }
-    else
-        return base::GetAttrByRow(row, col, attr); // returns false
+    else if (!GetValueByRow(&str, row, col))
+        attr.SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
+    return base::GetAttrByRow(row, col, attr); // returns false
+}
+
+void DBFModel::GetValue(wxVariant& var, const wxDataViewItem& item, unsigned int col) const
+{
+    unsigned int row = wxDataViewIndexListModel::GetRow(item);
+    wxString str;
+
+    if (GetValueByRow(&str, row, col))
+        var = str;
+    //else if (DBF_DATA_TYPE_BOOLEAN == m_database->GetFieldType(col))
+    //    var = (bool)false; // wxDataViewToggleRenderer needs a valid boolean
 }
 #endif

@@ -26,7 +26,7 @@ DBFDocument::DBFDocument(void) : wxDocument(), m_database(new wxDBase()), m_stre
 
 DBFDocument::~DBFDocument(void)
 {
-   delete m_database;
+    delete m_database;
 }
 
 // Since text windows have their own method for saving to/loading from files,
@@ -70,6 +70,8 @@ bool DBFDocument::DeleteContents()
 {
     bool ok = base::DeleteContents();
     wxDELETE(m_stream);
+    if (m_database->IsOpen())
+        m_database->Close();
     return ok;
 }
 
@@ -115,8 +117,6 @@ bool DBFDocument::OnCloseDocument()
 {
    bool ok = base::OnCloseDocument();
 
-   if (m_database->IsOpen())
-       m_database->Close();
    return ok;
 }
 
