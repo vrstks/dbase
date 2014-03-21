@@ -1,5 +1,5 @@
 // art.cpp
-// Copyright (c) 2007-2012 by Troels K. All rights reserved.
+// Copyright (c) 2007-2014 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -26,10 +26,12 @@ protected:
 
 wxBitmap ArtProvider::CreateBitmap(const wxArtID& id, const wxArtClient& WXUNUSED(client), const wxSize& WXUNUSED(size))
 {
-   ART(wxART_HELP      , help)
-   ART(wxART_ADD       , plus)
-   ART(wxART_PREVIEW   , preview)
-   return wxNullBitmap;
+    if (id == wxART_APP)
+        return wxBitmap(wxICON(app));
+    ART(wxART_HELP      , help)
+    ART(wxART_ADD       , plus)
+    ART(wxART_PREVIEW   , preview)
+    return wxNullBitmap;
 }
 
 /////////////////////////////////////////////////////////////////////////////

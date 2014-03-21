@@ -42,14 +42,18 @@ BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
 // EVT_UPDATE_UI(wxID_HELP          , MainFrame::OnUpdateDisable)
 END_EVENT_TABLE()
 
-bool MainFrame::Create(wxDocManager* manager, const wxString& title, const wxPoint& pos, const wxSize& size)
+bool MainFrame::Create(wxDocManager* docManager, const wxString& rtitle, const wxPoint& pos, const wxSize& size)
 {
-    bool ok = base::Create(manager, NULL, wxID_ANY, title, pos, size, wxDEFAULT_FRAME_STYLE | wxVSCROLL | wxHSCROLL);
+    wxString title = rtitle;
+#ifdef _DEBUG
+    title.insert(0, wxT("[DEBUG] "));
+#endif
+    bool ok = base::Create(docManager, NULL, wxID_ANY, title, pos, size, wxDEFAULT_FRAME_STYLE | wxVSCROLL | wxHSCROLL);
 
     if (ok)
     {
         CreateStatusBar()->PushStatusText(_("Ready"));
-        SetIcon(wxICON(app));
+        SetIcon(wxArtProvider::GetIcon(wxART_APP));
         SetMenuBar(CreateMenuBar());
         SetToolBar(CreateToolBar());
         SetAcceleratorTable(DBFFrame::GetAccelerator().ToArray());

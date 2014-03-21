@@ -1,5 +1,5 @@
 // wx/wxt/trunk.h
-// Copyright (c) 2010-2013 by Troels K. All rights reserved.
+// Copyright (c) 2010-2014 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __WX_EXT_TRUNK_H__
@@ -16,6 +16,7 @@
 #if (wxVERSION_NUMBER < 2905)
 #include <vector>
 typedef std::vector<wxDocument*> wxDocVector;
+#define wxALIGN_INVALID ((wxAlignment)-1)
 #endif
 
 #ifdef _WX_DOCH__

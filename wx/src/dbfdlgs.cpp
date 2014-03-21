@@ -1,5 +1,5 @@
 // dbfdlgs.cpp
-// Copyright (c) 2007-2013 by Troels K. All rights reserved.
+// Copyright (c) 2007-2014 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -82,9 +82,7 @@ void wxStructListView::Init(wxDBase* db)
    size_t i;
 
    for (i = 0; i < WXSIZEOF(aszType); i++)
-   {
       AppendColumn(aszType[i], (i == col_length) ? wxLIST_FORMAT_RIGHT : wxLIST_FORMAT_LEFT, 80);
-   }
 
    size_t count = (db && db->IsOpen()) ? db->GetFieldCount() : 0;
 
@@ -121,25 +119,18 @@ wxString wxStructListView::OnGetItemText(long item, long col) const
    switch (col)
    {
       case col_name:
-         str = wxConvertMB2WX(info.name);
-         break;
+         str = wxConvertMB2WX(info.name); break;
       case col_type:
-         str = MOD_aszType[info.type];
-         break;
+         str = MOD_aszType[info.type]; break;
       case col_length:
          if (info.decimals)
-         {
             str.Printf(wxT("%d:%d"), info.length, info.decimals);
-         }
          else
-         {
             str.Printf(wxT("%d"), info.length);
-         }
          break;
          /*
       case col_decimals:
-         str.Printf(wxT("%d"), info.decimals);
-         break;
+         str.Printf(wxT("%d"), info.decimals); break;
          */
    }
    return str;
@@ -220,9 +211,7 @@ void wxDBFStructDialog::OnAdd(wxCommandEvent&)
    DBF_FIELD_INFO info = { "", DBF_DATA_TYPE_CHAR, 10, 0 };
    
    if (::DoModal_FieldEdit(this, &info, _("Add Field")))
-   {
       m_list->Add(info);
-   }
 }
 
 void wxDBFStructDialog::OnEdit(wxCommandEvent&)
@@ -247,17 +236,13 @@ void wxDBFStructDialog::OnDelete(wxCommandEvent&)
 
 void wxDBFStructDialog::OnCalendar(wxCommandEvent&)
 {
-   const DBF_FIELD_INFO aField[] =
+   const DBF_FIELD_INFO fields[] =
    {
       { "DATE"    , DBF_DATA_TYPE_DATE   , DBF_LEN_DATE, 0 },
       { "TEXT"    , DBF_DATA_TYPE_CHAR   , 80, 0 },
       { "ANNIVERS", DBF_DATA_TYPE_BOOLEAN, DBF_LEN_BOOLEAN, 0 }
    };
-   m_list->m_array.clear();
-   for (size_t i = 0; i < WXSIZEOF(aField); i++)
-   {
-       m_list->m_array.push_back(aField[i]);
-   }
+   m_list->m_array.assign(fields, fields + WXSIZEOF(fields));
    m_list->Fill();
 }
 
@@ -325,8 +310,10 @@ void wxDBFFieldDialog::OnUpdateLength(wxUpdateUIEvent& event)
    const bool memo    = (m_edit1->GetSelection() == DBF_DATA_TYPE_MEMO);
 
    event.Enable(!(boolean || memo));
-   if (boolean) m_edit2->SetLabel(wxT("1"));
-   else if (memo) m_edit2->SetLabel(wxT("10"));
+   if (boolean)
+       m_edit2->SetLabel(wxT("1"));
+   else if (memo)
+       m_edit2->SetLabel(wxT("10"));
 }
 
 void wxDBFFieldDialog::OnUpdateDecimals(wxUpdateUIEvent& event)
@@ -334,7 +321,8 @@ void wxDBFFieldDialog::OnUpdateDecimals(wxUpdateUIEvent& event)
    const bool flt = (m_edit1->GetSelection() == DBF_DATA_TYPE_FLOAT);
 
    event.Enable(flt);
-   if (!flt) m_edit3->SetLabel(wxT("0"));
+   if (!flt)
+       m_edit3->SetLabel(wxT("0"));
 }
 
 void wxDBFFieldDialog::OnUpdateNeedData(wxUpdateUIEvent& event)
@@ -402,13 +390,14 @@ bool DoModal_FieldEdit(wxWindow* parent, DBF_FIELD_INFO* info, const wxString& c
        dlg.m_type = info->type;
        dlg.m_length = (int)info->length;
        dlg.m_decimals = info->decimals;
-       if (!caption.empty()) dlg.SetTitle(caption);
+       if (!caption.empty())
+           dlg.SetTitle(caption);
        ok = (wxID_OK == dlg.ShowModal());
        if (ok)
        {
           strncpy(info->name, dlg.m_name.mb_str(), sizeof(info->name));
-          info->type = (dbf_data_type)dlg.m_type;
-          info->length = dlg.m_length;
+          info->type     = (dbf_data_type)dlg.m_type;
+          info->length   = dlg.m_length;
           info->decimals = dlg.m_decimals;
        }
    }
@@ -472,15 +461,11 @@ bool WindowsDialog::Create(wxWindow* parent, const wxDocVector& docList)
             wxString text = doc->GetFilename();
             
             if (text.empty())
-            {
                 text = doc->GetTitle();
-            }
             int index = m_listBox->Append(text, doc);
 
             if (doc == docManager->GetCurrentDocument())
-            {
                 m_listBox->SetSelection(index);
-            }
         }
     }
     return ok;
@@ -504,9 +489,7 @@ void WindowsDialog::OnClose(wxCommandEvent&)
         wxDocument* doc = GetDocument(index);
 
         if (doc->GetDocumentManager()->CloseDocument(doc))
-        {
             m_listBox->Delete(index);
-        }
     }
 }
 
@@ -524,8 +507,7 @@ void WindowsDialog::OnDblClick(wxCommandEvent& event)
     switch (event.GetSelection())
     {
         case wxNOT_FOUND:
-            event.Skip();
-            break;
+            event.Skip(); break;
         default:
             m_selection = event.GetSelection();
             EndModal(wxID_OK);
@@ -548,11 +530,9 @@ int WindowsDialog::ShowModal()
 void DoModal_Windows(wxWindow* parent, const wxDocVector& docList)
 {
     WindowsDialog dlg;
-    
+
     if (dlg.Create(parent, docList))
-    {   
         dlg.ShowModal();
-    }
 }
 
 /////////////////////////////////////////////////////////////////////////////

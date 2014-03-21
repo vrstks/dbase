@@ -5,6 +5,7 @@
 #include "precomp.h"
 
 #include "wx/ext/wx.h"
+#include "wx/ext/trunk.h"
 #include "datamodel.h"
 #include "datalist.h"
 
@@ -28,6 +29,31 @@ BEGIN_EVENT_TABLE(DataModelListCtrl, wxTrunkListView)
     EVT_COMMAND_LEFT_DCLICK(wxID_ANY, DataModelListCtrl::OnDoubleClick)
 END_EVENT_TABLE()
 #endif
+
+wxAlignment DataViewColumnInfo::GetAlignment() const
+{
+    wxAlignment align = Alignment;
+    switch (align)
+    {
+        case (wxAlignment)wxALIGN_INVALID:
+            if (   (wxT("long"  ) == VariantType)
+                || (wxT("double") == VariantType) )
+            {
+                align = wxALIGN_RIGHT;
+            }
+            else if (   (wxT("datetime") == VariantType)
+                     || (wxT("bool"    ) == VariantType) )
+            {
+                align = wxALIGN_CENTER;
+            }
+            else
+                align = wxALIGN_LEFT;
+            break;
+        default:
+            break;
+    }
+    return align;
+}
 
 DataModelListCtrl::DataModelListCtrl()
 {
@@ -78,49 +104,44 @@ public:
     }
 };
 
-void DataModelListCtrl::InitColumns(const std::vector<int>& col_width, bool row_column)
+void DataModelListCtrl::AssociateModel(wxDataModel* model)
+{
+    base::AssociateModel(model);
+}
+
+void DataModelListCtrl::InitColumns(const DataViewColumnInfoVector& columns, bool row_column)
 {
     wxDataModelBase* model = GetModel();
     wxDataViewColumn* column;
     wxDataViewRenderer* tr;
     size_t col = 0;
-    
+
     m_row_column = row_column;
     if (m_row_column)
     {
+        wxASSERT(false);
         tr = new wxDataViewTextRenderer(wxT("long"), wxDATAVIEW_CELL_INERT);
-        column = new wxDataViewColumn(wxEmptyString, tr, col++, 75, wxALIGN_LEFT);
+        column = new wxDataViewColumn(wxEmptyString, tr, col, 75, wxALIGN_LEFT);
         AppendColumn(column);
     }
 
-    const wxDataModelColumnInfoVector columns = model->GetColumns();
-    wxASSERT(col_width.empty() || (col_width.size() == columns.size()) );
-    for (wxDataModelColumnInfoVector::const_iterator it = columns.begin(); it != columns.end(); it++)
+    wxASSERT(columns.size() == model->GetColumnCount());
+    for (DataViewColumnInfoVector::const_iterator it = columns.begin(); it != columns.end(); it++)
     {
-        wxAlignment align = wxALIGN_LEFT;
+        wxAlignment align = it->GetAlignment();
 
-        if (   (wxT("long"  ) == it->VariantType)
-            || (wxT("double") == it->VariantType) )
-        {
-            if ( (it + 1) != columns.end()) // last column expands to the right
-                align = wxALIGN_RIGHT;
-        }
-        else if (   (wxT("datetime") == it->VariantType)
-                 || (wxT("bool"    ) == it->VariantType) )
-        {
-            align = wxALIGN_CENTER;
-        }
-
+        if ( (align == wxALIGN_RIGHT) && ((it + 1) != columns.end())) // last column expands to the right
+            align = wxALIGN_LEFT;
         if (wxT("bool") == it->VariantType)
             tr = new MyDataViewToggleRenderer(it->VariantType, wxDATAVIEW_CELL_ACTIVATABLE);
         else
             tr = new wxDataViewTextRenderer(it->VariantType, wxDATAVIEW_CELL_EDITABLE);
-
         wxString colName = it->Name;
     #ifdef x_DEBUG
         colName += wxString::Format(wxT(" %d"), col);
     #endif
-        column = new wxDataViewColumn(colName, tr, col++, col_width.empty() ? 150 : col_width[it - columns.begin()], align);
+        column = new wxDataViewColumn(colName, tr, col++, it->Width, align,
+            wxDATAVIEW_COL_RESIZABLE | (it->Sortable ? wxDATAVIEW_COL_SORTABLE : 0));
         AppendColumn(column);
     }
     Fill();
@@ -129,7 +150,7 @@ void DataModelListCtrl::InitColumns(const std::vector<int>& col_width, bool row_
 void DataModelListCtrl::OnDoubleClick(wxDataViewEvent& event)
 {
     EditItem(event.GetItem(), event.GetDataViewColumn());
-    //event.Skip();
+    event.Skip();
 }
 
 #else // !USE_DATALISTVIEW
@@ -189,7 +210,7 @@ void DataModelListCtrl::OnKeyDown(wxKeyEvent& event)
    }
 }
 
-void DataModelListCtrl::InitColumns(const std::vector<int>& col_width, bool row_column)
+void DataModelListCtrl::InitColumns(const DataViewColumnInfoVector& columns, bool row_column)
 {
     wxDataModelBase* model = GetModel();
     m_row_column = row_column;
@@ -197,26 +218,24 @@ void DataModelListCtrl::InitColumns(const std::vector<int>& col_width, bool row_
     if (m_row_column)
         AppendColumn(wxEmptyString, wxLIST_FORMAT_LEFT, 75);
 
-    const wxDataModelColumnInfoVector columns = model->GetColumns();
-    wxASSERT(col_width.empty() || (col_width.size() == columns.size()) );
-    for (wxDataModelColumnInfoVector::const_iterator it = columns.begin(); it != columns.end(); it++)
+    wxASSERT(columns.size() == model->GetColumnCount());
+    for (DataViewColumnInfoVector::const_iterator it = columns.begin(); it != columns.end(); it++)
     {
+        wxAlignment align = it->GetAlignment();
         wxListColumnFormat format = wxLIST_FORMAT_LEFT;
-        const wxDataModelColumnInfo& info = *it;
 
-        if (   (wxT("long"  ) == info.VariantType)
-            || (wxT("double") == info.VariantType) )
+        switch(align)
         {
-            format = wxLIST_FORMAT_RIGHT;
+            case wxALIGN_RIGHT:
+                format = wxLIST_FORMAT_RIGHT; break;
+            case wxALIGN_CENTER:
+                format = wxLIST_FORMAT_CENTER; break;
+            case wxALIGN_LEFT:
+            case wxALIGN_INVALID:
+            default:
+                format = wxLIST_FORMAT_LEFT; break;
         }
-/*
-        else if (   (wxT("datetime") == type)
-                 || (wxT("bool"    ) == type) )
-        {
-            format = wxLIST_FORMAT_CENTER;
-        }
-*/
-        AppendColumn(info.Name, format, col_width.empty() ? 150 : col_width[it - columns.begin()]);
+        AppendColumn(it->Name, format, it->Width);
     }
     Fill();
 }

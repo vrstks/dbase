@@ -85,10 +85,13 @@ bool DBFListCtrl::Edit(long row, long col)
 
 bool DBFListCtrl::Edit()
 {
-#if !USE_DATALISTVIEW
+#if USE_DATALISTVIEW
+    base::Edit();
+    return true;
+#else
     ScrollList(-GetScrollPos(wxHORIZONTAL), 0);
-#endif
     return Edit((size_t)GetSelectedRow(), 0);
+#endif
 }
 
 #if !USE_DATALISTVIEW
@@ -126,21 +129,10 @@ bool DBFListCtrl::IsUndeletedInSelection(void)
 {
     bool ok = false;
 
-#if USE_DATALISTVIEW
-    wxDataViewItemArray selections;
-    GetSelections(selections);
-    for (size_t i = 0; i < selections.size(); i++)
-    {
-        wxDataViewItem item = selections[i];
-        unsigned int row = ItemToRow(item);
-        ok = ok || (IsRecordOk(row) && !IsRecordDeleted(row));
-    }
-#else
     wxArrayInt selections;
-    GetSelections(selections);
+    GetRowSelections(selections);
     for (wxArrayInt::const_iterator it = selections.begin(); (!ok) && (it != selections.end()); it++)
         ok = ok || (IsRecordOk(*it) && !IsRecordDeleted(*it));
-#endif
     return ok;
 }
 
@@ -148,21 +140,10 @@ bool DBFListCtrl::IsDeletedInSelection(void)
 {
     bool ok = false;
 
-#if USE_DATALISTVIEW
-    wxDataViewItemArray selections;
-    GetSelections(selections);
-    for (size_t i = 0; i < selections.size(); i++)
-    {
-        wxDataViewItem item = selections[i];
-        unsigned int row = ItemToRow(item);
-        ok = ok || (IsRecordOk(row) && IsRecordDeleted(row));
-    }
-#else
     wxArrayInt selections;
-    GetSelections(selections);
+    GetRowSelections(selections);
     for (wxArrayInt::const_iterator it = selections.begin(); (!ok) && (it != selections.end()); it++)
         ok = ok || (IsRecordOk(*it) && IsRecordDeleted(*it));
-#endif
     return ok;
 }
 
@@ -208,21 +189,10 @@ bool DBFListCtrl::DeleteRecord(unsigned int row, bool bDelete)
 
 void DBFListCtrl::DeleteSelection(bool bDelete)
 {
-#if USE_DATALISTVIEW
-    wxDataViewItemArray selections;
-    GetSelections(selections);
-    for (size_t i = 0; i < selections.size(); i++)
-    {
-        wxDataViewItem item = selections[i];
-        unsigned int row = ItemToRow(item);
-        DeleteRecord(row, bDelete);
-    }
-#else
     wxArrayInt selections;
-    GetSelections(selections);
+    GetRowSelections(selections);
     for (wxArrayInt::const_iterator it = selections.begin(); it != selections.end(); it++)
         DeleteRecord(*it, bDelete);
-#endif
     Fill();
 }
 
@@ -231,4 +201,16 @@ void DBFListCtrl::DeleteAll(bool bDelete)
     for (unsigned int row = 0; row < (unsigned int)GetItemCount(); row++)
         DeleteRecord(row, bDelete);
     Fill();
+}
+
+void DBFListCtrl::InitColumns()
+{
+    DataViewColumnInfoVector vec;
+    DBFModel* model = GetModel();
+
+    vec.resize(model->GetColumnCount());
+
+    for (unsigned int col = 0; col < vec.size(); col++)
+        model->GetColumn(col, &vec[col]);
+    base::InitColumns(vec, false);
 }

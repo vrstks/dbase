@@ -5,6 +5,8 @@
 #define WXK_HELP       WXK_F1
 #define WXK_FULLSCREEN WXK_F11
 
+#define wxART_APP          wxART_MAKE_ART_ID(wxART_APP)
+
 class WXDLLIMPEXP_FWD_CORE wxDataObject;
 class WXDLLIMPEXP_FWD_CORE wxMDIParentFrame;
 

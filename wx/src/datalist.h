@@ -6,22 +6,33 @@
 #define __DATALIST_H__
 
 #if (wxVERSION_NUMBER >= 2904)
-#define USE_DATALISTVIEW 1 // work in progress
+    #define USE_DATALISTVIEW 1 // work in progress
 #else
-#define USE_DATALISTVIEW 0
+    #define USE_DATALISTVIEW 0
 #endif
 
 #if USE_DATALISTVIEW
-#include <wx/dataview.h>
+    #include <wx/dataview.h>
 #else
-//#include <wx/listctrl.h>
+    #include <wx/listctrl.h>
 #endif
+
+class DataViewColumnInfo : public wxDataModelColumnInfo
+{
+public:
+    DataViewColumnInfo() : wxDataModelColumnInfo(), Alignment(wxALIGN_INVALID), Width(150), Sortable(true) {}
+
+    wxAlignment Alignment;
+    int Width;
+    bool Sortable;
+
+    wxAlignment GetAlignment() const;
+};
+class DataViewColumnInfoVector : public std::vector<DataViewColumnInfo> {};
 
 /////////////////////////////////////////////////////////////////////////////
 // DataModelListCtrl
 
-class wxDataModelBase;
-class wxDataModel;
 #if USE_DATALISTVIEW
 class DataModelListCtrl : public wxDataViewCtrl
 {
@@ -34,7 +45,7 @@ public:
         { return ItemToRow(GetSelection()); }
 
     void SelectRow(unsigned row, bool focus = true)
-        { 
+        {
             wxDataViewItem item = RowToItem(row);
             Select(item);
             if (focus)
@@ -59,27 +70,39 @@ public:
     {
         UnselectAll();
     }
+
+    void Edit()
+    {
+        wxDataViewItem item = GetCurrentItem();
+        EditItem(item, GetCurrentColumn());
+    }
+    void GetRowSelections(wxArrayInt& rows) const
+    {
+        wxDataViewItemArray selections;
+        GetSelections(selections);
+        rows.resize(selections.size());
+        for (size_t i = 0; i < selections.size(); i++)
+        {
+            wxDataViewItem item = selections[i];
+            rows[i] = ItemToRow(item);
+        }
+    }
     void Fill();
     bool IsOpen() const;
     bool Create(wxWindow *parent,
                 wxWindowID id = wxID_ANY,
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
-                long style = wxDV_ROW_LINES,
+                long style = wxDV_ROW_LINES | wxDV_MULTIPLE,
                 const wxValidator& validator = wxDefaultValidator);
     virtual ~DataModelListCtrl();
 
-    void AssociateModel(wxDataModel* model)
-    {
-        base::AssociateModel(model);
-        //if (model)
-        //    model->Reset();
-    }
+    void AssociateModel(wxDataModel*);
+
           wxDataModelBase* GetModel()       { return dynamic_cast<      wxDataModel*>(base::GetModel()); }
     const wxDataModelBase* GetModel() const { return dynamic_cast<const wxDataModel*>(base::GetModel()); }
 
-    void InitColumns(bool row_column = false) { InitColumns(std::vector<int>(), row_column); }
-    void InitColumns(const std::vector<int>& col_width, bool row_column = false);
+    void InitColumns(const DataViewColumnInfoVector&, bool row_column = false);
 
     virtual bool IsRecordOk(unsigned int row);
     bool IsAnyUnselected(void);
@@ -101,8 +124,7 @@ class DataModelListCtrl : public wxTrunkListView
 public:
     DataModelListCtrl();
 
-    void InitColumns(bool row_column = false) { InitColumns(std::vector<int>(), row_column); }
-    void InitColumns(const std::vector<int>& col_width, bool row_column = false);
+    void InitColumns(const DataViewColumnInfoVector&, bool row_column = false);
 
     bool IsAnyUnselected(void);
     bool IsOpen() const;
@@ -118,6 +140,11 @@ public:
                 const wxSize& size = wxDefaultSize,
                 long style = wxLC_REPORT | wxLC_VIRTUAL | wxLC_EDIT_LABELS,
                 const wxValidator& validator = wxDefaultValidator);
+
+    void GetRowSelections(wxArrayInt& rows) const
+    {
+        GetSelections(rows);
+    }
 
 protected:
     bool CanEditLabel(void);

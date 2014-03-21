@@ -22,6 +22,8 @@ public:
     bool Edit();
     bool AddNew();
 
+    void InitColumns();
+
     bool IsUndeletedInSelection(void);
     bool IsDeletedInSelection(void);
     void OnUpdateNeedSel_Deleted(wxUpdateUIEvent&);
