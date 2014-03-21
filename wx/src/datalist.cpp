@@ -55,6 +55,25 @@ wxAlignment DataViewColumnInfo::GetAlignment() const
     return align;
 }
 
+//static
+DataViewColumnInfoVector DataViewColumnInfoVector::MakeDefaultVector(const wxDataModelBase* model)
+{
+    DataViewColumnInfoVector vec;
+
+    vec.resize(model->GetColumnCount());
+    for (unsigned int col = 0; col < vec.size(); col++)
+        model->GetColumn(col, &vec[col]);
+    return vec;
+}
+
+void DataModelListCtrl::InitColumns(bool row_column)
+{
+    const wxDataModelBase* model = GetModel();
+    const DataViewColumnInfoVector vec = DataViewColumnInfoVector::MakeDefaultVector(model);
+
+    InitColumns(vec, row_column);
+}
+
 DataModelListCtrl::DataModelListCtrl()
 {
     m_row_column = false;
@@ -104,11 +123,6 @@ public:
     }
 };
 
-void DataModelListCtrl::AssociateModel(wxDataModel* model)
-{
-    base::AssociateModel(model);
-}
-
 void DataModelListCtrl::InitColumns(const DataViewColumnInfoVector& columns, bool row_column)
 {
     wxDataModelBase* model = GetModel();
@@ -154,6 +168,7 @@ void DataModelListCtrl::OnDoubleClick(wxDataViewEvent& event)
 }
 
 #else // !USE_DATALISTVIEW
+
 bool DataModelListCtrl::SendEvent( const wxEventType type, int row, int col)
 {
     wxListCellEvent evt(type, GetId());

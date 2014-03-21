@@ -202,15 +202,3 @@ void DBFListCtrl::DeleteAll(bool bDelete)
         DeleteRecord(row, bDelete);
     Fill();
 }
-
-void DBFListCtrl::InitColumns()
-{
-    DataViewColumnInfoVector vec;
-    DBFModel* model = GetModel();
-
-    vec.resize(model->GetColumnCount());
-
-    for (unsigned int col = 0; col < vec.size(); col++)
-        model->GetColumn(col, &vec[col]);
-    base::InitColumns(vec, false);
-}

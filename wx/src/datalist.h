@@ -6,7 +6,7 @@
 #define __DATALIST_H__
 
 #if (wxVERSION_NUMBER >= 2904)
-    #define USE_DATALISTVIEW 1 // work in progress
+    #define USE_DATALISTVIEW 1
 #else
     #define USE_DATALISTVIEW 0
 #endif
@@ -28,7 +28,11 @@ public:
 
     wxAlignment GetAlignment() const;
 };
-class DataViewColumnInfoVector : public std::vector<DataViewColumnInfo> {};
+class DataViewColumnInfoVector : public std::vector<DataViewColumnInfo>
+{
+public:
+    static DataViewColumnInfoVector MakeDefaultVector(const wxDataModelBase*);
+};
 
 /////////////////////////////////////////////////////////////////////////////
 // DataModelListCtrl
@@ -97,11 +101,15 @@ public:
                 const wxValidator& validator = wxDefaultValidator);
     virtual ~DataModelListCtrl();
 
-    void AssociateModel(wxDataModel*);
+    void AssociateModel(wxDataModel* model)
+    {
+        base::AssociateModel(model);
+    }
 
           wxDataModelBase* GetModel()       { return dynamic_cast<      wxDataModel*>(base::GetModel()); }
     const wxDataModelBase* GetModel() const { return dynamic_cast<const wxDataModel*>(base::GetModel()); }
 
+    void InitColumns(bool row_column = false);
     void InitColumns(const DataViewColumnInfoVector&, bool row_column = false);
 
     virtual bool IsRecordOk(unsigned int row);
@@ -124,6 +132,7 @@ class DataModelListCtrl : public wxTrunkListView
 public:
     DataModelListCtrl();
 
+    void InitColumns(bool row_column = false);
     void InitColumns(const DataViewColumnInfoVector&, bool row_column = false);
 
     bool IsAnyUnselected(void);
