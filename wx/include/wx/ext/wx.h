@@ -257,9 +257,9 @@ public:
 
     int GetSelections( wxArrayInt& sel ) const
     {
-        for (long index = GetFirstSelected(); index != wxNOT_FOUND; index = GetNextSelected(index))
-            sel.push_back(index);
-        return sel.size();
+        for (long row = GetFirstSelected(); row != wxNOT_FOUND; row = GetNextSelected(row))
+            sel.push_back(row);
+        return (int)sel.size();
     }
 
 #if (wxVERSION_NUMBER < 2900)

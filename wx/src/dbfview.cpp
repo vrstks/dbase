@@ -128,7 +128,6 @@ void DBFView::OnUpdate(wxView* sender, wxObject* hint)
 
         wxBusyCursor busy;
         wnd->Freeze();
-        wnd->GetModel()->Reset();
         wnd->InitColumns();
         wnd->SelectRow(0);
         wnd->Thaw();
@@ -195,9 +194,7 @@ void DBFView::OnUndelete(wxCommandEvent&)
 
 void DBFView::OnUpdateSelectAll(wxUpdateUIEvent& event)
 {
-#if !USE_DATALISTVIEW
     GetWindow()->OnUpdateSelectAll(event);
-#endif
 }
 
 void DBFView::OnUpdateNeedSel_Deleted(wxUpdateUIEvent& event)
@@ -216,9 +213,7 @@ void DBFView::OnUpdateNeedSel_NotDeleted(wxUpdateUIEvent& event)
 
 void DBFView::OnUpdateNeedSel(wxUpdateUIEvent& event)
 {
-#if !USE_DATALISTVIEW
    GetWindow()->OnUpdateNeedSel(event);
-#endif
    if (!GetDocument()->IsEditable())
        event.Enable(false);
 }

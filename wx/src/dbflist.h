@@ -30,15 +30,18 @@ public:
     void DeleteSelection(bool bDelete);
     void DeleteAll(bool bDelete);
 
-    virtual bool IsRecordDeleted(unsigned int index);
-    virtual bool DeleteRecord(unsigned int index, bool bDelete);
-#if USE_DATALISTVIEW
-#else
+    virtual bool IsRecordDeleted(unsigned int row);
+    virtual bool DeleteRecord(unsigned int row, bool bDelete);
+#if !USE_DATALISTVIEW
     virtual wxListItemAttr* OnGetItemAttr(long row) const;
 #endif
 protected:
+#if !USE_DATALISTVIEW
     void OnDblClick(wxListCellEvent&);
+#endif
     DECLARE_EVENT_TABLE()
 
+#if !USE_DATALISTVIEW
     wxListItemAttr  m_attr;
+#endif
 };

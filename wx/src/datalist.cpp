@@ -74,12 +74,8 @@ public:
     }
     virtual bool SetValue(const wxVariant& value)
     {
-        if (!value.IsNull())
-            return base::SetValue(value);
-        else
-            return base::SetValue(wxVariant((bool)false));
+        return base::SetValue(value.IsNull() ? wxVariant((bool)false) : value);
     }
-
 };
 
 void DataModelListCtrl::InitColumns(const std::vector<int>& col_width, bool row_column)
@@ -133,6 +129,7 @@ void DataModelListCtrl::InitColumns(const std::vector<int>& col_width, bool row_
 void DataModelListCtrl::OnDoubleClick(wxDataViewEvent& event)
 {
     EditItem(event.GetItem(), event.GetDataViewColumn());
+    //event.Skip();
 }
 
 #else // !USE_DATALISTVIEW
@@ -224,12 +221,6 @@ void DataModelListCtrl::InitColumns(const std::vector<int>& col_width, bool row_
     Fill();
 }
 
-void DataModelListCtrl::Fill()
-{
-    SetItemCount(GetModel() ? GetModel()->GetRowCount() : 0);
-    Refresh();
-}
-
 wxString DataModelListCtrl::OnGetItemText(long row, long col) const
 {
     DataModelListCtrl* pThis = wxStaticCast(this, DataModelListCtrl);
@@ -245,32 +236,6 @@ wxString DataModelListCtrl::OnGetItemText(long row, long col) const
         db->GetValueByRow(&str, row, col);
     }
     return str;
-}
-
-bool DataModelListCtrl::IsRecordOk(unsigned int index)
-{
-    return index < GetModel()->GetRowCount();
-}
-
-bool DataModelListCtrl::IsAnyUnselected(void)
-{
-    bool ok = false;
-#if USE_DATALISTVIEW
-#else
-    for (unsigned int index = 0; (!ok) && (index < (unsigned int)GetItemCount()); index++)
-        ok = ok || !IsSelected(index);
-#endif
-    return ok;
-}
-
-void DataModelListCtrl::OnUpdateSelectAll(wxUpdateUIEvent& event)
-{
-    event.Enable(GetModel() && GetModel()->IsOpen() && IsAnyUnselected());
-}
-
-void DataModelListCtrl::OnUpdateNeedSel(wxUpdateUIEvent& event)
-{
-    event.Enable(GetModel() && GetModel()->IsOpen() && HasSelection());
 }
 
 bool DataModelListCtrl::IsEditable() const
@@ -345,9 +310,51 @@ void DataModelListCtrl::OnEndLabelEdit(wxListEvent& event)
 }
 #endif
 
+bool DataModelListCtrl::IsAnyUnselected(void)
+{
+    bool ok = false;
+#if USE_DATALISTVIEW
+    for (unsigned int row = 0; (!ok) && (row < GetItemCount()); row++)
+    {
+        wxDataViewItem item = GetItemByRow(row);
+
+        ok = ok || !IsSelected(item);
+    }
+#else
+    for (unsigned int row = 0; (!ok) && (row < (unsigned int)GetItemCount()); row++)
+        ok = ok || !IsSelected(row);
+#endif
+    return ok;
+}
+
+void DataModelListCtrl::OnUpdateSelectAll(wxUpdateUIEvent& event)
+{
+    event.Enable(GetModel() && GetModel()->IsOpen() && IsAnyUnselected());
+}
+
+void DataModelListCtrl::OnUpdateNeedSel(wxUpdateUIEvent& event)
+{
+    event.Enable(GetModel() && GetModel()->IsOpen() && HasSelection());
+}
+
+bool DataModelListCtrl::IsRecordOk(unsigned int row)
+{
+    return row < GetModel()->GetRowCount();
+}
+
 bool DataModelListCtrl::IsOpen() const
 {
     const wxDataModelBase* db = wxStaticCast(this, DataModelListCtrl)->GetModel(); // unconst
 
     return db && db->IsOpen();
+}
+
+void DataModelListCtrl::Fill()
+{
+#if USE_DATALISTVIEW
+    GetStore()->Reset(GetItemCount());
+#else
+    SetItemCount(GetModel() ? GetModel()->GetRowCount() : 0);
+    Refresh();
+#endif
 }

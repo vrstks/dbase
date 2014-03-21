@@ -250,7 +250,7 @@ public:
     void SetSortOrder( bool ascending ) { m_ascending = ascending; }
     bool IsSortOrderAscending() const { return m_ascending; }
     void SetSortArray(const wxArrayInt& data) { m_array = data; }
-    unsigned int GetArrayValue(unsigned int index) const { return m_array[index]; }
+    unsigned int GetArrayValue(unsigned int row) const { return m_array[row]; }
 protected:
     int m_sort_column;
     bool m_row_column;

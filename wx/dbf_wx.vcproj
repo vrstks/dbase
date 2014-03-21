@@ -469,7 +469,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wxzlib.lib wxexpat.lib gdi32.lib kernel32.lib user32.lib comdlg32.lib comctl32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib "
+				AdditionalDependencies="wxzlib.lib wxexpat.lib wxpng.lib Rpcrt4.lib gdi32.lib kernel32.lib user32.lib comdlg32.lib comctl32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib "
 				OutputFile="..\..\bin/wxdbf32.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

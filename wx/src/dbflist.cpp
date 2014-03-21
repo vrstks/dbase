@@ -21,7 +21,9 @@
 
 BEGIN_EVENT_TABLE(DBFListCtrl, DataModelListCtrl)
     //EVT_COMMAND_LEFT_DCLICK(wxID_ANY, DBFListCtrl::OnDblClick)
+#if !USE_DATALISTVIEW
     EVT_LIST_CELL_DCLICK(wxID_ANY, DBFListCtrl::OnDblClick)
+#endif
 END_EVENT_TABLE()
 
 class FieldEdit : public wxTextCtrl
@@ -56,44 +58,42 @@ void FieldEdit::OnMove(wxMoveEvent& event)
 bool DBFListCtrl::Edit(long row, long col)
 {
 #if USE_DATALISTVIEW
-   return false;
+    wxDataViewItem item = RowToItem(row);
+    EditItem(item, GetColumn(col));
+    return true;
 #else
-   wxRect rect;
-   bool ok = GetSubItemRect(row, col, rect);
+    wxRect rect;
+    bool ok = GetSubItemRect(row, col, rect);
 
-   if (ok)
-   {
-      EnsureVisible(row);
-      m_column_clicked = col;
-      FieldEdit* edit = wxStaticCast(EditLabel(row, wxCLASSINFO(FieldEdit)), FieldEdit);
-      ok = (NULL != edit);
-      if (ok)
-      {
-         edit->SetValue(GetItemText(row, col));
-         edit->SelectAll();
-         rect.height+=3;
-         edit->Fixate(rect);
-      }
-   }
-   return ok;
+    if (ok)
+    {
+        EnsureVisible(row);
+        m_column_clicked = col;
+        FieldEdit* edit = wxStaticCast(EditLabel(row, wxCLASSINFO(FieldEdit)), FieldEdit);
+        ok = (NULL != edit);
+        if (ok)
+        {
+            edit->SetValue(GetItemText(row, col));
+            edit->SelectAll();
+            rect.height+=3;
+            edit->Fixate(rect);
+        }
+    }
+    return ok;
 #endif
 }
 
 bool DBFListCtrl::Edit()
 {
-#if USE_DATALISTVIEW
-    return false;
-#else
+#if !USE_DATALISTVIEW
     ScrollList(-GetScrollPos(wxHORIZONTAL), 0);
-    return Edit((size_t)GetSelectedRow(), 0);
 #endif
+    return Edit((size_t)GetSelectedRow(), 0);
 }
 
+#if !USE_DATALISTVIEW
 void DBFListCtrl::OnDblClick(wxListCellEvent& event)
 {
-#if USE_DATALISTVIEW
-    event.Skip();
-#else
     wxUnusedVar(event);
     if (!IsEditable()) return;
 
@@ -104,14 +104,11 @@ void DBFListCtrl::OnDblClick(wxListCellEvent& event)
     }
     else
         Edit((size_t)event.GetRow(), event.GetColumn());
-#endif
 }
+#endif
 
 bool DBFListCtrl::AddNew()
 {
-#if USE_DATALISTVIEW
-    return false;
-#else
     wxDataModelBase* db = GetModel();
     bool ok = db->AddNew();
 
@@ -123,15 +120,23 @@ bool DBFListCtrl::AddNew()
         Edit();
     }
     return ok;
-#endif
 }
 
 bool DBFListCtrl::IsUndeletedInSelection(void)
 {
     bool ok = false;
-    wxArrayInt selections;
 
-#if !USE_DATALISTVIEW
+#if USE_DATALISTVIEW
+    wxDataViewItemArray selections;
+    GetSelections(selections);
+    for (size_t i = 0; i < selections.size(); i++)
+    {
+        wxDataViewItem item = selections[i];
+        unsigned int row = ItemToRow(item);
+        ok = ok || (IsRecordOk(row) && !IsRecordDeleted(row));
+    }
+#else
+    wxArrayInt selections;
     GetSelections(selections);
     for (wxArrayInt::const_iterator it = selections.begin(); (!ok) && (it != selections.end()); it++)
         ok = ok || (IsRecordOk(*it) && !IsRecordDeleted(*it));
@@ -142,9 +147,18 @@ bool DBFListCtrl::IsUndeletedInSelection(void)
 bool DBFListCtrl::IsDeletedInSelection(void)
 {
     bool ok = false;
-    wxArrayInt selections;
 
-#if !USE_DATALISTVIEW
+#if USE_DATALISTVIEW
+    wxDataViewItemArray selections;
+    GetSelections(selections);
+    for (size_t i = 0; i < selections.size(); i++)
+    {
+        wxDataViewItem item = selections[i];
+        unsigned int row = ItemToRow(item);
+        ok = ok || (IsRecordOk(row) && IsRecordDeleted(row));
+    }
+#else
+    wxArrayInt selections;
     GetSelections(selections);
     for (wxArrayInt::const_iterator it = selections.begin(); (!ok) && (it != selections.end()); it++)
         ok = ok || (IsRecordOk(*it) && IsRecordDeleted(*it));
@@ -182,21 +196,29 @@ wxListItemAttr* DBFListCtrl::OnGetItemAttr(long row) const
 }
 #endif
 
-bool DBFListCtrl::IsRecordDeleted(unsigned int index)
+bool DBFListCtrl::IsRecordDeleted(unsigned int row)
 {
-    return GetModel()->IsRowDeleted(index);
+    return GetModel()->IsRowDeleted(row);
 }
 
-bool DBFListCtrl::DeleteRecord(unsigned int index, bool bDelete)
+bool DBFListCtrl::DeleteRecord(unsigned int row, bool bDelete)
 {
-    return GetModel()->DeleteRow(index, bDelete);
+    return GetModel()->DeleteRow(row, bDelete);
 }
 
 void DBFListCtrl::DeleteSelection(bool bDelete)
 {
+#if USE_DATALISTVIEW
+    wxDataViewItemArray selections;
+    GetSelections(selections);
+    for (size_t i = 0; i < selections.size(); i++)
+    {
+        wxDataViewItem item = selections[i];
+        unsigned int row = ItemToRow(item);
+        DeleteRecord(row, bDelete);
+    }
+#else
     wxArrayInt selections;
-
-#if !USE_DATALISTVIEW
     GetSelections(selections);
     for (wxArrayInt::const_iterator it = selections.begin(); it != selections.end(); it++)
         DeleteRecord(*it, bDelete);
@@ -206,8 +228,7 @@ void DBFListCtrl::DeleteSelection(bool bDelete)
 
 void DBFListCtrl::DeleteAll(bool bDelete)
 {
-    for (unsigned int index = 0; index < (unsigned int)GetItemCount(); index++)
-        DeleteRecord(index, bDelete);
+    for (unsigned int row = 0; row < (unsigned int)GetItemCount(); row++)
+        DeleteRecord(row, bDelete);
     Fill();
 }
-

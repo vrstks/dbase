@@ -6,7 +6,7 @@
 #define __DATALIST_H__
 
 #if (wxVERSION_NUMBER >= 2904)
-#define USE_DATALISTVIEW 0 // work in progress
+#define USE_DATALISTVIEW 1 // work in progress
 #else
 #define USE_DATALISTVIEW 0
 #endif
@@ -59,9 +59,7 @@ public:
     {
         UnselectAll();
     }
-    void Fill()
-    {
-    }
+    void Fill();
     bool IsOpen() const;
     bool Create(wxWindow *parent,
                 wxWindowID id = wxID_ANY,
@@ -82,6 +80,12 @@ public:
 
     void InitColumns(bool row_column = false) { InitColumns(std::vector<int>(), row_column); }
     void InitColumns(const std::vector<int>& col_width, bool row_column = false);
+
+    virtual bool IsRecordOk(unsigned int row);
+    bool IsAnyUnselected(void);
+
+    void OnUpdateSelectAll  (wxUpdateUIEvent&);
+    void OnUpdateNeedSel    (wxUpdateUIEvent&);
 
 protected:
     void OnDoubleClick(wxDataViewEvent&);
@@ -122,7 +126,7 @@ protected:
 public:
     virtual ~DataModelListCtrl();
     virtual wxString OnGetItemText(long row, long col) const;
-    virtual bool IsRecordOk(unsigned int index);
+    virtual bool IsRecordOk(unsigned int row);
     virtual void Fill();
 
     void AssociateModel(wxDataModelBase* model) { m_model = model; }
