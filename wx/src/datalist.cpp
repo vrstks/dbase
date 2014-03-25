@@ -144,7 +144,7 @@ void DataModelListCtrl::InitColumns(const DataViewColumnInfoVector& columns, boo
     {
         wxAlignment align = it->GetAlignment();
 
-        if ( (align == wxALIGN_RIGHT) && ((it + 1) != columns.end())) // last column expands to the right
+        if ( (align == wxALIGN_RIGHT) && ((it + 1) == columns.end())) // last column expands to the right
             align = wxALIGN_LEFT;
         if (wxT("bool") == it->VariantType)
             tr = new MyDataViewToggleRenderer(it->VariantType, wxDATAVIEW_CELL_ACTIVATABLE);

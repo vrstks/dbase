@@ -28,7 +28,9 @@ wxBitmap ArtProvider::CreateBitmap(const wxArtID& id, const wxArtClient& WXUNUSE
 {
     if (id == wxART_APP)
         return wxBitmap(wxICON(app));
+#if (wxVERSION_NUMBER < 3000)
     ART(wxART_HELP      , help)
+#endif
     ART(wxART_ADD       , plus)
     ART(wxART_PREVIEW   , preview)
     return wxNullBitmap;

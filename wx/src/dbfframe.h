@@ -12,37 +12,37 @@ class wxRecentFileList;
 class wxAcceleratorVector;
 class DBFFrame : public wxDocMDIChildFrame
 {
-   DECLARE_DYNAMIC_CLASS(DBFFrame)
-   typedef wxDocMDIChildFrame base;
-   wxRecentFileList* m_mru;
+    DECLARE_DYNAMIC_CLASS(DBFFrame)
+    typedef wxDocMDIChildFrame base;
+    wxRecentFileList* m_mru;
 public:
-   DBFFrame(void);
+    DBFFrame(void);
 
-   bool Create(wxMDIParentFrame*, wxView*, wxRecentFileList*);
+    bool Create(wxMDIParentFrame*, wxView*, wxRecentFileList*);
 
 #if (wxVERSION_NUMBER < 2900)
-   wxMDIParentFrame* GetMDIParent() const;
+    wxMDIParentFrame* GetMDIParent() const;
 #endif
-   static const wxAcceleratorVector& GetAccelerator();
+    static const wxAcceleratorVector& GetAccelerator();
 
-   virtual ~DBFFrame();
-   virtual void SetMenuBar(wxMenuBar*);
+    virtual ~DBFFrame();
+    virtual void SetMenuBar(wxMenuBar*);
 #if (wxVERSION_NUMBER < 2900)
    // To get statusbar menu help
-   virtual void DoGiveHelp(const wxString& text, bool show);
+    virtual void DoGiveHelp(const wxString& text, bool show);
 #endif
     virtual void Raise();
 #ifdef __WXGTK__
     virtual void SetLabel(const wxString& label)
     {
-       SetTitle(label);
+        SetTitle(label);
     }
 #endif
 
 protected:
-   wxMenuBar* CreateMenuBar() const;
+    wxMenuBar* CreateMenuBar() const;
 protected:
-   DECLARE_EVENT_TABLE()
+    DECLARE_EVENT_TABLE()
 };
 
 #endif // __DBFFRAME_H__
