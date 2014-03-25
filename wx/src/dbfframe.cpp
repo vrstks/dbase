@@ -23,11 +23,11 @@ DBFFrame::~DBFFrame()
 BEGIN_EVENT_TABLE(DBFFrame, wxDocMDIChildFrame)
 END_EVENT_TABLE()
 
-bool DBFFrame::Create(wxDocument* doc, wxMDIParentFrame* parent, wxRecentFileList* mru)
+bool DBFFrame::Create(wxMDIParentFrame* parent, wxView* view, wxRecentFileList* mru)
 {
    wxRect rect = parent->GetClientWindow()->GetClientRect();
 
-   bool ok = base::Create(doc, doc->GetFirstView(), parent, wxID_ANY, wxEmptyString, rect.GetPosition(), rect.GetSize(),
+   bool ok = base::Create(view->GetDocument(), view, parent, wxID_ANY, wxEmptyString, rect.GetPosition(), rect.GetSize(),
        wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE);
 
    if (ok)

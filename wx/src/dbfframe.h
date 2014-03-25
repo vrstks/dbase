@@ -18,7 +18,7 @@ class DBFFrame : public wxDocMDIChildFrame
 public:
    DBFFrame(void);
 
-   bool Create(wxDocument*, wxMDIParentFrame*, wxRecentFileList*);
+   bool Create(wxMDIParentFrame*, wxView*, wxRecentFileList*);
 
 #if (wxVERSION_NUMBER < 2900)
    wxMDIParentFrame* GetMDIParent() const;

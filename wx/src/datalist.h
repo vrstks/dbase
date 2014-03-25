@@ -78,7 +78,9 @@ public:
     void Edit()
     {
         wxDataViewItem item = GetCurrentItem();
-        EditItem(item, GetCurrentColumn());
+        const wxDataViewColumn* column = GetCurrentColumn();
+
+        EditItem(item, column ? column : GetColumn(0));
     }
     void GetRowSelections(wxArrayInt& rows) const
     {

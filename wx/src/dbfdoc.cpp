@@ -193,7 +193,7 @@ wxFrame* DatabaseDocTemplate::CreateViewFrame(wxView* view)
 {
     DBFFrame* subframe = wxStaticCast(m_frameClassInfo->CreateObject(), DBFFrame);
 
-    if (subframe->Create(view->GetDocument(), wxStaticCast(wxTheApp->GetTopWindow(), wxMDIParentFrame), m_mru))
+    if (subframe->Create(wxStaticCast(wxTheApp->GetTopWindow(), wxMDIParentFrame), view, m_mru))
         subframe->SetIcon(GetIcon());
     else
         wxDELETE(subframe);
