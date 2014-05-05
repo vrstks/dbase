@@ -13,6 +13,10 @@
     #define wxAPPLY 0x00000020
 #endif
 
+#ifndef wxCMD_LINE_DESC_END
+    #define wxCMD_LINE_DESC_END { wxCMD_LINE_NONE, NULL, NULL, NULL, wxCMD_LINE_VAL_NONE, 0x0 }
+#endif
+
 #if (wxVERSION_NUMBER < 2905)
 #include <vector>
 typedef std::vector<wxDocument*> wxDocVector;

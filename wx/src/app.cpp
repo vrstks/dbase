@@ -1,5 +1,5 @@
 // app.cpp
-// Copyright (c) 2007-2012 by Troels K. All rights reserved.
+// Copyright (c) 2007-2014 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -66,7 +66,7 @@ bool App::OnInit(void)
                         if (doc == NULL)
                         {
                             docManager->OnOpenFileFailure();
-                            wxLogError(wxString::Format(_("Failed to open %s"), fileName.GetFullPath().wx_str()));
+                            wxLogError(_("Failed to open %s"), fileName.GetFullPath().wx_str());
                         }
                     }
                 }
@@ -75,15 +75,11 @@ bool App::OnInit(void)
                     wxFileName fileName;
 
                     if (m_mru->GetFile(0, &fileName) && fileName.FileExists())
-                    {
                         docManager->CreateDocument(fileName.GetFullPath(), wxDOC_SILENT);
-                    }
                 }
             }
             else
-            {
                 delete frame;
-            }
         }
     }
     return ok;
@@ -116,7 +112,7 @@ CommandLine::CommandLine()
 static const wxCmdLineEntryDesc cmdLineDesc[] =
 {
     { wxCMD_LINE_PARAM,  wxT_2(""),  wxT_2(""), wxT_2("input filename(s)"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL|wxCMD_LINE_PARAM_MULTIPLE },
-    { wxCMD_LINE_NONE, NULL, NULL, NULL, wxCMD_LINE_VAL_NONE, 0 },
+    wxCMD_LINE_DESC_END
 };
 
 void App::OnInitCmdLine(wxCmdLineParser& parser)
@@ -128,8 +124,6 @@ void App::OnInitCmdLine(wxCmdLineParser& parser)
 bool App::OnCmdLineParsed(wxCmdLineParser& parser)
 {
    for (size_t i = 0; i < parser.GetParamCount(); i++)
-   {
       m_cmdline.m_fileNames.push_back(wxFileName(parser.GetParam(i)));
-   }
    return base::OnCmdLineParsed(parser);
 }
