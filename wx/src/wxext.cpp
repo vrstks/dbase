@@ -475,7 +475,8 @@ bool wxRecentFileList::Detach(wxFrame* frame)
 
 void wxRecentFileList::Load(wxConfigBase* config, const wxString& configPath)
 {
-   if (NULL == config) config = wxConfigBase::Get();
+   if (NULL == config)
+       config = wxConfigBase::Get();
    config->SetPath(configPath.empty() ? wxT("MRU") : configPath);
    m_fileHistory->Load(*config);
    config->SetPath(wxT("/"));
@@ -483,7 +484,8 @@ void wxRecentFileList::Load(wxConfigBase* config, const wxString& configPath)
 
 void wxRecentFileList::Save(wxConfigBase* config, const wxString& configPath)
 {
-   if (NULL == config) config = wxConfigBase::Get();
+   if (NULL == config)
+       config = wxConfigBase::Get();
    config->SetPath(configPath.empty() ? wxT("MRU") : configPath);
    m_fileHistory->Save(*config);
    config->SetPath(wxT("/"));
@@ -494,14 +496,25 @@ wxFileHistory* wxRecentFileList::GetImplementation() const
    return m_fileHistory;
 }
 
-bool wxRecentFileList::GetFile(size_t index, wxFileName* str) const
+int wxRecentFileList::IndexFromID(wxWindowID id) const
 {
-   const wxFileHistory* impl = GetImplementation();
-   bool ok = (index < impl->GetCount());
+    const wxFileHistory* impl = GetImplementation();
 
-   if (ok)
-      str->operator=(impl->GetHistoryFile(index));
-   return ok;
+    if (!(   (id >= impl->GetBaseId())
+          && (id < (impl->GetBaseId() + impl->GetMaxFiles()))
+          ) )
+        return wxNOT_FOUND;
+    return id - impl->GetBaseId();
+}
+
+bool wxRecentFileList::GetFile(size_t index, wxString* str) const
+{
+    const wxFileHistory* impl = GetImplementation();
+    bool ok = (index < impl->GetCount());
+
+    if (ok && str)
+        *str = impl->GetHistoryFile(index);
+    return ok;
 }
 
 #if (wxVERSION_NUMBER < 2905)

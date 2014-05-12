@@ -114,28 +114,43 @@ extern wxString wxGetStockLabelEx(wxWindowID, long flags = wxSTOCK_WITH_MNEMONIC
 
 class WXDLLIMPEXP_FWD_CORE wxFileHistory;
 class WXDLLIMPEXP_FWD_CORE wxDocManager;
-class WXDLLIMPEXP_FWD_CORE wxConfigBase;
+class WXDLLIMPEXP_FWD_BASE wxConfigBase;
 
 class wxRecentFileList
 {
-protected:
-   wxFileHistory* m_fileHistory;
-
 public:
-   wxRecentFileList(wxFileHistory*);
+    wxRecentFileList(wxFileHistory*);
 
-   void Load(wxConfigBase* config = NULL, const wxString& configPath = wxEmptyString);
-   void Save(wxConfigBase* config = NULL, const wxString& configPath = wxEmptyString);
+    void Load(wxConfigBase* config = NULL, const wxString& configPath = wxEmptyString);
+    void Save(wxConfigBase* config = NULL, const wxString& configPath = wxEmptyString);
 
-   void Attach(wxMenuBar*);
-   void Attach(wxFrame*);
-   bool Detach(wxMenuBar*);
-   bool Detach(wxFrame*);
+    void Attach(wxMenuBar*);
+    void Attach(wxFrame*);
+    bool Detach(wxMenuBar*);
+    bool Detach(wxFrame*);
 
-   wxFileHistory* GetImplementation() const;
+    wxFileHistory* GetImplementation() const;
 
-   bool GetFile(size_t, wxFileName*) const;
+    bool GetFile(size_t, wxString*) const;
+    bool GetFile(size_t index, wxFileName* fileName) const
+    {
+        wxString str;
+        if (!GetFile(index, &str))
+            return false;
+        if (fileName)
+            *fileName = str;
+        return true;
+    }
+
+    int IndexFromID(wxWindowID) const;
+    int IsInRange(wxWindowID id) const
+    {
+        return wxNOT_FOUND != IndexFromID(id);
+    }
+private:
+    wxFileHistory* m_fileHistory;
 };
+
 
 class WXDLLIMPEXP_FWD_CORE wxDocument;
 
