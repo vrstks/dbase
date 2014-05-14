@@ -119,7 +119,9 @@ class WXDLLIMPEXP_FWD_BASE wxConfigBase;
 class wxRecentFileList
 {
 public:
+    wxRecentFileList(size_t maxFiles = 9, wxWindowID idBase = wxID_FILE1);
     wxRecentFileList(wxFileHistory*);
+    virtual ~wxRecentFileList();
 
     void Load(wxConfigBase* config = NULL, const wxString& configPath = wxEmptyString);
     void Save(wxConfigBase* config = NULL, const wxString& configPath = wxEmptyString);
@@ -131,6 +133,7 @@ public:
 
     wxFileHistory* GetImplementation() const;
 
+    void AddFileToHistory(const wxString& file);
     bool GetFile(size_t, wxString*) const;
     bool GetFile(size_t index, wxFileName* fileName) const
     {
@@ -149,8 +152,8 @@ public:
     }
 private:
     wxFileHistory* m_fileHistory;
+    wxFileHistory* m_DeleteMe;
 };
-
 
 class WXDLLIMPEXP_FWD_CORE wxDocument;
 

@@ -429,8 +429,18 @@ wxString wxGetStockLabelEx(wxWindowID id, long flags)
 /////////////////////////////////////////////////////////////////////////////
 // wxRecentFileList
 
-wxRecentFileList::wxRecentFileList(wxFileHistory* fileHistory) : m_fileHistory(fileHistory)
+wxRecentFileList::wxRecentFileList(size_t maxFiles, wxWindowID idBase)
 {
+     m_fileHistory = m_DeleteMe = new wxFileHistory(maxFiles, idBase);
+}
+
+wxRecentFileList::wxRecentFileList(wxFileHistory* fileHistory) : m_fileHistory(fileHistory), m_DeleteMe(NULL)
+{
+}
+
+wxRecentFileList::~wxRecentFileList()
+{
+    delete m_DeleteMe;
 }
 
 void wxRecentFileList::Attach(wxMenuBar* menubar)
@@ -500,11 +510,16 @@ int wxRecentFileList::IndexFromID(wxWindowID id) const
 {
     const wxFileHistory* impl = GetImplementation();
 
-    if (!(   (id >= impl->GetBaseId())
-          && (id < (impl->GetBaseId() + impl->GetMaxFiles()))
-          ) )
-        return wxNOT_FOUND;
-    return id - impl->GetBaseId();
+    return (   (id >= impl->GetBaseId())
+            && (id < (impl->GetBaseId() + impl->GetMaxFiles()))
+           )
+            ? id - impl->GetBaseId()
+            : wxNOT_FOUND;
+}
+
+void wxRecentFileList::AddFileToHistory(const wxString& file)
+{
+    GetImplementation()->AddFileToHistory(file);
 }
 
 bool wxRecentFileList::GetFile(size_t index, wxString* str) const

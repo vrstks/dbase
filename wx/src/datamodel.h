@@ -100,6 +100,8 @@ public:
         return GetRowCount();
     }
 #endif
+
+    bool FindRowByColumnValue(const wxVariant&, unsigned int col, unsigned int* row) const;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -307,6 +309,22 @@ inline bool wxDataModelBase::SetValueByRow(const wxString& str, unsigned int row
 {
     const wxVariant var(str);
     return SetValueByRow(var, row, col);
+}
+
+inline bool wxDataModelBase::FindRowByColumnValue(const wxVariant& value, unsigned int col, unsigned int* row_ptr) const
+{
+    for (unsigned int row = 0; row < GetRowCount(); row++)
+    {
+        wxVariant var;
+        GetValueByRow(var, row, col);
+        if ( (!var.IsNull()) && (value == var) )
+        {
+            if (row_ptr)
+                *row_ptr = row;
+            return true;
+        }
+    }
+    return false;
 }
 
 /////////////////////////////////////////////////////////////////////////////

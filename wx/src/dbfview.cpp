@@ -35,7 +35,6 @@ public:
    bool Create(wxWindow* parent)
    {
        bool ok = base::Create(parent, wxID_ANY);
-       //bool ok = base::Create(parent);
        if (ok)
            AssociateModel(&m_datamodel);
        return ok;
@@ -131,6 +130,12 @@ void DBFView::OnUpdate(wxView* sender, wxObject* hint)
         wnd->InitColumns();
         wnd->SelectRow(0);
         wnd->Thaw();
+
+        /*
+        unsigned int row;
+        if (wnd->GetModel()->FindRowByColumnValue(wxT("GTOOLBAR"), 1, &row))
+            _asm NOP
+        */
     }
     else
         base::OnUpdate(sender, hint);
