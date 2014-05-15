@@ -431,7 +431,7 @@ wxString wxGetStockLabelEx(wxWindowID id, long flags)
 
 wxRecentFileList::wxRecentFileList(size_t maxFiles, wxWindowID idBase)
 {
-     m_fileHistory = m_DeleteMe = new wxFileHistory(maxFiles, idBase);
+    m_fileHistory = m_DeleteMe = new wxFileHistory(maxFiles, idBase);
 }
 
 wxRecentFileList::wxRecentFileList(wxFileHistory* fileHistory) : m_fileHistory(fileHistory), m_DeleteMe(NULL)
@@ -445,65 +445,60 @@ wxRecentFileList::~wxRecentFileList()
 
 void wxRecentFileList::Attach(wxMenuBar* menubar)
 {
-   wxMenu* submenu;
-   wxMenuItem* item = menubar->FindItem(m_fileHistory->GetBaseId(), &submenu);
+    wxMenu* submenu;
+    wxMenuItem* item = menubar->FindItem(m_fileHistory->GetBaseId(), &submenu);
 
-   submenu->Delete(item);
-   m_fileHistory->UseMenu(submenu);
-   m_fileHistory->AddFilesToMenu(submenu);
+    submenu->Delete(item);
+    m_fileHistory->UseMenu(submenu);
+    m_fileHistory->AddFilesToMenu(submenu);
 }
 
 bool wxRecentFileList::Detach(wxMenuBar* menubar)
 {
-   const wxList& list = m_fileHistory->GetMenus();
+    const wxList& list = m_fileHistory->GetMenus();
 
-   for (wxList::const_iterator it = list.begin();
-        it != list.end();
-        it++)
-   {
-       wxMenu* menu = wxStaticCast(*it, wxMenu);
+    for (wxList::const_iterator it = list.begin();
+         it != list.end();
+         it++)
+    {
+        wxMenu* menu = wxStaticCast(*it, wxMenu);
 
-       if (menu->GetMenuBar() == menubar)
-       {
-           m_fileHistory->RemoveMenu(menu);
-           return true;
-       }
-   }
-   wxASSERT(false);
-   return false;
+        if (menu->GetMenuBar() == menubar)
+        {
+            m_fileHistory->RemoveMenu(menu);
+            return true;
+        }
+    }
+    wxASSERT(false);
+    return false;
 }
 
 void wxRecentFileList::Attach(wxFrame* frame)
 {
-   Attach(frame->GetMenuBar());
+    Attach(frame->GetMenuBar());
 }
 
 bool wxRecentFileList::Detach(wxFrame* frame)
 {
-   return Detach(frame->GetMenuBar());
+    return Detach(frame->GetMenuBar());
 }
 
 void wxRecentFileList::Load(wxConfigBase* config, const wxString& configPath)
 {
-   if (NULL == config)
-       config = wxConfigBase::Get();
-   config->SetPath(configPath.empty() ? wxT("MRU") : configPath);
-   m_fileHistory->Load(*config);
-   config->SetPath(wxT("/"));
+    if (NULL == config)
+        config = wxConfigBase::Get();
+    config->SetPath(configPath.empty() ? wxT("MRU") : configPath);
+    m_fileHistory->Load(*config);
+    config->SetPath(wxT("/"));
 }
 
 void wxRecentFileList::Save(wxConfigBase* config, const wxString& configPath)
 {
-   if (NULL == config)
-       config = wxConfigBase::Get();
-   config->SetPath(configPath.empty() ? wxT("MRU") : configPath);
-   m_fileHistory->Save(*config);
-   config->SetPath(wxT("/"));
-}
-
-wxFileHistory* wxRecentFileList::GetImplementation() const
-{
-   return m_fileHistory;
+    if (NULL == config)
+        config = wxConfigBase::Get();
+    config->SetPath(configPath.empty() ? wxT("MRU") : configPath);
+    m_fileHistory->Save(*config);
+    config->SetPath(wxT("/"));
 }
 
 int wxRecentFileList::IndexFromID(wxWindowID id) const

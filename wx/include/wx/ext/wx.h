@@ -131,9 +131,16 @@ public:
     bool Detach(wxMenuBar*);
     bool Detach(wxFrame*);
 
-    wxFileHistory* GetImplementation() const;
+    wxFileHistory* GetImplementation() const
+    {
+        return m_fileHistory;
+    }
 
     void AddFileToHistory(const wxString& file);
+    void AddFileToHistory(const wxFileName& fileName)
+    {
+        AddFileToHistory(fileName.GetFullPath());
+    }
     bool GetFile(size_t, wxString*) const;
     bool GetFile(size_t index, wxFileName* fileName) const
     {
