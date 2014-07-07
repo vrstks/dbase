@@ -113,7 +113,6 @@ extern wxString wxGetStockLabelEx(wxWindowID, long flags = wxSTOCK_WITH_MNEMONIC
 // wrap up the eccentricities
 
 class WXDLLIMPEXP_FWD_CORE wxFileHistory;
-class WXDLLIMPEXP_FWD_CORE wxDocManager;
 class WXDLLIMPEXP_FWD_BASE wxConfigBase;
 
 class wxRecentFileList
