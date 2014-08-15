@@ -283,7 +283,7 @@ EXTERN_C DBF_HANDLE dbf_alloc(void)
    handle->memo.header.flag = MAGIC_DBASE3;
    handle->memo.header.next = 1;
 
-   handle->fieldarray     = NULL;
+   handle->fieldarray      = NULL;
    handle->modified        = FALSE;
    handle->recorddataptr   = NULL;
    handle->editmode        = dbf_editmode_readonly;
@@ -425,7 +425,7 @@ DBF_HANDLE dbf_attach(void* stream, const zlib_filefunc_def* api, enum dbf_editm
                DBF_FILEFIELD temp;
                DBF_FIELD* field = handle->fieldarray + i;
 
-               ZREAD(handle->api, stream, &temp, field_len);
+               ZREAD(handle->api, stream, &temp, (uLong)field_len);
 
                if ( (*temp.name >= 0) && (*temp.name <= ' '))
                {
@@ -772,7 +772,7 @@ BOOL dbf_setposition(DBF_HANDLE handle, dbf_uint record)
         {
             ok = (0 == ZSEEK(handle->api, handle->stream, handle->headerlength + (record - 0) * handle->recordlength, ZLIB_FILEFUNC_SEEK_SET));
             if (ok)
-                ok = (handle->recordlength == ZREAD(handle->api, handle->stream, handle->recorddataptr, handle->recordlength));
+                ok = (handle->recordlength == ZREAD(handle->api, handle->stream, handle->recorddataptr, (uLong)handle->recordlength));
         }
     }
     if (ok)
@@ -795,7 +795,7 @@ BOOL dbf_putrecord(DBF_HANDLE handle, dbf_uint record)
    if (ok)
    {
       ZSEEK (handle->api, handle->stream, handle->headerlength + (record - 0) * handle->recordlength, ZLIB_FILEFUNC_SEEK_SET);
-      ZWRITE(handle->api, handle->stream, handle->recorddataptr, handle->recordlength);
+      ZWRITE(handle->api, handle->stream, handle->recorddataptr, (uLong)handle->recordlength);
       handle->modified = TRUE;
       handle->currentrecord = record;
       handle->lasterror = DBASE_SUCCESS;
@@ -834,12 +834,12 @@ BOOL dbf_addrecord(DBF_HANDLE handle)
 
    memset(handle->recorddataptr, FIELD_FILL_CHAR, handle->recordlength);
    ZSEEK(handle->api, handle->stream, handle->headerlength + handle->recordcount * handle->recordlength, ZLIB_FILEFUNC_SEEK_SET);
-   ok = (handle->recordlength == ZWRITE(handle->api, handle->stream, handle->recorddataptr, handle->recordlength));
+   ok = (handle->recordlength == ZWRITE(handle->api, handle->stream, handle->recorddataptr, (uLong)handle->recordlength));
    if (ok)
    {
       handle->currentrecord = handle->recordcount++;
-      handle->modified = TRUE;
-      handle->lasterror = DBASE_SUCCESS;
+      handle->modified      = TRUE;
+      handle->lasterror     = DBASE_SUCCESS;
    }
    else
    {
@@ -852,8 +852,8 @@ BOOL dbf_addrecord(DBF_HANDLE handle)
 BOOL dbf_insertrecord(DBF_HANDLE handle, dbf_uint index)
 {
    char buf[255];
-
    BOOL ok = (index <= handle->recordcount);
+
    if (ok)
    {
       dbf_uint i, j, total = handle->recordcount+1;
@@ -1484,8 +1484,8 @@ BOOL dbf_memo_create(DBF_HANDLE handle, void* stream)
    if (ok)
    {
       dbf_uint i;
-      ZSEEK(handle->api, handle->memo.stream, 0, ZLIB_FILEFUNC_SEEK_SET);
 
+      ZSEEK(handle->api, handle->memo.stream, 0, ZLIB_FILEFUNC_SEEK_SET);
       handle->memo.nextfreeblock = 1;
 
       // first 4 bytes is next block
