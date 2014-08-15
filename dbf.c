@@ -263,7 +263,8 @@ static BOOL dbf_memo_attach(DBF_HANDLE handle, void* stream)
       handle->memo.stream = stream;
       ZSEEK(handle->api, stream, 0, ZLIB_FILEFUNC_SEEK_SET);
       ZREAD(handle->api, stream, &handle->memo.header, sizeof(handle->memo.header));
-      if (0 == handle->memo.header.blocksize) handle->memo.header.blocksize = MEMO_BLOCK_SIZE; /* OpenOffice2 */
+      if (0 == handle->memo.header.blocksize)
+          handle->memo.header.blocksize = MEMO_BLOCK_SIZE; /* OpenOffice2 */
    }
    return ok;
 }
@@ -460,9 +461,7 @@ DBF_HANDLE dbf_attach(void* stream, const zlib_filefunc_def* api, enum dbf_editm
             handle->editmode = editmode;
             handle->charconv = charconv;
             if (tablename)
-            {
                strncpy(handle->tablename, tablename, _countof(handle->tablename));
-            }
 
             switch (header.flags)
             {
@@ -529,15 +528,11 @@ void* dbf_detach(DBF_HANDLE* handle_ptr)
    void* stream = handle->stream;
 
    *handle_ptr = NULL;
-   if (handle->modified)
-   {
-	   dbf_write_header(handle);
-   }
 
+   if (handle->modified)
+	   dbf_write_header(handle);
    if (handle->memo.stream)
-   {
       dbf_close_memo(handle);
-   }
 
    free(handle->dup);
    free(handle->fieldarray);
@@ -552,27 +547,27 @@ void dbf_close(DBF_HANDLE* handle_ptr)
    zlib_filefunc_def api = handle->api;
    void* stream = dbf_detach(handle_ptr);
 
-   if (stream) ZCLOSE(api, stream);
+   if (stream)
+       ZCLOSE(api, stream);
 }
 
 void dbf_getmemofilename(const char* file_dbf, char* buf, size_t buf_len)
 {
-   char name[PATH_MAX];
-   size_t len;
+    char name[PATH_MAX];
+    size_t len;
 
-   strncpy(name, file_dbf, sizeof(name));
-   len = strlen(name) - 1;
-   if (len) switch(name[len])
-   {
-      case 'F':
-         name[len] = 'T';
-         break;
-      default:
-      case 'f':
-         name[len] = 't';
-         break;
-   }
-   strncpy(buf, name, buf_len);
+    strncpy(name, file_dbf, sizeof(name));
+    len = strlen(name) - 1;
+    if (len)
+        switch(name[len])
+        {
+          case 'F':
+             name[len] = 'T'; break;
+          default:
+          case 'f':
+             name[len] = 't'; break;
+        }
+    strncpy(buf, name, buf_len);
 }
 
 DBF_HANDLE dbf_open(const char* file, enum dbf_editmode editmode, const DBF_OPEN* parm)
@@ -594,9 +589,7 @@ DBF_HANDLE dbf_open(const char* file, enum dbf_editmode editmode, const DBF_OPEN
        parm = &parm_default;
    }
    if (parm->api)
-   {
        api = parm->api;
-   }
    else
    {
       fill_fopen_filefunc(&temp);
@@ -610,9 +603,7 @@ DBF_HANDLE dbf_open(const char* file, enum dbf_editmode editmode, const DBF_OPEN
 
       dbf_getmemofilename(file, temp, _countof(temp));
       if (parm->memo)
-      {
           memostream = (*api->zopen_file)(api->opaque, temp, openmode);
-      }
       handle = dbf_attach(stream, api, editmode, parm->charconv, memostream, parm->tablename);
       if (handle)
       {
@@ -625,9 +616,7 @@ DBF_HANDLE dbf_open(const char* file, enum dbf_editmode editmode, const DBF_OPEN
                break;
             default:
                if (memostream)
-               {
                    ZCLOSE(*api, memostream);
-               }
                break;
          }
       }
@@ -635,9 +624,7 @@ DBF_HANDLE dbf_open(const char* file, enum dbf_editmode editmode, const DBF_OPEN
       {
          ZCLOSE(*api, stream);
          if (memostream)
-         {
              ZCLOSE(*api, memostream);
-         }
       }
    }
    else
@@ -669,14 +656,10 @@ static char* Trim(char *str, char trimchar)
    char* end;
 
    while (*str == trimchar)
-   {
       strcpy(str, str + 1);
-   }
    end = str + strlen(str) - 1;
    while ( (end >= str) && (*end == trimchar) )
-   {
       *(end--) = 0;
-   }
    return str;
 }
 
@@ -766,8 +749,10 @@ BOOL dbf_parsedate(const char *buf, struct tm* tm_ptr, int* ms_ptr, enum dbf_dat
    }
    if (ok)
    {
-      if (tm_ptr) *tm_ptr = tm;
-      if (ms_ptr) *ms_ptr = ms;
+      if (tm_ptr)
+          *tm_ptr = tm;
+      if (ms_ptr)
+          *ms_ptr = ms;
    }
    return ok;
 }
@@ -788,14 +773,14 @@ BOOL dbf_setposition(DBF_HANDLE handle, dbf_uint record)
             ok = (0 == ZSEEK(handle->api, handle->stream, handle->headerlength + (record - 0) * handle->recordlength, ZLIB_FILEFUNC_SEEK_SET));
             if (ok)
                 ok = (handle->recordlength == ZREAD(handle->api, handle->stream, handle->recorddataptr, handle->recordlength));
-            if (ok)
-            {
-                handle->currentrecord = record;
-                handle->lasterror = DBASE_SUCCESS;
-            }
         }
     }
-    if (!ok)
+    if (ok)
+    {
+        handle->currentrecord = record;
+        handle->lasterror = DBASE_SUCCESS;
+    }
+    else
     {
         strncpy(handle->lasterrormsg, "Invalid record", _countof(handle->lasterrormsg));
         handle->lasterror = DBASE_INVALID_RECORD;
@@ -835,14 +820,11 @@ BOOL dbf_deleterecord(DBF_HANDLE handle, BOOL do_delete)
    if (ok)
    {
       handle->recorddataptr[RECORD_POS_DELETED] = (char)(do_delete ? RECORD_DELETED_MARKER : FIELD_FILL_CHAR);
-
       handle->modified = TRUE;
       ok = dbf_putrecord(handle, dbf_getposition(handle));
    }
    else
-   {
       handle->lasterror = DBASE_INVALID_RECORD;
-   }
    return ok;
 }
 
@@ -898,9 +880,7 @@ BOOL dbf_insertrecord(DBF_HANDLE handle, dbf_uint index)
       handle->lasterror = DBASE_SUCCESS;
    }
    else
-   {
       handle->lasterror = DBASE_INVALID_RECORD;
-   }
    return ok;
 }
 
@@ -909,9 +889,7 @@ const DBF_FIELD* dbf_getfieldptr(DBF_HANDLE handle, dbf_uint index)
    const DBF_FIELD* field = NULL;
 
    if (index < handle->fieldcount)
-   {
       field = handle->fieldarray + index;
-   }
    else
    {
       strncpy(handle->lasterrormsg, "Invalid field pointer", _countof(handle->lasterrormsg));
@@ -957,7 +935,8 @@ BOOL dbf_isnull(DBF_HANDLE handle, const DBF_FIELD* field)
 
    for (i = 0; i < field->m_Length; i++)
    {
-      if (field->ptr[i] != FIELD_FILL_CHAR) return FALSE;
+      if (field->ptr[i] != FIELD_FILL_CHAR)
+          return FALSE;
    }
    return TRUE;
 }
@@ -966,7 +945,8 @@ static int dotnormalize(char* str, char dot, size_t len)
 {
    size_t i;
 
-   if (0 == len) len = strlen(str);
+   if (0 == len)
+       len = strlen(str);
    for (i = 0; i < len; i++) switch (str[i])
    {
       case ',':
@@ -1005,9 +985,7 @@ BOOL dbf_putfield(DBF_HANDLE handle, const DBF_FIELD* field, const char* buf)
             while (*ptr)
             {
                if (strchr("+-.,0123456789", *ptr))
-               {
                   ptr++;
-               }
                else
                {
                   strncpy(handle->lasterrormsg, "Invalid type (not a FLOAT/NUMERIC)", _countof(handle->lasterrormsg));
@@ -1112,15 +1090,11 @@ BOOL dbf_putfield(DBF_HANDLE handle, const DBF_FIELD* field, const char* buf)
                {
                   int pad = field->m_DecCount - (i - sep);
                   for (; (pad >= 0) && (i < field->m_Length); i++, pad--)
-                  {
                      field->ptr[i] = '0';
-                  }
                }
 
                for (; i < field->m_Length; i++)
-               {
                   field->ptr[i] = FIELD_FILL_CHAR;
-               }
                break;
             }
             default:
@@ -1179,8 +1153,10 @@ BOOL dbf_getfield_time(DBF_HANDLE handle, const DBF_FIELD* field, time_t* utc_pt
                ok = (TIME_ERR != utc);
                if (ok)
                {
-                  if (utc_ptr) *utc_ptr = utc;
-                  if (ms_ptr ) *ms_ptr  = ms;
+                  if (utc_ptr)
+                      *utc_ptr = utc;
+                  if (ms_ptr)
+                      *ms_ptr  = ms;
                }
             }
             break;
@@ -1193,8 +1169,10 @@ BOOL dbf_getfield_time(DBF_HANDLE handle, const DBF_FIELD* field, time_t* utc_pt
             ok = dbf_getfield_numeric(handle, field, &temp);
             if (ok)
             {
-               if (utc_ptr) *utc_ptr = temp;
-               if (ms_ptr ) *ms_ptr  = 0;
+               if (utc_ptr)
+                   *utc_ptr = temp;
+               if (ms_ptr)
+                   *ms_ptr  = 0;
             }
             break;
          }
@@ -1205,8 +1183,10 @@ BOOL dbf_getfield_time(DBF_HANDLE handle, const DBF_FIELD* field, time_t* utc_pt
             ok = dbf_getfield_float(handle, field, &temp);
             if (ok)
             {
-               if (utc_ptr) *utc_ptr = (int)floor(temp);
-               if (ms_ptr ) *ms_ptr  = (int)((temp - floor(temp)) * 1000.0);
+               if (utc_ptr)
+                   *utc_ptr = (int)floor(temp);
+               if (ms_ptr)
+                   *ms_ptr  = (int)((temp - floor(temp)) * 1000.0);
             }
             break;
          }
@@ -1222,7 +1202,8 @@ BOOL dbf_putfield_time(DBF_HANDLE handle, const DBF_FIELD* field, time_t utc, in
 {
    BOOL ok = (field != NULL);
 
-   if (type < 0) type = field->type;
+   if (type < 0)
+       type = field->type;
    if (ok) switch (type)
    {
       case DBF_DATA_TYPE_DATE:
@@ -1232,7 +1213,8 @@ BOOL dbf_putfield_time(DBF_HANDLE handle, const DBF_FIELD* field, time_t utc, in
          struct tm* tm = localtime(&utc);
 
          ok = (tm != NULL);
-         if (ok) ok = dbf_putfield_tm(handle, field, tm, ms, type);
+         if (ok)
+             ok = dbf_putfield_tm(handle, field, tm, ms, type);
          break;
       }
       case DBF_DATA_TYPE_INTEGER:
@@ -1264,7 +1246,8 @@ BOOL dbf_getfield_tm(DBF_HANDLE handle, const DBF_FIELD* field, struct tm* tm, i
             char temp[80];
 
             ok = 0 != dbf_getfield(handle, field, temp, _countof(temp), DBF_DATA_TYPE_ANY);
-            if (ok) ok = dbf_parsedate(temp, tm, ms, field->type);
+            if (ok)
+                ok = dbf_parsedate(temp, tm, ms, field->type);
             break;
          }
          case DBF_DATA_TYPE_INTEGER:
@@ -1277,11 +1260,14 @@ BOOL dbf_getfield_tm(DBF_HANDLE handle, const DBF_FIELD* field, struct tm* tm, i
             if (ok)
             {
                const struct tm* temp = localtime(&utc);
+
                ok = (temp != NULL);
                if (ok)
                {
-                  if (tm) *tm = *temp;
-                  if (ms) *ms = 0;
+                  if (tm)
+                      *tm = *temp;
+                  if (ms)
+                      *ms = 0;
                }
             }
             break;
@@ -1298,13 +1284,15 @@ BOOL dbf_putfield_tm(DBF_HANDLE handle, const DBF_FIELD* field, const struct tm*
 {
    BOOL ok = tm && field;
 
-   if (type < 0) type = field->type;
+   if (type < 0)
+       type = field->type;
 
    if (ok) switch (type)
    {
       case DBF_DATA_TYPE_DATE:
       {
          char sz[80];
+
          snprintf(sz, sizeof(sz), FMT_DATE,
             tm->tm_year + ((tm->tm_year < 1900) ? 1900 : 0),
             tm->tm_mon + 1,
@@ -1315,6 +1303,7 @@ BOOL dbf_putfield_tm(DBF_HANDLE handle, const DBF_FIELD* field, const struct tm*
       case DBF_DATA_TYPE_TIME: /* non-standard */
       {
          char sz[80];
+
          snprintf(sz, sizeof(sz), FMT_TIME,
             tm->tm_hour,
             tm->tm_min,
@@ -1326,6 +1315,7 @@ BOOL dbf_putfield_tm(DBF_HANDLE handle, const DBF_FIELD* field, const struct tm*
       case DBF_DATA_TYPE_DATETIME: /* non-standard */
       {
          char sz[80];
+
          snprintf(sz, sizeof(sz), FMT_DATETIME,
             tm->tm_year + ((tm->tm_year < 1900) ? 1900 : 0),
             tm->tm_mon + 1,
@@ -1344,7 +1334,8 @@ BOOL dbf_putfield_tm(DBF_HANDLE handle, const DBF_FIELD* field, const struct tm*
          const time_t utc = mktime((struct tm*)tm); // unconst due to bad prototype in MSVC7
 
          ok = (TIME_ERR != utc);
-         if (ok) ok = dbf_putfield_time(handle, field, utc, ms, type);
+         if (ok)
+             ok = dbf_putfield_time(handle, field, utc, ms, type);
          break;
       }
       default:
@@ -1362,7 +1353,8 @@ BOOL dbf_getfield_float(DBF_HANDLE handle, const DBF_FIELD* field, double* d)
    if (ok)
    {
       dotnormalize(buf, 0, 0);
-      if (d) *d = atof(buf);
+      if (d)
+          *d = atof(buf);
    }
    else
    {
@@ -1393,6 +1385,7 @@ BOOL dbf_getfield_bool(DBF_HANDLE handle, const DBF_FIELD* field, BOOL* b)
 BOOL dbf_putfield_float(DBF_HANDLE handle, const DBF_FIELD* field, double value)
 {
    BOOL ok = (field != NULL);
+
    if (ok)
    {
       char* buf = (char*)malloc(field->m_Length);
@@ -1422,14 +1415,11 @@ char dbf_gettype_ext2int(enum dbf_data_type type)
    switch (type)
    {
       case DBF_DATA_TYPE_UNKNOWN:
-         n = 0;
-         break;
+         n = 0; break;
       case DBF_DATA_TYPE_ANY:
-         n = '?';
-         break;
+         n = '?'; break;
       default:
-         n = mod_type_int[type];
-         break;
+         n = mod_type_int[type]; break;
    }
    return n;
 }
@@ -1503,9 +1493,8 @@ BOOL dbf_memo_create(DBF_HANDLE handle, void* stream)
 
       // reserved space
       for (i = 4; i < 512; i++)
-      {
          ZWRITE(handle->api, handle->memo.stream, "\0", 1);
-      }
+
       ZSEEK (handle->api, handle->memo.stream, 16, ZLIB_FILEFUNC_SEEK_SET);
       ZWRITE(handle->api, handle->memo.stream, "\0x03", 1);
 
@@ -1563,9 +1552,7 @@ static int find_memo(const DBF_FIELD_INFO* array, dbf_uint array_count)
    for (i = 0; i < array_count; i++)
    {
       if (array[i].type == DBF_DATA_TYPE_MEMO)
-      {
          return (int)i;
-      }
    }
    return NOT_FOUND;
 }
@@ -1590,9 +1577,7 @@ DBF_HANDLE dbf_create(const char* filename, const DBF_FIELD_INFO* array, dbf_uin
        parm = &parm_default;
    }
    if (parm->api)
-   {
        api = parm->api;
-   }
    else
    {
       fill_fopen_filefunc(&temp);
@@ -1622,9 +1607,7 @@ DBF_HANDLE dbf_create(const char* filename, const DBF_FIELD_INFO* array, dbf_uin
           handle = dbf_open(filename, dbf_editmode_editable, parm);
       }
       else
-      {
          ZCLOSE(*api, stream);
-      }
    }
    return handle;
 }
@@ -1880,9 +1863,7 @@ size_t dbf_getfield(DBF_HANDLE handle, const DBF_FIELD* field, char* buf, size_t
 
       buf[len] = 0;
       for (i = 0; len && (FIELD_FILL_CHAR == *buf); i++, len--)
-      {
          strcpy(buf, buf + 1);
-      }
    }
    return len;
 }
@@ -1895,16 +1876,12 @@ BOOL dbf_getfield_numeric(DBF_HANDLE handle, const DBF_FIELD* field, long* n)
        || dbf_getfield(handle, field, buf, sizeof(buf), DBF_DATA_TYPE_DATE   ));
 
    if (ok)
-   {
       *n = atol(buf);
-   }
    else
    {
       ok = (0 != dbf_getfield(handle, field, buf, sizeof(buf), DBF_DATA_TYPE_MEMO)); // get field data, check for MEMO type
       if (ok)
-      {
          *n = atol(buf);
-      }
       else
       {
          strncpy(handle->lasterrormsg, "Invalid field type (not a NUMERIC)", _countof(handle->lasterrormsg));
@@ -1953,7 +1930,9 @@ static void strcpy_host2dos(char* buf, const char* src, size_t buf_len, enum dbf
 static char* strdup_host2dos(const char* src, size_t len, enum dbf_charconv mode, char* dup)
 {
    dup = (char*)realloc(dup, (1 + len)*sizeof(char));
-   if (len) strcpy_host2dos(dup, src, len + 1, mode);
-   else *dup = 0;
+   if (len)
+       strcpy_host2dos(dup, src, len + 1, mode);
+   else
+       *dup = 0;
    return dup;
 }
