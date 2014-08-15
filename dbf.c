@@ -779,29 +779,28 @@ BOOL dbf_isvaliddate(const char *buf, enum dbf_data_type type)
 
 BOOL dbf_setposition(DBF_HANDLE handle, dbf_uint record)
 {
-   BOOL ok = (record < handle->recordcount);
+    BOOL ok = (record < handle->recordcount);
 
-   if (ok && (record != handle->currentrecord))
-   {
-      ok = (0 == ZSEEK(handle->api, handle->stream, handle->headerlength + (record - 0) * handle->recordlength, ZLIB_FILEFUNC_SEEK_SET));
-      if (ok) ok = (handle->recordlength == ZREAD(handle->api, handle->stream, handle->recorddataptr, handle->recordlength));
-      if (ok)
-      {
-         handle->currentrecord = record;
-         handle->lasterror = DBASE_SUCCESS;
-      }
-      else
-      {
-         strncpy(handle->lasterrormsg, "Invalid record", _countof(handle->lasterrormsg));
-         handle->lasterror = DBASE_INVALID_RECORD;
-      }
-   }
-   else
-   {
-      strncpy(handle->lasterrormsg, "Invalid record", _countof(handle->lasterrormsg));
-      handle->lasterror = DBASE_INVALID_RECORD;
-   }
-   return ok;
+    if (ok)
+    {
+        if (record != handle->currentrecord)
+        {
+            ok = (0 == ZSEEK(handle->api, handle->stream, handle->headerlength + (record - 0) * handle->recordlength, ZLIB_FILEFUNC_SEEK_SET));
+            if (ok)
+                ok = (handle->recordlength == ZREAD(handle->api, handle->stream, handle->recorddataptr, handle->recordlength));
+            if (ok)
+            {
+                handle->currentrecord = record;
+                handle->lasterror = DBASE_SUCCESS;
+            }
+        }
+    }
+    if (!ok)
+    {
+        strncpy(handle->lasterrormsg, "Invalid record", _countof(handle->lasterrormsg));
+        handle->lasterror = DBASE_INVALID_RECORD;
+    }
+    return ok;
 }
 
 BOOL dbf_putrecord(DBF_HANDLE handle, dbf_uint record)
