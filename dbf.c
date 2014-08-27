@@ -417,7 +417,7 @@ DBF_HANDLE dbf_attach(void* stream, const zlib_filefunc_def* api, enum dbf_editm
             dbf_uint i;
             size_t fielddata_pos = RECORD_POS_DATA;
 
-            ZSEEK(handle->api, stream, header_len, ZLIB_FILEFUNC_SEEK_SET);
+            ZSEEK(handle->api, stream, (ZPOS_T)header_len, ZLIB_FILEFUNC_SEEK_SET);
 
             handle->fieldarray = (DBF_FIELD*)realloc(handle->fieldarray, sizeof(DBF_FIELD) * handle->fieldcount);
             for (i = 0; i < handle->fieldcount; i++)
@@ -770,7 +770,7 @@ BOOL dbf_setposition(DBF_HANDLE handle, dbf_uint record)
     {
         if (record != handle->currentrecord)
         {
-            ok = (0 == ZSEEK(handle->api, handle->stream, handle->headerlength + (record - 0) * handle->recordlength, ZLIB_FILEFUNC_SEEK_SET));
+            ok = (0 == ZSEEK(handle->api, handle->stream, (ZPOS_T)(handle->headerlength + (record - 0) * handle->recordlength), ZLIB_FILEFUNC_SEEK_SET));
             if (ok)
                 ok = (handle->recordlength == ZREAD(handle->api, handle->stream, handle->recorddataptr, (uLong)handle->recordlength));
         }
@@ -794,7 +794,7 @@ BOOL dbf_putrecord(DBF_HANDLE handle, dbf_uint record)
 
    if (ok)
    {
-      ZSEEK (handle->api, handle->stream, handle->headerlength + (record - 0) * handle->recordlength, ZLIB_FILEFUNC_SEEK_SET);
+      ZSEEK (handle->api, handle->stream, (ZPOS_T)(handle->headerlength + (record - 0) * handle->recordlength), ZLIB_FILEFUNC_SEEK_SET);
       ZWRITE(handle->api, handle->stream, handle->recorddataptr, (uLong)handle->recordlength);
       handle->modified = TRUE;
       handle->currentrecord = record;
@@ -833,7 +833,7 @@ BOOL dbf_addrecord(DBF_HANDLE handle)
    BOOL ok;
 
    memset(handle->recorddataptr, FIELD_FILL_CHAR, handle->recordlength);
-   ZSEEK(handle->api, handle->stream, handle->headerlength + handle->recordcount * handle->recordlength, ZLIB_FILEFUNC_SEEK_SET);
+   ZSEEK(handle->api, handle->stream, (ZPOS_T)(handle->headerlength + handle->recordcount * handle->recordlength), ZLIB_FILEFUNC_SEEK_SET);
    ok = (handle->recordlength == ZWRITE(handle->api, handle->stream, handle->recorddataptr, (uLong)handle->recordlength));
    if (ok)
    {
@@ -1062,7 +1062,7 @@ BOOL dbf_putfield(DBF_HANDLE handle, const DBF_FIELD* field, const char* buf)
                      DBF_MEMO_BLOCK* temp = &handle->memo.block;
                      char* text = temp->normal.text;
 
-                     ZSEEK(handle->api, handle->memo.stream, block * handle->memo.header.blocksize, ZLIB_FILEFUNC_SEEK_SET);
+                     ZSEEK(handle->api, handle->memo.stream, (ZPOS_T)(block * handle->memo.header.blocksize), ZLIB_FILEFUNC_SEEK_SET);
                      temp->normal.len = (uint32_t)min(handle->memo.header.blocksize - offsetof(DBF_MEMO_BLOCK, normal.text), buf_len);
                      temp->normal.reserved = MAGIC_MEMO_BLOCK;
                      memset(text, FIELD_FILL_CHAR, temp->normal.len);
