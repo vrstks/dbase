@@ -17,6 +17,11 @@
     #define wxCMD_LINE_DESC_END { wxCMD_LINE_NONE, NULL, NULL, NULL, wxCMD_LINE_VAL_NONE, 0x0 }
 #endif
 
+#ifndef wxEVENT_HANDLER_CAST
+    #define wxEVENT_HANDLER_CAST( functype, func ) \
+        ( wxObjectEventFunction )( wxEventFunction )wxStaticCastEvent( functype, &func )
+#endif
+
 #if (wxVERSION_NUMBER < 2905)
 #include <vector>
 typedef std::vector<wxDocument*> wxDocVector;

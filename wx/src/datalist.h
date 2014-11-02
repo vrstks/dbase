@@ -238,7 +238,7 @@ public:
 typedef void (wxEvtHandler::*wxListCellEventFunction)(wxListCellEvent&);
 
 #define wxListCellEventHandler(func) \
-    (wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxListCellEventFunction, &func)
+    wxEVENT_HANDLER_CAST(wxListCellEventFunction, func)
 
 #define wx__DECLARE_LISTCELLEVT(evt, id, fn) \
     wx__DECLARE_EVT1(wxEVT_LIST_CELL_ ## evt, id, wxListCellEventHandler(fn))
