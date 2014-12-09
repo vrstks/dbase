@@ -6,9 +6,11 @@
 
 #include "wx/ext/wx.h"
 
+#if (wxVERSION_NUMBER < 3000)
 #include "../art/help.xpm"
+#endif
 #include "../art/plus.xpm"
-#include "../art/preview.xpm"
+#include "../art/tango/print-preview16.xpm"
 
 /////////////////////////////////////////////////////////////////////////////
 // ArtProvider
@@ -32,7 +34,7 @@ wxBitmap ArtProvider::CreateBitmap(const wxArtID& id, const wxArtClient& WXUNUSE
     ART(wxART_HELP      , help)
 #endif
     ART(wxART_ADD       , plus)
-    ART(wxART_PREVIEW   , preview)
+    ART(wxART_PREVIEW   , print_preview16)
     return wxNullBitmap;
 }
 

@@ -26,6 +26,7 @@ BEGIN_EVENT_TABLE(DBFListCtrl, DataModelListCtrl)
 #endif
 END_EVENT_TABLE()
 
+#if !USE_DATALISTVIEW
 class FieldEdit : public wxTextCtrl
 {
    typedef wxTextCtrl base;
@@ -54,6 +55,7 @@ void FieldEdit::OnMove(wxMoveEvent& event)
    event.Skip();
    Fixate(m_fixate);
 }
+#endif
 
 bool DBFListCtrl::Edit(long row, long col)
 {

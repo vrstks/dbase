@@ -103,7 +103,9 @@ wxToolBar* MainFrame::CreateToolBar()
    const wxAcceleratorVector& accel = DBFFrame::GetAccelerator();
    wxToolBar* tb = base::CreateToolBar(wxTB_TEXT | wxBORDER_NONE | wxTB_HORIZONTAL | wxTB_FLAT);
 
-   const wxSize size = tb->GetToolBitmapSize();
+   //const wxSize size = tb->GetToolBitmapSize();
+   const wxSize size(tb->GetToolBitmapSize().x, 16);
+   tb->SetToolBitmapSize(size);
 
    const wxTOOLBARITEM aID[] =
    {
