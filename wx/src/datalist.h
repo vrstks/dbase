@@ -1,5 +1,5 @@
 // datalist.h
-// Copyright (c) 2007-2014 by Troels K. All rights reserved.
+// Copyright (c) 2007-2015 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __DATALIST_H__
@@ -217,7 +217,6 @@ private:
     wxDataModelBase* m_model;
     bool             m_row_column;
 };
-#endif
 
 extern const wxEventType wxEVT_LIST_CELL_CLICK;
 extern const wxEventType wxEVT_LIST_CELL_DCLICK;
@@ -245,6 +244,8 @@ typedef void (wxEvtHandler::*wxListCellEventFunction)(wxListCellEvent&);
 
 #define EVT_LIST_CELL_CLICK(id, fn)  wx__DECLARE_LISTCELLEVT(CLICK, id, fn)
 #define EVT_LIST_CELL_DCLICK(id, fn) wx__DECLARE_LISTCELLEVT(DCLICK, id, fn)
+
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 

@@ -1,11 +1,11 @@
 // datalist.cpp
-// Copyright (c) 2007-2014 by Troels K. All rights reserved.
+// Copyright (c) 2007-2015 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
 
-#include "wx/ext/wx.h"
 #include "wx/ext/trunk.h"
+#include "wx/ext/wx.h"
 #include "datamodel.h"
 #include "datalist.h"
 
