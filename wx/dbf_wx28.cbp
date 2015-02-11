@@ -123,6 +123,8 @@
 		<Unit filename="src\dbfutil.cpp" />
 		<Unit filename="src\dbfview.cpp" />
 		<Unit filename="src\dbfview.h" />
+		<Unit filename="src\printout.cpp" />
+		<Unit filename="src\printout.h" />
 		<Unit filename="src\precomp.h">
 			<Option compile="1" />
 			<Option weight="0" />

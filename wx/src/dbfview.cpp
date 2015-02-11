@@ -1,10 +1,11 @@
 // dbfview.cpp
-// Copyright (c) 2007-2014 by Troels K. All rights reserved.
+// Copyright (c) 2007-2015 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
 
 #include <wx/numdlg.h>
+#include <wx/html/htmprint.h>
 
 #include "wx/ext/trunk.h"
 #include "wx/ext/wx.h"
@@ -16,42 +17,43 @@
 #include "dbfutil.h"
 #include "dbfmodel.h"
 #include "dbflist.h"
+#include "printout.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // DBFWindow
 
 class DBFWindow : public DBFListCtrl
 {
-   typedef DBFListCtrl base;
-   DECLARE_CLASS(DBFWindow)
+    typedef DBFListCtrl base;
+    wxDECLARE_CLASS(DBFWindow);
 protected:
-   DBFModel m_datamodel;
-   DBFView* m_view;
+    DBFModel m_datamodel;
+    DBFView* m_view;
 public:
-   DBFWindow(DBFView* view) : DBFListCtrl(), m_datamodel(view->GetDocument()->GetDatabase()), m_view(view)
-   {
-   }
+    DBFWindow(DBFView* view) : DBFListCtrl(), m_datamodel(view->GetDocument()->GetDatabase()), m_view(view)
+    {
+    }
 
-   bool Create(wxWindow* parent)
-   {
+    bool Create(wxWindow* parent)
+    {
        bool ok = base::Create(parent, wxID_ANY);
        if (ok)
            AssociateModel(&m_datamodel);
        return ok;
-   }
+    }
 
-   virtual ~DBFWindow()
-   {
+    virtual ~DBFWindow()
+    {
         //AssociateModel(NULL);
-   }
+    }
 };
 
-IMPLEMENT_CLASS(DBFWindow, DBFListCtrl)
+wxIMPLEMENT_CLASS(DBFWindow, DBFListCtrl)
 
 /////////////////////////////////////////////////////////////////////////////
 // DBFView
 
-IMPLEMENT_DYNAMIC_CLASS(DBFView, wxViewEx)
+wxIMPLEMENT_DYNAMIC_CLASS(DBFView, wxViewEx)
 
 DBFView::DBFView() : wxViewEx()
 {
@@ -260,4 +262,12 @@ void DBFView::OnGoto(wxCommandEvent&)
         wnd->SelectNone();
         wnd->SelectRow(row-1);
     }
+}
+
+wxPrintout* DBFView::OnCreatePrintout()
+{
+    const DBFDocument* doc = GetDocument();
+    DBFModel datamodel(doc->GetDatabase());
+    DataModelPrintout* print = new DataModelPrintout(&datamodel, std::string(doc->GetTitle().mb_str()));
+    return print;
 }

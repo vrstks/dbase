@@ -1,5 +1,5 @@
 // wxdbf.rc
-// Copyright (c) 2004-2012 by Troels K. All rights reserved.
+// Copyright (c) 2004-2015 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 app ICON    "..\\art\\app.ico"
@@ -12,8 +12,8 @@ app ICON    "..\\art\\app.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,1,0,0
- PRODUCTVERSION 1,1,0,0
+ FILEVERSION 1,2,0,0
+ PRODUCTVERSION 1,2,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -31,14 +31,14 @@ BEGIN
             VALUE "Comments", "\0"
             VALUE "CompanyName", "Troels K\0"
             VALUE "FileDescription", "wxDBase demonstration program\0"
-            VALUE "FileVersion", "1, 1, 0, 0\0"
+            VALUE "FileVersion", "1, 2, 0, 0\0"
             VALUE "InternalName", "wxDBF\0"
-            VALUE "LegalCopyright", "Copyright © 2008-2011 Troels K\0"
+            VALUE "LegalCopyright", "Copyright © 2008-2015 Troels K\0"
             VALUE "LegalTrademarks", "\0"
             VALUE "OriginalFilename", "wxdbf32.exe\0"
             VALUE "PrivateBuild", "\0"
             VALUE "ProductName", "wxdbf\0"
-            VALUE "ProductVersion", "1, 1, 0, 0\0"
+            VALUE "ProductVersion", "1, 2, 0, 0\0"
             VALUE "SpecialBuild", "\0"
         END
     END

@@ -1,5 +1,5 @@
 // wx/ext/wx.h
-// Copyright (c) 2007-2014 by Troels K. All rights reserved.
+// Copyright (c) 2007-2015 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #define WXK_HELP       WXK_F1
@@ -344,3 +344,151 @@ public:
     }
 };
 #endif
+
+class wxHtmlTextWriter
+{
+public:
+    static const char TagLeftChar = '<';
+    static const char TagRightChar = '>';
+    static const std::string EndTagLeftChars;
+
+    wxHtmlTextWriter(wxOutputStream* stream, std::string encoding = "utf8", std::string tabstring = std::string(3, ' '));
+
+    void WriteBeginTag(const std::string& str)
+    {
+        Write(TagLeftChar);
+        Write(str);
+    }
+    void WriteFullBeginTag(const std::string& str)
+    {
+        WriteBeginTag(str);
+        Write(TagRightChar);
+    }
+    void WriteEndTag(const std::string& str)
+    {
+        Write(EndTagLeftChars + str + TagRightChar);
+    }
+    void WriteAttribute(const std::string& name, const std::string& value)
+    {
+        Write(' ');
+        Write(name);
+        Write("=\"");
+        Write(value);
+        Write('\"');
+    }
+    void WriteBreak()
+    {
+        Write("<br/>");
+    }
+
+    void Write(char ch)
+    {
+        Write(std::string(1, ch));
+    }
+    void Write(const std::string& str)
+    {
+        if (m_linePos == 0)
+            for (int i = 0; i < m_indent; i++)
+                DoWrite(m_tab_string);
+        m_linePos += DoWrite(str);
+    }
+    void WriteLine(const std::string& str = std::string())
+    {
+    #ifdef __WINDOWS__
+        Write(str + "\r\n");
+    #elif defined(__WXOSX__)
+        Write(str + "\r");
+    #else
+        Write(str + "\n");
+    #endif
+        m_linePos = 0;
+    }
+    void Close()
+    {
+        m_stream = NULL;
+        m_linePos = 0;
+        m_indent = 0;
+    }
+    void IncreaseIndent()
+    {
+        m_indent++;
+    }
+    void DecreaseIndent()
+    {
+        wxASSERT(m_indent != 0);
+        m_indent--;
+    }
+    std::string GetEncoding() const { return m_encoding; }
+    std::string GetTabString() const { return m_tab_string; }
+private:
+    wxOutputStream* m_stream;
+    int m_indent;
+    size_t m_linePos;
+    std::string m_encoding;
+    std::string m_tab_string;
+
+    size_t DoWrite(const std::string& str)
+    {
+        return m_stream->Write(str.c_str(), str.length()).LastWrite();
+    }
+};
+
+class wxHtmlItem
+{
+public:
+    virtual ~wxHtmlItem() {}
+    virtual void Render(wxHtmlTextWriter*) const = 0;
+};
+
+enum wxHtmlTextWeight
+{
+    wxHtmlTextWeight_Normal,
+    wxHtmlTextWeight_Bold
+};
+
+class wxHtmlTextParagraph : public wxHtmlItem
+{
+public:
+    std::string Text;
+    wxHtmlTextWeight Weight;
+
+    wxHtmlTextParagraph(const std::string& str, wxHtmlTextWeight weight = wxHtmlTextWeight_Normal);
+    virtual void Render(wxHtmlTextWriter*) const;
+
+    static std::string ToBold(const std::string& str)
+    {
+        return std::string("<b>") + str + "</b>";
+    }
+};
+
+typedef std::vector<std::string> std_string_vector;
+
+class wxHtmlTableRow
+{
+public:
+    std_string_vector ColumnTextArray;
+    std_string_vector ColumnAttribute;
+};
+typedef std::vector<wxHtmlTableRow> wxHtmlTableVector;
+
+class wxHtmlTable : public wxHtmlItem
+{
+public:
+    wxHtmlTableVector List;
+    wxArrayInt PercentArray;
+    int Border;
+    wxHtmlTable() : wxHtmlItem(), Border(1) {}
+    virtual void Render(wxHtmlTextWriter*) const;
+    virtual ~wxHtmlTable() {}
+};
+
+typedef std::vector<wxHtmlItem*> wxHtmlItemVector;
+
+class wxHtmlTableWriter : public wxObject
+{
+public:
+    std::string Title;
+    wxHtmlItemVector List;
+    void SaveFile(wxOutputStream*, std::string encoding = "utf8");
+    virtual ~wxHtmlTableWriter();
+};

@@ -1,5 +1,5 @@
 // dbfview.h
-// Copyright (c) 2007-2013 by Troels K. All rights reserved.
+// Copyright (c) 2007-2015 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __DBFVIEW_H__
@@ -12,41 +12,42 @@ class DBFDocument;
 class DBFWindow;
 class DBFView : public wxViewEx
 {
-   typedef wxViewEx base;
-   DECLARE_DYNAMIC_CLASS(DBFView)
+    typedef wxViewEx base;
+    wxDECLARE_DYNAMIC_CLASS(DBFView);
 public:
-   DBFView();
+    DBFView();
 
-   DBFDocument* GetDocument() const;
-   DBFWindow* GetWindow() const;
-   wxWindow* GetModalParent() const { return GetFrame(); }
+    DBFDocument* GetDocument() const;
+    DBFWindow* GetWindow() const;
+    wxWindow* GetModalParent() const { return GetFrame(); }
 
 // Implementation
 public:
-   virtual ~DBFView();
-   virtual bool OnClose(bool deleteWindow = true);
-   virtual bool OnCreate(wxDocument*, long flags);
-   virtual void OnUpdate(wxView* sender, wxObject* hint = NULL);
+    virtual ~DBFView();
+    virtual bool OnClose(bool deleteWindow = true);
+    virtual bool OnCreate(wxDocument*, long flags);
+    virtual void OnUpdate(wxView* sender, wxObject* hint = NULL);
+    virtual wxPrintout* OnCreatePrintout();
 protected:
-   void OnStructClipboard(wxCommandEvent&);
-   void OnStruct(wxCommandEvent&);
-   void OnProperties(wxCommandEvent&);
+    void OnStructClipboard(wxCommandEvent&);
+    void OnStruct(wxCommandEvent&);
+    void OnProperties(wxCommandEvent&);
    
-   void OnUpdateNeedSel (wxUpdateUIEvent&);
-   void OnSelectAll     (wxCommandEvent&);
-   void OnUpdateSelectAll(wxUpdateUIEvent&);
-   void OnAdd           (wxCommandEvent&);
-   void OnEdit          (wxCommandEvent&);
-   void OnUpdateNeedEditable(wxUpdateUIEvent&);
-   void OnUndelete      (wxCommandEvent&);
-   void OnUpdateNeedSel_Deleted(wxUpdateUIEvent&);
-   void OnDelete        (wxCommandEvent&);
-   void OnUpdateNeedSel_NotDeleted(wxUpdateUIEvent&);
-   void OnDeleteAll     (wxCommandEvent&);
-   void OnGoto          (wxCommandEvent&);
-   DECLARE_EVENT_TABLE()
+    void OnUpdateNeedSel (wxUpdateUIEvent&);
+    void OnSelectAll     (wxCommandEvent&);
+    void OnUpdateSelectAll(wxUpdateUIEvent&);
+    void OnAdd           (wxCommandEvent&);
+    void OnEdit          (wxCommandEvent&);
+    void OnUpdateNeedEditable(wxUpdateUIEvent&);
+    void OnUndelete      (wxCommandEvent&);
+    void OnUpdateNeedSel_Deleted(wxUpdateUIEvent&);
+    void OnDelete        (wxCommandEvent&);
+    void OnUpdateNeedSel_NotDeleted(wxUpdateUIEvent&);
+    void OnDeleteAll     (wxCommandEvent&);
+    void OnGoto          (wxCommandEvent&);
+    wxDECLARE_EVENT_TABLE();
 
-   friend class DBFWindow;
+    friend class DBFWindow;
 };
 
 #endif // __DBFVIEW_H__

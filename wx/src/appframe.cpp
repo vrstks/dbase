@@ -1,5 +1,5 @@
 // appframe.cpp
-// Copyright (c) 2007-2014 by Troels K. All rights reserved.
+// Copyright (c) 2007-2015 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -65,8 +65,9 @@ bool MainFrame::Create(wxDocManager* docManager, const wxString& rtitle, const w
         windowMenu->Append(XRCID("windows"), _("&Windows..."), _("Windows dialog"));
 
     #ifdef x_DEBUG
-        wxPostMenuCommand(this, XRCID("windows"));
+        //wxPostMenuCommand(this, XRCID("windows"));
         //wxPostMenuCommand(this, XRCID("struct"));
+        wxPostMenuCommand(this, wxID_PREVIEW);
     #endif
     }
     return ok;

@@ -11,6 +11,7 @@
          #pragma comment(lib, "wxmsw31ud_core.lib")
          #pragma comment(lib, "wxmsw31ud_adv.lib")
          #pragma comment(lib, "wxmsw31ud_xrc.lib")
+         #pragma comment(lib, "wxmsw31ud_html.lib")
       #else
          #pragma comment(lib, "wxbase31u.lib")
          #pragma comment(lib, "wxbase31u_xml.lib")
@@ -25,6 +26,7 @@
          #pragma comment(lib, "wxmsw31d_core.lib")
          #pragma comment(lib, "wxmsw31d_adv.lib")
          #pragma comment(lib, "wxmsw31d_xrc.lib")
+         #pragma comment(lib, "wxmsw31d_html.lib")
       #else
          #pragma comment(lib, "wxbase31.lib")
          #pragma comment(lib, "wxbase31_xml.lib")

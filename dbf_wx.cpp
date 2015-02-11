@@ -162,6 +162,8 @@ bool wxDBase::SetValueByRow(const wxVariant& var, unsigned int row, unsigned int
       ok = Write(col, var.MakeString());
    if (ok)
       ok = PutRecord(row);
+   else
+       wxLogError(_("dbf_putfield error"));
    return ok;
 }
 
@@ -170,7 +172,7 @@ bool wxDBase::SetValueByRow(const wxVariant& var, unsigned int row, unsigned int
 {
    return wxVersionInfo(wxT(DBF_LIB_NAME), DBF_MAJOR_VERSION, DBF_MINOR_VERSION, DBF_SVN_VERSION,
        wxT("dbase interface library"),
-       wxT("Copyright (c) 2007-2014 by Troels K")
+       wxT("Copyright (c) 2007-2015 by Troels K")
        );
 }
 #endif

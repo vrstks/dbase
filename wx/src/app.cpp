@@ -1,5 +1,5 @@
 // app.cpp
-// Copyright (c) 2007-2014 by Troels K. All rights reserved.
+// Copyright (c) 2007-2015 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -19,16 +19,16 @@ BEGIN_EVENT_TABLE(App, wxAppEx)
    EVT_MENU(wxID_ABOUT, App::OnMenuAbout)
 END_EVENT_TABLE()
 
-App::App(void) : wxAppEx(), m_mru(NULL), m_res(new DBFResource())
+App::App() : wxAppEx(), m_mru(NULL), m_res(new DBFResource())
 {
 }
 
-App::~App(void)
+App::~App()
 {
     delete m_res;
 }
 
-bool App::OnInit(void)
+bool App::OnInit()
 {
     //CheckBuildOptions(WX_BUILD_OPTIONS_SIGNATURE, "program");
     bool ok = base::OnInit();
@@ -85,7 +85,7 @@ bool App::OnInit(void)
     return ok;
 }
 
-int App::OnExit(void)
+int App::OnExit()
 {
    if (m_mru)
    {

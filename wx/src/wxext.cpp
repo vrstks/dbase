@@ -1,14 +1,29 @@
 // wxext.cpp
-// Copyright (c) 2007-2014 by Troels K. All rights reserved.
+// Copyright (c) 2007-2015 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
+
+#include <wx/html/htmprint.h>
+
+#include <algorithm>
 
 #include "wx/ext/trunk.h"
 #include "wx/ext/wx.h"
 
 IMPLEMENT_CLASS(wxViewEx, wxView)
 IMPLEMENT_CLASS(wxFileLoadedHint, wxObject)
+
+/*static*/ const std::string wxHtmlTextWriter::EndTagLeftChars = "</";
+
+wxHtmlTextWriter::wxHtmlTextWriter(wxOutputStream* stream, std::string encoding, std::string tabstring) :
+    m_stream(stream), m_indent(0), m_linePos(0), m_encoding(encoding), m_tab_string(tabstring)
+{
+    std::string temp = m_encoding;
+    std::transform(temp.begin(), temp.end(), temp.begin(), ::toupper);
+    if (temp == "UTF-8")
+        encoding = "utf8"; // no hyphen
+}
 
 bool wxRemoveFile(wxFFile* file)
 {
@@ -900,6 +915,93 @@ void wxModalTextDialog(wxWindow* parent, const wxString& text, const wxString& c
 {
     wxTextEntryDialog dialog(parent, wxEmptyString, caption.empty() ? wxGetTextFromUserPromptStr : caption, text, wxOK | wxTE_MULTILINE);
     dialog.ShowModal();
+}
+
+wxHtmlTextParagraph::wxHtmlTextParagraph(const std::string& str, wxHtmlTextWeight weight)
+{
+    Text = str, Weight = weight;
+}
+
+void wxHtmlTextParagraph::Render(wxHtmlTextWriter* writer_ptr) const
+{
+    wxHtmlTextWriter& writer = *writer_ptr;
+    writer.WriteFullBeginTag("p");
+    if (Weight == wxHtmlTextWeight_Bold)
+        writer.WriteFullBeginTag("b");
+    writer.Write(Text);
+    if (Weight == wxHtmlTextWeight_Bold)
+        writer.WriteEndTag("b");
+    writer.WriteEndTag("p");
+    writer.WriteBreak();
+    writer.WriteLine(); 
+}
+
+void wxHtmlTable::Render(wxHtmlTextWriter* writer_ptr) const
+{
+    char str[80];
+    wxHtmlTextWriter& writer = *writer_ptr;
+
+    writer.WriteBeginTag("table");
+        _snprintf(str, WXSIZEOF(str), "%d", Border);
+        writer.WriteAttribute("border", str);
+        writer.Write(wxHtmlTextWriter::TagRightChar); writer.WriteLine(); writer.IncreaseIndent();
+        writer.WriteFullBeginTag("tbody"); writer.WriteLine(); writer.IncreaseIndent();
+
+            for (wxHtmlTableVector::const_iterator it_row = List.begin(); it_row != List.end(); it_row++)
+            {
+                writer.WriteFullBeginTag("tr"); writer.WriteLine(); writer.IncreaseIndent();
+                size_t column = 0;
+                for (std_string_vector::const_iterator it_col = it_row->ColumnTextArray.begin(); it_col != it_row->ColumnTextArray.end(); it_col++)
+                {
+                    writer.WriteBeginTag("td");
+
+                    if ( (it_col == it_row->ColumnTextArray.begin()) && (PercentArray.size() > column))
+                    {
+                        _snprintf(str, WXSIZEOF(str), " width=\"%s%%\"", PercentArray[column]);
+                        writer.Write(str);
+                    }
+                    if (it_row->ColumnAttribute.size() > column)
+                        writer.Write(std::string(" ") + it_row->ColumnAttribute[column]);
+                    writer.Write(wxHtmlTextWriter::TagRightChar);
+                    writer.Write(*it_col);
+                    writer.WriteEndTag("td"); writer.WriteLine();
+                    column++;
+                }
+                writer.DecreaseIndent();
+                writer.WriteEndTag("tr"); writer.WriteLine();
+            }
+        writer.DecreaseIndent();
+        writer.WriteEndTag("tbody"); writer.WriteLine(); writer.DecreaseIndent();
+    writer.WriteEndTag("table"); writer.WriteLine();
+}
+
+wxHtmlTableWriter::~wxHtmlTableWriter()
+{
+    for (wxHtmlItemVector::iterator it = List.begin(); it != List.end(); it++)
+        delete *it;
+}
+
+void wxHtmlTableWriter::SaveFile(wxOutputStream* stream, std::string encoding)
+{
+    wxHtmlTextWriter writer(stream, encoding);
+    
+    writer.WriteFullBeginTag("html"); writer.WriteLine(); writer.IncreaseIndent();
+        writer.WriteFullBeginTag("head"); writer.WriteLine(); writer.IncreaseIndent();
+            writer.WriteBeginTag("meta"); 
+                writer.WriteAttribute("content", std::string("text/html; charset=") + writer.GetEncoding());
+                writer.Write(wxHtmlTextWriter::TagRightChar); writer.WriteLine();
+                writer.WriteFullBeginTag("title");
+                    writer.Write(Title); 
+                writer.WriteEndTag("title"); writer.WriteLine();
+                writer.DecreaseIndent();
+        writer.WriteEndTag("head"); writer.WriteLine();
+        writer.WriteFullBeginTag("body"); writer.WriteLine(); writer.IncreaseIndent();
+            for (wxHtmlItemVector::const_iterator it = List.begin(); it != List.end(); it++)
+                (*it)->Render(&writer);
+        writer.DecreaseIndent();
+        writer.WriteEndTag("body"); writer.WriteLine(); writer.DecreaseIndent();
+    writer.WriteEndTag("html"); writer.WriteLine(); 
+    writer.Close();
 }
 
 /////////////////////////////////////////////////////////////////////////////

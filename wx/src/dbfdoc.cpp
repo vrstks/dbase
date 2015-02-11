@@ -1,5 +1,5 @@
 // dbfdoc.cpp
-// Copyright (c) 2007-2014 by Troels K. All rights reserved.
+// Copyright (c) 2007-2015 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -18,13 +18,13 @@
 #include "dbfdlgs.h"
 #include "wxstreamc.h"
 
-IMPLEMENT_DYNAMIC_CLASS(DBFDocument, wxDocument)
+wxIMPLEMENT_DYNAMIC_CLASS(DBFDocument, wxDocument);
 
-DBFDocument::DBFDocument(void) : wxDocument(), m_database(new wxDBase()), m_stream(NULL)
+DBFDocument::DBFDocument() : wxDocument(), m_database(new wxDBase()), m_stream(NULL)
 {
 }
 
-DBFDocument::~DBFDocument(void)
+DBFDocument::~DBFDocument()
 {
     delete m_database;
 }
@@ -102,7 +102,7 @@ bool DBFDocument::DoOpenDocument(const wxString& filePath)
     return ok;
 }
 
-bool DBFDocument::IsModified(void) const
+bool DBFDocument::IsModified() const
 {
    //return m_database->IsOpen() && m_database->IsModified();
     return base::IsModified();
@@ -120,7 +120,7 @@ bool DBFDocument::OnCloseDocument()
    return ok;
 }
 
-bool DBFDocument::IsEditable(void) const
+bool DBFDocument::IsEditable() const
 {
    return m_database->IsOpen() && m_database->IsEditable();
 }

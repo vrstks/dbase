@@ -93,6 +93,11 @@ public:
             rows[i] = ItemToRow(item);
         }
     }
+    void Clear()
+    {
+        AssociateModel(NULL);
+        Fill();
+    }
     void Fill();
     bool IsOpen() const;
     bool Create(wxWindow *parent,
