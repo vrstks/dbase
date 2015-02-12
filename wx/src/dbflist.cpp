@@ -1,5 +1,5 @@
 // dbflist.cpp
-// Copyright (c) 2007-2014 by Troels K. All rights reserved.
+// Copyright (c) 2007-2015 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include "precomp.h"
@@ -127,7 +127,7 @@ bool DBFListCtrl::AddNew()
     return ok;
 }
 
-bool DBFListCtrl::IsUndeletedInSelection(void)
+bool DBFListCtrl::IsUndeletedInSelection()
 {
     bool ok = false;
 
@@ -138,7 +138,7 @@ bool DBFListCtrl::IsUndeletedInSelection(void)
     return ok;
 }
 
-bool DBFListCtrl::IsDeletedInSelection(void)
+bool DBFListCtrl::IsDeletedInSelection()
 {
     bool ok = false;
 

@@ -279,7 +279,7 @@ bool DataModelListCtrl::IsEditable() const
     return (GetWindowStyleFlag() & wxLC_EDIT_LABELS) && db->IsEditable();
 }
 
-bool DataModelListCtrl::CanEditLabel(void)
+bool DataModelListCtrl::CanEditLabel()
 {
     return (m_column_clicked != wxNOT_FOUND) && IsEditable();
 }
@@ -344,7 +344,7 @@ void DataModelListCtrl::OnEndLabelEdit(wxListEvent& event)
 }
 #endif
 
-bool DataModelListCtrl::IsAnyUnselected(void)
+bool DataModelListCtrl::IsAnyUnselected()
 {
     bool ok = false;
 #if USE_DATALISTVIEW

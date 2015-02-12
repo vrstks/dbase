@@ -1,5 +1,5 @@
 // app.h
-// Copyright (c) 2007-2013 by Troels K. All rights reserved.
+// Copyright (c) 2007-2015 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __APP_H__
@@ -33,11 +33,11 @@ protected:
    wxLocaleEx        m_locale;
    DBFResource*      m_res;
 public:
-   App(void);
+   App();
 
-   virtual ~App(void);
-   virtual bool OnInit(void);
-   virtual int OnExit(void);
+   virtual ~App();
+   virtual bool OnInit();
+   virtual int OnExit();
    virtual void OnInitCmdLine(wxCmdLineParser&);
    virtual bool OnCmdLineParsed(wxCmdLineParser&);
 

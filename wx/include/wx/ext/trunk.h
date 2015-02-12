@@ -41,6 +41,9 @@
 #ifndef wxAPPLY
 #define wxAPPLY 0x00000020
 #endif
+#ifndef wxOVERRIDE
+#define wxOVERRIDE
+#endif
 
 #ifndef wxEVENT_HANDLER_CAST
     #define wxEVENT_HANDLER_CAST( functype, func ) \

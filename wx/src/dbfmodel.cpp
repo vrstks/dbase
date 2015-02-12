@@ -1,5 +1,5 @@
 // dbfmodel.cpp
-// Copyright (c) 2007-2013 by Troels K. All rights reserved.
+// Copyright (c) 2007-2015 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include <wx/dataview.h>
@@ -18,13 +18,13 @@
 #include "dbfutil.h"
 #include "wxstreamc.h"
 
-/*static*/ const wxChar* DBFModel::m_fileext = wxT(DBF_FILEEXT);
+/*static*/ const std::string DBFModel::FileExt = DBF_FILEEXT;
 
 DBFModel::DBFModel(wxDBase* database) : wxDataModel(), m_database(database), m_delete_on_exit(false)
 {
 }
 
-DBFModel::~DBFModel(void)
+DBFModel::~DBFModel()
 {
    if (m_delete_on_exit)
    {
@@ -144,17 +144,17 @@ bool DBFModel::DeleteRow(unsigned int row, bool bDelete)
    return m_database->DeleteRecord(bDelete);
 }
 
-bool DBFModel::IsOpen(void) const
+bool DBFModel::IsOpen() const
 {
    return m_database && m_database->IsOpen();
 }
 
-bool DBFModel::IsEditable(void) const
+bool DBFModel::IsEditable() const
 {
    return m_database && m_database->IsEditable();
 }
 
-bool DBFModel::AddNew(void)
+bool DBFModel::AddNew()
 {
    return m_database->AddNew();
 }
@@ -242,12 +242,12 @@ bool DBFModel::AddNew(void)
    return ok;
 }
 
-wxString DBFModel::GetDataModelName(void) const
+wxString DBFModel::GetDataModelName() const
 {
    return wxT(DBF_FORMAT_NAME);
 }
 
-wxString DBFModel::GetTableName(void) const
+wxString DBFModel::GetTableName() const
 {
    DBF_INFO info;
 

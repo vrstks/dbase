@@ -1,5 +1,5 @@
 // datamodel.h
-// Copyright (c) 2007-2014 by Troels K. All rights reserved.
+// Copyright (c) 2007-2015 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include <vector>
@@ -57,7 +57,7 @@ protected:
 public:
     wxDataModelBase(wxDataViewListModelEx* src) : m_src(src) {}
 
-    wxDataViewListModelEx* GetSource(void) const { return m_src; }
+    wxDataViewListModelEx* GetSource() const { return m_src; }
 
     virtual ~wxDataModelBase() {}
     virtual int FindColumn(const wxString& colname) const;
@@ -65,9 +65,9 @@ public:
     virtual size_t GetProperties(wxArrayString*, bool header) const;
 
     virtual bool DeleteRow(unsigned int row, bool bDelete = true );
-    virtual bool IsOpen(void) const;
-    virtual bool IsEditable(void) const;
-    virtual bool AddNew(void);
+    virtual bool IsOpen() const;
+    virtual bool IsEditable() const;
+    virtual bool AddNew();
     virtual wxDataModel* GetChild() { return NULL; }
 
     wxDataModelColumnInfoVector GetColumns() const
@@ -87,7 +87,7 @@ public:
     virtual bool SetValueByRow(const wxVariant&, unsigned int row, unsigned int col) = 0;
     virtual unsigned int GetRowCount() const = 0;
     virtual unsigned int GetColumnCount() const = 0;
-    virtual wxString GetTableName(void) const
+    virtual wxString GetTableName() const
     {
         return wxEmptyString;
     }
@@ -120,7 +120,7 @@ public:
     virtual bool SetValueByRow(const wxString& , unsigned int row, unsigned int col);
     virtual void GetValueByRow(      wxVariant&, unsigned int row, unsigned int col) const = 0;
     virtual bool SetValueByRow(const wxVariant&, unsigned int row, unsigned int col) = 0;
-    virtual wxString GetDataModelName(void) const = 0;
+    virtual wxString GetDataModelName() const = 0;
     virtual int Compare(unsigned int row1, unsigned int row2, unsigned int column, bool ascending);
 
 #if (wxVERSION_NUMBER >= 2900)
@@ -206,15 +206,15 @@ public:
     {
         Resort(NULL);
     }
-    virtual wxString GetDataModelName(void) const
+    virtual wxString GetDataModelName() const
     {
         return m_child->GetDataModelName();
     }
 
     virtual bool DeleteRow(unsigned int row, bool bDelete = true );
-    virtual bool IsOpen(void) const;
-    virtual bool IsEditable(void) const;
-    virtual bool AddNew(void);
+    virtual bool IsOpen() const;
+    virtual bool IsEditable() const;
+    virtual bool AddNew();
 
     virtual bool GetValueByRow(      wxString* , unsigned int row, unsigned int col) const;
     virtual bool SetValueByRow(const wxString& , unsigned int row, unsigned int col);
@@ -282,17 +282,17 @@ inline bool wxDataModelBase::DeleteRow(unsigned int WXUNUSED(row), bool WXUNUSED
     return false;
 }
 
-inline bool wxDataModelBase::IsEditable(void) const
+inline bool wxDataModelBase::IsEditable() const
 {
     return false;
 }
 
-inline bool wxDataModelBase::AddNew(void)
+inline bool wxDataModelBase::AddNew()
 {
     return false;
 }
 
-inline bool wxDataModelBase::IsOpen(void) const
+inline bool wxDataModelBase::IsOpen() const
 {
     return true;
 }
@@ -427,17 +427,17 @@ inline bool wxDataModelSorted::DeleteRow(unsigned int row, bool bDelete)
     return m_child->DeleteRow(row, bDelete);
 }
 
-inline bool wxDataModelSorted::IsOpen(void) const
+inline bool wxDataModelSorted::IsOpen() const
 {
     return m_child->IsOpen();
 }
 
-inline bool wxDataModelSorted::IsEditable(void) const
+inline bool wxDataModelSorted::IsEditable() const
 {
     return m_child->IsEditable();
 }
 
-inline bool wxDataModelSorted::AddNew(void)
+inline bool wxDataModelSorted::AddNew()
 {
     return m_child->AddNew();
 }

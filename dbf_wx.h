@@ -1,5 +1,5 @@
 // dbf_wx.h
-// Copyright (c) 2007-2013 by Troels K. All rights reserved.
+// Copyright (c) 2007-2015 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __DBF_WX_H__
@@ -26,20 +26,20 @@ public:
 
 // Operations
 public:	
-   bool Open  (const wxFileName&, dbf_editmode);
-   bool Open  (const wxFileName&, dbf_editmode, const DBF_OPEN&);
-   bool Create(const wxFileName&, const DBaseFieldVector&);
-   bool Create(const wxFileName&, const DBaseFieldVector&, const DBF_OPEN&);
-   bool Create(/*const wxString& filename, */void* stream, const struct zlib_filefunc_def_s*, 
+    bool Open  (const wxFileName&, dbf_editmode);
+    bool Open  (const wxFileName&, dbf_editmode, const DBF_OPEN&);
+    bool Create(const wxFileName&, const DBaseFieldVector&);
+    bool Create(const wxFileName&, const DBaseFieldVector&, const DBF_OPEN&);
+    bool Create(/*const wxString& filename, */void* stream, const struct zlib_filefunc_def_s*, 
       const DBaseFieldVector&, 
       dbf_charconv charconv = dbf_charconv_compatible, void* memo = NULL);
-   bool Create(wxOutputStream*, 
+    bool Create(wxOutputStream*, 
       const DBaseFieldVector&, 
       dbf_charconv charconv = dbf_charconv_compatible, void* memo = NULL);
 
-   size_t Read(const DBF_FIELD* , wxString*, size_t buf_len = 1024);
-   size_t Read(const char* field, wxString*, size_t buf_len = 1024);
-   size_t Read(dbf_uint field   , wxString*, size_t buf_len = 1024);
+    size_t Read(const DBF_FIELD* , wxString*, size_t buf_len = 1024);
+    size_t Read(const char* field, wxString*, size_t buf_len = 1024);
+    size_t Read(dbf_uint field   , wxString*, size_t buf_len = 1024);
    
    bool Read(const DBF_FIELD* , wxDateTime*);
    bool Read(const char* field, wxDateTime*);
@@ -88,8 +88,8 @@ public:
    bool       Attach(wxDBase*);
    bool       Attach(wxInputStream*, dbf_editmode editmode = dbf_editmode_editable, dbf_charconv conv = dbf_charconv_compatible, 
                      wxInputStream* memo = NULL, const wxString& tablename = wxEmptyString);
-   DBF_HANDLE Detach(void);
-   wxInputStream* DetachStream(void)
+   DBF_HANDLE Detach();
+   wxInputStream* DetachStream()
    {
       wxInputStream* stream = m_stream;
       m_stream = NULL;
@@ -97,29 +97,29 @@ public:
    }
 
 #ifdef _WX_VERSIONINFO_H_
-   static wxVersionInfo GetVersionInfo();
+    static wxVersionInfo GetVersionInfo();
 #endif
 
 // Implementation
 public:
-   virtual ~wxDBase();
-   virtual void Close();
-   virtual bool SetPosition(dbf_uint index);
+    virtual ~wxDBase();
+    virtual void Close();
+    virtual bool SetPosition(dbf_uint index);
    //virtual void SetFilename(const wxString&);
-   //virtual wxString GetFilename(void) const;
+   //virtual wxString GetFilename() const;
 
 // wxDataViewListModel "compatibility"
-   wxString GetColType(unsigned int col);
-   bool GetValueByRow(wxVariant*, unsigned int row, unsigned int col);
-   bool SetValueByRow(const wxVariant&, unsigned int row, unsigned int col);
+    wxString GetColType(unsigned int col);
+    bool GetValueByRow(wxVariant*, unsigned int row, unsigned int col);
+    bool SetValueByRow(const wxVariant&, unsigned int row, unsigned int col);
 protected:
-   virtual void DoDataExchange(bool bSaveAndValidate);
+    virtual void DoDataExchange(bool bSaveAndValidate);
    
 // Operations
 public:
-   void Fixups(void);
-   bool Update(/*int index*/);
-   static bool ParseDate(const wxString&, wxDateTime::Tm*, dbf_data_type);
+    void Fixups();
+    bool Update(/*int index*/);
+    static bool ParseDate(const wxString&, wxDateTime::Tm*, dbf_data_type);
 private:
     wxInputStream* m_stream;
     wxInputStream* m_stream_memo;

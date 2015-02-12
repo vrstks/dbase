@@ -120,7 +120,7 @@ public:
     void InitColumns(const DataViewColumnInfoVector&, bool row_column = false);
 
     virtual bool IsRecordOk(unsigned int row);
-    bool IsAnyUnselected(void);
+    bool IsAnyUnselected();
 
     void OnUpdateSelectAll  (wxUpdateUIEvent&);
     void OnUpdateNeedSel    (wxUpdateUIEvent&);
@@ -142,7 +142,7 @@ public:
     void InitColumns(bool row_column = false);
     void InitColumns(const DataViewColumnInfoVector&, bool row_column = false);
 
-    bool IsAnyUnselected(void);
+    bool IsAnyUnselected();
     bool IsOpen() const;
     int GetEditWindowID() const
     {
@@ -163,7 +163,7 @@ public:
     }
 
 protected:
-    bool CanEditLabel(void);
+    bool CanEditLabel();
 
 // Implementation
 public:

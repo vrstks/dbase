@@ -1,5 +1,5 @@
 // dbf_wx.cpp
-// Copyright (c) 2007-2014 by Troels K. All rights reserved.
+// Copyright (c) 2007-2015 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #include <vector>
@@ -49,7 +49,7 @@ void wxDBase::Close()
    wxDELETE(m_stream_memo);
 }
 
-DBF_HANDLE wxDBase::Detach(void)
+DBF_HANDLE wxDBase::Detach()
 {
    wxASSERT(IsOpen());
    DBF_HANDLE handle = base::Detach();

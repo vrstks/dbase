@@ -53,6 +53,23 @@ bool wxWindow_Toggle(wxWindow* wnd)
    return show;
 }
 
+void wxFrame_ClonePosition(wxFrame* wnd, wxWindow* otherwindow /*= NULL*/)
+{
+   otherwindow = otherwindow ? wxGetTopLevelParent(otherwindow) : wxTheApp->GetTopWindow();
+   wxFrame* topframe = wxStaticCast(otherwindow, wxFrame);
+
+   if (topframe->IsMaximized())
+      wnd->Maximize();
+   else if (topframe->IsFullScreen())
+      wnd->Maximize();
+   else
+   {
+      wxRect rect = topframe->GetScreenRect();
+
+      wnd->SetSize(rect);
+   }
+}
+
 void wxFrame_ToggleFullScreen(wxFrame* wnd, long style)
 {
    wnd->ShowFullScreen(!wnd->IsFullScreen(), style);

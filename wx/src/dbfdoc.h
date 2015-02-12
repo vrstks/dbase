@@ -1,5 +1,5 @@
 // dbfdoc.h
-// Copyright (c) 2007-2014 by Troels K. All rights reserved.
+// Copyright (c) 2007-2015 by Troels K. All rights reserved.
 // License: wxWindows Library Licence, Version 3.1 - see LICENSE.txt
 
 #ifndef __DBFDOC_H__
@@ -15,19 +15,19 @@ class DBFDocument : public wxDocument
     DECLARE_DYNAMIC_CLASS(DBFDocument)
 
 public:
-    DBFDocument(void);
+    DBFDocument();
 
-    wxDBase* GetDatabase(void) const { return m_database; }
-    wxString GetTablename(void) const { return m_tablename; }
-    wxFileName GetFilename(void) const { return wxFileName(base::GetFilename()); }
-    bool IsEditable(void) const;
+    wxDBase* GetDatabase() const { return m_database; }
+    wxString GetTablename() const { return m_tablename; }
+    wxFileName GetFilename() const { return wxFileName(base::GetFilename()); }
+    bool IsEditable() const;
 
 // Implementation
 public:
-    virtual ~DBFDocument(void);
+    virtual ~DBFDocument();
     virtual bool OnNewDocument();
     virtual bool SaveAs();
-    virtual bool IsModified(void) const;
+    virtual bool IsModified() const;
     virtual void Modify(bool mod);
     virtual bool OnCloseDocument();
 
