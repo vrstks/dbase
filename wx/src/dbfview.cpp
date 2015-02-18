@@ -269,5 +269,9 @@ wxPrintout* DBFView::OnCreatePrintout()
     const DBFDocument* doc = GetDocument();
     DBFModel datamodel(doc->GetDatabase());
     DataModelPrintout* print = new DataModelPrintout(&datamodel, std::string(doc->GetTitle().mb_str()));
+#if (wxVERSION_NUMBER >= 2900)
+    const wxPageSetupDialogData& page = GetDocumentManager()->GetPageSetupDialogData();
+    print->SetMargins(page);
+#endif
     return print;
 }

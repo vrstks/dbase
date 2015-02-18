@@ -9,8 +9,16 @@
 class wxDataModel;
 class DataModelPrintout : public wxHtmlPrintout
 {
+    typedef wxHtmlPrintout base;
 public:
     DataModelPrintout(wxDataModel*, const std::string& title);
+
+    void SetMargins(const wxPageSetupDialogData& page)
+    {
+        wxPoint topleft_mm = page.GetMarginTopLeft();
+        wxPoint bottomright_mm = page.GetMarginBottomRight();
+        base::SetMargins(topleft_mm.y, bottomright_mm.y, topleft_mm.x, bottomright_mm.x);
+    }
 };
 #endif
 
