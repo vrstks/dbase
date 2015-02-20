@@ -346,28 +346,31 @@ public:
 };
 #endif
 
-class wxHtmlTextWriter
+class HtmlTextWriter
 {
 public:
     static const char TagLeftChar = '<';
     static const char TagRightChar = '>';
     static const std::string EndTagLeftChars;
+    static const std::string DefaultEncoding; // utf8
+    static const std::string DefaultTabString; // 3 spaces
 
-    wxHtmlTextWriter(wxOutputStream* stream, std::string encoding = "utf8", std::string tabstring = std::string(3, ' '));
+    HtmlTextWriter();
 
-    void WriteBeginTag(const std::string& str)
+    virtual ~HtmlTextWriter() {}
+
+    void WriteBeginTag(const std::string& tagName)
     {
         Write(TagLeftChar);
-        Write(str);
+        Write(tagName);
     }
-    void WriteFullBeginTag(const std::string& str)
+    void WriteFullBeginTag(const std::string& tagName)
     {
-        WriteBeginTag(str);
-        Write(TagRightChar);
+        WriteBeginTag(tagName + TagRightChar);
     }
-    void WriteEndTag(const std::string& str)
+    void WriteEndTag(const std::string& tagName)
     {
-        Write(EndTagLeftChars + str + TagRightChar);
+        Write(EndTagLeftChars + tagName + TagRightChar);
     }
     void WriteAttribute(const std::string& name, const std::string& value)
     {
@@ -395,18 +398,11 @@ public:
     }
     void WriteLine(const std::string& str = std::string())
     {
-    #ifdef __WINDOWS__
-        Write(str + "\r\n");
-    #elif defined(__WXOSX__)
-        Write(str + "\r");
-    #else
-        Write(str + "\n");
-    #endif
+        Write(str + GetNewLine());
         m_linePos = 0;
     }
-    void Close()
+    virtual void Close()
     {
-        m_stream = NULL;
         m_linePos = 0;
         m_indent = 0;
     }
@@ -419,19 +415,51 @@ public:
         wxASSERT(m_indent != 0);
         m_indent--;
     }
+    void SetEncoding(const std::string& encoding);
+    void SetTabString(const std::string& tabstring) { m_tab_string = tabstring; }
     std::string GetEncoding() const { return m_encoding; }
     std::string GetTabString() const { return m_tab_string; }
+    int GetIndent() const { return m_indent; }
+    virtual std::string GetNewLine() const
+    {
+        return "\n";
+    }
+protected:
+    virtual size_t DoWrite(const std::string& str) = 0;
 private:
-    wxOutputStream* m_stream;
     int m_indent;
     size_t m_linePos;
     std::string m_encoding;
     std::string m_tab_string;
+};
 
-    size_t DoWrite(const std::string& str)
+class wxHtmlTextWriter : public HtmlTextWriter
+{
+    typedef HtmlTextWriter base;
+public:
+    wxHtmlTextWriter(wxOutputStream* stream) : HtmlTextWriter(), m_stream(stream) {}
+    virtual void Close()
+    {
+        m_stream = NULL;
+        base::Close();
+    }
+    virtual std::string GetNewLine() const
+    {
+    #ifdef __WINDOWS__
+        return "\r\n";
+    #elif defined(__WXOSX__)
+        return "\r";
+    #else
+        return base::GetNewLine();
+    #endif
+    }
+protected:
+    virtual size_t DoWrite(const std::string& str)
     {
         return m_stream->Write(str.c_str(), str.length()).LastWrite();
     }
+private:
+    wxOutputStream* m_stream;
 };
 
 class wxHtmlItem

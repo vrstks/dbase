@@ -12,7 +12,7 @@
 #include "datamodel.h"
 #include "printout.h"
 
-DataModelPrintout::DataModelPrintout(wxDataModel* model, const std::string& title)
+DataModelPrintout::DataModelPrintout(const wxDataModel* model, const std::string& title)
 {
     wxString str;
     wxStringOutputStream stream(&str);

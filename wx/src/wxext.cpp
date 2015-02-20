@@ -14,15 +14,24 @@
 IMPLEMENT_CLASS(wxViewEx, wxView)
 IMPLEMENT_CLASS(wxFileLoadedHint, wxObject)
 
-/*static*/ const std::string wxHtmlTextWriter::EndTagLeftChars = "</";
+//static
+const std::string HtmlTextWriter::EndTagLeftChars = "</";
+//static
+const std::string HtmlTextWriter::DefaultEncoding = "utf8";
+//static
+const std::string HtmlTextWriter::DefaultTabString = std::string(3, ' ');
 
-wxHtmlTextWriter::wxHtmlTextWriter(wxOutputStream* stream, std::string encoding, std::string tabstring) :
-    m_stream(stream), m_indent(0), m_linePos(0), m_encoding(encoding), m_tab_string(tabstring)
+HtmlTextWriter::HtmlTextWriter() : m_indent(0), m_linePos(0), m_encoding(DefaultEncoding), m_tab_string(DefaultTabString)
 {
+}
+
+void HtmlTextWriter::SetEncoding(const std::string& encoding)
+{
+    m_encoding = encoding;
     std::string temp = m_encoding;
     std::transform(temp.begin(), temp.end(), temp.begin(), ::toupper);
     if (temp == "UTF-8")
-        encoding = "utf8"; // no hyphen
+        m_encoding = DefaultEncoding; // no hyphen
 }
 
 bool wxRemoveFile(wxFFile* file)
@@ -1000,7 +1009,8 @@ wxHtmlTableWriter::~wxHtmlTableWriter()
 
 void wxHtmlTableWriter::SaveFile(wxOutputStream* stream, std::string encoding)
 {
-    wxHtmlTextWriter writer(stream, encoding);
+    wxHtmlTextWriter writer(stream);
+    writer.SetEncoding(encoding);
     
     writer.WriteFullBeginTag("html"); writer.WriteLine(); writer.IncreaseIndent();
         writer.WriteFullBeginTag("head"); writer.WriteLine(); writer.IncreaseIndent();
