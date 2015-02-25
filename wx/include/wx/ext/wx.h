@@ -7,6 +7,9 @@
 
 #define wxART_APP          wxART_MAKE_ART_ID(wxART_APP)
 
+#define wxFD_DEFAULT_STYLE_OPEN (wxFD_OPEN | wxFD_FILE_MUST_EXIST)
+#define wxFD_DEFAULT_STYLE_SAVE (wxFD_SAVE | wxFD_OVERWRITE_PROMPT)
+
 class WXDLLIMPEXP_FWD_CORE wxDataObject;
 class WXDLLIMPEXP_FWD_CORE wxMDIParentFrame;
 
@@ -346,7 +349,192 @@ public:
 };
 #endif
 
-class HtmlTextWriter
+class TextWriter
+{
+public:
+    TextWriter() : m_indent(0), m_linePos(0), m_encoding(), m_tabString()
+    {
+    }
+    virtual ~TextWriter()
+    {
+    }
+
+    virtual bool IsOpen() const = 0;
+    virtual void Close() = 0;
+
+    void SetEncoding(const std::string& encoding) { m_encoding = encoding; }
+    void SetTabString(const std::string& tabstring) { m_tabString = tabstring; }
+    std::string GetEncoding() const { return m_encoding; }
+    std::string GetTabString() const { return m_tabString; }
+    int GetIndent() const { return m_indent; }
+    virtual std::string GetNewLine() const
+    {
+        return "\n";
+    }
+    void Write(const std::string& str)
+    {
+        if (m_linePos == 0)
+            for (int i = 0; i < m_indent; i++)
+                DoWrite(m_tabString);
+        m_linePos += DoWrite(str);
+    }
+    void Write(char ch)
+    {
+        Write(std::string(1, ch));
+    }
+    void WriteLine(const std::string& str = std::string())
+    {
+        Write(str + GetNewLine());
+        m_linePos = 0;
+    }
+    void WriteLine(char ch)
+    {
+        WriteLine(std::string(1, ch));
+    }
+    void IncreaseIndent()
+    {
+        m_indent++;
+    }
+    void DecreaseIndent()
+    {
+        wxASSERT(m_indent != 0);
+        m_indent--;
+    }
+protected:
+    virtual size_t DoWrite(const std::string& str) = 0;
+
+    int m_indent;
+    size_t m_linePos;
+    std::string m_encoding;
+    std::string m_tabString;
+};
+
+typedef std::vector<std::string> std_string_vector;
+
+class XmlWriter : public TextWriter
+{
+public:
+    static const char TagLeftChar = '<';
+    static const char TagRightChar = '>';
+    static const std::string EndTagLeftChars;
+    static const std::string DefaultEncoding; // utf8
+    static const std::string DefaultTabString; // 3 spaces
+
+    XmlWriter() : m_open(true), m_ElementOpened(false)
+    {
+        m_tabString = DefaultTabString, m_encoding = DefaultEncoding;
+    }
+    virtual ~XmlWriter()
+    {
+        if (IsOpen())
+            Close();
+    }
+    bool Open(const std::string& tableName)
+    {
+        m_TableName = tableName;
+        WriteLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+        WriteStartElement(tableName);
+
+        return true;
+    }
+    virtual void Close()
+    {
+        WriteEndElement();
+        m_open = false;
+        m_linePos = 0;
+        m_indent = 0;
+    }
+
+    void WriteStartElement(const std::string& elmName)
+    {
+        if (m_indent && m_ElementOpened)
+            WriteLine(TagRightChar);
+        Write(TagLeftChar);
+        Write(elmName);
+        ElementList.push_back(elmName);
+        m_indent++;
+        m_ElementOpened = true;
+    }
+    void WriteElement(const std::string& elmName, const std::string& text)
+    {
+        if (m_ElementOpened)
+        {
+            WriteLine(TagRightChar);
+            m_ElementOpened = false;
+        }
+        WriteStartElement(elmName);
+        Write(TagRightChar);
+        m_ElementOpened = false;
+        Write(text);
+        WriteEndElement();
+    }
+    void WriteEndElement()
+    {
+        if (m_ElementOpened)
+        {
+            WriteLine(TagRightChar);
+            m_ElementOpened = false;
+        }
+        m_indent--;
+        std::string elmName = ElementList.back();
+        ElementList.pop_back();
+        Write(EndTagLeftChars);
+        WriteLine(elmName + TagRightChar);
+    }
+    void WriteAttribute(const std::string& attrName, const std::string& text)
+    {
+        Write(' ');
+        Write(attrName + "=\"");
+        Write(text + "\"");
+    }
+    void WriteAttribute(const std::string& attrName, const bool& value)
+    {
+        WriteAttribute(attrName, std::string(value ? "true" : "false"));
+    }
+    virtual bool IsOpen() const { return m_open; }
+protected:
+    bool m_open;
+    std::string m_TableName;
+    std_string_vector ElementList;
+    bool m_ElementOpened;
+};
+
+class wxXmlWriter : public XmlWriter
+{
+    typedef XmlWriter base;
+public:
+    wxXmlWriter() : XmlWriter(), m_stream(NULL) {}
+
+    bool Open(const std::string& tableName, wxOutputStream* stream)
+    {
+        m_stream = stream;
+        return base::Open(tableName);
+    }
+    virtual void Close()
+    {
+        base::Close();
+        m_stream = NULL;
+    }
+    virtual std::string GetNewLine() const
+    {
+    #ifdef __WINDOWS__
+        return "\r\n";
+    #elif defined(__WXOSX__)
+        return "\r";
+    #else
+        return base::GetNewLine();
+    #endif
+    }
+protected:
+    virtual size_t DoWrite(const std::string& str)
+    {
+        return m_stream->Write(str.c_str(), str.length()).LastWrite();
+    }
+private:
+    wxOutputStream* m_stream;
+};
+
+class HtmlTextWriter : public TextWriter
 {
 public:
     static const char TagLeftChar = '<';
@@ -357,7 +545,12 @@ public:
 
     HtmlTextWriter();
 
-    virtual ~HtmlTextWriter() {}
+    virtual ~HtmlTextWriter()
+    {
+        if (IsOpen())
+            Close();
+    }
+    virtual bool IsOpen() const { return m_open; }
 
     void WriteBeginTag(const std::string& tagName)
     {
@@ -384,53 +577,14 @@ public:
     {
         Write("<br/>");
     }
-
-    void Write(char ch)
-    {
-        Write(std::string(1, ch));
-    }
-    void Write(const std::string& str)
-    {
-        if (m_linePos == 0)
-            for (int i = 0; i < m_indent; i++)
-                DoWrite(m_tab_string);
-        m_linePos += DoWrite(str);
-    }
-    void WriteLine(const std::string& str = std::string())
-    {
-        Write(str + GetNewLine());
-        m_linePos = 0;
-    }
     virtual void Close()
     {
         m_linePos = 0;
         m_indent = 0;
-    }
-    void IncreaseIndent()
-    {
-        m_indent++;
-    }
-    void DecreaseIndent()
-    {
-        wxASSERT(m_indent != 0);
-        m_indent--;
-    }
-    void SetEncoding(const std::string& encoding);
-    void SetTabString(const std::string& tabstring) { m_tab_string = tabstring; }
-    std::string GetEncoding() const { return m_encoding; }
-    std::string GetTabString() const { return m_tab_string; }
-    int GetIndent() const { return m_indent; }
-    virtual std::string GetNewLine() const
-    {
-        return "\n";
+        m_open = false;
     }
 protected:
-    virtual size_t DoWrite(const std::string& str) = 0;
-private:
-    int m_indent;
-    size_t m_linePos;
-    std::string m_encoding;
-    std::string m_tab_string;
+    bool m_open;
 };
 
 class wxHtmlTextWriter : public HtmlTextWriter
@@ -440,8 +594,8 @@ public:
     wxHtmlTextWriter(wxOutputStream* stream) : HtmlTextWriter(), m_stream(stream) {}
     virtual void Close()
     {
-        m_stream = NULL;
         base::Close();
+        m_stream = NULL;
     }
     virtual std::string GetNewLine() const
     {
@@ -462,27 +616,30 @@ private:
     wxOutputStream* m_stream;
 };
 
-class wxHtmlItem
+class HtmlItem
 {
 public:
-    virtual ~wxHtmlItem() {}
-    virtual void Render(wxHtmlTextWriter*) const = 0;
+    virtual ~HtmlItem() {}
+    virtual void Render(HtmlTextWriter*) const = 0;
 };
 
-enum wxHtmlTextWeight
+enum HtmlTextWeight
 {
-    wxHtmlTextWeight_Normal,
-    wxHtmlTextWeight_Bold
+    HtmlTextWeight_Normal,
+    HtmlTextWeight_Bold
 };
 
-class wxHtmlTextParagraph : public wxHtmlItem
+class HtmlTextParagraph : public HtmlItem
 {
 public:
     std::string Text;
-    wxHtmlTextWeight Weight;
+    HtmlTextWeight Weight;
 
-    wxHtmlTextParagraph(const std::string& str, wxHtmlTextWeight weight = wxHtmlTextWeight_Normal);
-    virtual void Render(wxHtmlTextWriter*) const;
+    HtmlTextParagraph(const std::string& str, HtmlTextWeight weight = HtmlTextWeight_Normal)
+    {
+        Text = str, Weight = weight;
+    }
+    virtual void Render(HtmlTextWriter*) const;
 
     static std::string ToBold(const std::string& str)
     {
@@ -490,34 +647,32 @@ public:
     }
 };
 
-typedef std::vector<std::string> std_string_vector;
-
-class wxHtmlTableRow
+class HtmlTableRow
 {
 public:
     std_string_vector ColumnTextArray;
     std_string_vector ColumnAttribute;
 };
-typedef std::vector<wxHtmlTableRow> wxHtmlTableVector;
+typedef std::vector<HtmlTableRow> HtmlTableVector;
 
-class wxHtmlTable : public wxHtmlItem
+class HtmlTable : public HtmlItem
 {
 public:
-    wxHtmlTableVector List;
-    wxArrayInt PercentArray;
+    HtmlTableVector List;
+    std::vector<int> PercentArray;
     int Border;
-    wxHtmlTable() : wxHtmlItem(), Border(1) {}
-    virtual void Render(wxHtmlTextWriter*) const;
-    virtual ~wxHtmlTable() {}
+    HtmlTable() : HtmlItem(), Border(1) {}
+    virtual void Render(HtmlTextWriter*) const;
+    virtual ~HtmlTable() {}
 };
 
-typedef std::vector<wxHtmlItem*> wxHtmlItemVector;
+typedef std::vector<HtmlItem*> HtmlItemVector;
 
 class wxHtmlTableWriter : public wxObject
 {
 public:
     std::string Title;
-    wxHtmlItemVector List;
-    void SaveFile(wxOutputStream*, std::string encoding = "utf8");
+    HtmlItemVector List;
+    void SaveFile(wxOutputStream*, std::string encoding = HtmlTextWriter::DefaultEncoding);
     virtual ~wxHtmlTableWriter();
 };

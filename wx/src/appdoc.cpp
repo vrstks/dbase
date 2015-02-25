@@ -32,6 +32,7 @@ BEGIN_EVENT_TABLE(DocManager, wxDocManagerEx)
     EVT_UPDATE_UI(XRCID("edit")      , DocManager::OnUpdateDisableIfNoDoc)
     EVT_UPDATE_UI(XRCID("struct")    , DocManager::OnUpdateDisableIfNoDoc)
     EVT_UPDATE_UI(XRCID("pack")      , DocManager::OnUpdateDisableIfNoDoc)
+    EVT_UPDATE_UI(XRCID("export")    , DocManager::OnUpdateDisableIfNoDoc)
 END_EVENT_TABLE()
 
 wxDocument* DocManager::CreateDocument(const wxString& path, long flags)

@@ -5,6 +5,7 @@
 #include "precomp.h"
 
 #include <wx/numdlg.h>
+#include <wx/wfstream.h>
 #include <wx/html/htmprint.h>
 
 #include "wx/ext/trunk.h"
@@ -63,28 +64,29 @@ DBFView::~DBFView()
 {
 }
 
-BEGIN_EVENT_TABLE(DBFView, wxViewEx)
-   EVT_MENU(XRCID("struct"), DBFView::OnStruct)
-   EVT_UPDATE_UI(XRCID("struct"), DBFView::OnUpdateNeedEditable)
-   EVT_MENU(XRCID("tool_struct"), DBFView::OnStructClipboard)
-   EVT_MENU(wxID_PROPERTIES, DBFView::OnProperties)
+wxBEGIN_EVENT_TABLE(DBFView, wxViewEx)
+    EVT_MENU(XRCID("struct"), DBFView::OnStruct)
+    EVT_UPDATE_UI(XRCID("struct"), DBFView::OnUpdateNeedEditable)
+    EVT_MENU(XRCID("tool_struct"), DBFView::OnStructClipboard)
+    EVT_MENU(wxID_PROPERTIES, DBFView::OnProperties)
+    EVT_MENU(XRCID("export"), DBFView::OnFileExport)
 
-   EVT_MENU(wxID_SELECTALL       , DBFView::OnSelectAll)
-   EVT_UPDATE_UI(wxID_SELECTALL  , DBFView::OnUpdateSelectAll)
-   EVT_MENU(wxID_UNDELETE        , DBFView::OnUndelete)
-   EVT_UPDATE_UI(wxID_UNDELETE   , DBFView::OnUpdateNeedSel_Deleted)
-   EVT_MENU(wxID_ADD             , DBFView::OnAdd)
-   EVT_UPDATE_UI(wxID_ADD        , DBFView::OnUpdateNeedEditable)
-   EVT_UPDATE_UI(wxID_REPLACE    , DBFView::OnUpdateNeedEditable)
-   EVT_MENU(wxID_DELETE          , DBFView::OnDelete)
-   EVT_UPDATE_UI(wxID_DELETE     , DBFView::OnUpdateNeedSel_NotDeleted)
-   EVT_MENU(wxID_CLEAR           , DBFView::OnDeleteAll)
+    EVT_MENU(wxID_SELECTALL       , DBFView::OnSelectAll)
+    EVT_UPDATE_UI(wxID_SELECTALL  , DBFView::OnUpdateSelectAll)
+    EVT_MENU(wxID_UNDELETE        , DBFView::OnUndelete)
+    EVT_UPDATE_UI(wxID_UNDELETE   , DBFView::OnUpdateNeedSel_Deleted)
+    EVT_MENU(wxID_ADD             , DBFView::OnAdd)
+    EVT_UPDATE_UI(wxID_ADD        , DBFView::OnUpdateNeedEditable)
+    EVT_UPDATE_UI(wxID_REPLACE    , DBFView::OnUpdateNeedEditable)
+    EVT_MENU(wxID_DELETE          , DBFView::OnDelete)
+    EVT_UPDATE_UI(wxID_DELETE     , DBFView::OnUpdateNeedSel_NotDeleted)
+    EVT_MENU(wxID_CLEAR           , DBFView::OnDeleteAll)
 
-   EVT_MENU(XRCID("edit")        , DBFView::OnEdit)
-   EVT_UPDATE_UI(XRCID("edit")   , DBFView::OnUpdateNeedSel)
+    EVT_MENU(XRCID("edit")        , DBFView::OnEdit)
+    EVT_UPDATE_UI(XRCID("edit")   , DBFView::OnUpdateNeedSel)
 
-   EVT_MENU(XRCID("goto")        , DBFView::OnGoto)
-END_EVENT_TABLE()
+    EVT_MENU(XRCID("goto")        , DBFView::OnGoto)
+wxEND_EVENT_TABLE()
 
 bool DBFView::OnCreate(wxDocument* doc, long flags)
 {
@@ -161,17 +163,17 @@ bool DBFView::OnClose(bool deleteWindow)
 
 DBFDocument* DBFView::GetDocument() const
 {
-   return wxStaticCast(base::GetDocument(), DBFDocument);
+    return wxStaticCast(base::GetDocument(), DBFDocument);
 }
 
 void DBFView::OnStructClipboard(wxCommandEvent&)
 {
-   const DBFDocument* doc = GetDocument();
-   const wxString str = ::dbf_getstruct_c(doc->GetTablename(), doc->GetDatabase());
-   bool ok = wxClipboardHelper::SetText(str);
+    const DBFDocument* doc = GetDocument();
+    const wxString str = ::dbf_getstruct_c(doc->GetTablename(), doc->GetDatabase());
+    bool ok = wxClipboardHelper::SetText(str);
 
-   ::wxMessageBox(ok ? _("Struct is now on the Clipboard") : _("Failed to open clipboard"),
-      wxMessageBoxCaptionStr, wxOK | wxCENTRE, GetModalParent());
+    ::wxMessageBox(ok ? _("Struct is now on the Clipboard") : _("Failed to open clipboard"),
+        wxMessageBoxCaptionStr, wxOK | wxCENTRE, GetModalParent());
 }
 
 void DBFView::OnProperties(wxCommandEvent&)
@@ -189,6 +191,65 @@ void DBFView::OnProperties(wxCommandEvent&)
     ::wxModalTextDialog(GetModalParent(), str, doc->GetFilename().GetFullName());
 }
 
+void DBFView::OnFileExport(wxCommandEvent&)
+{
+    const DBFDocument* doc = GetDocument();
+    wxString filter;
+    enum fmt
+    {
+        fmt_html_table,
+        fmt_xml,
+        fmt_enumcount
+    };
+    wxFileName fileName = doc->GetFilename();
+    wxString default_title = fileName.GetName();
+    wxString dir = fileName.GetPath();
+
+    wxString temp;
+    temp.Printf(wxT("%s (%s)|%s"),
+         _("HTML Files"),
+         wxT("html"),
+         wxT("*.html;*.htm")
+         );
+    filter+=temp;
+    filter+=wxT('|');
+    temp.Printf(wxT("%s (%s)|%s"),
+         _("XML Files"),
+         wxT("xml"),
+         wxT("*.xml")
+         );
+    filter+=temp;
+    wxFileDialog dlg(GetFrame(), _("Export"), dir, default_title, filter, wxFD_DEFAULT_STYLE_SAVE);
+    if (dlg.ShowModal() != wxID_OK)
+        return;
+    fileName = dlg.GetPath();
+
+    DBFModel datamodel(doc->GetDatabase());
+    DBFModel* model = &datamodel;
+
+    if (0 == fileName.GetExt().CmpNoCase("xml"))
+    {
+        wxFFile file;
+        if (file.Open(fileName.GetFullPath(), wxT("wb")))
+        {
+            wxFFileOutputStream stream(file);
+            DataModelPrintout::MakeXmlFile(model, &stream, std::string(doc->GetTablename().utf8_str()));
+            file.Close();
+        }
+    }
+    else if (   (0 == fileName.GetExt().CmpNoCase("html"))
+             || (0 == fileName.GetExt().CmpNoCase("htm")))
+    {
+        wxFFile file;
+        if (file.Open(fileName.GetFullPath(), wxT("wb")))
+        {
+            wxFFileOutputStream stream(file);
+            DataModelPrintout::MakeHtmlTableFile(model, &stream, std::string(doc->GetFilename().GetFullPath().utf8_str()));
+            file.Close();
+        }
+    }
+}
+
 void DBFView::OnSelectAll(wxCommandEvent&)
 {
     GetWindow()->SelectAll();
@@ -196,7 +257,7 @@ void DBFView::OnSelectAll(wxCommandEvent&)
 
 void DBFView::OnUndelete(wxCommandEvent&)
 {
-   GetWindow()->DeleteSelection(false);
+    GetWindow()->DeleteSelection(false);
 }
 
 void DBFView::OnUpdateSelectAll(wxUpdateUIEvent& event)
@@ -206,45 +267,45 @@ void DBFView::OnUpdateSelectAll(wxUpdateUIEvent& event)
 
 void DBFView::OnUpdateNeedSel_Deleted(wxUpdateUIEvent& event)
 {
-   GetWindow()->OnUpdateNeedSel_Deleted(event);
-   if (!GetDocument()->IsEditable())
-       event.Enable(false);
+    GetWindow()->OnUpdateNeedSel_Deleted(event);
+    if (!GetDocument()->IsEditable())
+        event.Enable(false);
 }
 
 void DBFView::OnUpdateNeedSel_NotDeleted(wxUpdateUIEvent& event)
 {
-   GetWindow()->OnUpdateNeedSel_NotDeleted(event);
-   if (!GetDocument()->IsEditable())
-       event.Enable(false);
+    GetWindow()->OnUpdateNeedSel_NotDeleted(event);
+    if (!GetDocument()->IsEditable())
+        event.Enable(false);
 }
 
 void DBFView::OnUpdateNeedSel(wxUpdateUIEvent& event)
 {
-   GetWindow()->OnUpdateNeedSel(event);
-   if (!GetDocument()->IsEditable())
-       event.Enable(false);
+    GetWindow()->OnUpdateNeedSel(event);
+    if (!GetDocument()->IsEditable())
+        event.Enable(false);
 }
 
 void DBFView::OnDeleteAll(wxCommandEvent&)
 {
-   if (wxOK == wxMessageBox(_("Delete all?"), wxMessageBoxCaptionStr, wxOK | wxCANCEL | wxICON_QUESTION, GetModalParent()))
-      GetWindow()->DeleteAll(true);
+    if (wxOK == wxMessageBox(_("Delete all?"), wxMessageBoxCaptionStr, wxOK | wxCANCEL | wxICON_QUESTION, GetModalParent()))
+        GetWindow()->DeleteAll(true);
 }
 
 void DBFView::OnDelete(wxCommandEvent&)
 {
-   if (wxOK == wxMessageBox(_("Delete selection?"), wxMessageBoxCaptionStr, wxOK | wxCANCEL | wxICON_QUESTION, GetModalParent()))
-      GetWindow()->DeleteSelection(true);
+    if (wxOK == wxMessageBox(_("Delete selection?"), wxMessageBoxCaptionStr, wxOK | wxCANCEL | wxICON_QUESTION, GetModalParent()))
+        GetWindow()->DeleteSelection(true);
 }
 
 void DBFView::OnAdd(wxCommandEvent&)
 {
-   GetWindow()->AddNew();
+    GetWindow()->AddNew();
 }
 
 void DBFView::OnEdit(wxCommandEvent&)
 {
-   GetWindow()->Edit();
+    GetWindow()->Edit();
 }
 
 void DBFView::OnGoto(wxCommandEvent&)

@@ -16,13 +16,19 @@ DataModelPrintout::DataModelPrintout(const wxDataModel* model, const std::string
 {
     wxString str;
     wxStringOutputStream stream(&str);
-    wxHtmlTableWriter writer;
+    MakeHtmlTableFile(model, &stream, title);
+    SetHtmlText(str);
+}
+
+//static
+void DataModelPrintout::MakeHtmlTableFile(const wxDataModel* model, wxOutputStream* stream, const std::string& title)
+{
     unsigned int row_count = model->GetRowCount();
     unsigned int col_count = model->GetColumnCount();
-    wxHtmlTable* table = new wxHtmlTable();
+    HtmlTable* table = new HtmlTable();
     unsigned int row, col;
 
-    wxHtmlTableRow row_caption;
+    HtmlTableRow row_caption;
     for (col = 0; col < col_count; col++)
     {
         wxDataModelColumnInfo info;
@@ -30,13 +36,13 @@ DataModelPrintout::DataModelPrintout(const wxDataModel* model, const std::string
         model->GetColumn(col, &info);
 
         std::string str(info.Name.utf8_str());
-        str = wxHtmlTextParagraph::ToBold(str);
+        str = HtmlTextParagraph::ToBold(str);
         row_caption.ColumnTextArray.push_back(str);
     }
     table->List.push_back(row_caption);
     for (row = 0; row < row_count; row++)
     {
-        wxHtmlTableRow temp;
+        HtmlTableRow temp;
         for (col = 0; col < col_count; col++)
         {
             wxString str;
@@ -46,8 +52,33 @@ DataModelPrintout::DataModelPrintout(const wxDataModel* model, const std::string
         }
         table->List.push_back(temp);
     }
+    wxHtmlTableWriter writer;
     writer.List.push_back(table);
     writer.Title = title;
-    writer.SaveFile(&stream);
-    SetHtmlText(str);
+    writer.SaveFile(stream);
+}
+
+//static
+void DataModelPrintout::MakeXmlFile(const wxDataModel* model, wxOutputStream* stream, const std::string& tableName)
+{
+    unsigned int row_count = model->GetRowCount();
+    unsigned int col_count = model->GetColumnCount();
+    unsigned int row, col;
+    const wxDataModelColumnInfoVector col_vec = model->GetColumns();
+    wxXmlWriter writer;
+
+    writer.Open(tableName, stream);
+    for (row = 0; row < row_count; row++)
+    {
+        writer.WriteStartElement("record");
+            for (col = 0; col < col_count; col++)
+            {
+                wxString str;
+                model->GetValueByRow(&str, row, col);
+
+                writer.WriteElement(std::string(col_vec[col].Name.utf8_str()), std::string(str.utf8_str()));
+            }
+        writer.WriteEndElement();
+    }
+    writer.Close();
 }

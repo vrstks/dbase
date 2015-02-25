@@ -19,6 +19,8 @@ public:
         wxPoint bottomright_mm = page.GetMarginBottomRight();
         base::SetMargins(topleft_mm.y, bottomright_mm.y, topleft_mm.x, bottomright_mm.x);
     }
+    static void MakeHtmlTableFile(const wxDataModel*, wxOutputStream*, const std::string& title);
+    static void MakeXmlFile      (const wxDataModel*, wxOutputStream*, const std::string& tableName);
 };
 #endif
 

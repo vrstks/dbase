@@ -32,6 +32,7 @@ protected:
     void OnStructClipboard(wxCommandEvent&);
     void OnStruct(wxCommandEvent&);
     void OnProperties(wxCommandEvent&);
+    void OnFileExport(wxCommandEvent&);
    
     void OnUpdateNeedSel (wxUpdateUIEvent&);
     void OnSelectAll     (wxCommandEvent&);
