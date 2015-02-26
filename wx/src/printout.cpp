@@ -12,11 +12,11 @@
 #include "datamodel.h"
 #include "printout.h"
 
-DataModelPrintout::DataModelPrintout(const wxDataModel* model, const std::string& title)
+DataModelPrintout::DataModelPrintout(const wxDataModel* model, const wxString& title) : wxHtmlPrintout(title)
 {
     wxString str;
     wxStringOutputStream stream(&str);
-    MakeHtmlTableFile(model, &stream, title);
+    MakeHtmlTableFile(model, &stream, std::string(title.utf8_str()));
     SetHtmlText(str);
 }
 
@@ -48,7 +48,9 @@ void DataModelPrintout::MakeHtmlTableFile(const wxDataModel* model, wxOutputStre
             wxString str;
             model->GetValueByRow(&str, row, col);
 
-            temp.ColumnTextArray.push_back(std::string(str.utf8_str()));
+            std::string value(str.utf8_str());
+            value = HtmlTextWriter::Escape(value);
+            temp.ColumnTextArray.push_back(value);
         }
         table->List.push_back(temp);
     }
@@ -73,10 +75,14 @@ void DataModelPrintout::MakeXmlFile(const wxDataModel* model, wxOutputStream* st
         writer.WriteStartElement("record");
             for (col = 0; col < col_count; col++)
             {
+                const std::string elmName(col_vec[col].Name.utf8_str());
+
                 wxString str;
                 model->GetValueByRow(&str, row, col);
 
-                writer.WriteElement(std::string(col_vec[col].Name.utf8_str()), std::string(str.utf8_str()));
+                std::string value(str.utf8_str());
+                value = HtmlTextWriter::Escape(value);
+                writer.WriteElement(elmName, value);
             }
         writer.WriteEndElement();
     }

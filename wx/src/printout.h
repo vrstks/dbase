@@ -11,7 +11,7 @@ class DataModelPrintout : public wxHtmlPrintout
 {
     typedef wxHtmlPrintout base;
 public:
-    DataModelPrintout(const wxDataModel*, const std::string& title);
+    DataModelPrintout(const wxDataModel*, const wxString& title);
 
     void SetMargins(const wxPageSetupDialogData& page)
     {

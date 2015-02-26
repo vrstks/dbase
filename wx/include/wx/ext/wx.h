@@ -583,6 +583,7 @@ public:
         m_indent = 0;
         m_open = false;
     }
+    static std::string Escape(const std::string&);
 protected:
     bool m_open;
 };

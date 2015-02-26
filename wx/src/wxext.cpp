@@ -35,6 +35,27 @@ HtmlTextWriter::HtmlTextWriter() : TextWriter()
     m_open = true;
 }
 
+//static
+std::string HtmlTextWriter::Escape(const std::string& data)
+{
+    std::string buffer;
+    buffer.reserve(data.size());
+    for(std::string::const_iterator it = data.begin(); it != data.end(); it++)
+    {
+        switch(*it)
+        {
+            case '&':  buffer.append("&amp;");  break;
+            case '\"': buffer.append("&quot;"); break;
+            case '\'': buffer.append("&apos;"); break;
+            case '<':  buffer.append("&lt;");   break;
+            case '>':  buffer.append("&gt;");   break;
+            case ' ':  buffer.append("&nbsp;"); break;
+            default:   buffer.append(1, *it);   break;
+        }
+    }
+    return buffer;
+}
+
 bool wxRemoveFile(wxFFile* file)
 {
     bool ok = true;
@@ -979,7 +1000,7 @@ void HtmlTable::Render(HtmlTextWriter* writer_ptr) const
 
                     if ( (it_col == it_row->ColumnTextArray.begin()) && (PercentArray.size() > column))
                     {
-                        _snprintf(str, WXSIZEOF(str), " width=\"%s%%\"", PercentArray[column]);
+                        _snprintf(str, WXSIZEOF(str), " width=\"%d%%\"", PercentArray[column]);
                         writer.Write(str);
                     }
                     if (it_row->ColumnAttribute.size() > column)
