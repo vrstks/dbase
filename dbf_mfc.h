@@ -47,11 +47,11 @@ public:
       dbf_charconv charconv = dbf_charconv_compatible, void* memo = NULL);
     bool CloneDatabase(const TCHAR* lpszCloneName, bool bCopyRecords = FALSE, bool bSkipDeleted = FALSE);
 
-    const CString& GetFilename(void) const;
+    const CString& GetFilename() const;
 
     int GetRecord(size_t index);
     int PutRecord(size_t index);
-    bool PutRecord(void);
+    bool PutRecord();
 
     int DeleteRecord(bool bDelete = true);
     int AddRecord();
@@ -123,7 +123,7 @@ public:
     bool GetLogicalField(size_t field);
     bool GetLogicalField(const char* field);
 
-    bool IsOpen(void) const { return (m_handle != NULL); }
+    bool IsOpen() const { return (m_handle != NULL); }
 
     int PutNumericField(const DBF_FIELD* , long);
     int PutNumericField(size_t field     , long);
@@ -142,7 +142,7 @@ public:
     size_t SearchRecord(size_t field     , const TCHAR* criteria, size_t nStartRec = 0);
 
     int Pack();
-    DBF_HANDLE Detach(void);
+    DBF_HANDLE Detach();
 
 // Implementation
 public:

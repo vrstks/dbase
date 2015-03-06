@@ -137,76 +137,74 @@ wxString wxStructListView::OnGetItemText(long item, long col) const
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// wxDBFStructDialog
+// DbfStructPanel
 
-class wxDBFStructDialog : public wxDialog
+class DbfStructPanel : public wxPanel
 {
+    typedef wxPanel base;
 protected:
-   wxDBase* m_database;
-   wxStructListView* m_list;
+    wxDBase* m_database;
+    wxStructListView* m_list;
 public:
 
 public:
-   wxDBFStructDialog(wxDBase*);
+    DbfStructPanel(wxDBase*);
 
-   bool Create(wxWindow* parent);
+    bool Create(wxWindow* parent);
 
-   const wxStructListView* GetList() const { return m_list; }
+    const wxStructListView* GetList() const { return m_list; }
 
 // Implementation
 public:
-   virtual ~wxDBFStructDialog();
+    virtual ~DbfStructPanel();
 
 protected:
-   void OnAdd(wxCommandEvent&);
-   void OnEdit(wxCommandEvent&);
-   void OnDelete(wxCommandEvent&);
-   void OnCalendar(wxCommandEvent&);
-   void OnUpdateNeedSel(wxUpdateUIEvent&);
-   void OnUpdateNeedData(wxUpdateUIEvent&);
-   DECLARE_EVENT_TABLE()
+    void OnAdd(wxCommandEvent&);
+    void OnEdit(wxCommandEvent&);
+    void OnDelete(wxCommandEvent&);
+    void OnCalendar(wxCommandEvent&);
+    void OnUpdateNeedSel(wxUpdateUIEvent&);
+    void OnUpdateNeedData(wxUpdateUIEvent&);
+    wxDECLARE_EVENT_TABLE();
 };
 
-BEGIN_EVENT_TABLE(wxDBFStructDialog, wxDialog)
-   EVT_BUTTON(wxID_ADD        , wxDBFStructDialog::OnAdd)
-   EVT_BUTTON(wxID_DELETE     , wxDBFStructDialog::OnDelete)
-   EVT_BUTTON(XRCID("edit")   , wxDBFStructDialog::OnEdit)
-   EVT_BUTTON(XRCID("calendar"), wxDBFStructDialog::OnCalendar)
-   EVT_UPDATE_UI(wxID_DELETE  , wxDBFStructDialog::OnUpdateNeedSel)
-   EVT_UPDATE_UI(XRCID("edit"), wxDBFStructDialog::OnUpdateNeedSel)
-   EVT_COMMAND_LEFT_DCLICK(XRCID("list"), wxDBFStructDialog::OnEdit)
-   EVT_UPDATE_UI(wxID_OK, wxDBFStructDialog::OnUpdateNeedData)
-END_EVENT_TABLE()
+wxBEGIN_EVENT_TABLE(DbfStructPanel, wxPanel)
+   EVT_BUTTON(wxID_ADD        , DbfStructPanel::OnAdd)
+   EVT_BUTTON(wxID_DELETE     , DbfStructPanel::OnDelete)
+   EVT_BUTTON(XRCID("edit")   , DbfStructPanel::OnEdit)
+   EVT_BUTTON(XRCID("calendar"), DbfStructPanel::OnCalendar)
+   EVT_UPDATE_UI(wxID_DELETE  , DbfStructPanel::OnUpdateNeedSel)
+   EVT_UPDATE_UI(XRCID("edit"), DbfStructPanel::OnUpdateNeedSel)
+   EVT_COMMAND_LEFT_DCLICK(XRCID("list"), DbfStructPanel::OnEdit)
+   EVT_UPDATE_UI(wxID_OK, DbfStructPanel::OnUpdateNeedData)
+wxEND_EVENT_TABLE();
 
-wxDBFStructDialog::wxDBFStructDialog(wxDBase* db) : wxDialog(), m_database(db), m_list(NULL)
+DbfStructPanel::DbfStructPanel(wxDBase* db) : wxPanel(), m_database(db), m_list(NULL)
 {
 }
 
-bool wxDBFStructDialog::Create(wxWindow* parent)
+bool DbfStructPanel::Create(wxWindow* parent)
 {
-    bool ok = wxXmlResource::Get()->LoadDialog(this, parent, wxT("struct"));
+    bool ok = wxXmlResource::Get()->LoadPanel(this, parent, wxT("struct"));
 
     if (ok)
     {
-        wxCreateStdDialogButtonSizer(this, wxOK|wxCANCEL);
-        
         m_list = XRCCTRL(*this, "list", wxStructListView);
         m_list->Init(m_database);
-        GetSizer()->SetSizeHints(this);
     }
     return ok;
 }
 
-wxDBFStructDialog::~wxDBFStructDialog()
+DbfStructPanel::~DbfStructPanel()
 {
 }
 
-void wxDBFStructDialog::OnUpdateNeedData(wxUpdateUIEvent& event)
+void DbfStructPanel::OnUpdateNeedData(wxUpdateUIEvent& event)
 {
    event.Enable(m_list->GetItemCount() != 0);
 }
 
-void wxDBFStructDialog::OnAdd(wxCommandEvent&)
+void DbfStructPanel::OnAdd(wxCommandEvent&)
 {
    DBF_FIELD_INFO info = { "", DBF_DATA_TYPE_CHAR, 10, 0 };
    
@@ -214,7 +212,7 @@ void wxDBFStructDialog::OnAdd(wxCommandEvent&)
       m_list->Add(info);
 }
 
-void wxDBFStructDialog::OnEdit(wxCommandEvent&)
+void DbfStructPanel::OnEdit(wxCommandEvent&)
 {
    const int item = m_list->GetSelectedRow();
    DBF_FIELD_INFO info = m_list->m_array[item];
@@ -226,7 +224,7 @@ void wxDBFStructDialog::OnEdit(wxCommandEvent&)
    }
 }
 
-void wxDBFStructDialog::OnDelete(wxCommandEvent&)
+void DbfStructPanel::OnDelete(wxCommandEvent&)
 {
     const int item = m_list->GetSelectedRow();
 
@@ -234,7 +232,7 @@ void wxDBFStructDialog::OnDelete(wxCommandEvent&)
     m_list->Fill();
 }
 
-void wxDBFStructDialog::OnCalendar(wxCommandEvent&)
+void DbfStructPanel::OnCalendar(wxCommandEvent&)
 {
    const DBF_FIELD_INFO fields[] =
    {
@@ -246,65 +244,77 @@ void wxDBFStructDialog::OnCalendar(wxCommandEvent&)
    m_list->Fill();
 }
 
-void wxDBFStructDialog::OnUpdateNeedSel(wxUpdateUIEvent& event)
+void DbfStructPanel::OnUpdateNeedSel(wxUpdateUIEvent& event)
 {
    event.Enable(m_list->HasSelection());
 }
 
 bool DoModal_Structure(wxWindow* parent, wxDBase* db, const wxString& caption, const wxFileName& fileName)
 {
-   wxDBFStructDialog dlg(db);   
-   bool ok = dlg.Create(parent);
-
-   if (ok)
-   {
-       if (!caption.empty())
-           dlg.SetTitle(caption);
-       ok = (wxID_OK == dlg.ShowModal());
-       if (ok && fileName.IsOk() && !db->IsOpen())
-           ok = db->Create(fileName, dlg.GetList()->m_array);
+    wxDialog dlg;
+    bool ok = dlg.Create(parent, wxID_ANY, _("Structure"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    if (ok)
+    {
+        DbfStructPanel* panel = new DbfStructPanel(db);   
+        ok = panel->Create(&dlg);
+        if (ok)
+        {
+            wxSizer* topSizer = new wxBoxSizer(wxVERTICAL);
+            topSizer->Add(panel, 1, wxEXPAND);
+            topSizer->Add(dlg.CreateStdDialogButtonSizer(wxOK | wxCANCEL), wxSizerFlags().Align(wxEXPAND).Border());
+            dlg.SetSizerAndFit(topSizer);
+            dlg.CenterOnParent();
+            dlg.GetSizer()->SetSizeHints(&dlg);
+            dlg.SetExtraStyle(dlg.GetExtraStyle() | wxWS_EX_VALIDATE_RECURSIVELY);
+            dlg.SetIcon(wxArtProvider::GetIcon(wxART_APP));
+            if (!caption.empty())
+               dlg.SetTitle(caption);
+            ok = (wxID_OK == dlg.ShowModal());
+            if (ok && fileName.IsOk() && !db->IsOpen())
+               ok = db->Create(fileName, panel->GetList()->m_array);
+        }
    }
    return ok;
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// wxDBFFieldDialog
+// DbfFieldPanel
 
-class wxDBFFieldDialog : public wxDialog
+class DbfFieldPanel : public wxPanel
 {
-    typedef wxDialog base;
+    typedef wxPanel base;
 public:
-   wxString m_name;
-   int m_type;
-   int m_length;
-   int m_decimals;
+    wxString m_name;
+    int m_type;
+    int m_length;
+    int m_decimals;
 protected:
-   wxTextCtrl* m_edit0;
-   wxComboBox* m_edit1;
-   wxTextCtrl* m_edit2;
-   wxTextCtrl* m_edit3;
+    wxTextCtrl* m_edit0;
+    wxComboBox* m_edit1;
+    wxTextCtrl* m_edit2;
+    wxTextCtrl* m_edit3;
 
 public:
-   wxDBFFieldDialog();
+    DbfFieldPanel();
 
-   bool Create(wxWindow* parent);
+    bool Create(wxWindow* parent);
 
-   virtual bool TransferDataFromWindow();
+    virtual bool TransferDataFromWindow();
 
 protected:
-   void OnUpdateNeedData(wxUpdateUIEvent&);
-   void OnUpdateLength(wxUpdateUIEvent&);
-   void OnUpdateDecimals(wxUpdateUIEvent&);
-   DECLARE_EVENT_TABLE()
+    void OnUpdateNeedData(wxUpdateUIEvent&);
+    void OnUpdateLength(wxUpdateUIEvent&);
+    void OnUpdateDecimals(wxUpdateUIEvent&);
+    wxDECLARE_EVENT_TABLE();
 };
 
-BEGIN_EVENT_TABLE(wxDBFFieldDialog, wxDialog)
-   EVT_UPDATE_UI(wxID_OK, wxDBFFieldDialog::OnUpdateNeedData)
-   EVT_UPDATE_UI(XRCID("edit2"), wxDBFFieldDialog::OnUpdateLength)
-   EVT_UPDATE_UI(XRCID("edit3"), wxDBFFieldDialog::OnUpdateDecimals)
-END_EVENT_TABLE()
+wxBEGIN_EVENT_TABLE(DbfFieldPanel, wxPanel)
+   EVT_UPDATE_UI(wxID_OK, DbfFieldPanel::OnUpdateNeedData)
+   EVT_UPDATE_UI(XRCID("edit2"), DbfFieldPanel::OnUpdateLength)
+   EVT_UPDATE_UI(XRCID("edit3"), DbfFieldPanel::OnUpdateDecimals)
+wxEND_EVENT_TABLE();
 
-void wxDBFFieldDialog::OnUpdateLength(wxUpdateUIEvent& event)
+void DbfFieldPanel::OnUpdateLength(wxUpdateUIEvent& event)
 {
    const bool boolean = (m_edit1->GetSelection() == DBF_DATA_TYPE_BOOLEAN);
    const bool memo    = (m_edit1->GetSelection() == DBF_DATA_TYPE_MEMO);
@@ -316,7 +326,7 @@ void wxDBFFieldDialog::OnUpdateLength(wxUpdateUIEvent& event)
        m_edit2->SetLabel(wxT("10"));
 }
 
-void wxDBFFieldDialog::OnUpdateDecimals(wxUpdateUIEvent& event)
+void DbfFieldPanel::OnUpdateDecimals(wxUpdateUIEvent& event)
 {
    const bool flt = (m_edit1->GetSelection() == DBF_DATA_TYPE_FLOAT);
 
@@ -325,7 +335,7 @@ void wxDBFFieldDialog::OnUpdateDecimals(wxUpdateUIEvent& event)
        m_edit3->SetLabel(wxT("0"));
 }
 
-void wxDBFFieldDialog::OnUpdateNeedData(wxUpdateUIEvent& event)
+void DbfFieldPanel::OnUpdateNeedData(wxUpdateUIEvent& event)
 {
    bool enable = !(   m_edit0->GetValue().empty()
                    || (m_edit1->GetSelection() == wxNOT_FOUND)
@@ -335,18 +345,16 @@ void wxDBFFieldDialog::OnUpdateNeedData(wxUpdateUIEvent& event)
    event.Enable(enable);
 }
 
-wxDBFFieldDialog::wxDBFFieldDialog() : wxDialog()
+DbfFieldPanel::DbfFieldPanel() : wxPanel()
 {
 }
 
-bool wxDBFFieldDialog::Create(wxWindow* parent)
+bool DbfFieldPanel::Create(wxWindow* parent)
 {
-    bool ok = wxXmlResource::Get()->LoadDialog(this, parent, wxT("field_edit"));
+    bool ok = wxXmlResource::Get()->LoadPanel(this, parent, wxT("field_edit"));
    
     if (ok)
     {
-        wxCreateStdDialogButtonSizer(this, wxOK|wxCANCEL);
-
         m_edit0 = XRCCTRL(*this, "edit0", wxTextCtrl);
         m_edit1 = XRCCTRL(*this, "edit1", wxComboBox);
         m_edit2 = XRCCTRL(*this, "edit2", wxTextCtrl);
@@ -361,13 +369,11 @@ bool wxDBFFieldDialog::Create(wxWindow* parent)
         m_edit1->SetValidator(wxGenericValidator(&m_type));
         m_edit2->SetValidator(wxGenericValidator(&m_length  ));
         m_edit3->SetValidator(wxGenericValidator(&m_decimals));
-        GetSizer()->SetSizeHints(this);
-        Center();
     }
     return ok;
 }
 
-bool wxDBFFieldDialog::TransferDataFromWindow()
+bool DbfFieldPanel::TransferDataFromWindow()
 {
    bool ok = base::TransferDataFromWindow();
 
@@ -381,34 +387,46 @@ bool wxDBFFieldDialog::TransferDataFromWindow()
 
 bool DoModal_FieldEdit(wxWindow* parent, DBF_FIELD_INFO* info, const wxString& caption)
 {
-   wxDBFFieldDialog dlg;
-   bool ok = dlg.Create(parent);
-   
-   if (ok)
-   {
-       dlg.m_name = wxConvertMB2WX(info->name);
-       dlg.m_type = info->type;
-       dlg.m_length = (int)info->length;
-       dlg.m_decimals = info->decimals;
-       if (!caption.empty())
-           dlg.SetTitle(caption);
-       ok = (wxID_OK == dlg.ShowModal());
-       if (ok)
-       {
-          strncpy(info->name, dlg.m_name.mb_str(), sizeof(info->name));
-          info->type     = (dbf_data_type)dlg.m_type;
-          info->length   = dlg.m_length;
-          info->decimals = dlg.m_decimals;
-       }
+    wxDialog dlg;
+    bool ok = dlg.Create(parent, wxID_ANY, _("Field edit"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    if (ok)
+    {
+        DbfFieldPanel* panel = new DbfFieldPanel();   
+        ok = panel->Create(&dlg);
+        if (ok)
+        {
+            wxSizer* topSizer = new wxBoxSizer(wxVERTICAL);
+            topSizer->Add(panel, 1, wxEXPAND);
+            topSizer->Add(dlg.CreateStdDialogButtonSizer(wxOK | wxCANCEL), wxSizerFlags().Align(wxEXPAND).Border());
+            dlg.SetSizerAndFit(topSizer);
+            dlg.CenterOnParent();
+            dlg.GetSizer()->SetSizeHints(&dlg);
+            dlg.SetExtraStyle(dlg.GetExtraStyle() | wxWS_EX_VALIDATE_RECURSIVELY);
+            dlg.SetIcon(wxArtProvider::GetIcon(wxART_APP));
+            panel->m_name = wxConvertMB2WX(info->name);
+            panel->m_type = info->type;
+            panel->m_length = (int)info->length;
+            panel->m_decimals = info->decimals;
+            if (!caption.empty())
+                dlg.SetTitle(caption);
+            ok = (wxID_OK == dlg.ShowModal());
+            if (ok)
+            {
+                strncpy(info->name, panel->m_name.mb_str(), sizeof(info->name));
+                info->type     = (dbf_data_type)panel->m_type;
+                info->length   = panel->m_length;
+                info->decimals = panel->m_decimals;
+            }
+        }
    }
    return ok;
 }
 
-class WindowsDialog : public wxDialog
+class WindowsPanel : public wxPanel
 {
-    typedef wxDialog base;
+    typedef wxPanel base;
 public:
-    WindowsDialog();
+    WindowsPanel();
 
     bool Create(wxWindow* parent, const wxDocVector&);
 
@@ -416,42 +434,40 @@ public:
     {
         return wxStaticCast(m_listBox->GetClientData(item), wxDocument);
     }
-    virtual int ShowModal();
+    int GetSelection() const
+    {
+        return m_selection;
+    }
 protected:
     void OnClose(wxCommandEvent&);
     void OnActivate(wxCommandEvent&);
     void OnUpdateNeedSel(wxUpdateUIEvent&);
     void OnDblClick(wxCommandEvent&);
-    DECLARE_EVENT_TABLE()
+    wxDECLARE_EVENT_TABLE();
 
 protected:
     wxListBox* m_listBox;
     int m_selection;
 };
 
-BEGIN_EVENT_TABLE(WindowsDialog, wxDialog)
-    EVT_BUTTON(wxID_CLOSE, WindowsDialog::OnClose)
-    EVT_BUTTON(XRCID("activate"), WindowsDialog::OnActivate)
-    EVT_UPDATE_UI(wxID_CLOSE, WindowsDialog::OnUpdateNeedSel)
-    EVT_UPDATE_UI(XRCID("activate"), WindowsDialog::OnUpdateNeedSel)
-    EVT_LISTBOX_DCLICK(wxID_ANY, WindowsDialog::OnDblClick)
-END_EVENT_TABLE()
+wxBEGIN_EVENT_TABLE(WindowsPanel, wxPanel)
+    EVT_BUTTON(wxID_CLOSE, WindowsPanel::OnClose)
+    EVT_BUTTON(XRCID("activate"), WindowsPanel::OnActivate)
+    EVT_UPDATE_UI(wxID_CLOSE, WindowsPanel::OnUpdateNeedSel)
+    EVT_UPDATE_UI(XRCID("activate"), WindowsPanel::OnUpdateNeedSel)
+    EVT_LISTBOX_DCLICK(wxID_ANY, WindowsPanel::OnDblClick)
+wxEND_EVENT_TABLE()
 
-WindowsDialog::WindowsDialog() : wxDialog(), m_listBox(NULL), m_selection(wxNOT_FOUND)
+WindowsPanel::WindowsPanel() : wxPanel(), m_listBox(NULL), m_selection(wxNOT_FOUND)
 {
 }
 
-bool WindowsDialog::Create(wxWindow* parent, const wxDocVector& docList)
+bool WindowsPanel::Create(wxWindow* parent, const wxDocVector& docList)
 {
-    bool ok = wxXmlResource::Get()->LoadDialog(this, parent, wxT("windows"));
+    bool ok = wxXmlResource::Get()->LoadPanel(this, parent, wxT("windows"));
 
     if (ok)
     {
-        wxStdDialogButtonSizer* buttonpane = wxCreateStdDialogButtonSizer(this, wxOK);
-
-        buttonpane->GetAffirmativeButton()->SetId(wxID_CANCEL);
-        buttonpane->SetAffirmativeButton(NULL);
-        GetSizer()->SetSizeHints(this);
         m_listBox = XRCCTRL(*this, "list", wxListBox);
 
         for (wxDocVector::const_iterator it = docList.begin(); it != docList.end(); it++)
@@ -471,14 +487,14 @@ bool WindowsDialog::Create(wxWindow* parent, const wxDocVector& docList)
     return ok;
 }
 
-void WindowsDialog::OnUpdateNeedSel(wxUpdateUIEvent& event)
+void WindowsPanel::OnUpdateNeedSel(wxUpdateUIEvent& event)
 {
     wxArrayInt selections;
 
     event.Enable(0 != m_listBox->GetSelections(selections));
 }
 
-void WindowsDialog::OnClose(wxCommandEvent&)
+void WindowsPanel::OnClose(wxCommandEvent&)
 {
     wxArrayInt selections;
 
@@ -493,16 +509,16 @@ void WindowsDialog::OnClose(wxCommandEvent&)
     }
 }
 
-void WindowsDialog::OnActivate(wxCommandEvent&)
+void WindowsPanel::OnActivate(wxCommandEvent&)
 {
     wxArrayInt selections;
 
     m_listBox->GetSelections(selections);
     m_selection = selections[0];
-    EndModal(wxID_OK);
+    wxStaticCast(GetParent(), wxDialog)->EndModal(wxID_OK);
 }
 
-void WindowsDialog::OnDblClick(wxCommandEvent& event)
+void WindowsPanel::OnDblClick(wxCommandEvent& event)
 {
     switch (event.GetSelection())
     {
@@ -510,29 +526,37 @@ void WindowsDialog::OnDblClick(wxCommandEvent& event)
             event.Skip(); break;
         default:
             m_selection = event.GetSelection();
-            EndModal(wxID_OK);
+            wxStaticCast(GetParent(), wxDialog)->EndModal(wxID_OK);
             break;
     }
 }
 
-int WindowsDialog::ShowModal()
-{
-    int n = wxDialog::ShowModal();
-
-    if ( (n == wxID_OK) && (wxNOT_FOUND != m_selection) )
-    {
-        // ShowModal() restores previous focus, so do this later
-        wxTrunkDocView::ActivateDocument(GetDocument(m_selection));
-    }
-    return n;
-}
-
 void DoModal_Windows(wxWindow* parent, const wxDocVector& docList)
 {
-    WindowsDialog dlg;
+    wxDialog dlg;
+    bool ok = dlg.Create(parent, wxID_ANY, _("Field edit"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    if (ok)
+    {
+        WindowsPanel* panel = new WindowsPanel();   
+        ok = panel->Create(&dlg, docList);
+        if (ok)
+        {
+            wxStdDialogButtonSizer* buttonpane = dlg.CreateStdDialogButtonSizer(wxOK);
+            buttonpane->GetAffirmativeButton()->SetId(wxID_CANCEL);
+            buttonpane->SetAffirmativeButton(NULL);
 
-    if (dlg.Create(parent, docList))
-        dlg.ShowModal();
+            wxSizer* topSizer = new wxBoxSizer(wxVERTICAL);
+            topSizer->Add(panel, 1, wxEXPAND | wxRIGHT, 5);
+            topSizer->Add(buttonpane, wxSizerFlags().Align(wxEXPAND).Border());
+            dlg.SetSizerAndFit(topSizer);
+            dlg.CenterOnParent();
+            dlg.GetSizer()->SetSizeHints(&dlg);
+            dlg.SetExtraStyle(dlg.GetExtraStyle() | wxWS_EX_VALIDATE_RECURSIVELY);
+            dlg.SetIcon(wxArtProvider::GetIcon(wxART_APP));
+            if (wxID_OK == dlg.ShowModal())
+                wxTrunkDocView::ActivateDocument(panel->GetDocument(panel->GetSelection()));
+        }
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////
